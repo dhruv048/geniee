@@ -7,6 +7,7 @@ import { AuthStack, HomeStack } from './app/config/routes';
 import Loading from './app/components/Loading/index';
 import settings from './app/config/settings'
 import {colors} from "./app/config/styles";
+import Sapp from "./app/screens/Sapp"
 
 // const instructions = Platform.select({
 //   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -110,7 +111,7 @@ class App extends Component {
 
      render() {
          if (this.props.user !== null) {
-             return <HomeStack />;
+             return <Sapp />;
          }
          else   if(!this.state.netConnected){
              return ( <View style={styles.container}>
@@ -128,7 +129,7 @@ class App extends Component {
                  console.log('wait for 2 sec')
              },2000)
              if (this.props.user !== null) {
-                 return <HomeStack />;
+                 return <Sapp />;
              }
              else
                  return <AuthStack/>;

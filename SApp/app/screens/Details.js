@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet, Dimensions, Text, View, ScrollView, Image, Modal, LayoutAnimation} from 'react-native';
+import {StyleSheet, Dimensions, Text, View, ScrollView, Image, Modal, LayoutAnimation, Platform} from 'react-native';
 import Meteor, {Accounts, createContainer} from 'react-native-meteor';
 import PropTypes from 'prop-types';
 import Loading from '../components/Loading';
@@ -10,6 +10,8 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import call from 'react-native-phone-call'
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
 import GenericTextInput from "../components/GenericTextInput";
+import {Header} from 'react-native-elements';
+import Icon  from 'react-native-vector-icons/FontAwesome';
 
 const window = Dimensions.get('window');
 const MARGIN_HORIZONTAL = 10;
@@ -19,10 +21,10 @@ const styles = StyleSheet.create({
 
   container: {
       flex:1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      // justifyContent: 'center',
+      // alignItems: 'center',
       backgroundColor: colors.background,
-      padding: 10,
+      // padding: 10,
   },
     main: {
         fontSize: 20,
@@ -127,6 +129,13 @@ class Details extends Component  {
                  call(args).catch(console.error)
              }
     }
+
+    static navigationOptions={
+        drawerIcon:(
+            <Image source={require('../images/settings.png')}
+                   style={{height:25,width:25}}/>
+        )
+    }
     render() {
     if (!this.props.detailsReady) {
         return <Loading/>;
@@ -134,12 +143,20 @@ class Details extends Component  {
     else {
         return (
             <View style={styles.container}>
+                <Header style={{height:25}}
+                        statusBarProps={{ barStyle: 'light-content' }}
+                        leftComponent={<Icon color="white" name="bars" size={30} onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}
+                        // rightComponent={ <Icon  size={30} name='sign-out' style={{}}  onPress={this.handleSignout} ></Icon>}
+                        outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}
+                />
+                <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={styles.main}>
                     Roshan Shah
 
                 </Text>
                 <Text>Sr. Software Engineer </Text>
                 <Image style={styles.userImg} source={userImage}/>
+                </View>
                 <AirbnbRating
                     count={5}
                     reviews={["Terrible", "Bad", "OK", "Good", "Very Good"]}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Platform} from 'react-native';
+import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Image,Platform} from 'react-native';
 import { Header } from 'react-native-elements';
 import { colors } from '../config/styles';
 import Button from '../components/Button';
@@ -10,6 +10,7 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import Meteor, { createContainer } from 'react-native-meteor';
 import GridView from 'react-native-super-grid';
 import call from "react-native-phone-call";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -228,7 +229,14 @@ class Home extends Component {
         }
     }
 
+    static navigationOptions={
+        drawerIcon:(
+            <Image source={require('../images/settings.png')}
+                   style={{height:25,width:25}}/>
+        )
+    }
     render() {
+
         const title= this.state.editItem ? "Edit Item" : "Add Item";
         let button;
         if(this.state.role===1){
@@ -242,11 +250,11 @@ class Home extends Component {
         }
 
         return (
-
             <View style={styles.container}>
                 <Header style={{height:25}}
                     statusBarProps={{ barStyle: 'light-content' }}
-                    rightComponent={<Icon  size={30} name='sign-out' style={{}}  onPress={this.handleSignout} ></Icon>}
+                        leftComponent={<Icon name="bars" color="white" size={30} onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}
+                    rightComponent={ <Icon  size={30} name='sign-out' color="white" onPress={this.handleSignout} ></Icon>}
                         outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}
                 />
                 {/*<Text style={styles.main}>*/}
@@ -271,10 +279,10 @@ class Home extends Component {
                                 <Text style={styles.itemCode}>Mb: {item.contact}</Text>
                                 <View style={styles.buttons}/>
                                 {this.state.role === 1 ?
-                                    <Icon name="times-circle" onPress={()=>{this.handleRemove(item._id)}} size={30} style={{
+                                    <Icon color="white" name="times-circle" onPress={()=>{this.handleRemove(item._id)}} size={30} style={{
                                         position: 'absolute',
-                                        right: -4,
-                                        top: -7,
+                                        right: 2,
+                                        top: 0,
                                         bottom: 0,
                                     }} />:null}
                                     {this.state.role === 1 ?
@@ -333,6 +341,7 @@ class Home extends Component {
                     </View>
 
                 </Modal>
+
             </View>
         );
     };

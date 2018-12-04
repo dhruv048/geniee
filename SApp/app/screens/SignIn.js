@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { LayoutAnimation, StyleSheet, Dimensions, Text, View, Image,Modal,NetInfo } from 'react-native';
+import { LayoutAnimation, StyleSheet, Dimensions, Text, View, Image,Modal,ScrollView } from 'react-native';
 import Meteor from 'react-native-meteor';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import ImagePicker from 'react-native-image-picker';
@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import GenericTextInput, { InputWrapper } from '../components/GenericTextInput';
 import logoImage from '../images/rn-logo.png';
 import userImage from '../images/duser.png';
+import Sapp from "../screens/Sapp";
 
 
 const window = Dimensions.get('window');
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
       position:'absolute',
         left:0,
         right:0,
-        bottom:0,
+        bottom:5,
         height:200,
         padding:20,
     },
@@ -230,7 +231,7 @@ class SignIn extends Component {
 
   render() {
       if(this.state.isLogged!==null){
-          return < HomeStack />
+          return < Sapp />
       }
       else {
           return (
@@ -289,19 +290,19 @@ class SignIn extends Component {
                   })}}>
                       <View style={styles.header}>
                       <Text style={styles.subHeaderText}>Create New Account</Text>
-                          {/*<Image source={this.state.sourceURI} style={styles.userImage}/>*/}
+                          <Image source={this.state.sourceURI} style={styles.userImage}/>
 
-                          {/*<Button text="Upload Image" onPress={this.uploadImage} />*/}
+                          <Button text="Upload Image" onPress={this.uploadImage} />
                       </View>
 
-                      {/*<ScrollView>*/}
+                      <ScrollView>
                           <InputWrapper>
-                              {/*<CheckBox*/}
-                              {/*center*/}
-                              {/*title='Admin'*/}
-                              {/*checked={this.state.checked}*/}
-                              {/*onPress={() => this.setState({checked: !this.state.checked})}*/}
-                          {/*/>*/}
+                              <CheckBox
+                              center
+                              title='Admin'
+                              checked={this.state.checked}
+                              onPress={() => this.setState({checked: !this.state.checked})}
+                          />
                           <GenericTextInput
                               placeholder="Full name"
                               onChangeText={(name) => this.setState({name})}
@@ -329,12 +330,16 @@ class SignIn extends Component {
                                   borderTop
                           />
                       </InputWrapper>
-                      {/*</ScrollView>*/}
+                          <View style={styles.error}>
+                              <Text style={styles.errorText}>{this.state.error}</Text>
+                          </View>
+                      </ScrollView>
                       <View style={styles.buttons}>
                           <Button text="Create Account" onPress={this.handleCreateAccount}/>
                           <Button text="Cancel" onPress={()=>{
                               this.setState({
-                                  showModal:false
+                                  showModal:false,
+                                  error:null
                               })}}/>
                       </View>
                   </Modal>
