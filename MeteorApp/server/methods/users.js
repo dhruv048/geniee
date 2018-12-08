@@ -3,7 +3,17 @@ import { Meteor } from 'meteor/meteor';
 Meteor.methods({
 
     'registerUser':  (userInfo)=> {
-        console.log('register:::=>>>');
+        var user= Meteor.user();
+        var createdBy=null
+        if(user.profile.role===2 ){
+            createdBy="Super Admin";
+        }
+        else if(user.profile.role===1 ){
+          createdBy=  user.profile._id;
+        }
+        else if(user.profile.role===0){
+         createdBy=user.profile.createdBy
+        }
         try {
             Accounts.createUser({
                 password: userInfo.password,
@@ -11,14 +21,18 @@ Meteor.methods({
                 email: userInfo.email,
                 createdAt: new Date(),
                 profile: {
-                    role: userInfo.role,
+                   // role: userInfo.role,
+                    role: user.profile.role===2 ? 1:0,
                     // profileimage: null,
-                    name: userInfo.name
+                    name: userInfo.name,
+                    contactNo:userInfo.contact,
+                    createdBy:createdBy,
                 }
             });
         }
         catch (e) {
             console.log(e.message);
+            throw new Meteor.Error(401,e.message);
 
         }
     },
@@ -55,13 +69,12 @@ Meteor.methods({
                 }
             } else {
                 //if user is not found
-                return {
-                    error: "user not found"
-                }
+                throw new Meteor.Error(404, "user not found")
             }
         }
         catch (e) {
             console.log(e.message)
+            throw new Meteor.Error(403, e.message);
         }
     }
 });

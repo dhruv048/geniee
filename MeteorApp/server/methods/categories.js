@@ -6,22 +6,26 @@ Meteor.methods({
 
     'addNewCategory': (categoryInfo) => {
         console.log('addNewCategory:::=>>>');
+        var currentUserId = Meteor.userId();
         try {
             Category.insert({
                 title: categoryInfo.title,
                 name: categoryInfo.name,
                 contact: categoryInfo.contact,
                 createdAt: new Date(),
+                createdBy:currentUserId,
             });
         }
         catch (e) {
             console.log(e.message);
+            throw new Meteor.Error(403,e.message)
 
         }
     },
 
     'updateCategory': function (category) {
-        if (Meteor.user().profile.role === 1) {
+        var cat= Category.findOne({_id:category._id});
+        if (cat.createdBy===Meteor.userId() || Meteor.user().profile.role === 2) {
             try {
 
                 Category.update({_id: category._id}, {
@@ -34,25 +38,29 @@ Meteor.methods({
             }
             catch (err) {
                 console.log(err.message);
+                throw new Meteor.Error(403,e.message)
             }
 
         }
         else {
-            throw new Meteor.Error(401, "", "Logged User is not Admin");
+            console.log("Permission Denied")
+            throw new Meteor.Error(401, "Permission Denied");
         }
     },
 
     'removeCategory': function (id) {
-        if (Meteor.user().profile.role ===1) {
+        var category= Category.findOne({_id:id});
+        if  (Meteor.userId()===category.createdBy || Meteor.user().profile.role === 2)  {
             try {
                 Category.remove({_id:id});
             }
             catch (err) {
                 console.log(err.message);
+                throw new Meteor.Error(403,err.message);
             }
         }
         else {
-            throw new Meteor.Error(401,"", "Logged User is not Admin");
+            throw new Meteor.Error(401,"Permission Denied");
         }
     },
 
@@ -74,6 +82,7 @@ Meteor.methods({
         }
         catch (err){
             console.log(err.message);
+            throw new Meteor.Error(403,err.message)
         }
 
 
