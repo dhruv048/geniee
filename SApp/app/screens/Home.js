@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Image,Platform} from 'react-native';
-import { Header } from 'react-native-elements';
+import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Platform,TouchableHighlight,Linking,} from 'react-native';
+import { Header} from 'react-native-elements';
 import { colors } from '../config/styles';
 import Button from '../components/Button';
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
@@ -10,6 +10,8 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import Meteor, { createContainer } from 'react-native-meteor';
 import GridView from 'react-native-super-grid';
 import call from "react-native-phone-call";
+import Popover from 'react-native-popover-view';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -61,6 +63,44 @@ const styles = StyleSheet.create({
         height:100,
         width:100,
     },
+    error: {
+        height: 28,
+        justifyContent: 'center',
+        width: window.width,
+        alignItems: 'center',
+    },
+    errorText: {
+        color: colors.errorText,
+        fontSize: 14,
+    },
+    badgeIconView:{
+        position:'relative',
+        padding:5
+    },
+    badge:{
+        color:'#fff',
+        position:'absolute',
+        zIndex:5,
+        top:-1,
+        right:2,
+        padding:1,
+        backgroundColor:'red',
+        borderRadius:6
+    },
+    subtitleView: {
+        flexDirection: 'row',
+        padding: 10,
+        paddingTop: 5,
+    },
+    ratingImage: {
+        height: 25,
+        width: 25
+    },
+    ratingText: {
+        paddingLeft: 10,
+        color: 'rgb(39, 44, 48)'
+    },
+
 });
 
 class Home extends Component {
@@ -76,7 +116,8 @@ class Home extends Component {
             editItem: false,
             items:{},
             error:null,
-            role:Meteor.user().profile.role
+            role:Meteor.user().profile.role,
+            isVisible:false
         }
 
     }
@@ -102,7 +143,7 @@ class Home extends Component {
                 Meteor.call('addNewCategory', item, (err, res) => {
                     if (err) {
                         console.log(err);
-                        this.handleError(err);
+                        this.handleError(err.reason);
                     }
                     else {
                         console.log(res);
@@ -127,6 +168,7 @@ class Home extends Component {
             title: item.title,
             editItem:true,
             showModal: true,
+            error:null,
         });
     }
 
@@ -153,7 +195,7 @@ class Home extends Component {
             Meteor.call('updateCategory',itemToEdit,(err,res)=>{
                if(err){
                    console.log(err);
-                   this.handleError(err.message);
+                   this.handleError(err.reason);
                }
                else {
                    console.log(res);
@@ -163,7 +205,8 @@ class Home extends Component {
                        editItem: false,
                        name: '',
                        title: '',
-                       contact: ''
+                       contact: '',
+                       error:null,
                    })
                }
             });
@@ -179,7 +222,7 @@ class Home extends Component {
                 {text: 'Yes Remove', onPress: () =>  Meteor.call('removeCategory',id,(err)=>{
                         if(err){
                             console.log(err);
-                            this.handleError(err);
+                           Alert.alert(err.reason);
                         }
                     })},
                 {text: 'Not Now', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
@@ -196,7 +239,8 @@ class Home extends Component {
             name:'',
             title:'',
             contact:'',
-            idToEdit:''
+            idToEdit:'',
+            error:null,
         })
     }
     handleSignout=()=>{
@@ -222,27 +266,43 @@ class Home extends Component {
         if(this.mounted) {
             Meteor.call('updateCallCount',(err)=>{
                 if(err){
-                    this.handleError(err);
+                    this.handleError(err.reason);
                 }
             });
             call(args).catch(console.error)
         }
     }
+    showPopover=() =>{
+        this.setState({isVisible: true});
+    }
 
-    static navigationOptions={
-        drawerIcon:(
-            <Image source={require('../images/settings.png')}
-                   style={{height:25,width:25}}/>
-        )
+    closePopover=() =>{
+        this.setState({isVisible: false});
     }
     render() {
+        const list=(
+            <View style={{padding:10, margin:0 }}>
+                {this.props.notifications.map((l, i) => (
+
+            <View  key={i} style={{padding:10, backgroundColor:'rgb(192, 213, 229)',width:'auto', marginTop:5,borderRadius:6}}>
+                <View>
+                <Text style={styles.main}>{l.title}</Text>
+                </View>
+                    <View style={styles.subtitleView}>
+                        {/*<Image source={require('../images/avatar-placeholder.png')} style={styles.ratingImage}/>*/}
+                        <Icon name="comment" color="white" size={30}></Icon>
+                        <Text  onPress={ ()=> Linking.openURL(l.url) } style={styles.ratingText}>{l.message}</Text>
+                        <Text style={{color:'#3ca3f2'}} onPress={ ()=> Linking.openURL(l.url) }> {l.linkText}</Text>
+
+                    </View>
+            </View>
+
+        ))}
+            </View>)
 
         const title= this.state.editItem ? "Edit Item" : "Add Item";
         let button;
-        if(this.state.role===1){
-
-        }
-
+        const addUser = (<Icon  size={30} name='user-plus' color="white"  onPress={()=>{this.props.navigation.navigate("SignUp")}} ></Icon>);
         if (this.state.editItem ) {
             button = <Button text="Update" onPress={this.handleEditOld}/>;
         } else {
@@ -250,20 +310,38 @@ class Home extends Component {
         }
 
         return (
+
             <View style={styles.container}>
-                <Header style={{height:25}}
+                <Header
                     statusBarProps={{ barStyle: 'light-content' }}
-                        leftComponent={<Icon name="bars" color="white" size={30} onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}
-                    rightComponent={ <Icon  size={30} name='sign-out' color="white" onPress={this.handleSignout} ></Icon>}
+                    // rightComponent={<Icon  size={30} name='sign-out' color="white"  onPress={this.handleSignout} ></Icon>}
+                    rightComponent={
+                    <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'center'}}>
+                        {this.props.notifications.length>0?
+                        <View style={{paddingRight:15}} >
+                                <Popover style={{justifyContent: 'flex-start', flexDirection:'row', padding:0}}
+                                isVisible={this.state.isVisible}
+                                fromView={this.touchable}
+                                onClose={() => this.closePopover()}>
+                                {list}
+                                </Popover>
+
+                            <TouchableHighlight ref={ref => this.touchable = ref} onPress={() => this.showPopover()} style={styles.badgeIconView}>
+                                <View style={styles.badgeIconView}>
+                                    <Text style={styles.badge}> {this.props.notifications.length} </Text>
+                                    <Icon  size={30} name='bell' ref={ref => this.touchable = ref} onPress={() => this.showPopover()} color="white" style={{width:30,height:30}} />
+                                </View>
+                            </TouchableHighlight>
+
+                        </View> :null}
+                        <Icon  size={30} name='sign-out' color="white"  onPress={this.handleSignout} ></Icon>
+                        </View>}
+                    leftComponent={addUser}
                         outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}
                 />
-                {/*<Text style={styles.main}>*/}
-                    {/*Our Services*/}
-                {/*</Text>*/}
 
-                {/*<Icon.Button  size={20} name='sign-out' style={{backgroundColor: "rgb(6, 222, 229)",}}  onPress={this.handleSignout} >Sign Out</Icon.Button>*/}
+                {this.props.user.profile.role === 1?
 
-                {this.state.role === 1 ?
                 <Icon.Button  size={35} name='plus-square' style={{backgroundColor: "#39BD98", justifyContent:'center', alignItems:'center'}}  onPress={()=>{this.setState({showModal: true})}}>Add New</Icon.Button>
                 :null}
 
@@ -276,16 +354,16 @@ class Home extends Component {
                             <View style={[styles.itemContainer, {backgroundColor: "rgb(44, 116, 224)"}]}>
                                 <Text style={styles.itemName}>{item.title}</Text>
                                 <Text style={styles.itemCode}>Person: {item.name}</Text>
-                                <Text style={styles.itemCode}>Mb: {item.contact}</Text>
+                                {/*<Text style={styles.itemCode}>Mb: {item.contact}</Text>*/}
                                 <View style={styles.buttons}/>
-                                {this.state.role === 1 ?
-                                    <Icon color="white" name="times-circle" onPress={()=>{this.handleRemove(item._id)}} size={30} style={{
+                                {this.props.user.profile.role === 1  ?
+                                    <Icon name="times-circle" color="white" onPress={()=>{this.handleRemove(item._id)}} size={30} style={{
                                         position: 'absolute',
-                                        right: 2,
-                                        top: 0,
+                                        right: 3,
+                                        top: 1,
                                         bottom: 0,
                                     }} />:null}
-                                    {this.state.role === 1 ?
+                                    {this.props.user.profile.role === 1  ?
                                     <Icon.Button size={20} name='edit'
                                                  style={[styles.button, {textAlign: 'center', padding: 5,backgroundColor: "#39BD98"}]}
                                                  onPress={() => {
@@ -297,15 +375,13 @@ class Home extends Component {
                                                        this.callPhone(item.contact)
                                                    }}> Call</Icon.Button>
                                 }
-                                {/*<Button*/}
-                                    {/*text="Details" onPress={() => this.props.navigation.navigate('Details')}/>*/}
                             </View>
                         )}
                     />
 
                 </ScrollView>
 
-                <Modal style={styles.ite} visible={this.state.showModal} onRequestClose={()=>{}}>
+                <Modal style={styles.container} visible={this.state.showModal} onRequestClose={()=>{}}>
                     <Text style={styles.main}>
                         {title}
                     </Text>
@@ -341,7 +417,6 @@ class Home extends Component {
                     </View>
 
                 </Modal>
-
             </View>
         );
     };
@@ -354,9 +429,27 @@ Home.propTypes = {
 
 export default createContainer(() => {
     Meteor.subscribe('categories-list');
-    // console.log(Meteor.user());
+    Meteor.subscribe('notifications-list');
+    // let notifications=Meteor.call('notifications',(err,res)=>{
+    //     console.log(err,res);
+    //     return res;
+    // });
     return {
-        items: Meteor.collection('category').find(),
 
+        items: Meteor.collection('category').find(),
+        user :Meteor.user(),
+        // notifications:[{
+        //     title:"Updates",
+        //     message:"A lot new features available now. Grab new App by Tapping here",
+        //     url:"http://github.com",
+        //     linkText:"here"
+        // },
+        //     {
+        //         title:"Updates",
+        //         message:"A lot new features available now. Grab new App by Tapping here",
+        //         url:"http://github.com",
+        //         linkText:"here"
+        //     }]
+        notifications:Meteor.collection('notification').find(),
     };
 }, Home);

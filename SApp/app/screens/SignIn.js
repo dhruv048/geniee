@@ -5,13 +5,14 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import ImagePicker from 'react-native-image-picker';
 import {CheckBox} from 'react-native-elements';
 import { colors } from '../config/styles';
-import { HomeStack } from '../config/routes';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Button from '../components/Button';
 import GenericTextInput, { InputWrapper } from '../components/GenericTextInput';
 import logoImage from '../images/rn-logo.png';
 import userImage from '../images/duser.png';
 import Sapp from "../screens/Sapp";
-
+import settings from '../config/settings'
+import Icon  from 'react-native-vector-icons/FontAwesome';
 
 const window = Dimensions.get('window');
 
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
         left:0,
         right:0,
         bottom:5,
-        height:200,
-        padding:20,
+        height:190,
+        padding:10,
     },
 });
 
@@ -102,6 +103,7 @@ class SignIn extends Component {
         showModal:false,
         sourceURI:userImage,
         checked:false,
+        region:{},
     };
   }
 
@@ -112,13 +114,30 @@ class SignIn extends Component {
   componentWillUnmount() {
     this.mounted = false;
   }
-
+  componentDidMount(){
+      this.watchID = navigator.geolocation.watchPosition((position) => {
+          // Create the object to update this.state.mapRegion through the onRegionChange function
+         this.setState({
+              region:{
+                  lat:       position.coords.latitude,
+                  long:      position.coords.longitude,
+          }})
+          this.onRegionChange( position.coords.latitude, position.coords.longitude);
+      }, (error)=>console.log(error));
+  }
   handleError = (error) => {
     if (this.mounted) {
       this.setState({ error });
     }
   }
-
+    onRegionChange( lastLat, lastLong) {
+        this.setState({
+            region:{
+                lat:       lastLat,
+                long:     lastLong
+            }
+        });
+    }
   validInput = (overrideConfirm) => {
     const { email, password, confirmPassword, confirmPasswordVisible } = this.state;
     let valid = true;
@@ -230,6 +249,65 @@ class SignIn extends Component {
     }
 
   render() {
+
+const yourPlace= { description: 'Your Location', geometry: { location: { lat:this.state.region.lat, lng: this.state.region.long } }};
+      const GooglePlacesInput =  (
+
+              <GooglePlacesAutocomplete
+                  placeholder='Search'
+                  minLength={2} // minimum length of text to search
+                  autoFocus={false}
+                  returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                  listViewDisplayed='auto'    // true/false/undefined
+                  fetchDetails={true}
+                  renderDescription={row => row.description} // custom description render
+                  onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                      console.log(data, details);
+                  }}
+
+                  getDefaultValue={() => ''}
+
+                  query={{
+                      // available options: https://developers.google.com/places/web-service/autocomplete
+                      key: settings.GOOGLE_MAP_API_KEY,
+                      language: 'en', // language of the results
+                       types: '(address)', // default: 'geocode'
+                      components:'country:np'
+                  }}
+
+                  styles={{
+                      textInputContainer: {
+                          width: '100%'
+                      },
+                      description: {
+                          fontWeight: 'bold'
+                      },
+                      predefinedPlacesDescription: {
+                          color: '#1faadb'
+                      }
+                  }}
+                  predefinedPlaces={[yourPlace]}
+                  currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                  currentLocationLabel="Current location"
+                  // nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                  // GoogleReverseGeocodingQuery={{
+                  //     // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                  // }}
+                  // GooglePlacesSearchQuery={{
+                  //     // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                  //     rankby: 'distance',
+                  //     types: 'food'
+                  // }}
+
+                  // filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+
+                  debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                  renderLeftButton={()  => <Icon size={20} name="caret-left"></Icon>}
+                  renderRightButton={() => <Text></Text>}
+              />
+      )
+
+
       if(this.state.isLogged!==null){
           return < Sapp />
       }
@@ -312,6 +390,9 @@ class SignIn extends Component {
                               onChangeText={(contact) => this.setState({contact})}
                               borderTop
                           />
+
+                              {GooglePlacesInput}
+
                           <GenericTextInput
                               placeholder="Email address"
                               onChangeText={(email) => this.setState({email})}

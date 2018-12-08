@@ -6,7 +6,7 @@ import Profile from '../screens/Profile';
 import Details from '../screens/Details';
 import {Container, Content, Header,Body,Icon} from 'native-base';
 import React, {Component} from 'react';
-
+import { colors } from '../config/styles';
 
 const CustomDrawerContentComponent=(props)=>(
     <Container>
@@ -14,7 +14,7 @@ const CustomDrawerContentComponent=(props)=>(
             <Body>
             <Image
                 style={styles.drawerImage}
-                source={require('../images/avatar-placeholder.png')}/>
+                source={require('../images/RoshanShah.jpg')}/>
             </Body>
         </Header>
         <Content>
@@ -51,6 +51,7 @@ export  const Sapp= DrawerNavigator({
         flex:1,
         justifyContent:'center',
         alignItems:'center',
+        backgroundColor:colors.background
     },
     drawerImage:{
         height:150,
