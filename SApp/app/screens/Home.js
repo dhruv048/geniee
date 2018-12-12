@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Platform,TouchableHighlight,Linking,} from 'react-native';
-import { Header} from 'react-native-elements';
+import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Image,TouchableHighlight,Linking,} from 'react-native';
 import { colors } from '../config/styles';
 import Button from '../components/Button';
+import CustomHeader from '../components/Header';
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
 import GenericTextInput from "../components/GenericTextInput";
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import Meteor, { createContainer } from 'react-native-meteor';
 import GridView from 'react-native-super-grid';
 import call from "react-native-phone-call";
-import Popover from 'react-native-popover-view';
+
 
 
 const styles = StyleSheet.create({
@@ -73,37 +73,11 @@ const styles = StyleSheet.create({
         color: colors.errorText,
         fontSize: 14,
     },
-    badgeIconView:{
-        position:'relative',
-        padding:5
-    },
-    badge:{
-        color:'#fff',
-        position:'absolute',
-        zIndex:5,
-        top:-1,
-        right:2,
-        padding:1,
-        backgroundColor:'red',
-        borderRadius:6
-    },
-    subtitleView: {
-        flexDirection: 'row',
-        padding: 10,
-        paddingTop: 5,
-    },
-    ratingImage: {
-        height: 25,
-        width: 25
-    },
-    ratingText: {
-        paddingLeft: 10,
-        color: 'rgb(39, 44, 48)'
-    },
 
 });
 
 class Home extends Component {
+
     constructor(props) {
         super(props);
         this.mounted = false;
@@ -124,6 +98,10 @@ class Home extends Component {
     componentWillMount() {
         this.mounted = true;
 
+    }
+
+    componentDidMount(){
+        Meteor.subscribe('notifications-list');
     }
 
     componentWillUnmount(){
@@ -279,27 +257,13 @@ class Home extends Component {
     closePopover=() =>{
         this.setState({isVisible: false});
     }
+    static navigationOptions={
+        drawerIcon:(
+            <Image source={require('../images/settings.png')}
+                   style={{height:25,width:25}}/>
+        )
+    }
     render() {
-        const list=(
-            <View style={{padding:10, margin:0 }}>
-                {this.props.notifications.map((l, i) => (
-
-            <View  key={i} style={{padding:10, backgroundColor:'rgb(192, 213, 229)',width:'auto', marginTop:5,borderRadius:6}}>
-                <View>
-                <Text style={styles.main}>{l.title}</Text>
-                </View>
-                    <View style={styles.subtitleView}>
-                        {/*<Image source={require('../images/avatar-placeholder.png')} style={styles.ratingImage}/>*/}
-                        <Icon name="comment" color="white" size={30}></Icon>
-                        <Text  onPress={ ()=> Linking.openURL(l.url) } style={styles.ratingText}>{l.message}</Text>
-                        <Text style={{color:'#3ca3f2'}} onPress={ ()=> Linking.openURL(l.url) }> {l.linkText}</Text>
-
-                    </View>
-            </View>
-
-        ))}
-            </View>)
-
         const title= this.state.editItem ? "Edit Item" : "Add Item";
         let button;
         const addUser = (<Icon  size={30} name='user-plus' color="white"  onPress={()=>{this.props.navigation.navigate("SignUp")}} ></Icon>);
@@ -312,38 +276,10 @@ class Home extends Component {
         return (
 
             <View style={styles.container}>
-                <Header
-                    statusBarProps={{ barStyle: 'light-content' }}
-                    // rightComponent={<Icon  size={30} name='sign-out' color="white"  onPress={this.handleSignout} ></Icon>}
-                    rightComponent={
-                    <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'center'}}>
-                        {this.props.notifications.length>0?
-                        <View style={{paddingRight:15}} >
-                                <Popover style={{justifyContent: 'flex-start', flexDirection:'row', padding:0}}
-                                isVisible={this.state.isVisible}
-                                fromView={this.touchable}
-                                onClose={() => this.closePopover()}>
-                                {list}
-                                </Popover>
-
-                            <TouchableHighlight ref={ref => this.touchable = ref} onPress={() => this.showPopover()} style={styles.badgeIconView}>
-                                <View style={styles.badgeIconView}>
-                                    <Text style={styles.badge}> {this.props.notifications.length} </Text>
-                                    <Icon  size={30} name='bell' ref={ref => this.touchable = ref} onPress={() => this.showPopover()} color="white" style={{width:30,height:30}} />
-                                </View>
-                            </TouchableHighlight>
-
-                        </View> :null}
-                        <Icon  size={30} name='sign-out' color="white"  onPress={this.handleSignout} ></Icon>
-                        </View>}
-                    leftComponent={addUser}
-                        outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}
-                />
-
+            <CustomHeader />
                 {this.props.user.profile.role === 1?
-
-                <Icon.Button  size={35} name='plus-square' style={{backgroundColor: "#39BD98", justifyContent:'center', alignItems:'center'}}  onPress={()=>{this.setState({showModal: true})}}>Add New</Icon.Button>
-                :null}
+                    <Icon.Button  size={35} name='plus-square' style={{backgroundColor: "#39BD98", justifyContent:'center', alignItems:'center'}}  onPress={()=>{this.setState({showModal: true})}}>Add New</Icon.Button>
+                    :null}
 
                 <ScrollView style={styles.scrollView}>
                     <GridView
@@ -429,11 +365,6 @@ Home.propTypes = {
 
 export default createContainer(() => {
     Meteor.subscribe('categories-list');
-    Meteor.subscribe('notifications-list');
-    // let notifications=Meteor.call('notifications',(err,res)=>{
-    //     console.log(err,res);
-    //     return res;
-    // });
     return {
 
         items: Meteor.collection('category').find(),
@@ -450,6 +381,5 @@ export default createContainer(() => {
         //         url:"http://github.com",
         //         linkText:"here"
         //     }]
-        notifications:Meteor.collection('notification').find(),
-    };
+            };
 }, Home);
