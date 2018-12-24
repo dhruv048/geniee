@@ -2,12 +2,12 @@
 import React from 'react';
 import { Image } from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
-
 import Home from '../screens/Home';
 import Details from '../screens/Details';
 import Profile from '../screens/Profile';
 import SignIn from '../screens/SignIn';
-// import Users from '../screens/Users';
+import ChatList from '../screens/ChatList';
+import Chat from '../screens/Chat';
 
 import homeIcon from '../images/home-icon.png';
 import profileIcon from '../images/user-icon.png';
@@ -20,6 +20,17 @@ export const AuthStack = StackNavigator({
   headerMode: 'none',
 });
 
+export const ChatStack = StackNavigator({
+    ChatList: {
+        screen: ChatList,
+    },
+    Chat:{
+        screen: Chat,
+    }
+},{
+    headerMode:'none'
+});
+
 export const ProfileStack = StackNavigator({
     Profile: {
         screen: Profile,
@@ -27,6 +38,8 @@ export const ProfileStack = StackNavigator({
 }, {
     headerMode: 'none',
 });
+
+
 
 
 export const HomeStack = StackNavigator({
@@ -38,11 +51,11 @@ export const HomeStack = StackNavigator({
   },
   Details: {
     screen: Details,
-    // navigationOptions: {
-    //   headerTitle: 'Details',
-    // },
 
   },
+    Chat:{
+      screen:Chat,
+    },
 
     Tabbs : {
         screen: TabNavigator({
@@ -88,41 +101,41 @@ const styles = {
   },
 };
 
-export const Tabs = TabNavigator({
-  Home: {
-    screen: HomeStack,
-    navigationOptions: {
-      tabBarLabel: 'Home',
-      tabBarIcon: ({ tintColor }) => (
-        <Image
-          style={[styles.icon, { tintColor }]}
-          source={homeIcon}
-        />
-      ),
-    },
-  },
-    // Users: {
-    //     screen: Users,
-    //     navigationOptions: {
-    //         tabBarLabel: 'Users',
-    //         tabBarIcon: ({tintColor}) => (
-    //             <Image
-    //                 style={[styles.icon, {tintColor}]}
-    //                 source={homeIcon}
-    //             />
-    //         ),
-    //     },
-    // },
-  Profile: {
-    screen: ProfileStack,
-    navigationOptions: {
-      tabBarLabel: 'Profile',
-      tabBarIcon: ({ tintColor }) => (
-        <Image
-          style={[styles.icon, { tintColor }]}
-          source={profileIcon}
-        />
-      ),
-    },
-  },
-});
+// export const Tabs = TabNavigator({
+//   Home: {
+//     screen: HomeStack,
+//     navigationOptions: {
+//       tabBarLabel: 'Home',
+//       tabBarIcon: ({ tintColor }) => (
+//         <Image
+//           style={[styles.icon, { tintColor }]}
+//           source={homeIcon}
+//         />
+//       ),
+//     },
+//   },
+//     // Users: {
+//     //     screen: Users,
+//     //     navigationOptions: {
+//     //         tabBarLabel: 'Users',
+//     //         tabBarIcon: ({tintColor}) => (
+//     //             <Image
+//     //                 style={[styles.icon, {tintColor}]}
+//     //                 source={homeIcon}
+//     //             />
+//     //         ),
+//     //     },
+//     // },
+//   Profile: {
+//     screen: ProfileStack,
+//     navigationOptions: {
+//       tabBarLabel: 'Profile',
+//       tabBarIcon: ({ tintColor }) => (
+//         <Image
+//           style={[styles.icon, { tintColor }]}
+//           source={profileIcon}
+//         />
+//       ),
+//     },
+//   },
+// });

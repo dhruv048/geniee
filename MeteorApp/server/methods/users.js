@@ -4,12 +4,9 @@ Meteor.methods({
 
     'registerUser':  (userInfo)=> {
         var user= Meteor.user();
-        var createdBy=null
-        if(user.profile.role===2 ){
-            createdBy="Super Admin";
-        }
-        else if(user.profile.role===1 ){
-          createdBy=  user.profile._id;
+        var createdBy=null;
+        if(user.profile.role===1 || user.profile.role===2   ){
+          createdBy= user._id;
         }
         else if(user.profile.role===0){
          createdBy=user.profile.createdBy

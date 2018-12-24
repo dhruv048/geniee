@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Image,TouchableHighlight,Linking,} from 'react-native';
+import { StyleSheet, Text,Alert, View,ScrollView, Modal ,Platform,TouchableHighlight,Linking,Image,AsyncStorage} from 'react-native';
+import CustomHeader from "../components/Header"
+import HeaderMenu from "../components/Header/HeaderMenu";
+import HeaderNotification from "../components/Header/HeaderNotification"
 import { colors } from '../config/styles';
 import Button from '../components/Button';
-import CustomHeader from '../components/Header';
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
 import GenericTextInput from "../components/GenericTextInput";
 import PropTypes from 'prop-types';
@@ -14,21 +16,21 @@ import call from "react-native-phone-call";
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    backgroundColor: colors.background,
-  },
-  main: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: colors.headerText,
-    fontWeight: '400',
-    fontStyle: 'italic',
-  },
+    container: {
+        flex: 1,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        backgroundColor: colors.background,
+    },
+    main: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: colors.headerText,
+        fontWeight: '400',
+        fontStyle: 'italic',
+    },
     buttons: {
-      marginTop:5,
+        marginTop:5,
         justifyContent: 'center',
         flexDirection: 'row',
     },
@@ -73,11 +75,9 @@ const styles = StyleSheet.create({
         color: colors.errorText,
         fontSize: 14,
     },
-
 });
 
-class Home extends Component {
-
+class Home extends React.Component {
     constructor(props) {
         super(props);
         this.mounted = false;
@@ -98,10 +98,6 @@ class Home extends Component {
     componentWillMount() {
         this.mounted = true;
 
-    }
-
-    componentDidMount(){
-        Meteor.subscribe('notifications-list');
     }
 
     componentWillUnmount(){
@@ -166,27 +162,26 @@ class Home extends Component {
     }
 
     handleEditOld=()=>{
-        debugger;
         if(this.validInput()) {
             const {name, contact, title} = this.state;
             let itemToEdit = {_id:this.state.toEdit,name:name,title:title,contact:contact}
             Meteor.call('updateCategory',itemToEdit,(err,res)=>{
-               if(err){
-                   console.log(err);
-                   this.handleError(err.reason);
-               }
-               else {
-                   console.log(res);
-                   this.setState({
-                       // items: items,
-                       showModal: false,
-                       editItem: false,
-                       name: '',
-                       title: '',
-                       contact: '',
-                       error:null,
-                   })
-               }
+                if(err){
+                    console.log(err);
+                    this.handleError(err.reason);
+                }
+                else {
+                    console.log(res);
+                    this.setState({
+                        // items: items,
+                        showModal: false,
+                        editItem: false,
+                        name: '',
+                        title: '',
+                        contact: '',
+                        error:null,
+                    })
+                }
             });
         }
     }
@@ -200,7 +195,7 @@ class Home extends Component {
                 {text: 'Yes Remove', onPress: () =>  Meteor.call('removeCategory',id,(err)=>{
                         if(err){
                             console.log(err);
-                           Alert.alert(err.reason);
+                            Alert.alert(err.reason);
                         }
                     })},
                 {text: 'Not Now', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
@@ -221,22 +216,8 @@ class Home extends Component {
             error:null,
         })
     }
-    handleSignout=()=>{
-        Alert.alert(
-            'SignOut',
-            'Do you want to SignOut?',
-            [
-                {text: 'Yes SignOut', onPress: () =>  Meteor.logout((err)=>{
-                        if(!err)
-                            this.props.navigation.navigate('signIn')
-                    })},
-                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-            ],
-            { cancelable: false }
-        )
 
-    }
-    callPhone(number){
+    callPhone=(number)=>{
         const args = {
             number: number, // String value with the number to call
             prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
@@ -250,20 +231,31 @@ class Home extends Component {
             call(args).catch(console.error)
         }
     }
-    showPopover=() =>{
-        this.setState({isVisible: true});
+
+    handleChat=(id)=>{
+        var channel=this.props.getChannel(id);
+        console.log('channel'+channel);
+        if(channel===null || channel===undefined) {
+            Meteor.call('createChatChannel', {To:id}, (err, result) => {
+                if (err) {
+                    console.log('err:' + err);
+                }
+                else {
+                    console.log('resss' + result);
+                    this.props.navigation.navigate('Chat', {'channel': this.props.getChannel(id)})
+                }
+
+            })
+        }
+        else{
+            this.props.navigation.navigate('Chat', {'channel':channel})
+        }
+        // this.props.navigation.navigate('ChatList',{ID:id})
     }
 
-    closePopover=() =>{
-        this.setState({isVisible: false});
-    }
-    static navigationOptions={
-        drawerIcon:(
-            <Image source={require('../images/settings.png')}
-                   style={{height:25,width:25}}/>
-        )
-    }
+
     render() {
+
         const title= this.state.editItem ? "Edit Item" : "Add Item";
         let button;
         const addUser = (<Icon  size={30} name='user-plus' color="white"  onPress={()=>{this.props.navigation.navigate("SignUp")}} ></Icon>);
@@ -273,11 +265,19 @@ class Home extends Component {
             button = <Button text="Save" onPress={this.handleCreateNew}/>;
         }
 
+
         return (
 
             <View style={styles.container}>
-            <CustomHeader />
+
+                <CustomHeader
+                    rightComponent={<HeaderNotification/>}
+                    centerComponent={{text:'HOME',style:{color:'white'}}}
+                    leftComponent={<HeaderMenu />}
+                />
+
                 {this.props.user.profile.role === 1?
+
                     <Icon.Button  size={35} name='plus-square' style={{backgroundColor: "#39BD98", justifyContent:'center', alignItems:'center'}}  onPress={()=>{this.setState({showModal: true})}}>Add New</Icon.Button>
                     :null}
 
@@ -299,17 +299,26 @@ class Home extends Component {
                                         top: 1,
                                         bottom: 0,
                                     }} />:null}
-                                    {this.props.user.profile.role === 1  ?
+                                {this.props.user.profile.role === 1  ?
                                     <Icon.Button size={20} name='edit'
                                                  style={[styles.button, {textAlign: 'center', padding: 5,backgroundColor: "#39BD98"}]}
                                                  onPress={() => {
                                                      this.handleEdit(item)
                                                  }}> Edit</Icon.Button>
-                                    : <Icon.Button size={20} name='phone-square'
-                                                   style={[styles.button, {textAlign: 'center', padding: 5,backgroundColor: "#39BD98"}]}
-                                                   onPress={() => {
-                                                       this.callPhone(item.contact)
-                                                   }}> Call</Icon.Button>
+                                    : <View style={{flex:1,flexDirection:'row',padding:10, justifyContent: 'space-around',}}>
+                                        <Icon.Button size={20} name='phone-square'
+                                                     style={[styles.button, {textAlign: 'center', padding: 5,backgroundColor: "#39BD98"}]}
+                                                     onPress={() => {
+                                                         this.callPhone(item.contact)
+                                                     }}> Call</Icon.Button>
+                                        {this.props.user.profile.role===0?
+                                            <Icon.Button size={20} name='comment'
+                                                         style={[styles.button, {textAlign: 'center', padding: 5,backgroundColor: "#39BD98"}]}
+                                                         onPress={() => {
+                                                             this.handleChat(item.createdBy)
+                                                         }}> Chat</Icon.Button>
+                                            :null}
+                                    </View>
                                 }
                             </View>
                         )}
@@ -359,27 +368,21 @@ class Home extends Component {
 }
 
 Home.propTypes = {
-  navigation: PropTypes.object,
+    navigation: PropTypes.object,
 };
 
 
 export default createContainer(() => {
     Meteor.subscribe('categories-list');
+    Meteor.subscribe('notifications-list');
+    Meteor.subscribe('get-channel');
     return {
 
         items: Meteor.collection('category').find(),
         user :Meteor.user(),
-        // notifications:[{
-        //     title:"Updates",
-        //     message:"A lot new features available now. Grab new App by Tapping here",
-        //     url:"http://github.com",
-        //     linkText:"here"
-        // },
-        //     {
-        //         title:"Updates",
-        //         message:"A lot new features available now. Grab new App by Tapping here",
-        //         url:"http://github.com",
-        //         linkText:"here"
-        //     }]
-            };
+        // notifications:Meteor.collection('notification').find(),
+        getChannel:(id)=>{
+            return Meteor.collection('chatChannels').findOne({users: { "$in" : [id]}});
+        }
+    };
 }, Home);
