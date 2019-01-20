@@ -26,13 +26,5 @@ import { Meteor } from 'meteor/meteor';
         }
     });
 
-    Meteor.publish('notifications-list',()=>{
-        try {
-          return Notifications.find({isActive:true})
-        }
-        catch (e) {
-
-        }
-    })
 
 
