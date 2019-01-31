@@ -1,4 +1,5 @@
 MeteorApp/node_modules/
+MeteorApp/.deploy/
 .idea/
 SApp/ios
 SApp/node_modules/
