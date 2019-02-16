@@ -34,6 +34,20 @@ Meteor.methods({
         }
     },
 
+    'signUpUser':  (userInfo)=> {
+        try {
+            Accounts.createUser(userInfo);
+        }
+        catch (e) {
+            console.log(e.message);
+            throw new Meteor.Error(401,e.message);
+
+        }
+    },
+
+
+
+
     'loginUser':(username,password)=> {
         // Meteor.loginWithPassword({email: username}, password, function(error) {
         //     console.log(error)
