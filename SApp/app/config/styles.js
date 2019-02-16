@@ -1,9 +1,9 @@
 export const colors = {
-  background: '#F5F2F9',
-  errorText: '#FA3256',
-  headerText: '#444444',
-  buttonBackground: '#39BD98',
-  buttonText: '#FFFFFF',
-  inputBackground: '#FFFFFF',
-  inputDivider: '#E4E2E5',
+  appBackground: '#05a5d10d',
+  statusBar: '#094c6b',
+  inputBackground: 'rgba(9,76,107,0.5)',
+  buttonPrimaryBackground: '#094c6b',  
+  primaryText: '#094c6b',
+  redText: '#a51822',
+  whiteText: '#ffffff',
 };

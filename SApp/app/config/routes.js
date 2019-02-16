@@ -6,6 +6,7 @@ import Home from '../screens/Home';
 import Details from '../screens/Details';
 import Profile from '../screens/Profile';
 import SignIn from '../screens/SignIn';
+import Register from '../screens/Register';
 import ChatList from '../screens/ChatList';
 import Chat from '../screens/Chat';
 
@@ -15,9 +16,23 @@ import profileIcon from '../images/user-icon.png';
 export const AuthStack = StackNavigator({
   SignIn: {
     screen: SignIn,
+  },  
+  Register: {
+    screen: Register,
   },
 }, {
   headerMode: 'none',
+});
+
+export const RegisterStack = StackNavigator({
+    Register: {
+      screen: Register,
+    },
+    SignIn: {
+        screen: SignIn,
+    },
+}, {
+    headerMode: 'none',
 });
 
 export const ChatStack = StackNavigator({
@@ -38,9 +53,6 @@ export const ProfileStack = StackNavigator({
 }, {
     headerMode: 'none',
 });
-
-
-
 
 export const HomeStack = StackNavigator({
   Home: {
@@ -88,6 +100,9 @@ export const HomeStack = StackNavigator({
 
     signIn:{
       screen:AuthStack,
+    },
+    Register:{
+        screen:RegisterStack,
     }
 },{
     headerMode: 'none',
