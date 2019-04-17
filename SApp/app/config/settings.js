@@ -10,9 +10,10 @@ export const settings = {
     METEOR_URL,
     GOOGLE_MAP_API_KEY,
 };
-export default settings;
-
 export const userType = {
     NORMAL: 0,
     SERVICE_PROVIDER: 1
 }
+export default settings;
+
+

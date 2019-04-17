@@ -58,8 +58,8 @@ const CustomDrawerContentComponent=(props)=>(
         <Content>
             <DrawerItems {...props}/>
             <TouchableOpacity style={{marginLeft:17, flexDirection: 'row'}} onPress={()=>{this.handleSignout()}}>
-                <Icon size={25} name='sign-out' style={{fontWeigh:100}}  ></Icon>
-                <Text style={{marginLeft:30}} >LOG OUT</Text>
+                <Icon size={25} name='sign-out' style={{fontWeigh:'100'}}  ></Icon>
+                <Text style={{marginLeft:30,fontWeigh:'500'}} >LOG OUT</Text>
             </TouchableOpacity>
         </Content>
     </Container>

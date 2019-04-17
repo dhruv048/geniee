@@ -16,6 +16,7 @@ import Meteor from 'react-native-meteor';
 import Sapp from "../screens/Sapp";
 import Logo from '../components/Logo/Logo';
 import { colors } from '../config/styles';
+import settings, {userType} from '../config/settings';
 
 
 class SignIn extends Component {
