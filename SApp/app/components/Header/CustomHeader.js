@@ -14,12 +14,12 @@ class CustomHeader extends React.Component{
                     backgroundColor: '#3D6DCC',
                     justifyContent: 'space-around',
                     paddingTop: 2,
+                    height: Platform.OS === 'ios' ? 70 : 70 - 24,
                 }}
                 statusBarProps={{barStyle: 'light-content'}}
                 rightComponent={this.props.rightComponent}
                 centerComponent={this.props.centerComponent}
                 leftComponent={this.props.leftComponent}
-                outerContainerStyles={{height: Platform.OS === 'ios' ? 70 : 70 - 24, padding: 2}}
             />
         );
     }
