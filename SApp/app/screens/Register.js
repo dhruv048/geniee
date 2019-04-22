@@ -12,6 +12,8 @@ import {
     Picker
  } from 'react-native';
 
+import { RadioGroup } from 'react-native-btr';
+
 import Meteor from 'react-native-meteor';
 
 import Logo from '../components/Logo/Logo';
@@ -30,7 +32,17 @@ class Register extends Component {
             confirmPassword: '',
             confirmPasswordVisible: false,
             userType: '',
-            isLogged:Meteor.user()?true : null            
+            isLogged:Meteor.user()?true : null,
+            radioButtons: [
+                {
+                  label: 'User',
+                  value: '1'
+                },
+                {
+                  label: 'Service Provider',
+                  value: '2'
+                }
+              ]            
         };
     }
 
@@ -205,7 +217,7 @@ class Register extends Component {
                         ref={(input) => this.contactNumber = input}
                         onChangeText={(contact) => this.setState({contact})}
                         />
-                        <View style={styles.pickerView}><Picker style={styles.selectBox}
+                        {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
                             selectedValue={this.state.userType}
                             onValueChange={(itemValue, itemIndex) =>
                                 this.setState({userType:itemValue})
@@ -214,7 +226,17 @@ class Register extends Component {
                             <Picker.Item label="Register As" value=""/>
                             <Picker.Item label="User" value="0"/>
                             <Picker.Item label="Service Provider" value="1"/>
-                        </Picker></View>
+                        </Picker></View>*/}
+                        <View style={styles.radioView}>
+                            <Text style={styles.radioTypeText}>Register As</Text>
+                            <RadioGroup style={styles.radioGrp}
+                                color='#094c6b'
+                                //flexDirection='row'
+                                labelStyle={{fontSize: 16, color: '#094c6b'}}
+                                radioButtons={this.state.radioButtons}
+                                onPress={radioButtons => this.setState({radioButtons})}
+                            />
+                        </View>
 
                         <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
                             <Text style={styles.buttonText}>Register</Text>
@@ -258,18 +280,45 @@ const styles = StyleSheet.create({
         marginVertical: 5    
     },
 
-    pickerView: {
-        overflow: 'hidden',
-        width: 300,
-        borderRadius: 100,
+    radioView: {
+        //flexGrow: 1,
+        //alignItems: 'flex-end',
+        justifyContent: 'center',
+        //paddingVertical: 2,
+        flexDirection: 'row'
     },
-    selectBox: {
-        width: 300,
-        backgroundColor: colors.inputBackground,        
-        paddingHorizontal: 16,
-        color: colors.whiteText,       
-        marginVertical: 5
+    radioTypeText: {
+        color: colors.primaryText,
+        fontSize: 16,
+        fontWeight: '700',
+        paddingVertical: 10,
+        paddingHorizontal: 40,
     },
+    radioGrp: {
+        paddingHorizontal: 12,
+        marginVertical: 0,
+    },
+
+    //radioGrp: {
+        //flexGrow: 1,
+        //alignItems: 'flex-end',
+        //justifyContent: 'center',
+        //paddingVertical: 16,
+        //flexDirection: 'row'
+    //},
+
+    //pickerView: {
+        //overflow: 'hidden',
+        ////width: 300,
+        //borderRadius: 100,
+    //},
+    //selectBox: {
+       // width: 300,
+        //backgroundColor: colors.inputBackground,        
+        //paddingHorizontal: 16,
+        //color: colors.whiteText,       
+        //marginVertical: 5
+    //},
     
     button: {
         width: 300,
