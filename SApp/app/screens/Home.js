@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
-import { Container, Header, Left, Body, Title, Subtitle, Right, Content, List, ListItem, Thumbnail, Footer, FooterTab, Button, Icon, Text, Item, Input } from 'native-base';
+import { Container, Header, Left, Body, Title, Subtitle, Right, Content, List, ListItem, Thumbnail, Footer, FooterTab, Button, Icon, Text, Item, Input, Drawer } from 'native-base';
 
-import {StyleSheet, Image, StatusBar} from 'react-native';
+import {StyleSheet, Image, StatusBar, TouchableWithoutFeedback, Keyboard} from 'react-native';
+
+import Sidebar from '../components/MenuNav/MenuNav';
 
 import logoImage from '../images/logo2-trans-640X640.png';
 
@@ -22,151 +24,168 @@ class Home extends React.Component {
 
     componentWillUnmount(){
         this.mounted = false;
-    }   
+    }
+    
+    closeDrawer(){ this.drawer._root.close(); }
+    openDrawer(){ this.drawer._root.open(); }
 
     render() {
 
         return (
-            <Container>
+            
+            <Drawer ref={(ref) => { this.drawer = ref; }} content={<Sidebar navigator={this.navigator} />} onClose={() => this.closeDrawer()} >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <Container>
                 
-                <Header noLeft style={{backgroundColor:'#094c6b'}}>
-                    <Left>
-                        <Button transparent>
-                            <Icon name="search" />
-                        </Button>                        
-                    </Left>
-                    <Body>
-                        <Title>SAPP</Title>
-                        <Subtitle>one place solutions</Subtitle>
-                    </Body>
-                    <Right>
-                        <Button transparent>
-                            <Icon name="search" />
-                        </Button>
-                        <Button transparent>
-                            <Icon name='more' />
-                        </Button>
-                    </Right>
-                </Header>
-                
-                <Content style={styles.content}>
-                    <List style={styles.contentList}>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                        <ListItem thumbnail>
-                            <Left>
-                                <Thumbnail square source={logoImage} />
-                            </Left>
-                            <Body>
-                                <Text>Sapp Home Service</Text>
-                                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                            </Body>
-                            <Right>
-                                <Button transparent>
-                                    <Text>View</Text>
-                                </Button>
-                            </Right>
-                        </ListItem>
-                    </List>
-                </Content>
+                    <Header style={{backgroundColor:'#094c6b'}}>
+                        {/*<Left>
+                            <Button transparent>
+                                <Icon name="cog" />
+                            </Button>                        
+                        </Left>*/} 
+                        <Body>
+                        <Item><Input placeholder="Search" style={styles.searchInput}
+                                placeholderTextColor='#ffffff'
+                                selectionColor='#ffffff'
+                                underlineColorAndroid="transparent"
+                            />
+                            <Button transparent><Icon style={styles.activeTabIcon} name='search' /></Button>    
 
-                <Footer>
-                    <FooterTab style={styles.footerTab}>
-                        <Button vertical style={styles.activeTab}>
-                            <Icon name="list" style={styles.activeTabIcon}/>
-                            <Text style={styles.activeTabText}>List View</Text>
-                        </Button>
-                        <Image source={logoImage} style={styles.image} />
-                        <Button vertical>
-                            <Icon name="map" />
-                            <Text>Map View</Text>
-                        </Button>
-                    </FooterTab>
-                </Footer>
-            </Container>
-          );
+                            <Button transparent onPress={()=>this.openDrawer()}>
+                                <Icon name='more' style={styles.activeTabIcon}/>
+                            </Button>
+                        </Item>
+                        
+                        </Body>
+                        {/*<Right>                            
+                            <Button transparent onPress={()=>this.openDrawer()}>
+                                <Icon name='more' />
+                            </Button>
+                        </Right>    */}                    
+                    </Header>
+                    
+                    <Content style={styles.content}>
+                        <List style={styles.contentList}>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                            <ListItem thumbnail>
+                                <Left>
+                                    <Thumbnail square source={logoImage} />
+                                </Left>
+                                <Body>
+                                    <Text>Sapp Home Service</Text>
+                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                                </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Text>View</Text>
+                                    </Button>
+                                </Right>
+                            </ListItem>
+                        </List>
+                    </Content>
+
+                    <Footer>
+                        <FooterTab style={styles.footerTab}>
+                            <Button vertical style={styles.activeTab}>
+                                <Icon name="list" style={styles.activeTabIcon}/>
+                                <Text style={styles.activeTabText}>List View</Text>
+                            </Button>
+                            <Image source={logoImage} style={styles.image} />
+                            <Button vertical>
+                                <Icon name="map" />
+                                <Text>Map View</Text>
+                            </Button>
+                        </FooterTab>
+                    </Footer>
+                    
+                </Container>
+                </TouchableWithoutFeedback>
+            </Drawer>
+            
+        );
     };
 }
 
@@ -202,7 +221,20 @@ const styles = StyleSheet.create({
     },
     activeTabText: {
         color: '#ffffff'
+    },
+    searchInput: {
+        //borderBottomWidth: 3,
+        //borderBottomColor: '#000000',
+        color: '#ffffff',
+        //backgroundColor: '#898e907a',
+        height: 40,
+        width: 300,
+        paddingHorizontal: 16,
+        borderTopWidth: 0,
+      borderRightWidth: 0,
+      borderLeftWidth: 0,
+      borderBottomWidth: 0,
     }
-  });
+});
 
 export default  Home;
