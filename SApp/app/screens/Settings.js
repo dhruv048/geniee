@@ -4,7 +4,7 @@ import { StyleSheet, Dimensions, Text, View, Image,Platform } from 'react-native
 import PropTypes from 'prop-types';
 import Icon  from 'react-native-vector-icons/FontAwesome';
 import { colors } from '../config/styles';
-import { Header } from 'react-native-elements';
+// import { Header } from 'react-native-elements';
 
 const window = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -32,12 +32,12 @@ const styles = StyleSheet.create({
     render() {
         return(
       <View>
-      <Header style={{height:25}}
-              statusBarProps={{ barStyle: 'light-content' }}
-              leftComponent={<Icon name="bars" size={30} color="white"  onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}
-              rightComponent={ <Icon color="white" size={30} name='sign-out' style={{}}  onPress={this.handleSignout} ></Icon>}
-              outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}
-      />
+      {/*<Header style={{height:25}}*/}
+              {/*statusBarProps={{ barStyle: 'light-content' }}*/}
+              {/*leftComponent={<Icon name="bars" size={30} color="white"  onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}*/}
+              {/*rightComponent={ <Icon color="white" size={30} name='sign-out' style={{}}  onPress={this.handleSignout} ></Icon>}*/}
+              {/*outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}*/}
+      {/*/>*/}
           <Text>Settings</Text>
       </View>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Dimensions, Platform } from 'react-native';
-import {Icon,Input } from 'react-native-elements';
+// import {Icon,Input } from 'react-native-elements';
 
 const { width } = Dimensions.get('window');
 
@@ -23,15 +23,15 @@ const ChatInput = (props) => {
                 onChangeText={onChangeText}
                 onFocus={onFocus}
             />
-            <Icon
-                containerStyle={{marginLeft: 1, marginRight:5}}
-                iconStyle={{margin: 0, padding: 0}}
-                name='envelope'
-                type='font-awesome'
-                color={textMessage.length > 0 ? '#7d62d9' : '#494e57'}
-                size={25}
-                onPress={onRightPress}
-            />
+            {/*<Icon*/}
+                {/*containerStyle={{marginLeft: 1, marginRight:5}}*/}
+                {/*iconStyle={{margin: 0, padding: 0}}*/}
+                {/*name='envelope'*/}
+                {/*type='font-awesome'*/}
+                {/*color={textMessage.length > 0 ? '#7d62d9' : '#494e57'}*/}
+                {/*size={25}*/}
+                {/*onPress={onRightPress}*/}
+            {/*/>*/}
         </View>
     )
 }

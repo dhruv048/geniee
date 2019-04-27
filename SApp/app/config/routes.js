@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { Image } from 'react-native';
-import { StackNavigator, TabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import Home from '../screens/Home';
 import Details from '../screens/Details';
 import Profile from '../screens/Profile';
@@ -13,7 +13,7 @@ import Chat from '../screens/Chat';
 import homeIcon from '../images/home-icon.png';
 import profileIcon from '../images/user-icon.png';
 
-export const AuthStack = StackNavigator({
+export const AuthStack = createStackNavigator({
   SignIn: {
     screen: SignIn,
   },  
@@ -24,7 +24,7 @@ export const AuthStack = StackNavigator({
   headerMode: 'none',
 });
 
-export const RegisterStack = StackNavigator({
+export const RegisterStack = createStackNavigator({
     Register: {
       screen: Register,
     },
@@ -35,7 +35,7 @@ export const RegisterStack = StackNavigator({
     headerMode: 'none',
 });
 
-export const ChatStack = StackNavigator({
+export const ChatStack = createStackNavigator({
     ChatList: {
         screen: ChatList,
     },
@@ -46,7 +46,7 @@ export const ChatStack = StackNavigator({
     headerMode:'none'
 });
 
-export const ProfileStack = StackNavigator({
+export const ProfileStack = createStackNavigator({
     Profile: {
         screen: Profile,
     },
@@ -54,7 +54,7 @@ export const ProfileStack = StackNavigator({
     headerMode: 'none',
 });
 
-export const HomeStack = StackNavigator({
+export const HomeStack = createStackNavigator({
   Home: {
     screen: Home,
     // navigationOptions: {
@@ -70,7 +70,7 @@ export const HomeStack = StackNavigator({
     },
 
     Tabbs : {
-        screen: TabNavigator({
+        screen: createBottomTabNavigator({
             Users: {
                 screen: Home,
                 navigationOptions: {

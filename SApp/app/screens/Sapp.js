@@ -1,4 +1,4 @@
-import {DrawerNavigator, DrawerItems} from 'react-navigation';
+import {createDrawerNavigator, DrawerItems,createAppContainer,createStackNavigator} from 'react-navigation';
 import {StyleSheet,Text, Image, Alert,TouchableOpacity} from 'react-native'
 import Home from '../screens/Home';
 import Settings from '../screens/Settings';
@@ -9,13 +9,12 @@ import {Container, Content, Header,Body} from 'native-base';
 import React from 'react';
 import { colors } from '../config/styles';
 import Icon  from 'react-native-vector-icons/FontAwesome';
-import { StackNavigator, TabNavigator } from 'react-navigation';
 import Meteor from "react-native-meteor";
 import Chat from "./Chat";
 import {AuthStack} from "../config/routes";
 
 
-export const ChatStack = StackNavigator({
+export const ChatStack = createStackNavigator({
     ChatList: {
         screen: ChatList,
     },
@@ -27,7 +26,7 @@ export const ChatStack = StackNavigator({
 });
 
 
-export const HomeStack = StackNavigator({
+export const HomeStack = createStackNavigator({
     Home: {
         screen: Home,
     },
@@ -81,7 +80,7 @@ handleSignout= () => {
     )
 }
 
-export  const Sapp= DrawerNavigator({
+export  const MainNavigation= createDrawerNavigator({
     Home:{
         screen : HomeStack,
         navigationOptions:{
@@ -135,7 +134,7 @@ export  const Sapp= DrawerNavigator({
 })
 
 
- styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container:{
         flex:1,
         justifyContent:'center',
@@ -149,5 +148,6 @@ export  const Sapp= DrawerNavigator({
 
     }
 });
+const Sapp=createAppContainer(MainNavigation);
 export  default Sapp;
 

@@ -6,11 +6,11 @@ import Loading from '../components/Loading';
 import { colors } from '../config/styles';
 import userImage from '../images/RoshanShah.jpg';
 import Button from "../components/Button";
-import { Rating, AirbnbRating } from 'react-native-ratings';
+// import { Rating, AirbnbRating } from 'react-native-ratings';
 import call from 'react-native-phone-call'
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
 import GenericTextInput from "../components/GenericTextInput";
-import {Header} from 'react-native-elements';
+// import {Header} from 'react-native-elements';
 import Icon  from 'react-native-vector-icons/FontAwesome';
 
 const window = Dimensions.get('window');
@@ -143,12 +143,12 @@ class Details extends Component  {
     else {
         return (
             <View style={styles.container}>
-                <Header style={{height:25}}
-                        statusBarProps={{ barStyle: 'light-content' }}
-                        leftComponent={<Icon color="white" name="bars" size={30} onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}
-                        // rightComponent={ <Icon  size={30} name='sign-out' style={{}}  onPress={this.handleSignout} ></Icon>}
-                        outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}
-                />
+                {/*<Header style={{height:25}}*/}
+                        {/*statusBarProps={{ barStyle: 'light-content' }}*/}
+                        {/*leftComponent={<Icon color="white" name="bars" size={30} onPress={()=> this.props.navigation.navigate('DrawerOpen')} />}*/}
+                        {/*// rightComponent={ <Icon  size={30} name='sign-out' style={{}}  onPress={this.handleSignout} ></Icon>}*/}
+                        {/*outerContainerStyles={{height: Platform.OS === 'ios' ? 70 :  70 - 24, padding:10}}*/}
+                {/*/>*/}
                 <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={styles.main}>
                     Roshan Shah
@@ -157,13 +157,13 @@ class Details extends Component  {
                 <Text>Sr. Software Engineer </Text>
                 <Image style={styles.userImg} source={userImage}/>
                 </View>
-                <AirbnbRating
-                    count={5}
-                    reviews={["Terrible", "Bad", "OK", "Good", "Very Good"]}
-                    defaultRating={0}
-                    size={20}
-                    onFinishRating={this.ratingCompleted}
-                />
+                {/*<AirbnbRating*/}
+                    {/*count={5}*/}
+                    {/*reviews={["Terrible", "Bad", "OK", "Good", "Very Good"]}*/}
+                    {/*defaultRating={0}*/}
+                    {/*size={20}*/}
+                    {/*onFinishRating={this.ratingCompleted}*/}
+                {/*/>*/}
                 <Text style={styles.itemText}>{this.props.detail.title}</Text>
                 <Text style={styles.itemDesc}>{this.props.detail.description}</Text>
                 <ScrollView>
