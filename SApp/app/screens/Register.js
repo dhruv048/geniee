@@ -1,23 +1,24 @@
-import React, { Component } from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    View, 
-    StatusBar, 
-    TouchableOpacity, 
+import React, {Component} from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    StatusBar,
+    TouchableOpacity,
     TextInput,
     TouchableWithoutFeedback,
     Keyboard,
     ToastAndroid,
     Picker
- } from 'react-native';
+} from 'react-native';
 
-import { RadioGroup } from 'react-native-btr';
+import {RadioGroup} from 'react-native-btr';
 
 import Meteor from 'react-native-meteor';
 
 import Logo from '../components/Logo/Logo';
-import { colors } from '../config/styles';
+import {colors} from '../config/styles';
+import {userType} from '../config/settings';
 
 class Register extends Component {
     constructor(props) {
@@ -25,24 +26,24 @@ class Register extends Component {
 
         this.mounted = false;
         this.state = {
-            name:'',
+            name: '',
             email: '',
-            contact:'',
+            contact: '',
             password: '',
             confirmPassword: '',
             confirmPasswordVisible: false,
-            userType: '',
-            isLogged:Meteor.user()?true : null,
+            userType: null,
+            isLogged: Meteor.user() ? true : null,
             radioButtons: [
                 {
-                  label: 'User',
-                  value: '1'
+                    label: 'User',
+                    value: userType.NORMAL
                 },
                 {
-                  label: 'Service Provider',
-                  value: '2'
+                    label: 'Service Provider',
+                    value: userType.SERVICE_PROVIDER
                 }
-              ]            
+            ]
         };
     }
 
@@ -53,13 +54,13 @@ class Register extends Component {
     componentWillUnmount() {
         this.mounted = false;
     }
-    
-    componentDidMount(){
-        
+
+    componentDidMount() {
+
     }
-    
+
     validInput = (overrideConfirm) => {
-        const { email, password, confirmPassword, confirmPasswordVisible } = this.state;
+        const {email, password, confirmPassword, confirmPasswordVisible} = this.state;
         let valid = true;
 
         if (email.length === 0 || password.length === 0) {
@@ -89,7 +90,7 @@ class Register extends Component {
 
     handleSignIn = () => {
         if (this.validInput(true)) {
-            const { email, password } = this.state;
+            const {email, password} = this.state;
 
             try {
                 Meteor.loginWithPassword({username: email}, password, function (err, res) {
@@ -121,8 +122,8 @@ class Register extends Component {
     }
 
     handleCreateAccount = () => {
-        if ( this.validInput()) {
-            const { email,password,name,contact,userType } = this.state;
+        if (this.validInput()) {
+            const {email, password, name, contact, userType} = this.state;
             if (name.length === 0 || contact.length === 0) {
                 console.log('Empty');
                 ToastAndroid.showWithGravityAndOffset(
@@ -132,90 +133,98 @@ class Register extends Component {
                     0,
                     50,
                 );
-                valid = false;
+                //valid = false;
             }
             else {
-                let user={
-                    name:name,
-                    contact:contact,
-                    email:email,
-                    password:password,
-                    userType:userType
+                let user = {
+                    password: password,
+                    username: contact,
+                    email: email,
+                    createdAt: new Date(),
+                    createdAt: new Date(),
+                    profile: {
+                        role: userType,
+                        name: name,
+                        contactNo: contact,
+                        profileImage: null,
+
+                    }
                 };
-                Meteor.call('registerUser',  user , (err, res) => {
+                debugger;
+                Meteor.call('signUpUer', user, (err, res) => {
                     if (err) {
                         console.log(err.reason);
                     } else {
                         // hack because react-native-meteor doesn't login right away after sign in
-                        console.log('Reslut from register'+res);                        
+                        console.log('Reslut from register' + res);
                         this.handleSignIn();
                     }
                 });
             }
-        }       
-    }   
-    
-    
+        }
+    }
+
+
     render() {
-        const { navigate } = this.props.navigation;
-        
+        const {navigate} = this.props.navigation;
+
         return (
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>  
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={styles.container}>
                     <StatusBar
-                        backgroundColor= {colors.statusBar}
-                        barStyle= 'light-content'
+                        backgroundColor={colors.statusBar}
+                        barStyle='light-content'
                     />
-                    
+
                     <Logo/>
-                    
+
                     <View style={styles.containerRegister}>
-                        {/*<TextInput style={styles.inputBox}
+                        <TextInput style={styles.inputBox}
                         underlineColorAndroid='rgba(0,0,0,0)'
                         placeholder='Full Name'
                         placeholderTextColor='#ffffff'
                         selectionColor='#ffffff'
                         onSubmitEditing={() => this.email.focus()}
-                        onChangeText={(name) => this.setState({name})}          
-        />*/}
+                        onChangeText={(name) => this.setState({name})}
+        />
                         <TextInput style={styles.inputBox}
-                        underlineColorAndroid='rgba(0,0,0,0)'
-                        placeholder='Email'
-                        placeholderTextColor='#ffffff'
-                        selectionColor='#ffffff'
-                        keyboardType='email-address'
-                        ref={(input) => this.email = input}
-                        onSubmitEditing={() => this.password.focus()}
-                        onChangeText={(email) => this.setState({email})}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Email'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='email-address'
+                                   ref={(input) => this.email = input}
+                                   onSubmitEditing={() => this.password.focus()}
+                                   onChangeText={(email) => this.setState({email})}
                         />
                         <TextInput style={styles.inputBox}
-                        underlineColorAndroid='rgba(0,0,0,0)'
-                        placeholder='Password'
-                        placeholderTextColor='#ffffff'
-                        selectionColor='#ffffff'
-                        secureTextEntry
-                        ref={(input) => this.password = input}
-                        onSubmitEditing={() => this.confirmPassword.focus()}
-                        onChangeText={(password) => this.setState({password})}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Password'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   secureTextEntry
+                                   ref={(input) => this.password = input}
+                                   onSubmitEditing={() => this.confirmPassword.focus()}
+                                   onChangeText={(password) => this.setState({password})}
                         />
                         <TextInput style={styles.inputBox}
-                        underlineColorAndroid='rgba(0,0,0,0)'
-                        placeholder='Confirm Password'
-                        placeholderTextColor='#ffffff'
-                        selectionColor='#ffffff'
-                        secureTextEntry
-                        ref={(input) => this.confirmPassword = input}
-                        onSubmitEditing={() => this.contactNumber.focus()}
-                        onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Confirm Password'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   secureTextEntry
+                                   ref={(input) => this.confirmPassword = input}
+                                   onSubmitEditing={() => this.contactNumber.focus()}
+                                   onChangeText={(confirmPassword) => this.setState({confirmPassword})}
                         />
                         <TextInput style={styles.inputBox}
-                        underlineColorAndroid='rgba(0,0,0,0)'
-                        placeholder='Contact Number'
-                        placeholderTextColor='#ffffff'
-                        selectionColor='#ffffff'
-                        keyboardType='phone-pad'
-                        ref={(input) => this.contactNumber = input}
-                        onChangeText={(contact) => this.setState({contact})}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Contact Number'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='phone-pad'
+                                   ref={(input) => this.contactNumber = input}
+                                   onChangeText={(contact) => this.setState({contact})}
                         />
                         {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
                             selectedValue={this.state.userType}
@@ -230,11 +239,11 @@ class Register extends Component {
                         <View style={styles.radioView}>
                             <Text style={styles.radioTypeText}>Register As</Text>
                             <RadioGroup style={styles.radioGrp}
-                                color='#094c6b'
+                                        color='#094c6b'
                                 //flexDirection='row'
-                                labelStyle={{fontSize: 16, color: '#094c6b'}}
-                                radioButtons={this.state.radioButtons}
-                                onPress={radioButtons => this.setState({radioButtons})}
+                                        labelStyle={{fontSize: 16, color: '#094c6b'}}
+                                        radioButtons={this.state.radioButtons}
+                                        onPress={userType => this.setState({userType})}
                             />
                         </View>
 
@@ -248,11 +257,11 @@ class Register extends Component {
                         <TouchableOpacity style={styles.navButton} onPress={() => navigate('SignIn')}>
                             <Text style={styles.navButtonText}>Login</Text>
                         </TouchableOpacity>
-                    </View>                    
+                    </View>
                 </View>
-            </TouchableWithoutFeedback>      
+            </TouchableWithoutFeedback>
         );
-        
+
     }
 }
 
@@ -269,7 +278,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    
+
     inputBox: {
         width: 300,
         backgroundColor: colors.inputBackground,
@@ -277,7 +286,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         fontSize: 16,
         color: colors.whiteText,
-        marginVertical: 5    
+        marginVertical: 5
     },
 
     radioView: {
@@ -300,26 +309,26 @@ const styles = StyleSheet.create({
     },
 
     //radioGrp: {
-        //flexGrow: 1,
-        //alignItems: 'flex-end',
-        //justifyContent: 'center',
-        //paddingVertical: 16,
-        //flexDirection: 'row'
+    //flexGrow: 1,
+    //alignItems: 'flex-end',
+    //justifyContent: 'center',
+    //paddingVertical: 16,
+    //flexDirection: 'row'
     //},
 
     //pickerView: {
-        //overflow: 'hidden',
-        ////width: 300,
-        //borderRadius: 100,
+    //overflow: 'hidden',
+    ////width: 300,
+    //borderRadius: 100,
     //},
     //selectBox: {
-       // width: 300,
-        //backgroundColor: colors.inputBackground,        
-        //paddingHorizontal: 16,
-        //color: colors.whiteText,       
-        //marginVertical: 5
+    // width: 300,
+    //backgroundColor: colors.inputBackground,
+    //paddingHorizontal: 16,
+    //color: colors.whiteText,
+    //marginVertical: 5
     //},
-    
+
     button: {
         width: 300,
         backgroundColor: colors.buttonPrimaryBackground,
@@ -363,9 +372,9 @@ const styles = StyleSheet.create({
     },
 
     //signupButton: {
-        //color: '#a51822',
-        //fontSize: 16,
-        //fontWeight: '500'
+    //color: '#a51822',
+    //fontSize: 16,
+    //fontWeight: '500'
     //}
 });
 

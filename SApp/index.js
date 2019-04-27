@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import Saap from './app/screens/Sapp';
 
-AppRegistry.registerComponent('SApp', () => App);
+AppRegistry.registerComponent('SApp', () => Saap);

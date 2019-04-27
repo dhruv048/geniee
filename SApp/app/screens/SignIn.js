@@ -82,6 +82,7 @@ class SignIn extends Component {
                         this.setState({
                             isLogged: true
                         })
+                        this.props.navigation.navigate('App')
                     }
                 }.bind(this));
             }
@@ -93,58 +94,54 @@ class SignIn extends Component {
     
 
     render() {
-        const { navigate } = this.props.navigation;
-        if(this.state.isLogged!==null){
-            return < Sapp />
-        }
-        else {
-            return (
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                    <View style={styles.container}>
-                        <StatusBar 
-                            backgroundColor= {colors.statusBar}
-                            barStyle= 'light-content'
-                        />
-                    
-                        <Logo/>
-                        
-                        <View style={styles.containerForm}>
-                            <TextInput style={styles.inputBox}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder='Email'
-                                placeholderTextColor='#ffffff'
-                                selectionColor='#ffffff'
-                                keyboardType='email-address'
-                                onSubmitEditing={() => this.password.focus()}
-                                onChangeText={(email) => this.setState({email})}
-                            />
-                            <TextInput style={styles.inputBox}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder='Password'
-                                placeholderTextColor='#ffffff'
-                                selectionColor='#ffffff'
-                                secureTextEntry
-                                ref={(input) => this.password = input}
-                                onChangeText={(password) => this.setState({password})}
-                            />
-                            <TouchableOpacity style={styles.button} onPress={this.handleSignIn}>
-                                <Text style={styles.buttonText}>Login</Text>
-                            </TouchableOpacity>
-                            <View>
-                                <Text style={styles.forgotPwdButton}>Forgot password?</Text>
-                            </View>
-                        </View>
+        const {navigate} = this.props.navigation;
+        return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View style={styles.container}>
+                    <StatusBar
+                        backgroundColor={colors.statusBar}
+                        barStyle='light-content'
+                    />
 
-                        <View style={styles.signupCont}>
-                            <Text style={styles.signupText}>Don't have an account?</Text>
-                            <TouchableOpacity style={styles.navButton} onPress={() => navigate('Register')}>
-                                <Text style={styles.navButtonText}>Sign Up</Text>
-                            </TouchableOpacity>
-                        </View>                    
+                    <Logo/>
+
+                    <View style={styles.containerForm}>
+                        <TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Email'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='email-address'
+                                   onSubmitEditing={() => this.password.focus()}
+                                   onChangeText={(email) => this.setState({email})}
+                        />
+                        <TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Password'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   secureTextEntry
+                                   ref={(input) => this.password = input}
+                                   onChangeText={(password) => this.setState({password})}
+                        />
+                        <TouchableOpacity style={styles.button} onPress={this.handleSignIn}>
+                            <Text style={styles.buttonText}>Login</Text>
+                        </TouchableOpacity>
+                        <View>
+                            <Text style={styles.forgotPwdButton}>Forgot password?</Text>
+                        </View>
                     </View>
-                </TouchableWithoutFeedback>
-            );
-        }
+
+                    <View style={styles.signupCont}>
+                        <Text style={styles.signupText}>Don't have an account?</Text>
+                        <TouchableOpacity style={styles.navButton} onPress={() => navigate('Register')}>
+                            <Text style={styles.navButtonText}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        );
+
     }
 }
 

@@ -1,4 +1,4 @@
-import {createDrawerNavigator, DrawerItems,createAppContainer,createStackNavigator} from 'react-navigation';
+import {createDrawerNavigator, DrawerItems,createAppContainer,createStackNavigator,createSwitchNavigator} from 'react-navigation';
 import {StyleSheet,Text, Image, Alert,TouchableOpacity} from 'react-native'
 import Home from '../screens/Home';
 import Settings from '../screens/Settings';
@@ -11,7 +11,22 @@ import { colors } from '../config/styles';
 import Icon  from 'react-native-vector-icons/FontAwesome';
 import Meteor from "react-native-meteor";
 import Chat from "./Chat";
-import {AuthStack} from "../config/routes";
+
+import SignIn from "./SignIn";
+import Register from "./Register";
+import AuthLoadingScreen from "./AuthLoading";
+
+export const AuthStack = createStackNavigator({
+    SignIn: {
+        screen: SignIn,
+    },
+    Register: {
+        screen: Register,
+    },
+}, {
+    initialRoute:Register,
+    headerMode: 'none',
+});
 
 
 export const ChatStack = createStackNavigator({
@@ -124,14 +139,11 @@ export  const MainNavigation= createDrawerNavigator({
                 <Icon name='cog' size={24} />
             )
         }
-    },
+    }
 },{
-    initialRoute:HomeStack,
-    contentComponent:CustomDrawerContentComponent,
-    drawerOpenRoute:'DrawerOpen',
-    drawerCloseRoute:'DrawerClose',
-    drawerToggleRoute:'DrawerToggle'
-})
+    initialRoute:Home,
+    contentComponent:CustomDrawerContentComponent
+});
 
 
 const styles = StyleSheet.create({
@@ -148,6 +160,14 @@ const styles = StyleSheet.create({
 
     }
 });
-const Sapp=createAppContainer(MainNavigation);
+const Sapp=createAppContainer(createSwitchNavigator(
+    {
+        AuthLoading:AuthLoadingScreen,
+        App: MainNavigation,
+        Auth: AuthStack,
+    },
+    {
+        initialRouteName: 'AuthLoading',
+    }));
 export  default Sapp;
 
