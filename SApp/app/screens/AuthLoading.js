@@ -31,7 +31,7 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        if (Meteor.user() !== null) {
+        if (this.props.user !== null) {
             this.props.navigation.navigate('App')
         }
         else if (!this.state.netConnected) {
@@ -44,8 +44,8 @@ class AuthLoadingScreen extends React.Component {
         else {
             setTimeout(() => {
                 console.log('wait for 2 sec')
-            }, 2000)
-            if (Meteor.user() !== null) {
+            }, 3000)
+            if (this.props.user !== null) {
                 this.props.navigation.navigate('App')
             }
             else
@@ -59,6 +59,7 @@ class AuthLoadingScreen extends React.Component {
                 netConnected: true,
                 user: Meteor.user(),
             })
+            this._bootstrapAsync();
 
         }
         else {
@@ -67,7 +68,6 @@ class AuthLoadingScreen extends React.Component {
             })
         }
         console.log('First change, type: ' + isConnected);
-        this._bootstrapAsync();
 
     }
 
@@ -83,6 +83,7 @@ class AuthLoadingScreen extends React.Component {
                 this.setState({
                     netConnected: true
                 })
+
             }
             console.log('Initial, type: ' + isConnected);
         });
@@ -128,35 +129,6 @@ class AuthLoadingScreen extends React.Component {
         return (<Loading />);
     }
 };
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.background,
-    },
-    logoContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        padding:25
-    },
-    headerText: {
-        fontSize: 30,
-        color: colors.headerText,
-        fontWeight: '600',
-        fontStyle: 'italic',
-    },
-    subHeaderText: {
-        fontSize: 20,
-        color: colors.headerText,
-        fontWeight: '400',
-        fontStyle: 'italic',
-    },
-})
-
 
 export default createContainer(() => {
     return {

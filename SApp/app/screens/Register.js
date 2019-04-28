@@ -37,7 +37,8 @@ class Register extends Component {
             radioButtons: [
                 {
                     label: 'User',
-                    value: userType.NORMAL
+                    value: userType.NORMAL,
+                    checked: true,
                 },
                 {
                     label: 'Service Provider',
@@ -90,10 +91,10 @@ class Register extends Component {
 
     handleSignIn = () => {
         if (this.validInput(true)) {
-            const {email, password} = this.state;
+            const {contact, password} = this.state;
 
             try {
-                Meteor.loginWithPassword({username: email}, password, function (err, res) {
+                Meteor.loginWithPassword({username: contact}, password, function (err, res) {
                     // Meteor.call('loginUser',{email, password}, (err,res) => {
                     if (err) {
                         console.log("err::" + err.message);
@@ -136,6 +137,8 @@ class Register extends Component {
                 //valid = false;
             }
             else {
+                let selectedItem = this.state.radioButtons.find(e => e.checked == true);
+                selectedItem = selectedItem ? selectedItem.value : this.state.radioButtons[0].value;
                 let user = {
                     password: password,
                     username: contact,
@@ -143,7 +146,7 @@ class Register extends Component {
                     createdAt: new Date(),
                     createdAt: new Date(),
                     profile: {
-                        role: userType,
+                        role: selectedItem,
                         name: name,
                         contactNo: contact,
                         profileImage: null,
@@ -151,7 +154,7 @@ class Register extends Component {
                     }
                 };
                 debugger;
-                Meteor.call('signUpUer', user, (err, res) => {
+                Meteor.call('signUpUser', user, (err, res) => {
                     if (err) {
                         console.log(err.reason);
                     } else {
@@ -243,7 +246,7 @@ class Register extends Component {
                                 //flexDirection='row'
                                         labelStyle={{fontSize: 16, color: '#094c6b'}}
                                         radioButtons={this.state.radioButtons}
-                                        onPress={userType => this.setState({userType})}
+                                        onPress={radioButtons => this.setState({radioButtons})}
                             />
                         </View>
 
