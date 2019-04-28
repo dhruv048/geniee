@@ -7,8 +7,11 @@ import {StyleSheet, Image, StatusBar, TouchableWithoutFeedback, Keyboard} from '
 import Sidebar from '../components/MenuNav/MenuNav';
 
 import logoImage from '../images/logo2-trans-640X640.png';
+import Meteor, {createContainer} from "react-native-meteor";
 
-class Home extends React.Component {
+
+
+class Home extends Component {
     constructor(props) {
         super(props);
         this.mounted = false;
@@ -25,11 +28,31 @@ class Home extends React.Component {
     componentWillUnmount(){
         this.mounted = false;
     }
+
+    _getListItem = (rowData) => {
+        console.log('rowData:',rowData);
+       return ( <ListItem thumbnail>
+                <Left>
+                    <Thumbnail square source={logoImage} />
+                </Left>
+                <Body>
+                <Text>{rowData.name}</Text>
+                <Text note numberOfLines={1}>{rowData.title} : {rowData.contact}</Text>
+                </Body>
+                <Right>
+                    <Button transparent>
+                        <Text>View</Text>
+                    </Button>
+                </Right>
+            </ListItem>)
+
+    }
     
     closeDrawer(){ this.drawer._root.close(); }
     openDrawer(){ this.drawer._root.open(); }
 
     render() {
+        console.log(this.props.categories)
 
         return (
             
@@ -65,105 +88,9 @@ class Home extends React.Component {
                     </Header>
                     
                     <Content style={styles.content}>
-                        <List style={styles.contentList}>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem thumbnail>
-                                <Left>
-                                    <Thumbnail square source={logoImage} />
-                                </Left>
-                                <Body>
-                                    <Text>Sapp Home Service</Text>
-                                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent>
-                                        <Text>View</Text>
-                                    </Button>
-                                </Right>
-                            </ListItem>
+                        <List style={styles.contentList}
+                              dataArray={this.props.categories}
+                              renderRow={this._getListItem} >
                         </List>
                     </Content>
 
@@ -237,4 +164,9 @@ const styles = StyleSheet.create({
     }
 });
 
-export default  Home;
+export default  createContainer(()=>{
+    Meteor.subscribe('categories-list');
+    return{
+        categories:Meteor.collection('category').find()
+    }
+},Home);
