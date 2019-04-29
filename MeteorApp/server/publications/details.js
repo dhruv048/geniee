@@ -23,5 +23,8 @@ import { Meteor } from 'meteor/meteor';
         }
     });
 
+    Meteor.publish('categories',()=>{
+    return Categories.find({},{fields: {'name':1}});
+    });
 
 

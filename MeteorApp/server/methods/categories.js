@@ -23,6 +23,24 @@ Meteor.methods({
         }
     },
 
+    'addCategory': (name) => {
+    console.log('addCategory:::=>>>');
+    var currentUserId = Meteor.userId();
+    try {
+        Categories.insert({
+            name: name,
+            createdAt: new Date(),
+            createdBy:currentUserId,
+        });
+    }
+    catch (e) {
+        console.log(e.message);
+        throw new Meteor.Error(403,e.message)
+
+    }
+},
+
+
     'updateCategory': function (category) {
         var cat= Category.findOne({_id:category._id});
         if (cat.createdBy===Meteor.userId() || Meteor.user().profile.role === 2) {

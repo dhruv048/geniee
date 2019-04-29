@@ -30,7 +30,6 @@ class Home extends Component {
     }
 
     _getListItem = (rowData) => {
-        console.log('rowData:',rowData);
        return ( <ListItem thumbnail>
                 <Left>
                     <Thumbnail square source={logoImage} />
@@ -52,7 +51,7 @@ class Home extends Component {
     openDrawer(){ this.drawer._root.open(); }
 
     render() {
-        console.log(this.props.categories)
+
 
         return (
             
