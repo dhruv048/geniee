@@ -30,6 +30,10 @@ class Home extends Component {
         this.mounted = false;
     }
 
+    _handlItemPress=(service)=>{
+        this.props.navigation.navigate('Details',{'Service':service});
+    }
+
     _getListItem = (rowData) => {
        return ( <ListItem thumbnail>
                 <Left>
@@ -41,7 +45,7 @@ class Home extends Component {
                 <Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>
                 </Body>
                 <Right>
-                    <Button transparent>
+                    <Button onPress={()=>{this._handlItemPress(rowData)}} transparent>
                         <Text>View</Text>
                     </Button>
                 </Right>

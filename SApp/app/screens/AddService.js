@@ -1,11 +1,13 @@
-import React, { Fragment } from "react";
-import {View, StyleSheet, ToastAndroid} from "react-native";
-import Icon  from 'react-native-vector-icons/FontAwesome';
-import { SafeAreaView } from "react-navigation";
+import React, {Fragment} from "react";
+import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal} from "react-native";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {SafeAreaView} from "react-navigation";
 import Autocomplete from 'native-base-autocomplete';
 import {colors} from "../config/styles";
-import {    Container, Content, Text,  Item,  Input,  ListItem, Textarea, CheckBox,Button} from 'native-base';
+import {Container, Content, Text, Item, Input, ListItem, Textarea, CheckBox, Button, Picker} from 'native-base';
 import Meteor, {createContainer} from "react-native-meteor";
+//import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const styles = StyleSheet.create({
     s1f0fdd20: {
@@ -17,7 +19,7 @@ const styles = StyleSheet.create({
         color: `rgba(87, 150, 252, 1)`,
         fontSize: 60
     },
-    s98b3c3c3: {
+    imageView: {
         alignItems: `center`,
         borderColor: `rgba(87, 150, 252, 1)`,
         borderRadius: 75,
@@ -80,17 +82,24 @@ const styles = StyleSheet.create({
         width: `100%`
     },
     inputText: {
-       // color: `rgba(51, 51, 51, 1)`,
+        backgroundColor: `rgba(243, 247, 255, 1)`,
+        borderRadius: 5,
+        color: `rgba(0, 0, 0, 1)`,
         fontFamily: `Source Sans Pro`,
-        fontSize: 16,
-        opacity: 0.5
+        fontSize: 18,
+        padding: 10,
+        paddingLeft: 40,
+        width: `100%`,
+        marginBottom: 4,
+        marginTop: 4,
     },
     s50325ddf: {
-        backgroundColor: `rgba(87, 150, 252, 1)`,
+        backgroundColor: `rgba(0, 0, 0, 0.11)`,
         height: 1,
-        marginBottom: 13,
-        marginTop: 13,
-        width: `100%`
+        marginBottom: 2,
+        marginTop: 2,
+        width: `100%`,
+
     },
     itemText: {
         color: `rgba(51, 51, 51, 1)`,
@@ -99,12 +108,12 @@ const styles = StyleSheet.create({
         opacity: 0.5
     },
     form: {
-       // flex: 1.5
+        // flex: 1.5
     },
     sb85086c9: {
-      //  alignItems: 'center',
+        //  alignItems: 'center',
         padding: 20,
-      //  flex: 1
+        //  flex: 1
     },
     sbf9e8383: {
         flex: 1,
@@ -112,7 +121,7 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: colors.appBackground,
-       // flex: 1,
+        // flex: 1,
 
     },
     // itemText: {
@@ -131,8 +140,8 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: '500',
-        marginBottom: 10,
-        marginTop: 10,
+        marginBottom: 5,
+        marginTop: 5,
         textAlign: 'center',
         color: `rgba(51, 51, 51, 1)`,
         fontFamily: `Source Sans Pro`,
@@ -148,18 +157,20 @@ const styles = StyleSheet.create({
     openingText: {
         textAlign: 'center'
     },
-    buttonContainer: { flex: 1, alignSelf: 'center', paddingTop: 20 },
-    centerButton: { margin: 10, alignSelf: 'center' },
+    buttonContainer: {flex: 1, alignSelf: 'center', paddingTop: 20},
+    centerButton: {margin: 10, alignSelf: 'center'},
 
-    checkBokView:{
-        height:50,
-        flex:1,
-        paddingLeft:5,
-        paddingRight:5,
-        fontSize:17,
-        color:'#000',
-        flexDirection:'row',
-        paddingTop:15,
+    checkBokView: {
+        backgroundColor: `rgba(243, 247, 255, 1)`,
+        borderRadius: 5,
+        color: `rgba(0, 0, 0, 0.44)`,
+        fontFamily: `Source Sans Pro`,
+        fontSize: 18,
+        padding: 10,
+        paddingLeft: 40,
+        width: `100%`,
+        flexDirection: 'row',
+        // paddingTop: 15,
     }
 
 });
@@ -171,14 +182,142 @@ class AddService extends React.PureComponent {
         this.state = {
             query: '',
             selectedCategory: null,
-            title:'',
+            title: '',
             homeDelivery: false,
-            radius:0,
-            description:'',
-            location:'',
-            contact:''
+            radius: 0,
+            description: '',
+            location: '',
+            contact: '',
+            avatarSource: null,
+            selected: 'Keynull',
+            modalVisible: false
         };
 
+    }
+
+    _handleImageUpload = (selected) => {
+        this.setModalVisible(false);
+        if(selected ==='key0'){
+            ImagePicker.openCamera({
+                width: 400,
+                height: 200,
+                cropping: true,
+                includeBase64:true
+            }).then(image => {
+                console.log(image);
+               this._onImageChange(image)
+            });
+        }
+        else if (selected ==='key1'){
+            ImagePicker.openPicker({
+                width: 400,
+                height: 200,
+                cropping: true,
+                includeBase64:true
+            }).then(image => {
+                console.log(image);
+               this._onImageChange(image)
+            });
+        }
+    };
+    _onImageChange=(image)=>{
+        this.setState({
+            avatarSource:{ uri: `data:${image.mime};base64,${image.data}`}
+          //  avatarSource:{ uri:  image.path }
+        });
+        ImagePicker.clean().then(() => {
+            console.log('removed all tmp images from tmp directory');
+        }).catch(e => {
+            alert(e);
+        });
+    }
+        _updateHomeDelivery = () => {
+            let current = this.state.homeDelivery;
+            this.setState(
+                {homeDelivery: current === false ? true : false}
+            )
+        };
+        _callSaveServiceMethod = (service) => {
+            Meteor.call('addNewService', service, (err, res) => {
+                if (err) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        err.reason,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    console.log(err.reason);
+                } else {
+                    // hack because react-native-meteor doesn't login right away after sign in
+                    console.log('Reslut from addNewService' + res);
+                    this.setState({
+                        query: '',
+                        selectedCategory: null,
+                        title: '',
+                        homeDelivery: false,
+                        radius: 0,
+                        description: '',
+                        location: '',
+                        contact: ''
+                    });
+                    this.props.navigation.navigate('Home');
+                }
+            });
+
+        }
+        _saveService = () => {
+            const {title, description, radius, contact, homeDelivery, selectedCategory, query} = this.state;
+            let service = {
+                title: title,
+                description: description,
+                contact: contact,
+                location: {lat: 100, long: 100},
+                radius: radius,
+                coverImage: null,
+                homeDelivery: homeDelivery,
+            };
+            if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0) {
+                ToastAndroid.showWithGravityAndOffset(
+                    'Please Enter all the fields.',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+                //valid = false;
+            }
+            else {
+                if (selectedCategory === null && query.length > 3) {
+                    Meteor.call('addCategory', this.state.query, (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        }
+                        else {
+                            service.Category = {_id: null, name: query}
+                            this._callSaveServiceMethod(service)
+                        }
+                    })
+                }
+                else if (selectedCategory) {
+                    service.Category = selectedCategory;
+                    this._callSaveServiceMethod(service)
+                }
+                else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Please Enter Category Name with length greater than 3',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
+            }
+        }
+
+
+    setModalVisible(visible) {
+        this.setState({modalVisible: visible});
     }
 
     _findCategory(query) {
@@ -186,195 +325,165 @@ class AddService extends React.PureComponent {
             return [];
         }
 
-        const  categories  = this.props.categories;
+        const categories = this.props.categories;
         const regex = new RegExp(`${query.trim()}`, 'i');
         return categories.filter(category => category.name.search(regex) >= 0);
     }
 
-    _updateHomeDelivery=()=>{
-        let current=this.state.homeDelivery;
-        this.setState(
-            {homeDelivery: current===false ? true : false}
-        )
-    }
-
-    _callSaveServiceMethod=(service)=>{
-        Meteor.call('addNewService', service, (err, res) => {
-            if (err) {
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-                console.log(err.reason);
-            } else {
-                // hack because react-native-meteor doesn't login right away after sign in
-                console.log('Reslut from addNewService' + res);
-                this.setState({
-                    query: '',
-                    selectedCategory: null,
-                    title:'',
-                    homeDelivery: false,
-                    radius:0,
-                    description:'',
-                    location:'',
-                    contact:''
-                });
-                this.props.navigation.navigate('Home');
-            }
-        });
-
-    }
-    _saveService=()=>{
-        const {title, description, radius, contact, homeDelivery,selectedCategory,query} = this.state;
-        let service = {
-            title: title,
-            description: description,
-            contact: contact,
-            location:{lat:100,long:100},
-            radius:radius,
-            coverImage:null,
-            homeDelivery:homeDelivery,
-        };
-        if (title.length === 0 || contact.length === 0 || description.length === 0 ||  radius.length === 0) {
-            ToastAndroid.showWithGravityAndOffset(
-                'Please Enter all the fields.',
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                50,
-            );
-            //valid = false;
-        }
-        else {
-            if(selectedCategory===null  && query.length>3){
-                Meteor.call('addCategory',this.state.query,(err,res)=>{
-                    if(err){
-                        console.log(err)
-                    }
-                    else{
-                        debugger;
-                        service.Category={_id:null,name:query}
-                        this._callSaveServiceMethod(service)
-                    }
-                })
-            }
-            else if(selectedCategory) {
-                service.Category=selectedCategory;
-                this._callSaveServiceMethod(service)
-            }
-            else {
-                ToastAndroid.showWithGravityAndOffset(
-                    'Please Enter Category Name with length greater than 3',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            }
-        }
-    }
     render() {
-        const { query, selectedCategory } = this.state;
+        const {query, selectedCategory} = this.state;
         const categories = this._findCategory(query);
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={styles.container}>
                 <Content>
-            <Fragment>
-                {/*<ImageBackground*/}
-                    {/*style={styles.sbf9e8383}*/}
-                    {/*source={{*/}
+                    <Fragment>
+                        {/*<ImageBackground*/}
+                        {/*style={styles.sbf9e8383}*/}
+                        {/*source={{*/}
                         {/*uri:*/}
-                            {/*"https://storage.googleapis.com/laska-a5b9d.appspot.com/users/8gFytgGUIxUmMgoS77epODqK1F82/apps/-LYZqWkoo_OshI8cOcox/7405112c-8e46-4d6f-9d60-5278eebf67df"*/}
-                    {/*}}*/}
-                    {/*resizeMode={`stretch`}*/}
-                {/*>*/}
-                    <SafeAreaView style={styles.sb85086c9}>
-                        <View style={styles.sbc83915f}>
-                            <Text style={styles.s1f0fdd20}>{`Add Service`}</Text>
-                            <View style={styles.s98b3c3c3}>
-                                <Icon
-                                    style={styles.sfe09f185}
-                                   name='camera'
-                                />
+                        {/*"https://storage.googleapis.com/laska-a5b9d.appspot.com/users/8gFytgGUIxUmMgoS77epODqK1F82/apps/-LYZqWkoo_OshI8cOcox/7405112c-8e46-4d6f-9d60-5278eebf67df"*/}
+                        {/*}}*/}
+                        {/*resizeMode={`stretch`}*/}
+                        {/*>*/}
+                        <SafeAreaView style={styles.sb85086c9}>
+                            <View style={styles.sbc83915f}>
+                                <Text style={styles.s1f0fdd20}>{`Add Service`}</Text>
+                                <TouchableOpacity style={styles.imageView} onPress={()=>{this.setModalVisible(true)}}>
+                                    {this.state.avatarSource !== null ?
+                                        <Image style={{
+                                            width: 147,
+                                            height: 147,
+                                            borderRadius: 75,
+                                            borderWidth: 3,
+                                            height: 150,
+                                            justifyContent: `center`,
+                                            borderColor: `rgba(87, 150, 252, 1)`
+                                        }} source={this.state.avatarSource}/> :
+                                        <Icon
+                                            style={styles.sfe09f185}
+                                            name='camera'
+                                        />}
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                        <View style={styles.form}>
-                            <Autocomplete
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                data={categories.length === 1 && comp(query, categories[0].name)
-                                    ? [] : categories}
-                                defaultValue={query}
-                                hideResults={selectedCategory && selectedCategory.name === query}
-                                onChangeText={text => this.setState({ query: text })}
-                                placeholder="Enter Category's name"
-                                renderItem={cat => <ListItem style={{backgroundColor:colors.bgBrightGreen}}
-                                    onPress={() => (
-                                        this.setState({ query: cat.name, selectedCategory: cat })
-                                    )}
-
+                            <View style={styles.form}>
+                                <Autocomplete
+                                    autoCapitalize="none"
                                     style={styles.inputText}
-                                >
-                                    <Text>{cat.name}</Text>
-                                </ListItem>}
-                            />
-                            <View style={styles.descriptionContainer}>
+                                    autoCorrect={false}
+                                    data={categories.length === 1 && comp(query, categories[0].name)
+                                        ? [] : categories}
+                                    defaultValue={query}
+                                    hideResults={selectedCategory && selectedCategory.name === query}
+                                    onChangeText={text => this.setState({query: text})}
+                                    placeholder="Enter Category's name"
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    renderItem={cat => <ListItem style={{backgroundColor: colors.bgBrightGreen}}
+                                                                 onPress={() => (
+                                                                     this.setState({
+                                                                         query: cat.name,
+                                                                         selectedCategory: cat
+                                                                     })
+                                                                 )}
+
+                                                                 style={styles.inputText}
+                                    >
+                                        <Text>{cat.name}</Text>
+                                    </ListItem>}
+                                />
+                                <Item>
+                                    <Input placeholder='Title'
+                                           style={styles.inputText}
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           onSubmitEditing={() => this.title.focus()}
+                                           onChangeText={(title) => this.setState({title})}
+                                    />
+                                </Item>
+                                <Textarea rowSpan={4} placeholder="Description"
+                                          style={styles.inputText}
+                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                          underlineColorAndroid='rgba(0,0,0,0)'
+                                    //onSubmitEditing={() => this.contactNumber.focus()}
+                                          onChangeText={(description) => this.setState({description})}
+                                />
+                                <View style={styles.s50325ddf}/>
+                                <Item>
+                                    <Input disabled
+                                           style={styles.inputText}
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Location'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(location) => this.setState({location})}
+                                    />
+                                </Item>
+                                <Item>
+                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputText}
+                                           placeholder='Radius in KiloMeter'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(radius) => this.setState({radius})}
+                                    />
+                                </Item>
+                                <View style={styles.checkBokView}>
+                                    <CheckBox style={{marginRight:15}} checked={this.state.homeDelivery} onPress={this._updateHomeDelivery}/>
+                                    <Text style={{color:`rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text>
+                                </View>
+                                <View style={styles.s50325ddf}/>
+                                <Item>
+                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputText}
+                                           placeholder='Contact No'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(contact) => this.setState({contact})}
+                                    />
+                                </Item>
+
+                                <View style={styles.s50325ddf}/>
+                                <Button block success onPress={this._saveService}><Text> Save </Text></Button>
+
                             </View>
-                           {/*<View style={styles.s906d750e} />*/}
-                            <Item >
-                                <Input placeholder='Title'
-                                       style={styles.item_text}
-                                       underlineColorAndroid='rgba(0,0,0,0)'
-                                       onSubmitEditing={() => this.title.focus()}
-                                       onChangeText={(title) => this.setState({title})}
-                                />
-                            </Item>
-                            <Textarea rowSpan={4}  placeholder="Description"
-                                      underlineColorAndroid='rgba(0,0,0,0)'
-                             //onSubmitEditing={() => this.contactNumber.focus()}
-                            onChangeText={(description) => this.setState({description})}
-                            />
-                            <View  style={styles.s50325ddf} />
-                            <Item >
-                                <Input  disabled
-                                        underlineColorAndroid='rgba(0,0,0,0)'
-                                        placeholder='Location'
-                                        keyboardType='phone-pad'
-                                        onChangeText={(location) => this.setState({location})}
-                                />
-                            </Item>
-                            <Item >
-                                <Input  underlineColorAndroid='rgba(0,0,0,0)'
-                                        placeholder='Radius in KiloMeter'
-                                        keyboardType='phone-pad'
-                                        onChangeText={(radius) => this.setState({radius})}
-                                />
-                            </Item>
-                            <View style={styles.checkBokView}>
-                            <Text style={styles.inputText}>{'Home Delivery'}</Text>
+                            <View style={{marginTop: 22}}>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={this.state.modalVisible}
+                                    onRequestClose={() => {
+                                       this.setModalVisible
+                                    }}>
+                                    <View style={{
+                                        flex: 1,
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                       }}>
 
-                            <CheckBox checked={this.state.homeDelivery} onPress={this._updateHomeDelivery} />
+                                        <View style={{
+                                            backgroundColor:'white',
+                                            width: 350,
+                                            height: 200,
+                                        padding:30,
 
+                                        }}>
+
+                                            <Button block bordered info onPress={()=>{this._handleImageUpload('key0')}} >
+                                                <Text style={styles.item_text}>Picture from Camera</Text>
+                                            </Button>
+                                            <Button style={{marginTop:10}} info block bordered  onPress={()=>{this._handleImageUpload('key1')}} >
+                                                <Text style={styles.item_text}>Picture from Gallery </Text>
+                                            </Button>
+                                            <Button  transparent danger onPress={()=>{this.setModalVisible(false)}}>
+                                                <Text>Cancel</Text>
+                                            </Button>
+                                        </View>
+                                    </View>
+                                </Modal>
                             </View>
-                            <View   style={styles.s50325ddf} />
-                            <Item >
-                                <Input  underlineColorAndroid='rgba(0,0,0,0)'
-                                        placeholder='Contact No'
-                                        keyboardType='phone-pad'
-                                        onChangeText={(contact) => this.setState({contact})}
-                                />
-                            </Item>
-
-                            <View   style={styles.s50325ddf} />
-                            <Button block success onPress={this._saveService}><Text> Save </Text></Button>
-
-                        </View>
-                    </SafeAreaView>
-            </Fragment>
+                        </SafeAreaView>
+                    </Fragment>
                 </Content>
             </Container>
         );
@@ -383,10 +492,10 @@ class AddService extends React.PureComponent {
 
 AddService.defaultProps = {};
 
-export { styles };
-export default  createContainer(()=>{
+export {styles};
+export default createContainer(() => {
     Meteor.subscribe('categories');
-    return{
-        categories:Meteor.collection('categories').find()
+    return {
+        categories: Meteor.collection('categories').find()
     }
-},AddService);
+}, AddService);

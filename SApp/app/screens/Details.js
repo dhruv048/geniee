@@ -6,7 +6,7 @@ import Loading from '../components/Loading';
 import { colors } from '../config/styles';
 import userImage from '../images/RoshanShah.jpg';
 import Button from "../components/Button";
-// import { Rating, AirbnbRating } from 'react-native-ratings';
+import StarRating from 'react-native-star-rating';
 import call from 'react-native-phone-call'
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
 import GenericTextInput from "../components/GenericTextInput";
@@ -89,10 +89,17 @@ class Details extends Component  {
             title:'',
             description:'',
             error:null,
+            starCount: 1.5
         }
     }
    ratingCompleted(rating) {
         console.log("Rating is: " + rating)
+    }
+
+    onStarRatingPress(rating) {
+        this.setState({
+            starCount: rating
+        });
     }
     componentWillMount() {
         this.mounted = true;
@@ -120,27 +127,28 @@ class Details extends Component  {
             showModal:false
     })
     }
-    callPhone(){
+    callPhone(number){
         const args = {
-            number: '9813798508', // String value with the number to call
+            number: number, // String value with the number to call
              prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
              }
              if(this.mounted) {
                  call(args).catch(console.error)
              }
     }
-
-    static navigationOptions={
-        drawerIcon:(
-            <Image source={require('../images/settings.png')}
-                   style={{height:25,width:25}}/>
-        )
-    }
+    //
+    // static navigationOptions={
+    //     drawerIcon:(
+    //         <Image source={require('../images/settings.png')}
+    //                style={{height:25,width:25}}/>
+    //     )
+    // }
     render() {
     if (!this.props.detailsReady) {
         return <Loading/>;
     }
     else {
+        const Service=this.props.navigation.getParam('Service');
         return (
             <View style={styles.container}>
                 {/*<Header style={{height:25}}*/}
@@ -151,29 +159,32 @@ class Details extends Component  {
                 {/*/>*/}
                 <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={styles.main}>
-                    Roshan Shah
+                    {Service.title}
 
                 </Text>
-                <Text>Sr. Software Engineer </Text>
+                <Text>({Service.contact}) </Text>
                 <Image style={styles.userImg} source={userImage}/>
+                    <StarRating
+                        disabled={false}
+                        maxStars={5}
+                        rating={this.state.starCount}
+                        selectedStar={(rating) => this.onStarRatingPress(rating)}
+                        fullStarColor={'yellow'}
+                        starSize={25}
+                        containerStyle={{justifyContent:'center'}}
+                    />
                 </View>
-                {/*<AirbnbRating*/}
-                    {/*count={5}*/}
-                    {/*reviews={["Terrible", "Bad", "OK", "Good", "Very Good"]}*/}
-                    {/*defaultRating={0}*/}
-                    {/*size={20}*/}
-                    {/*onFinishRating={this.ratingCompleted}*/}
-                {/*/>*/}
-                <Text style={styles.itemText}>{this.props.detail.title}</Text>
-                <Text style={styles.itemDesc}>{this.props.detail.description}</Text>
+
+                <Text style={styles.itemText}>Provides service within {Service.radius} KM Radius.</Text>
+                <Text style={styles.itemDesc}>{Service.description}</Text>
                 <ScrollView>
-                    <View style={styles.item} key={this.props.detail._id}>
-                        <Text style={styles.itemDesc}>{this.props.detail.content}</Text>
+                    <View style={styles.item} key={Service._id}>
+                        <Text style={styles.itemDesc}>{Service.description}</Text>
                     </View>
 
                 </ScrollView>
                 <View style={styles.buttons}>
-                    <Button text="Call" onPress={() => this.callPhone()}/>
+                    <Button text="Call" onPress={() => this.callPhone(Service.contact)}/>
                     <Button text="Message"/>
                     <Button text="Create Ticket"  onPress={()=>{
                         this.setState({
