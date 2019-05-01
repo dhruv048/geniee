@@ -144,7 +144,7 @@ class Register extends Component {
                     username: contact,
                     email: email,
                     createdAt: new Date(),
-                    createdAt: new Date(),
+                    //createdBy: new Date(),
                     profile: {
                         role: selectedItem,
                         name: name,
@@ -153,7 +153,6 @@ class Register extends Component {
 
                     }
                 };
-                debugger;
                 Meteor.call('signUpUser', user, (err, res) => {
                     if (err) {
                         console.log(err.reason);

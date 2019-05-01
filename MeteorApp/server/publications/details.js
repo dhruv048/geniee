@@ -15,7 +15,7 @@ import { Meteor } from 'meteor/meteor';
             //     return Category.find({createdBy: Meteor.userId()});
             // }
             // else {
-                return Category.find();
+                return Service.find();
             // }
         }
         catch (e) {

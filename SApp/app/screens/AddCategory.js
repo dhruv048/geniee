@@ -5,10 +5,13 @@ import {
     Container,
     Content,
     Text,
-    Button,
-    ListItem
+    Item,
+    Input,
+    ListItem,
+    Textarea, CheckBox
 } from 'native-base';
 import Meteor, {createContainer} from "react-native-meteor";
+import {colors} from "../config/styles";
 
 class AddCategory extends Component {
     constructor(props) {
@@ -16,7 +19,9 @@ class AddCategory extends Component {
         this.mounted = false;
         this.state = {
             query: '',
-            selectedCategory: null
+            selectedCategory: null,
+            title:'',
+            homeDelivery:false,
         };
 
     }
@@ -61,10 +66,6 @@ class AddCategory extends Component {
         return (
             <Container style={styles.container}>
                 <Content>
-
-                    <View  style={styles.buttonContainer}>
-                        <Button style={styles.centerButton} onPress={this._AddCategory} success={true} ><Text> Save </Text></Button>
-                    </View>
                     <Autocomplete
                         autoCapitalize="none"
                         autoCorrect={false}
@@ -85,8 +86,47 @@ class AddCategory extends Component {
                     <View style={styles.descriptionContainer}>
 
                             <Text style={styles.titleText}>{this.state.query}</Text>
+                        {/*<TextInput style={styles.inputBox}*/}
+                                   {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                   {/*placeholder='Title'*/}
+                                   {/*placeholderTextColor='#ffffff'*/}
+                                   {/*selectionColor='#ffffff'*/}
+                                   {/*onSubmitEditing={() => this.title.focus()}*/}
+                                   {/*onChangeText={(name) => this.setState({name})}*/}
+                        {/*/>*/}
+                        <Item regular>
+                            <Input placeholder='Title'
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   onSubmitEditing={() => this.title.focus()}
+                                   onChangeText={(title) => this.setState({title})}
+                            />
+                        </Item>
+                        <Textarea rowSpan={5} bordered placeholder="Description"
+
+                        // onSubmitEditing={() => this.contactNumber.focus()}
+                        onChangeText={(description) => this.setState({description})}
+                        />
+                        <Item regular>
+                        <Input  underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Radius in KiloMeter'
+                                   keyboardType='phone-pad'
+                                   onChangeText={(radius) => this.setState({radius})}
+                        />
+                        </Item>
+                        {/*<Body>*/}
+                        <Text>Home Delivery</Text>
+                        {/*</Body>*/}
+                        <CheckBox checked={this.state.homeDelivery} onPress={(homeDelivery) => this.setState({homeDelivery})} />
                     </View>
-                    <View style={{ height: 500, backgroundColor: 'transparent' }} />
+                    {/*<View style={{ height: 500, backgroundColor: 'transparent' }} />*/}
+                    {/*<TextInput style={styles.inputBox}*/}
+                               {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                               {/*placeholder='Title'*/}
+                               {/*placeholderTextColor='#ffffff'*/}
+                               {/*selectionColor='#ffffff'*/}
+                               {/*onSubmitEditing={() => this.title.focus()}*/}
+                               {/*onChangeText={(name) => this.setState({name})}*/}
+                    {/*/>*/}
                 </Content>
             </Container>
         );
@@ -129,7 +169,17 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     buttonContainer: { flex: 1, alignSelf: 'center', paddingTop: 20 },
-    centerButton: { margin: 10, alignSelf: 'center' }
+    centerButton: { margin: 10, alignSelf: 'center' },
+
+    inputBox: {
+        width: 300,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5
+    },
 });
 export default  createContainer(()=>{
     Meteor.subscribe('categories');

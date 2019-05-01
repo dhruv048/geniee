@@ -5,6 +5,7 @@ import Settings from '../screens/Settings';
 import Profile from '../screens/Profile';
 import Details from '../screens/Details';
 import AddCategory from '../screens/AddCategory';
+import AddService from '../screens/AddService';
 import ChatList from '../screens/ChatList';
 import {Container, Content, Header,Body} from 'native-base';
 import React from 'react';
@@ -114,15 +115,25 @@ export  const MainNavigation= createDrawerNavigator({
             )
         }
     },
-    AddCategory: {
-        screen: AddCategory,
+    // AddCategory: {
+    //     screen: AddCategory,
+    //     navigationOptions:{
+    //         drawerLabel: 'Add Category',
+    //         drawerIcon: (
+    //             <Icon name='plus' size={24} />
+    //         )
+    //     }
+    // },
+    AddService: {
+        screen: AddService,
         navigationOptions:{
-            drawerLabel: 'Add Category',
+            drawerLabel: 'Add Service',
             drawerIcon: (
                 <Icon name='plus' size={24} />
             )
         }
     },
+
     Details: {
         screen: Details,
         navigationOptions:{

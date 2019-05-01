@@ -1,6 +1,6 @@
 import {Mongo} from 'meteor/mongo';
 
- Category = new Mongo.Collection('category');
+ Service = new Mongo.Collection('service');
 
 Count = new Mongo.Collection('count');
 Categories = new  Mongo.Collection('categories');

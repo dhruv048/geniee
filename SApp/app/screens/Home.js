@@ -7,6 +7,7 @@ import {StyleSheet, Image, StatusBar, TouchableWithoutFeedback, Keyboard} from '
 import Sidebar from '../components/MenuNav/MenuNav';
 
 import logoImage from '../images/logo2-trans-640X640.png';
+import dUser from '../images/duser.png';
 import Meteor, {createContainer} from "react-native-meteor";
 
 
@@ -32,11 +33,12 @@ class Home extends Component {
     _getListItem = (rowData) => {
        return ( <ListItem thumbnail>
                 <Left>
-                    <Thumbnail square source={logoImage} />
+                    <Thumbnail square source={dUser} />
                 </Left>
                 <Body>
-                <Text>{rowData.name}</Text>
-                <Text note numberOfLines={1}>{rowData.title} : {rowData.contact}</Text>
+                <Text>{rowData.title}</Text>
+                <Text note numberOfLines={1}>{rowData.description}</Text>
+                <Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>
                 </Body>
                 <Right>
                     <Button transparent>
@@ -166,6 +168,6 @@ const styles = StyleSheet.create({
 export default  createContainer(()=>{
     Meteor.subscribe('categories-list');
     return{
-        categories:Meteor.collection('category').find()
+        categories:Meteor.collection('service').find()
     }
 },Home);

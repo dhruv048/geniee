@@ -1,49 +1,57 @@
-import { Meteor } from 'meteor/meteor';
-
+import {Meteor} from 'meteor/meteor';
 
 
 Meteor.methods({
 
-    'addNewCategory': (categoryInfo) => {
+    'addNewService': (serviceInfo) => {
         console.log('addNewCategory:::=>>>');
         var currentUserId = Meteor.userId();
+        let CategoryId = serviceInfo.Category._id !== null ? serviceInfo.Category._id : Categories.findOne({'name': serviceInfo.Category.name})._id;
         try {
-            Category.insert({
-                title: categoryInfo.title,
-                name: categoryInfo.name,
-                contact: categoryInfo.contact,
+            var res = Service.insert({
+                title: serviceInfo.title,
+                description: serviceInfo.description,
+                contact: serviceInfo.contact,
+                location: serviceInfo.location,
+                radius: serviceInfo.radius,
+                coverImage: serviceInfo.coverImage,
+                homeDelivery: serviceInfo.homeDelivery,
+                categoryId: CategoryId,
                 createdAt: new Date(),
-                createdBy:currentUserId,
+                createdBy: currentUserId,
             });
+
+            return res;
         }
         catch (e) {
             console.log(e.message);
-            throw new Meteor.Error(403,e.message)
+            throw new Meteor.Error(403, e.message)
 
         }
     },
 
     'addCategory': (name) => {
-    console.log('addCategory:::=>>>');
-    var currentUserId = Meteor.userId();
-    try {
-        Categories.insert({
-            name: name,
-            createdAt: new Date(),
-            createdBy:currentUserId,
-        });
-    }
-    catch (e) {
-        console.log(e.message);
-        throw new Meteor.Error(403,e.message)
+        console.log('addCategory:::=>>>');
+        var currentUserId = Meteor.userId();
+        try {
+            var res = Categories.insert({
+                name: name,
+                createdAt: new Date(),
+                createdBy: currentUserId,
+            });
+            return res;
+        }
+        catch (e) {
+            console.log(e.message);
+            throw new Meteor.Error(403, e.message)
 
-    }
-},
+        }
+    },
 
 
     'updateCategory': function (category) {
-        var cat= Category.findOne({_id:category._id});
-        if (cat.createdBy===Meteor.userId() || Meteor.user().profile.role === 2) {
+        var cat = Service.findOne({_id: category._id});
+        if (cat.createdBy === Meteor.userId() || Meteor.user().profile.role === 2) {
             try {
 
                 Category.update({_id: category._id}, {
@@ -56,7 +64,7 @@ Meteor.methods({
             }
             catch (err) {
                 console.log(err.message);
-                throw new Meteor.Error(403,e.message)
+                throw new Meteor.Error(403, e.message)
             }
 
         }
@@ -67,40 +75,40 @@ Meteor.methods({
     },
 
     'removeCategory': function (id) {
-        var category= Category.findOne({_id:id});
-        if  (Meteor.userId()===category.createdBy || Meteor.user().profile.role === 2)  {
+        var category = Service.findOne({_id: id});
+        if (Meteor.userId() === category.createdBy || Meteor.user().profile.role === 2) {
             try {
-                Category.remove({_id:id});
+                Category.remove({_id: id});
             }
             catch (err) {
                 console.log(err.message);
-                throw new Meteor.Error(403,err.message);
+                throw new Meteor.Error(403, err.message);
             }
         }
         else {
-            throw new Meteor.Error(401,"Permission Denied");
+            throw new Meteor.Error(401, "Permission Denied");
         }
     },
 
-    'updateCallCount':function () {
-        try{
+    'updateCallCount': function () {
+        try {
 
-            if(Count.find().count()>0){
+            if (Count.find().count() > 0) {
                 var count = Count.findOne();
                 Count.update({_id: count._id}, {
                     $set: {
-                        callCount: count.callCount+1
+                        callCount: count.callCount + 1
                     }
                 });
             }
 
-            else{
-                Count.insert({callCount:1})
+            else {
+                Count.insert({callCount: 1})
             }
         }
-        catch (err){
+        catch (err) {
             console.log(err.message);
-            throw new Meteor.Error(403,err.message)
+            throw new Meteor.Error(403, err.message)
         }
 
 
