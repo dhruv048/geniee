@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-    ActivityIndicator,
-    AsyncStorage, NetInfo,
-    Text,
-    StyleSheet,
-    View,
-} from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import Meteor, {createContainer} from "react-native-meteor";
 import Loading from '../components/Loading/index';
 import settings from '../config/settings'
@@ -31,27 +25,27 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        this.props.navigation.navigate('App')
-        // if (this.props.user !== null) {
-        //     this.props.navigation.navigate('App')
-        // }
-        // else if (!this.state.netConnected) {
-        //     alert("You are Offline \n Please check your internet connection...");
+       // this.props.navigation.navigate('App')
+        if (this.props.user !== null) {
+            this.props.navigation.navigate('App')
+        }
+        else if (!this.state.netConnected) {
+            alert("You are Offline \n Please check your internet connection...");
+            return ;
+        }
+        // else if (!this.state.status.connected) {
         //     return ;
         // }
-        // // else if (!this.state.status.connected) {
-        // //     return ;
-        // // }
-        // else {
-        //     setTimeout(() => {
-        //         console.log('wait for 2 sec')
-        //     }, 3000)
-        //     if (this.props.user !== null) {
-        //         this.props.navigation.navigate('App')
-        //     }
-        //     else
-        //         this.props.navigation.navigate('Auth')
-        // }
+        else {
+            setTimeout(() => {
+                console.log('wait for 2 sec')
+            }, 3000)
+            if (this.props.user !== null) {
+                this.props.navigation.navigate('App')
+            }
+            else
+                this.props.navigation.navigate('Auth')
+        }
     }
 
     _handleConnectivityChange = (isConnected) => {
@@ -95,7 +89,7 @@ class AuthLoadingScreen extends React.Component {
     componentWillUnmount() {
         NetInfo.isConnected.removeEventListener(
             'connectionChange',
-            this._handleConnectivityChange
+          //  this._handleConnectivityChange
         );
     }
 

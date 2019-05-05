@@ -53,7 +53,7 @@ class Profile extends Component {
           {/*/>*/}
         <Image style={styles.header} source={headerImage} />
         <View style={styles.body}>
-          <Avatar email={email} />
+          {/*<Avatar email={email} />*/}
           <Text>{capitalize(email)}</Text>
           <Button text="Sign Out" onPress={this.handleSignOut} />
         </View>

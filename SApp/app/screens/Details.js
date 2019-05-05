@@ -11,7 +11,7 @@ import call from 'react-native-phone-call'
 import InputWrapper from "../components/GenericTextInput/InputWrapper";
 import GenericTextInput from "../components/GenericTextInput";
 // import {Header} from 'react-native-elements';
-import Icon  from 'react-native-vector-icons/FontAwesome';
+import settings  from '../config/settings';
 
 const window = Dimensions.get('window');
 const MARGIN_HORIZONTAL = 10;
@@ -89,7 +89,8 @@ class Details extends Component  {
             title:'',
             description:'',
             error:null,
-            starCount: 1.5
+            starCount: 1.5,
+            dataSource:null
         }
     }
    ratingCompleted(rating) {
@@ -101,6 +102,20 @@ class Details extends Component  {
             starCount: rating
         });
     }
+
+    componentDidMount(){
+        return fetch(settings.API_URL+'serviceImage/'+ this.props.navigation.getParam('Service').coverImage)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({
+                    dataSource: responseJson,
+                });
+            })
+            .catch((error) =>{
+                console.error(error);
+            });
+    }
+
     componentWillMount() {
         this.mounted = true;
     }
@@ -149,6 +164,7 @@ class Details extends Component  {
     }
     else {
         const Service=this.props.navigation.getParam('Service');
+        let source={uri:'http://192.168.1.245:3000/cdn/storage/serviceImages/tb2unKF96qKnv3z4N/original/tb2unKF96qKnv3z4N.jpg'};
         return (
             <View style={styles.container}>
                 {/*<Header style={{height:25}}*/}
@@ -163,7 +179,9 @@ class Details extends Component  {
 
                 </Text>
                 <Text>({Service.contact}) </Text>
-                <Image style={styles.userImg} source={userImage}/>
+                    {this.state.dataSource===null?
+                        <Image style={styles.userImg} source={userImage} /> :
+                <Image style={{height:200,width:400}} source={{uri: this.state.dataSource}}/> }
                     <StarRating
                         disabled={false}
                         maxStars={5}

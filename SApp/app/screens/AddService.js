@@ -190,7 +190,8 @@ class AddService extends React.PureComponent {
             contact: '',
             avatarSource: null,
             selected: 'Keynull',
-            modalVisible: false
+            modalVisible: false,
+            Image:null
         };
 
     }
@@ -222,9 +223,11 @@ class AddService extends React.PureComponent {
     };
     _onImageChange=(image)=>{
         this.setState({
-            avatarSource:{ uri: `data:${image.mime};base64,${image.data}`}
+            avatarSource:{ uri: `data:${image.mime};base64,${image.data}`},
           //  avatarSource:{ uri:  image.path }
+            Image:image
         });
+
         ImagePicker.clean().then(() => {
             console.log('removed all tmp images from tmp directory');
         }).catch(e => {
@@ -238,6 +241,7 @@ class AddService extends React.PureComponent {
             )
         };
         _callSaveServiceMethod = (service) => {
+            service.Image=this.state.Image;
             Meteor.call('addNewService', service, (err, res) => {
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
@@ -265,7 +269,7 @@ class AddService extends React.PureComponent {
                 }
             });
 
-        }
+        };
         _saveService = () => {
             const {title, description, radius, contact, homeDelivery, selectedCategory, query} = this.state;
             let service = {

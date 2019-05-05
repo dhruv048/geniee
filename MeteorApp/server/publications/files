@@ -2,5 +2,5 @@ import {Mongo} from 'meteor/mongo';
 import ProfileImages from 'lib/collections/filecollection'
 
 Meteor.publish("profileImages", function (_id) {
-    return ProfileImages.findOne({_id:_id});
+    return ServiceImage.findOne({_id:_id});
 });

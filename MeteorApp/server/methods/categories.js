@@ -4,24 +4,57 @@ import {Meteor} from 'meteor/meteor';
 Meteor.methods({
 
     'addNewService': (serviceInfo) => {
-        console.log('addNewCategory:::=>>>');
-        var currentUserId = Meteor.userId();
-        let CategoryId = serviceInfo.Category._id !== null ? serviceInfo.Category._id : Categories.findOne({'name': serviceInfo.Category.name})._id;
         try {
-            var res = Service.insert({
-                title: serviceInfo.title,
-                description: serviceInfo.description,
-                contact: serviceInfo.contact,
-                location: serviceInfo.location,
-                radius: serviceInfo.radius,
-                coverImage: serviceInfo.coverImage,
-                homeDelivery: serviceInfo.homeDelivery,
-                categoryId: CategoryId,
-                createdAt: new Date(),
-                createdBy: currentUserId,
-            });
+            console.log('addNewCategory:::=>>>');
+            var currentUserId = Meteor.userId();
+            let CategoryId = serviceInfo.Category._id !== null ? serviceInfo.Category._id : Categories.findOne({'name': serviceInfo.Category.name})._id;
+            if (serviceInfo.Image) {
+                ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
+                    {
+                        fileName: serviceInfo.Image.modificationDate+'.jpg',
+                        type: serviceInfo.Image.mime
+                    },
+                    (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        }
+                        else {
+                            console.log(res._id)
+                            var res = Service.insert({
+                                title: serviceInfo.title,
+                                description: serviceInfo.description,
+                                contact: serviceInfo.contact,
+                                location: serviceInfo.location,
+                                radius: serviceInfo.radius,
+                                coverImage: res._id,
+                                homeDelivery: serviceInfo.homeDelivery,
+                                categoryId: CategoryId,
+                                createdAt: new Date(),
+                                createdBy: currentUserId,
+                            });
 
-            return res;
+                            return res;
+                        }
+                    }, proceedAfterUpload = true)
+            }
+            else{
+
+                var res = Service.insert({
+                    title: serviceInfo.title,
+                    description: serviceInfo.description,
+                    contact: serviceInfo.contact,
+                    location: serviceInfo.location,
+                    radius: serviceInfo.radius,
+                    coverImage: null,
+                    homeDelivery: serviceInfo.homeDelivery,
+                    categoryId: CategoryId,
+                    createdAt: new Date(),
+                    createdBy: currentUserId,
+                });
+
+                return res;
+            }
+
         }
         catch (e) {
             console.log(e.message);

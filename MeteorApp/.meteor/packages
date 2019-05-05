@@ -21,3 +21,5 @@ accounts-password
 shell-server@0.2.4
 dynamic-import
 aldeed:simple-schema
+ostrio:files
+nimble:restivus
