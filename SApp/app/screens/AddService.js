@@ -6,6 +6,9 @@ import Autocomplete from 'native-base-autocomplete';
 import {colors} from "../config/styles";
 import {Container, Content, Text, Item, Input, ListItem, Textarea, CheckBox, Button, Picker} from 'native-base';
 import Meteor, {createContainer} from "react-native-meteor";
+import GooglePlaceSearchBox from '../components/GooglePlaceSearch';
+import GoogleSearch from '../components/GooglePlaceSearch/GoogleSearch'
+
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 
@@ -186,7 +189,7 @@ class AddService extends React.PureComponent {
             homeDelivery: false,
             radius: 0,
             description: '',
-            location: '',
+            location: null,
             contact: '',
             avatarSource: null,
             selected: 'Keynull',
@@ -276,7 +279,7 @@ class AddService extends React.PureComponent {
                 title: title,
                 description: description,
                 contact: contact,
-                location: {lat: 100, long: 100},
+                location: this.state.location,
                 radius: radius,
                 coverImage: null,
                 homeDelivery: homeDelivery,
@@ -293,15 +296,15 @@ class AddService extends React.PureComponent {
             }
             else {
                 if (selectedCategory === null && query.length > 3) {
-                    Meteor.call('addCategory', this.state.query, (err, res) => {
-                        if (err) {
-                            console.log(err)
-                        }
-                        else {
+                    // Meteor.call('addCategory', this.state.query, (err, res) => {
+                    //     if (err) {
+                    //         console.log(err)
+                    //     }
+                    //     else {
                             service.Category = {_id: null, name: query}
-                            this._callSaveServiceMethod(service)
-                        }
-                    })
+                             this._callSaveServiceMethod(service)
+                    //     }
+                    // })
                 }
                 else if (selectedCategory) {
                     service.Category = selectedCategory;
@@ -319,6 +322,12 @@ class AddService extends React.PureComponent {
             }
         }
 
+    handleLocation=(data,Detail)=>{
+            console.log(data,'Detail :'+Detail)
+        this.setState({
+            location:data
+        })
+    }
 
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
@@ -350,7 +359,7 @@ class AddService extends React.PureComponent {
                         {/*}}*/}
                         {/*resizeMode={`stretch`}*/}
                         {/*>*/}
-                        <SafeAreaView style={styles.sb85086c9}>
+                        <SafeAreaView style={styles.sb85086c9} keyboardShouldPersistTaps='always'>
                             <View style={styles.sbc83915f}>
                                 <Text style={styles.s1f0fdd20}>{`Add Service`}</Text>
                                 <TouchableOpacity style={styles.imageView} onPress={()=>{this.setModalVisible(true)}}>
@@ -413,15 +422,24 @@ class AddService extends React.PureComponent {
                                 />
                                 <View style={styles.s50325ddf}/>
                                 <Item>
-                                    <Input disabled
-                                           style={styles.inputText}
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholder='Location'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(location) => this.setState({location})}
-                                    />
+                                    {/*<Input disabled*/}
+                                           {/*style={styles.inputText}*/}
+                                           {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                           {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                           {/*placeholder='Location'*/}
+                                           {/*keyboardType='phone-pad'*/}
+                                           {/*onChangeText={(location) => this.setState({location})}*/}
+                                    {/*/>*/}
+                                    <GooglePlaceSearchBox
+                                        onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                                        console.log(data, details);
+                                        this.handleLocation(details)
+                                    }}
+
+                                    ></GooglePlaceSearchBox>
+
                                 </Item>
+
                                 <Item>
                                     <Input underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
@@ -445,8 +463,6 @@ class AddService extends React.PureComponent {
                                            onChangeText={(contact) => this.setState({contact})}
                                     />
                                 </Item>
-
-                                <View style={styles.s50325ddf}/>
                                 <Button block success onPress={this._saveService}><Text> Save </Text></Button>
 
                             </View>

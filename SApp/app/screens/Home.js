@@ -7,8 +7,10 @@ import {StyleSheet, Image, StatusBar, TouchableWithoutFeedback, Keyboard} from '
 import Sidebar from '../components/MenuNav/MenuNav';
 
 import logoImage from '../images/logo2-trans-640X640.png';
-import dUser from '../images/duser.png';
+import dUser from '../images/Image.png';
 import Meteor, {createContainer} from "react-native-meteor";
+import Map from './Map';
+import settings from "../config/settings";
 
 
 
@@ -17,12 +19,14 @@ class Home extends Component {
         super(props);
         this.mounted = false;
         this.state = {
-            
+            selectedTab:'home',
+            markers:[]
         }
 
     }
     componentWillMount() {
         this.mounted = true;
+       // this._fetchMarkers()
 
     }
 
@@ -31,18 +35,20 @@ class Home extends Component {
     }
 
     _handlItemPress=(service)=>{
-        this.props.navigation.navigate('Details',{'Service':service});
+        this.props.navigation.navigate('Service',{'Service':service});
     }
 
     _getListItem = (rowData) => {
        return ( <ListItem thumbnail>
                 <Left>
-                    <Thumbnail square source={dUser} />
+                    {rowData.coverImage===null?
+                        <Thumbnail style={styles.banner} square source={dUser} /> :
+                        <Thumbnail style={styles.banner} source={{uri: settings.API_URL+'images/'+rowData.coverImage}}/> }
                 </Left>
                 <Body>
                 <Text>{rowData.title}</Text>
                 <Text note numberOfLines={1}>{rowData.description}</Text>
-                <Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>
+                {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                 </Body>
                 <Right>
                     <Button onPress={()=>{this._handlItemPress(rowData)}} transparent>
@@ -55,6 +61,49 @@ class Home extends Component {
     
     closeDrawer(){ this.drawer._root.close(); }
     openDrawer(){ this.drawer._root.open(); }
+
+    _fetchMarkers=()=>{
+        let markers=[];
+        this.props.categories.map(item=>{
+            if(item.location.hasOwnProperty('geometry')){
+                let latlang=item.location.geometry.location;
+                console.log('item:'+latlang)
+             markers.push({
+                 latlng:
+                     {latitude:latlang.lat,
+                         longitude:latlang.lng
+                     },
+                 title:item.title,
+                 description:item.description
+             })
+            }
+        })
+        console.log('markers:'+markers)
+        // this.setState({
+        //     markers
+        // })
+        console.log('state.markers:'+this.state.markers)
+        return markers
+    }
+
+    renderSelectedTab () {
+        const home= (
+            <List style={styles.contentList}
+                  dataArray={this.props.categories}
+                  renderRow={this._getListItem} >
+            </List>
+        )
+        switch (this.state.selectedTab) {
+            case 'home':
+                return home;
+                break;
+            case 'map':
+                return (<Map
+                markers={this._fetchMarkers()}/>);
+                break;
+            default:
+        }
+    }
 
     render() {
 
@@ -91,22 +140,25 @@ class Home extends Component {
                             </Button>
                         </Right>    */}                    
                     </Header>
-                    
+
                     <Content style={styles.content}>
-                        <List style={styles.contentList}
-                              dataArray={this.props.categories}
-                              renderRow={this._getListItem} >
-                        </List>
+                        {this.renderSelectedTab()}
+                        {/*<List style={styles.contentList}*/}
+                              {/*dataArray={this.props.categories}*/}
+                              {/*renderRow={this._getListItem} >*/}
+                        {/*</List>*/}
                     </Content>
 
                     <Footer>
                         <FooterTab style={styles.footerTab}>
-                            <Button vertical style={styles.activeTab}>
+                            <Button vertical  active={this.state.selectedTab==='home'}
+                                    onPress={() => this.setState({selectedTab: 'home'})}>
                                 <Icon name="list" style={styles.activeTabIcon}/>
                                 <Text style={styles.activeTabText}>List View</Text>
                             </Button>
                             <Image source={logoImage} style={styles.image} />
-                            <Button vertical>
+                            <Button vertical  active={this.state.selectedTab==='map'}
+                                    onPress={() => this.setState({selectedTab: 'map'})}>
                                 <Icon name="map" />
                                 <Text>Map View</Text>
                             </Button>
@@ -134,10 +186,16 @@ const styles = StyleSheet.create({
         //paddingVertical: 3
     },
     image: {
-      width: 56,
+      width: 50,
       height: 56,
-      borderRadius: 50,
+      borderRadius: 25,
       backgroundColor: '#000000'
+    },
+    banner: {
+        width: 80,
+        height: 50,
+        borderRadius: 3,
+        backgroundColor: '#000000'
     },
     footerTab: {
         backgroundColor:'#094c6b',

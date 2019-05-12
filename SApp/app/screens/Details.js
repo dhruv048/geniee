@@ -104,16 +104,17 @@ class Details extends Component  {
     }
 
     componentDidMount(){
-        return fetch(settings.API_URL+'serviceImage/'+ this.props.navigation.getParam('Service').coverImage)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({
-                    dataSource: responseJson,
-                });
-            })
-            .catch((error) =>{
-                console.error(error);
-            });
+         // fetch('http://192.168.1.245:3000/api/images/GfoZ9Rx3es3H9rs2w')
+         //    .then((response) => response.json())
+         //    .then((responseJson) => {
+         //        console.log(responseJson)
+         //        this.setState({
+         //            dataSource: responseJson,
+         //        });
+         //    })
+         //    .catch((error) =>{
+         //        console.error(error);
+         //    });
     }
 
     componentWillMount() {
@@ -165,6 +166,7 @@ class Details extends Component  {
     else {
         const Service=this.props.navigation.getParam('Service');
         let source={uri:'http://192.168.1.245:3000/cdn/storage/serviceImages/tb2unKF96qKnv3z4N/original/tb2unKF96qKnv3z4N.jpg'};
+     //   console.log(settings.API_URL+'images/'+Service.coverImage);
         return (
             <View style={styles.container}>
                 {/*<Header style={{height:25}}*/}
@@ -179,9 +181,9 @@ class Details extends Component  {
 
                 </Text>
                 <Text>({Service.contact}) </Text>
-                    {this.state.dataSource===null?
+                    {Service.coverImage===null?
                         <Image style={styles.userImg} source={userImage} /> :
-                <Image style={{height:200,width:400}} source={{uri: this.state.dataSource}}/> }
+                        <Image style={{height:200,width:400}} source={{uri: settings.API_URL+'images/'+Service.coverImage}}/> }
                     <StarRating
                         disabled={false}
                         maxStars={5}

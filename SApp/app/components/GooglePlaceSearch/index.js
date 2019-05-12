@@ -1,3 +1,3 @@
-import GooglePlaceSearchBox from "./GooglePlaceSearchBox";
+import GooglePlaceSearchBox from "./GooglePlacesSearchBox";
 
 export default  GooglePlaceSearchBox;

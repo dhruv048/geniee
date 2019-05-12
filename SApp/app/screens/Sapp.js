@@ -2,7 +2,7 @@ import {createDrawerNavigator, DrawerItems,createAppContainer,createStackNavigat
 import {StyleSheet,Text, Image, Alert,TouchableOpacity} from 'react-native'
 import Home from '../screens/Home';
 import Settings from '../screens/Settings';
-import Profile from '../screens/Profile';
+import ServiceDetail from '../screens/ServiceDetail';
 import Details from '../screens/Details';
 import AddCategory from '../screens/AddCategory';
 import AddService from '../screens/AddService';
@@ -54,6 +54,9 @@ export const HomeStack = createStackNavigator({
     Chat:{
         screen:Chat,
     },
+    Service:{
+        screen: ServiceDetail,
+    },
 
     // signIn:{
     //     screen:AuthStack,
@@ -68,7 +71,7 @@ const CustomDrawerContentComponent=(props)=>(
             <Body style={{justifyContent:'center',alignItems:'center'}}>
             <Image
                 style={styles.drawerImage}
-                source={require('../images/RoshanShah.jpg')}/>
+                source={require('../images/duser.png')}/>
             </Body>
         </Header>
         <Content>
@@ -107,23 +110,7 @@ export  const MainNavigation= createDrawerNavigator({
             )
         }
     },
-    Profile:{
-        screen: Profile, navigationOptions:{
-            drawerLabel: 'PROFILE',
-            drawerIcon: (
-                <Icon name='user' size={24} />
-            )
-        }
-    },
-    // AddCategory: {
-    //     screen: AddCategory,
-    //     navigationOptions:{
-    //         drawerLabel: 'Add Category',
-    //         drawerIcon: (
-    //             <Icon name='plus' size={24} />
-    //         )
-    //     }
-    // },
+
     AddService: {
         screen: AddService,
         navigationOptions:{
@@ -134,15 +121,6 @@ export  const MainNavigation= createDrawerNavigator({
         }
     },
 
-    Details: {
-        screen: Details,
-        navigationOptions:{
-            drawerLabel: 'Details',
-            drawerIcon: (
-                <Icon name='info' size={24} />
-            )
-        }
-    },
     Message:{
         screen:ChatStack,
         navigationOptions:{

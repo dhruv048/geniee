@@ -4,6 +4,7 @@ import Meteor, {createContainer} from "react-native-meteor";
 import Loading from '../components/Loading/index';
 import settings from '../config/settings'
 import {colors} from "../config/styles";
+import {StyleSheet, View,Text} from 'react-native';
 
 try {
     Meteor.connect(settings.METEOR_URL);
@@ -18,34 +19,35 @@ class AuthLoadingScreen extends React.Component {
         this.state = {
             status: Meteor.status(),
             user: Meteor.user(),
-            netConnected: false
+            netConnected: false,
+            connected:Meteor.status()
         }
         this._bootstrapAsync();
     }
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-       // this.props.navigation.navigate('App')
-        if (this.props.user !== null) {
-            this.props.navigation.navigate('App')
-        }
-        else if (!this.state.netConnected) {
-            alert("You are Offline \n Please check your internet connection...");
-            return ;
-        }
-        // else if (!this.state.status.connected) {
-        //     return ;
-        // }
-        else {
-            setTimeout(() => {
-                console.log('wait for 2 sec')
-            }, 3000)
-            if (this.props.user !== null) {
-                this.props.navigation.navigate('App')
-            }
-            else
-                this.props.navigation.navigate('Auth')
-        }
+        this.props.navigation.navigate('App')
+       //  if (this.props.user !== null) {
+       //      this.props.navigation.navigate('App')
+       //  }
+       //  else if (!this.state.netConnected) {
+       //     // alert("You are Offline \n Please check your internet connection...");
+       //      return ;
+       //  }
+       //  // else if (!this.state.connected) {
+       //  //     return ;
+       //  // }
+       //  else {
+       //      setTimeout(() => {
+       //          console.log('wait for 2 sec')
+       //      }, 3000)
+       //      if (this.props.user !== null) {
+       //          this.props.navigation.navigate('App')
+       //      }
+       //      else
+       //          this.props.navigation.navigate('Auth')
+       //  }
     }
 
     _handleConnectivityChange = (isConnected) => {
@@ -69,8 +71,7 @@ class AuthLoadingScreen extends React.Component {
     componentDidMount() {
         Meteor.connect(settings.METEOR_URL);
         NetInfo.isConnected.addEventListener(
-            'connectionChange',
-            this._handleConnectivityChange
+            'connectionChange', this._handleConnectivityChange
         );
         NetInfo.isConnected.fetch().done((isConnected) => {
 
@@ -78,11 +79,17 @@ class AuthLoadingScreen extends React.Component {
                 this.setState({
                     netConnected: true
                 })
-
             }
             console.log('Initial, type: ' + isConnected);
         });
 
+        // Meteor.ddp.addEventListener('connected',()=> {
+        //     alert('evetListened')
+        //     this.setState({
+        //         connected:Meteor.status().connected
+        //     })
+        //     this._bootstrapAsync
+        // });
 
     }
 
@@ -95,18 +102,17 @@ class AuthLoadingScreen extends React.Component {
 
     // Render any loading content that you like here
     render() {
-
         // if (this.props.user !== null) {
         //     this.props.navigation.navigate('App')
         //  }
-        //  else   if(!this.state.netConnected){
-        //      return ( <View style={styles.container}>
-        //          <View style={styles.logoContainer}>
-        //              <Text style={styles.headerText}>You are Offline</Text>
-        //              <Text style={styles.subHeaderText} >Please check your internet connection...</Text>
-        //          </View>
-        //      </View>)
-        //  }
+            if(!this.state.netConnected){
+             return ( <View style={styles.container}>
+                 <View style={styles.logoContainer}>
+                     <Text style={styles.headerText}>You are Offline</Text>
+                     <Text style={styles.subHeaderText} >Please check your internet connection...</Text>
+                 </View>
+             </View>)
+         }
         //  else if (!this.props.status.connected) {
         //      return <Loading />;
         //  }
@@ -120,10 +126,27 @@ class AuthLoadingScreen extends React.Component {
         //      else
         //          this.props.navigation.navigate('Auth')
         //  }
+        else {
 
-        return (<Loading />);
+                return (<Loading/>);
+            }
     }
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.background,
+    },
+    logoContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        padding:25
+    }
+});
 
 export default createContainer(() => {
     return {

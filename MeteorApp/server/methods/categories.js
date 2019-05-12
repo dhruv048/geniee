@@ -7,7 +7,10 @@ Meteor.methods({
         try {
             console.log('addNewCategory:::=>>>');
             var currentUserId = Meteor.userId();
-            let CategoryId = serviceInfo.Category._id !== null ? serviceInfo.Category._id : Categories.findOne({'name': serviceInfo.Category.name})._id;
+            let CategoryId = serviceInfo.Category._id !== null ? serviceInfo.Category._id : Categories.insert(
+                {  name: serviceInfo.Category.name,
+                createdAt: new Date(),
+                createdBy: Meteor.userId()});
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
