@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform} from 'react-native';
 import { Header} from 'react-native-elements';
+import {withNavigation} from 'react-navigation'
 
 
 class CustomHeader extends React.Component{
@@ -11,7 +12,7 @@ class CustomHeader extends React.Component{
         return (
             <Header
                 containerStyle={{
-                    backgroundColor: '#3D6DCC',
+                    backgroundColor: '#05a5d10d',
                     justifyContent: 'space-around',
                     paddingTop: 2,
                 }}
@@ -25,4 +26,4 @@ class CustomHeader extends React.Component{
     }
 };
 
-export default CustomHeader;
+export default withNavigation( CustomHeader);

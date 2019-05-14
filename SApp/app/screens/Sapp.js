@@ -13,10 +13,11 @@ import { colors } from '../config/styles';
 import Icon  from 'react-native-vector-icons/FontAwesome';
 import Meteor from "react-native-meteor";
 import Chat from "./Chat";
-
+import LogOut from "./LogOut"
 import SignIn from "./SignIn";
 import Register from "./Register";
 import AuthLoadingScreen from "./AuthLoading";
+import {withNavigation} from 'react-navigation'
 
 export const AuthStack = createStackNavigator({
     SignIn: {
@@ -76,10 +77,10 @@ const CustomDrawerContentComponent=(props)=>(
         </Header>
         <Content>
             <DrawerItems {...props}/>
-            <TouchableOpacity style={{marginLeft:17, flexDirection: 'row'}} onPress={()=>{this.handleSignout()}}>
-                <Icon size={25} name='sign-out' style={{fontWeight:'100'}}  ></Icon>
-                <Text style={{marginLeft:30,fontWeight:'500'}} >LOG OUT</Text>
-            </TouchableOpacity>
+            {/*<TouchableOpacity style={{marginLeft:17, flexDirection: 'row'}} onPress={()=>{this.handleSignout()}}>*/}
+                {/*<Icon size={25} name='sign-out' style={{fontWeight:'100'}}  ></Icon>*/}
+                {/*<Text style={{marginLeft:30,fontWeight:'500'}} >LOG OUT</Text>*/}
+            {/*</TouchableOpacity>*/}
         </Content>
     </Container>
 )
@@ -90,8 +91,8 @@ handleSignout= () => {
         [
             {
                 text: 'Yes SignOut', onPress: () => Meteor.logout((err) => {
-                    //     if (!err)
-                    //         this.props.navigation.navigate('signIn')
+                        // if (!err)
+                        //    this.props.navigation.navigate('Auth')
                 })
             },
             {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'}
@@ -138,7 +139,16 @@ export  const MainNavigation= createDrawerNavigator({
                 <Icon name='cog' size={24} />
             )
         }
-    }
+    },
+    LogOut:{
+        screen: LogOut,
+        navigationOptions:{
+            drawerLabel: 'SignOut',
+            drawerIcon: (
+                <Icon name='sign-out' size={24} />
+            )
+        }
+    },
 },{
     initialRoute:Home,
     contentComponent:CustomDrawerContentComponent
@@ -168,5 +178,5 @@ const Sapp=createAppContainer(createSwitchNavigator(
     {
         initialRouteName: 'AuthLoading',
     }));
-export  default Sapp;
+export  default (Sapp);
 

@@ -17,6 +17,8 @@ class ChatList extends Component {
         }
     }
 
+
+
     componentWillMount() {
         // let chanel = this.props.navigation.getParam('channel', null);
         // console.log(chanel._id)
@@ -60,11 +62,6 @@ class ChatList extends Component {
     _renderList = (rowData) => {
         if(rowData) {
             return (
-                <View>
-                <CustomHeader
-                    centerComponent={{text:'CHATS',style:{color:'white'}}}
-                    leftComponent={<HeaderMenu/>}
-                />
                 <View style={{padding: 5}}>
                     <FlatListItem
                         key={rowData._id}
@@ -75,15 +72,20 @@ class ChatList extends Component {
                         title={rowData.createdBy===this.props.user._id ? rowData.otherUser.name : rowData.createUser.name}
                     />
                 </View>
-                </View>
             )
         }
     }
 
     render() {
 
+
             return (
+
                 <View>
+                    <CustomHeader
+                        centerComponent={{text:'CHATS',style:{color:'white'}}}
+                        leftComponent={<HeaderMenu/>}
+                    />
                     <ListView
                         enableEmptySections={true}
                         renderRow={this._renderList}

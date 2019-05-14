@@ -148,5 +148,17 @@ Meteor.methods({
         }
 
 
+    },
+
+    'SearchService': function(searchText){
+        try {
+            // check(searchText, String);
+            // this.unblock();
+            var searchExp = new RegExp(RexExp.escape(searchText), 'i');
+            return Service.find({$or: [{title: searchExp}, {description: searchText}]}).fetch();
+        }
+        catch (e) {
+            console.log('from search'+e.message)
+        }
     }
 })

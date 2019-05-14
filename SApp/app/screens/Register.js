@@ -21,45 +21,6 @@ import {colors} from '../config/styles';
 import {userType} from '../config/settings';
 
 class Register extends Component {
-    constructor(props) {
-        super(props);
-
-        this.mounted = false;
-        this.state = {
-            name: '',
-            email: '',
-            contact: '',
-            password: '',
-            confirmPassword: '',
-            confirmPasswordVisible: false,
-            userType: null,
-            isLogged: Meteor.user() ? true : null,
-            radioButtons: [
-                {
-                    label: 'User',
-                    value: userType.NORMAL,
-                    checked: true,
-                },
-                {
-                    label: 'Service Provider',
-                    value: userType.SERVICE_PROVIDER
-                }
-            ]
-        };
-    }
-
-    componentWillMount() {
-        this.mounted = true;
-    }
-
-    componentWillUnmount() {
-        this.mounted = false;
-    }
-
-    componentDidMount() {
-
-    }
-
     validInput = (overrideConfirm) => {
         const {email, password, confirmPassword, confirmPasswordVisible} = this.state;
         let valid = true;
@@ -88,7 +49,6 @@ class Register extends Component {
 
         return valid;
     }
-
     handleSignIn = () => {
         if (this.validInput(true)) {
             const {contact, password} = this.state;
@@ -121,7 +81,6 @@ class Register extends Component {
         }
         // this.props.navigation.navigate('Details');
     }
-
     handleCreateAccount = () => {
         if (this.validInput()) {
             const {email, password, name, contact, userType} = this.state;
@@ -166,6 +125,44 @@ class Register extends Component {
         }
     }
 
+    constructor(props) {
+        super(props);
+
+        this.mounted = false;
+        this.state = {
+            name: '',
+            email: '',
+            contact: '',
+            password: '',
+            confirmPassword: '',
+            confirmPasswordVisible: false,
+            userType: null,
+            isLogged: Meteor.user() ? true : null,
+            radioButtons: [
+                {
+                    label: 'User',
+                    value: userType.NORMAL,
+                    checked: true,
+                },
+                {
+                    label: 'Service Provider',
+                    value: userType.SERVICE_PROVIDER
+                }
+            ]
+        };
+    }
+
+    componentWillMount() {
+        this.mounted = true;
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
+    componentDidMount() {
+
+    }
 
     render() {
         const {navigate} = this.props.navigation;
@@ -188,7 +185,7 @@ class Register extends Component {
                         selectionColor='#ffffff'
                         onSubmitEditing={() => this.email.focus()}
                         onChangeText={(name) => this.setState({name})}
-        />
+                        />
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
                                    placeholder='Email'
@@ -198,6 +195,15 @@ class Register extends Component {
                                    ref={(input) => this.email = input}
                                    onSubmitEditing={() => this.password.focus()}
                                    onChangeText={(email) => this.setState({email})}
+                        />
+                        <TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Contact Number'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='phone-pad'
+                                   ref={(input) => this.contactNumber = input}
+                                   onChangeText={(contact) => this.setState({contact})}
                         />
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
@@ -219,15 +225,7 @@ class Register extends Component {
                                    onSubmitEditing={() => this.contactNumber.focus()}
                                    onChangeText={(confirmPassword) => this.setState({confirmPassword})}
                         />
-                        <TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Contact Number'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
-                                   keyboardType='phone-pad'
-                                   ref={(input) => this.contactNumber = input}
-                                   onChangeText={(contact) => this.setState({contact})}
-                        />
+
                         {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
                             selectedValue={this.state.userType}
                             onValueChange={(itemValue, itemIndex) =>

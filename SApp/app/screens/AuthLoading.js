@@ -27,28 +27,30 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        this.props.navigation.navigate('App')
-       //  if (this.props.user !== null) {
-       //      this.props.navigation.navigate('App')
-       //  }
-       //  else if (!this.state.netConnected) {
-       //     // alert("You are Offline \n Please check your internet connection...");
-       //      return ;
-       //  }
-       //  // else if (!this.state.connected) {
-       //  //     return ;
-       //  // }
-       //  else {
-       //      setTimeout(() => {
-       //          console.log('wait for 2 sec')
-       //      }, 3000)
-       //      if (this.props.user !== null) {
-       //          this.props.navigation.navigate('App')
-       //      }
-       //      else
-       //          this.props.navigation.navigate('Auth')
-       //  }
-    }
+       // this.props.navigation.navigate('App')
+        if (this.props.user !== null) {
+            this.props.navigation.navigate('App')
+        }
+        else
+            this.props.navigation.navigate('Auth')
+    //     else if (!this.state.netConnected) {
+    //        // alert("You are Offline \n Please check your internet connection...");
+    //         return ;
+    //     }
+    //     // else if (!this.state.connected) {
+    //     //     return ;
+    //     // }
+    //     else {
+    //         setTimeout(() => {
+    //             console.log('wait for 2 sec')
+    //         }, 3000)
+    //         if (this.props.user !== null) {
+    //             this.props.navigation.navigate('App')
+    //         }
+    //         else
+    //             this.props.navigation.navigate('Auth')
+    //     }
+     }
 
     _handleConnectivityChange = (isConnected) => {
         if (isConnected == true) {

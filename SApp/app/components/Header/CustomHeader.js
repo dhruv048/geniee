@@ -11,7 +11,7 @@ class CustomHeader extends React.Component{
         return (
             <Header
                 containerStyle={{
-                    backgroundColor: '#3D6DCC',
+                    backgroundColor: '#094c6b',
                     justifyContent: 'space-around',
                     paddingTop: 2,
                     height: Platform.OS === 'ios' ? 70 : 70 - 24,

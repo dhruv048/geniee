@@ -11,7 +11,7 @@ class HeaderMenu extends React.Component{
             <View style={{marginLeft: 5, flexDirection: 'row',alignItems: 'center',justifyContent: 'center'}}>
                     <Text  >
                 <Icon name="bars" style={{fontWeight:'500'}} size={30} color="white" onPress={() => {
-                    this.props.navigation.navigate('DrawerOpen')
+                    this.props.navigation.openDrawer()
                 }}/>
                     </Text>
             </View>
