@@ -43,8 +43,8 @@ class Map extends Component {
                     let region= {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
-                        latitudeDelta: 0.5,
-                        longitudeDelta: 0.5,
+                        latitudeDelta: 0.4,
+                        longitudeDelta: 0.4,
                     };
                     this.setState({ region:region });
                 },

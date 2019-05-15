@@ -7,6 +7,7 @@ import {MessageItem }from "../components/Chat/MessageItem";
 import Icon  from 'react-native-vector-icons/FontAwesome';
 import Moment from 'moment';
 import CustomHeader from "../components/Header";
+import {Container,Content,Item,Input} from 'native-base';
 
 class Chat extends Component {
 
@@ -103,12 +104,13 @@ class Chat extends Component {
         />
         )
         return (
-            <View style={styles.containerViewStyle}>
+            <Container style={styles.containerViewStyle}>
                 <CustomHeader
                     centerComponent={{text:channel.createdBy===this.props.user._id ? channel.otherUser.name : channel.createUser.name,style:{color:'white'}}}
                     leftComponent={ <Icon color='white' size={30} name="arrow-left" onPress={() => {
                         this.props.navigation.navigate('ChatList')}}></Icon>}
                 />
+                <Content>
                 <View style={styles.messageListViewStyle}>
                     <ListView
                         enableEmptySections={true}
@@ -117,11 +119,16 @@ class Chat extends Component {
                         onEndReachedThreshold={-100}
                     />
                 </View>
+                    {/*<Item>*/}
+                        {/*<Input placeholder='Your Message'/>*/}
+                        {/*<Icon style={{fontSize: 20}} active name='envelope' />*/}
+                    {/*</Item>*/}
                 <View style={styles.messageInputViewStyle}>
                     {chatInput}
 
                 </View>
-            </View>
+            </Content>
+            </Container>
         )
     }
 }
@@ -195,6 +202,6 @@ const styles = {
         flex: 1,
         marginBottom: 8,
         flexDirection: 'column',
-        justifyContent: 'center'
+      //  justifyContent: 'center'
     }
 };

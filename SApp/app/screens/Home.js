@@ -88,7 +88,7 @@ class Home extends Component {
 
     _fetchMarkers = () => {
         let markers = [];
-        this.props.categories.map(item => {
+        this.state.data.map(item => {
             if (item.location.hasOwnProperty('geometry')) {
                 let latlang = item.location.geometry.location;
                 console.log('item:' + latlang)
@@ -228,15 +228,14 @@ class Home extends Component {
                         </Header>
 
                         <Content style={styles.content}>
-                            {this.state.loading===true ?
-                            <Loading/> : <Text/>}
                             {this.renderSelectedTab()}
                             {/*<List style={styles.contentList}*/}
                             {/*dataArray={this.props.categories}*/}
                             {/*renderRow={this._getListItem} >*/}
                             {/*</List>*/}
                         </Content>
-
+                        {this.state.loading===true ?
+                            <Loading/> : <Text style={{height:0}}/>}
                         <Footer>
                             <FooterTab style={styles.footerTab}>
                                 <Button vertical active={this.state.selectedTab === 'home'}

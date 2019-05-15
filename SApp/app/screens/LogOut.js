@@ -11,7 +11,9 @@ class LogOut extends Component {
         super(props);
     }
 
-
+    componentWillMount(){
+       this._handleSignout()
+    }
     componentDidMount(){
         // alert('called')
         // this._handleSignout

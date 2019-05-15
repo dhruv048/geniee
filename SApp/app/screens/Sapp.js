@@ -1,10 +1,9 @@
 import {createDrawerNavigator, DrawerItems,createAppContainer,createStackNavigator,createSwitchNavigator} from 'react-navigation';
 import {StyleSheet,Text, Image, Alert,TouchableOpacity} from 'react-native'
 import Home from '../screens/Home';
-import Settings from '../screens/Settings';
+import Settings,{userType} from '../screens/Settings';
 import ServiceDetail from '../screens/ServiceDetail';
 import Details from '../screens/Details';
-import AddCategory from '../screens/AddCategory';
 import AddService from '../screens/AddService';
 import ChatList from '../screens/ChatList';
 import {Container, Content, Header,Body} from 'native-base';
@@ -17,7 +16,6 @@ import LogOut from "./LogOut"
 import SignIn from "./SignIn";
 import Register from "./Register";
 import AuthLoadingScreen from "./AuthLoading";
-import {withNavigation} from 'react-navigation'
 
 export const AuthStack = createStackNavigator({
     SignIn: {
@@ -115,7 +113,7 @@ export  const MainNavigation= createDrawerNavigator({
     AddService: {
         screen: AddService,
         navigationOptions:{
-            drawerLabel: 'Add Service',
+            drawerLabel: "ADD SERVICE",
             drawerIcon: (
                 <Icon name='plus' size={24} />
             )
@@ -131,19 +129,19 @@ export  const MainNavigation= createDrawerNavigator({
             )
         }
     },
-    Settings:{
-        screen: Settings,
-        navigationOptions:{
-            drawerLabel: 'SETTINGS',
-            drawerIcon: (
-                <Icon name='cog' size={24} />
-            )
-        }
-    },
+    // Settings:{
+    //     screen: Settings,
+    //     navigationOptions:{
+    //         drawerLabel: 'SETTINGS',
+    //         drawerIcon: (
+    //             <Icon name='cog' size={24} />
+    //         )
+    //     }
+    // },
     LogOut:{
         screen: LogOut,
         navigationOptions:{
-            drawerLabel: 'SignOut',
+            drawerLabel: 'SIGN-OUT',
             drawerIcon: (
                 <Icon name='sign-out' size={24} />
             )
