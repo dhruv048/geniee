@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, ListView, TouchableOpacity ,Text,Image,Alert} from 'react-native';
+import { View, ListView, StatusBar ,Text,Image,Alert} from 'react-native';
 import {  FlatListItem } from '../components/FlatListItem';
 import Meteor, { createContainer } from 'react-native-meteor';
 import CustomHeader from "../components/Header"
 import HeaderMenu from "../components/Header/HeaderMenu";
 import Icon  from 'react-native-vector-icons/FontAwesome';
+import {colors} from "../config/styles";
 class ChatList extends Component {
 
     constructor(props) {
@@ -63,6 +64,10 @@ class ChatList extends Component {
         if(rowData) {
             return (
                 <View style={{padding: 5}}>
+                    <StatusBar
+                        backgroundColor={colors.statusBar}
+                        barStyle='light-content'
+                    />
                     <FlatListItem
                         key={rowData._id}
                         onListItemPress={() => {

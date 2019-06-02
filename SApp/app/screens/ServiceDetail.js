@@ -7,9 +7,10 @@ import {
     Image,
     Alert,
     ScrollView,
-    FlatList,
+    StatusBar,
+    Modal
 } from 'react-native';
-import {Button, Container, Content, Header, Left, Icon,Body} from 'native-base'
+import {Button, Container, Content, Textarea, Left, Icon,Body} from 'native-base'
 import Meteor, {createContainer} from "react-native-meteor";
 import settings ,{userType} from "../config/settings";
 import userImage from '../images/Image.png';
@@ -22,7 +23,7 @@ class ServiceDetail extends Component {
 
     ratingCompleted = (rating) => {
         this.setState({
-            starCount: rating
+            starCount: rating,
         });
     }
     _callPhone = (number) => {
@@ -37,47 +38,62 @@ class ServiceDetail extends Component {
         super(props);
         this.state = {
             starCount: 2,
-            isLoading:false
+            isLoading:false,
+            showModal:false,
+            comment:'',
         }
     }
 
     handleChat = (id) => {
         var channel = this.props.getChannel(id);
         console.log('channel' + channel);
-        if (channel === null || channel === undefined) {
-            Meteor.call('createChatChannel', {To: id}, (err, result) => {
-                if (err) {
-                    console.log('err:' + err);
-                }
-                else {
-                    this.setState({isLoading:true});
-                    console.log('resss' + result);
-                    Meteor.subscribe('get-channel', (ready) => {
-                        console.log('ready' + ready);
-                        let channel = Meteor.collection('chatChannels').findOne({_id: result});
-                        console.log('new Channel' + channel);
-                        // this.props.navigation.navigate('Chat', {'channel': this.props.getChannel(id)})
-                        this.setState({isLoading:false});
-                        this.props.navigation.navigate('Chat', {'channel': channel})
 
-                    })
-                }
-            })
-        }
-        else {
+            if (channel === null || channel === undefined) {
+                Meteor.call('createChatChannel', {To: id}, (err, result) => {
+                    if (err) {
+                        console.log('err:' + err);
+                    }
+                    else {
+                        this.setState({isLoading: true});
+                        console.log('resss' + result);
+                        Meteor.subscribe('get-channel', (ready) => {
+                            console.log('ready' + ready);
+                            let channel = Meteor.collection('chatChannels').findOne({_id: result});
+                            console.log('new Channel' + channel);
+                            // this.props.navigation.navigate('Chat', {'channel': this.props.getChannel(id)})
+                            this.setState({isLoading: false});
+                            this.props.navigation.navigate('Chat', {'channel': channel})
 
-            this.props.navigation.navigate('Chat', {'channel': channel})
-        }
+                        })
+                    }
+                })
+            }
+            else {
+
+                this.props.navigation.navigate('Chat', {'channel': channel})
+            }
     }
 
-    clickEventListener() {
+
+    _saveRatting=(id)=>{
+        this.setState({showModal:false});
+        alert(this.state.comment);
+        console.log(this.state.comment +this.state.starCount);
+    }
+
+    clickEventListener(){
         Alert.alert("Success", "Product has beed added to cart")
     }
 
     render() {
         const Service = this.props.navigation.getParam('Service');
+        const {navigate} = this.props.navigation;
         return (
             <Container style={styles.container}>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
                 {/*<Header  style={{backgroundColor:'#094c6b', height:40}}>*/}
                 {/*<Left>*/}
                 {/*<Button transparent onPress={()=>{this.props.navigation.goBack()}}>*/}
@@ -111,8 +127,9 @@ class ServiceDetail extends Component {
                                 count={5}
                                 defaultRating={this.state.starCount}
                                 size={20}
-                                showRating
-                                onFinishRating={this.ratingCompleted}
+                                showRating={false}
+                                readOnly={true}
+
                             />
                         </View>
                         {/*<View style={styles.contentColors}>*/}
@@ -137,11 +154,76 @@ class ServiceDetail extends Component {
                         </View>
 
                         <View style={styles.addToCarContainer}>
-                            {this.props.role===userType.NORMAL?
-                            <Button block success rounded onPress={() => {this.handleChat(Service.createdBy)}} style={{marginBottom: 10}}><Text> Message </Text></Button> : <Text/>}
+                            {this.props.user ?
+                            <Button block success rounded onPress={() => {this.handleChat(Service.createdBy)}} ><Text> Message </Text></Button> : <Text/>}
+                        </View>
+                        <View style={styles.addToCarContainer}>
+                            {this.props.user ?
+                            <Button style={{marginBottom: 5}} block warning rounded onPress={() => {
+                                this.setState({showModal:true})
+                            }}><Text> Rate </Text></Button>
+                                : <Text/>}
                         </View>
                     </ScrollView>
                 </Content>
+                <View style={{marginTop: 22}}>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={this.state.showModal}
+                        onRequestClose={() => {
+                            this.setState({showModal:false})
+                        }}>
+                        <View style={{
+                            flex: 1,
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+
+                            <View style={{
+                                backgroundColor:'white',
+                                width: 350,
+                                height: 400,
+                                padding:30,
+                                borderWidth: 2,
+                                borderColor: colors.buttonPrimaryBackground,
+
+                            }}>
+                                <Text style={styles.signupText}>
+                                   Rate Service
+                                </Text>
+                                <View style={styles.starContainer}>
+                                    <AirbnbRating
+                                        reviews={['Terrible', 'Bad', 'Okay', 'Good', 'Great']}
+                                        count={5}
+                                        defaultRating={1}
+                                        size={25}
+                                        showRating={true}
+                                        onFinishRating={this.ratingCompleted}
+                                    />
+                                </View>
+                                <Textarea bordered rowSpan={4} placeholder="Comment"
+                                        //  style={styles.inputText}
+                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                          underlineColorAndroid='rgba(0,0,0,0)'
+                                    //onSubmitEditing={() => this.contactNumber.focus()}
+                                          onChangeText={(comment) => this.setState({comment})}
+                                />
+                                <View style={styles.addToCarContainer}>
+                                    <Button block success  onPress={() => {
+                                        this._saveRatting(Service._id)
+                                    }}><Text> Save </Text></Button>
+                                </View>
+                                <View style={styles.addToCarContainer}>
+                                <Button block  danger onPress={()=>{this.setState({showModal:false})}}>
+                                    <Text>Cancel</Text>
+                                </Button>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
             </Container>
         );
     }
@@ -240,7 +322,69 @@ const styles = StyleSheet.create({
     addToCarContainer: {
         marginHorizontal: 30,
         marginTop: 10
-    }
+    },
+    containerForm: {
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    inputBox: {
+        width: 300,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5
+    },
+
+    button: {
+        width: 300,
+        backgroundColor: colors.buttonPrimaryBackground,
+        borderRadius: 25,
+        marginVertical: 10,
+        paddingVertical: 13
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: colors.whiteText,
+        textAlign: 'center'
+    },
+    forgotPwdButton: {
+        color: colors.redText,
+        fontSize: 14,
+        fontWeight: '500'
+    },
+
+    signupCont: {
+        flexGrow: 1,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        paddingVertical: 16,
+        flexDirection: 'row'
+    },
+    signupText: {
+        color: colors.primaryText,
+        fontSize: 16,
+        fontWeight: '700',
+        paddingVertical: 2
+    },
+    navButton: {
+        width: 80,
+        backgroundColor: colors.buttonPrimaryBackground,
+        borderRadius: 25,
+        paddingVertical: 2,
+        marginLeft: 5
+    },
+    navButtonText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: colors.whiteText,
+        textAlign: 'center'
+    },
+
 });
 
 export default createContainer(() => {
@@ -253,6 +397,6 @@ export default createContainer(() => {
             // return Meteor.collection('chatChannels').findOne({users: { "$in" : [id]}});
             return Meteor.collection('chatChannels').findOne({'otherUser._id':id});
         },
-        role: Meteor.user().profile.role
+        user: Meteor.user()
     };
 }, ServiceDetail);

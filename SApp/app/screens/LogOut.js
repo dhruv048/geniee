@@ -36,7 +36,7 @@ class LogOut extends Component {
 
         Meteor.logout((err) => {
             if (!err)
-                this.props.navigation.navigate('Auth')
+                this.props.navigation.navigate('UnAuthorized')
             else
                 this.props.navigation.goBack()
         })

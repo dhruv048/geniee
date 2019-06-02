@@ -3,4 +3,5 @@ MeteorApp/.deploy/
 .idea/
 SApp/ios
 SApp/node_modules/
+SApp/app/config/settings.js
 SApp/package-lock.json

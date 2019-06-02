@@ -1,11 +1,19 @@
 import React, {Component} from 'react';
 import _ from 'lodash';
 import {
-    Container, Header, Left, Body, Title, Subtitle, Right, Content, List, ListItem, Thumbnail, Footer, FooterTab, Button, Icon, Text,
-    Item, Input, Drawer
+    Container, Header, Left, Body, Subtitle, Right, Content, List, ListItem, Thumbnail, Footer, FooterTab, Button, Icon, Text,
+    Item, Input, Picker
 } from 'native-base';
 
-import {StyleSheet, Image, StatusBar, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {
+    StyleSheet,
+    Image,
+    StatusBar,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Alert,
+    PermissionsAndroid
+} from 'react-native';
 
 import Sidebar from '../components/MenuNav/MenuNav';
 import Loading from '../components/Loading';
@@ -14,6 +22,8 @@ import dUser from '../images/Image.png';
 import Meteor, {createContainer} from "react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
+import {colors} from "../config/styles";
+import MyFunctions from '../lib/MyFunctions'
 
 
 class Home extends Component {
@@ -25,27 +35,74 @@ class Home extends Component {
             markers: [],
             currentSearch: "",
             loading: false,
-            data: [],
+            data:  Meteor.collection('service').find(),
             error: null,
-            searchText:''
+            searchText:'',
+            selected:'all'
         }
-        this.arrayholder = [];
+        this.arrayholder =  Meteor.collection('service').find();
         this.currentSearch='';
+        this.region={
+                latitude: 27.700769,
+                longitude:85.300140,
+        };
     }
     componentDidMount(){
-        Meteor.subscribe('categories-list',()=>{
-            this.setState({
-                data:Meteor.collection('service').find()
-            })
-            this.arrayholder=Meteor.collection('service').find();
-        })
+        // Meteor.subscribe('categories-list',()=>{
+        //     // this.setState({
+        //     //     data:Meteor.collection('service').find()
+        //     // })
+        //     // this.arrayholder=Meteor.collection('service').find();
+        // })
+
+        const granted =  PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                'title': 'Location Permission',
+                'message': 'This App needs access to your location ' +
+                'so we can know where you are.'
+            }
+        )
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+
+            console.log("You can use locations ")
+            navigator.geolocation.getCurrentPosition(
+                ( position) => {
+                    console.log(position)
+                    //   const location = JSON.stringify(position);
+                    let region= {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    };
+                    this.region=region;
+                },
+                error => Alert.alert(error.message),
+                { enableHighAccuracy: true, timeout: 5000}
+            );
+        } else {
+            console.log("Location permission denied")
+        }
     }
     componentWillMount() {
         this.mounted = true;
         // this._fetchMarkers()
+         Meteor.subscribe('categories-list',()=>{
+            this.setState({
+                data:Meteor.collection('service').find()
+            })
+             this.arrayholder=Meteor.collection('service').find();
+        })
+
 
     }
-
+    componentWillReceiveProps(newProps) {
+        const oldProps = this.props
+        if(oldProps.categories !== newProps.categories) {
+            this.setState({data:newProps.categories})
+            this.arrayholder=newProps.categories;
+            this._search(this.currentSearch)
+        }
+    }
     componentWillUnmount() {
         this.mounted = false;
     }
@@ -55,7 +112,10 @@ class Home extends Component {
     }
 
     _getListItem = (rowData) => {
-        return (<ListItem thumbnail>
+        return (
+            <TouchableWithoutFeedback onPress={() => {
+                this._handlItemPress(rowData) }} >
+            <ListItem thumbnail>
             <Left>
                 {rowData.coverImage === null ?
                     <Thumbnail style={styles.banner} square source={dUser}/> :
@@ -67,14 +127,17 @@ class Home extends Component {
             <Text note numberOfLines={1}>{rowData.description}</Text>
             {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
             </Body>
-            <Right>
-                <Button onPress={() => {
-                    this._handlItemPress(rowData)
-                }} transparent>
-                    <Text>View</Text>
-                </Button>
-            </Right>
-        </ListItem>)
+                {/*<Right>*/}
+                {/*<Button onPress={() => {*/}
+                {/*this._handlItemPress(rowData)*/}
+                {/*}} transparent>*/}
+                {/*<Text>View</Text>*/}
+                {/*</Button>*/}
+                {/*</Right>*/}
+
+        </ListItem>
+            </TouchableWithoutFeedback>
+    )
 
     }
 
@@ -129,7 +192,36 @@ class Home extends Component {
             default:
         }
     }
-
+    onValueChange(value) {
+        this.setState({
+            selected: value
+        });
+        switch (value) {
+            case 'all':
+                this.setState({
+                    data: this.props.categories,
+                });
+                this.arrayholder=this.props.categories;
+                this._search(this.state.currentSearch)
+                break;
+            case 'starred':
+                break;
+            case 'myLocation':
+                const newData = this.arrayholder.filter(item => {
+                    if (item.location.hasOwnProperty('geometry')) {
+                        return MyFunctions.isWithinRange(item.location.geometry.location.lat, item.location.geometry.location.lng,this.region.latitude,this.region.longitude,item.radius);
+                    }
+                    else {
+                        return false
+                    }
+                });
+                this.setState({data: newData});
+                this.arrayholder=newData;
+                this._search(this.state.currentSearch)
+                break;
+            default:
+        }
+    };
 
     _search =  (text)=> {
        //  debugger
@@ -172,11 +264,18 @@ class Home extends Component {
 
         const textData = text.trim().toUpperCase();
         this.setState({ loading: true });
-        if (textData === this.currentSearch) {
-            // abort search if query wasn't different
+        // if (textData === this.currentSearch) {
+        //     // abort search if query wasn't different
+        //     return;
+        // }
+        if (textData === ""){
+            this.setState({
+                data: this.arrayholder, loading: false
+            });
             return;
         }
-            this.currentSearch=textData;
+
+        this.currentSearch=textData;
             const newData = this.arrayholder.filter(item => {
                 const itemData =
                     `${item.title.toUpperCase()} ${item.description.toUpperCase()}`;
@@ -189,36 +288,53 @@ class Home extends Component {
 
 
         return (
-
-            <Drawer ref={(ref) => {
-                this.drawer = ref;
-            }} content={<Sidebar navigator={this.navigator}/>} onClose={() => this.closeDrawer()}>
-                {/*<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>*/}
-                    <Container>
-
+            <Container style={{backgroundColor:colors.appBackground}}>
+                        <StatusBar
+                            backgroundColor={colors.statusBar}
+                            barStyle='light-content'
+                        />
                         <Header style={{backgroundColor: '#094c6b'}}>
                             {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />
                             </Button>                        
                         </Left>*/}
-                            <Body>
-                            <Item><Input placeholder="Search" style={styles.searchInput}
+
+                            <Body style={{flexDirection:'row'}}>
+                            <Item rounded style={{height:40,flex:4}}>
+                                {/*<Button transparent onPress={()=>{}}>*/}
+                                    <Icon style={styles.activeTabIcon} name='search'/>
+                                {/*</Button>*/}
+                                <Input placeholder="Search" style={styles.searchInput}
                                          placeholderTextColor='#ffffff'
                                          selectionColor='#ffffff'
-                                         underlineColorAndroid="transparent"
+                                       //  underlineColorAndroid="transparent"
                                          onChangeText={(searchText )=> {
                                              this._search(searchText)
                                          }}
                                          autoCorrect={false}
                             />
-                                <Button transparent onPress={()=>{}}><Icon style={styles.activeTabIcon} name='search'/></Button>
+
 
                                 {/*<Button transparent onPress={() => this.openDrawer()}>*/}
                                     {/*<Icon name='more' style={styles.activeTabIcon}/>*/}
                                 {/*</Button>*/}
-                            </Item>
 
+                            </Item>
+                            <Item rounded style={{height:40,flex:2, marginLeft:4}}>
+                            <Picker
+                                mode="dropdown"
+                                iosIcon={<Icon name="arrow-dropdown-circle" style={{ color: "#007aff", fontSize: 25 }} />}
+                                style={{color: '#ffffff'} }
+                                note={false}
+                                selectedValue={this.state.selected}
+                                onValueChange={this.onValueChange.bind(this)}
+                            >
+                                <Picker.Item label="All" value="all" />
+                                <Picker.Item label="Starred" value="starred" />
+                                <Picker.Item label="My Location" value="myLocation" />
+                            </Picker>
+                            </Item>
                             </Body>
                             {/*<Right>
                             <Button transparent onPress={()=>this.openDrawer()}>
@@ -243,7 +359,7 @@ class Home extends Component {
                                     <Icon name="list" style={styles.activeTabIcon}/>
                                     <Text style={styles.activeTabText}>List View</Text>
                                 </Button>
-                                <Image source={logoImage} style={styles.image}/>
+                                {/*<Image source={logoImage} style={styles.image}/>*/}
                                 <Button vertical active={this.state.selectedTab === 'map'}
                                         onPress={() => this.setState({selectedTab: 'map'})}>
                                     <Icon name="map"/>
@@ -253,8 +369,7 @@ class Home extends Component {
                         </Footer>
 
                     </Container>
-                {/*</TouchableWithoutFeedback>*/}
-            </Drawer>
+
 
         );
     };
@@ -264,7 +379,8 @@ class Home extends Component {
 
 const styles = StyleSheet.create({
     content: {
-        backgroundColor: '#05a5d10d',
+        backgroundColor: colors.appBackground,
+        //backgroundColor: '#05a5d10d',
         //borderTopWidth: 3,
         //borderTopColor: '#000000',
         //borderBottomWidth: 3,
@@ -306,9 +422,9 @@ const styles = StyleSheet.create({
         //borderBottomColor: '#000000',
         color: '#ffffff',
         //backgroundColor: '#898e907a',
-        height: 40,
-        width: 300,
-        paddingHorizontal: 16,
+        // height: 40,
+        // width: 300,
+        // paddingHorizontal: 16,
         borderTopWidth: 0,
         borderRightWidth: 0,
         borderLeftWidth: 0,
@@ -317,7 +433,7 @@ const styles = StyleSheet.create({
 });
 
 export default createContainer(() => {
-    Meteor.subscribe('categories-list');
+    //Meteor.subscribe('categories-list');
     return {
         categories: Meteor.collection('service').find()
     }

@@ -5,6 +5,7 @@ import Loading from '../components/Loading/index';
 import settings from '../config/settings'
 import {colors} from "../config/styles";
 import {StyleSheet, View,Text} from 'react-native';
+import {UnAuthorized,MainNavigation} from "./Sapp";
 
 try {
     Meteor.connect(settings.METEOR_URL);
@@ -32,29 +33,29 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-       // this.props.navigation.navigate('App')
-        if (this.props.user !== null) {
-            this.props.navigation.navigate('App')
-        }
-        // else
-        //     this.props.navigation.navigate('Auth')
-        else if (!this.state.netConnected) {
-           // alert("You are Offline \n Please check your internet connection...");
-            return ;
-        }
-        else if (!this.state.connected) {
-            return ;
-        }
-        else {
-            setTimeout(() => {
-                console.log('wait for 2 sec')
-            }, 2000)
-            if (this.props.user !== null) {
-                this.props.navigation.navigate('App')
-            }
-            else
-                this.props.navigation.navigate('Auth')
-        }
+        this.props.navigation.navigate('App')
+        // if (this.props.user !== null) {
+        //     this.props.navigation.navigate('App')
+        // }
+        // // else
+        // //     this.props.navigation.navigate('Auth')
+        // else if (!this.state.netConnected) {
+        //    // alert("You are Offline \n Please check your internet connection...");
+        //     return ;
+        // }
+        // else if (!this.state.connected) {
+        //     return ;
+        // }
+        // else {
+        //     setTimeout(() => {
+        //         console.log('wait for 2 sec')
+        //     }, 2000)
+        //     if (this.props.user !== null) {
+        //         this.props.navigation.navigate('App')
+        //     }
+        //     else
+        //         this.props.navigation.navigate('Auth')
+        // }
      }
 
     _handleConnectivityChange = (isConnected) => {
@@ -134,8 +135,11 @@ class AuthLoadingScreen extends React.Component {
         //          this.props.navigation.navigate('Auth')
         //  }
         else {
-
-                return (<Loading/>);
+            if(this.props.user){
+                return <MainNavigation/>
+            }
+            else
+                return (<UnAuthorized/>);
             }
     }
 };

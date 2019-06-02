@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ListView ,Alert} from 'react-native';
+import { View, ListView ,Alert,StatusBar} from 'react-native';
 import Meteor, { createContainer } from 'react-native-meteor';
 import Message from "../components/Chat/Message";
 import {ChatInput} from "../components/Chat/ChatInput";
@@ -8,6 +8,7 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import Moment from 'moment';
 import CustomHeader from "../components/Header";
 import {Container,Content,Item,Input} from 'native-base';
+import {colors} from "../config/styles";
 
 class Chat extends Component {
 
@@ -105,6 +106,10 @@ class Chat extends Component {
         )
         return (
             <Container style={styles.containerViewStyle}>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
                 <CustomHeader
                     centerComponent={{text:channel.createdBy===this.props.user._id ? channel.otherUser.name : channel.createUser.name,style:{color:'white'}}}
                     leftComponent={ <Icon color='white' size={30} name="arrow-left" onPress={() => {

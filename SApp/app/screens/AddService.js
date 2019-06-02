@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal} from "react-native";
+import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal,StatusBar} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SafeAreaView} from "react-navigation";
 import Autocomplete from 'native-base-autocomplete';
@@ -349,6 +349,10 @@ class AddService extends React.PureComponent {
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={styles.container}>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
                 <Content>
                     <Fragment>
                         {/*<ImageBackground*/}

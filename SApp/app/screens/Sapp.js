@@ -129,12 +129,12 @@ export  const MainNavigation= createDrawerNavigator({
             )
         }
     },
-    // Settings:{
-    //     screen: Settings,
+    // Login:{
+    //     screen: AuthStack,
     //     navigationOptions:{
-    //         drawerLabel: 'SETTINGS',
+    //         drawerLabel: 'Login',
     //         drawerIcon: (
-    //             <Icon name='cog' size={24} />
+    //             <Icon name='sign-in' size={24} />
     //         )
     //     }
     // },
@@ -147,6 +147,59 @@ export  const MainNavigation= createDrawerNavigator({
             )
         }
     },
+},{
+    initialRoute:Home,
+    contentComponent:CustomDrawerContentComponent
+});
+
+export  const UnAuthorized= createDrawerNavigator({
+    Home:{
+        screen : HomeStack,
+        navigationOptions:{
+            drawerLabel: 'HOME',
+            drawerIcon: (
+                <Icon name='home' size={24} />
+            )
+        }
+    },
+
+    // AddService: {
+    //     screen: AddService,
+    //     navigationOptions:{
+    //         drawerLabel: "ADD SERVICE",
+    //         drawerIcon: (
+    //             <Icon name='plus' size={24} />
+    //         )
+    //     }
+    // },
+    //
+    // Message:{
+    //     screen:ChatStack,
+    //     navigationOptions:{
+    //         drawerLabel: 'MESSAGE',
+    //         drawerIcon: (
+    //             <Icon name='comment' size={24} />
+    //         )
+    //     }
+    // },
+    Login:{
+        screen: AuthStack,
+        navigationOptions:{
+            drawerLabel: 'Login',
+            drawerIcon: (
+                <Icon name='sign-in' size={24} />
+            )
+        }
+    },
+    // LogOut:{
+    //     screen: LogOut,
+    //     navigationOptions:{
+    //         drawerLabel: 'SIGN-OUT',
+    //         drawerIcon: (
+    //             <Icon name='sign-out' size={24} />
+    //         )
+    //     }
+    // },
 },{
     initialRoute:Home,
     contentComponent:CustomDrawerContentComponent
@@ -172,6 +225,7 @@ const Sapp=createAppContainer(createSwitchNavigator(
         AuthLoading:AuthLoadingScreen,
         App: MainNavigation,
         Auth: AuthStack,
+        UnAuthorized:UnAuthorized
     },
     {
         initialRouteName: 'AuthLoading',
