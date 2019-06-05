@@ -33,12 +33,13 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        this.props.navigation.navigate('App')
-        // if (this.props.user !== null) {
-        //     this.props.navigation.navigate('App')
-        // }
-        // // else
-        // //     this.props.navigation.navigate('Auth')
+        //this.props.navigation.navigate('App')
+        if (this.props.user !== null) {
+            this.props.navigation.navigate('App')
+        }
+        else {
+            this.props.navigation.navigate('UnAuthorized')
+        }
         // else if (!this.state.netConnected) {
         //    // alert("You are Offline \n Please check your internet connection...");
         //     return ;
@@ -56,7 +57,7 @@ class AuthLoadingScreen extends React.Component {
         //     else
         //         this.props.navigation.navigate('Auth')
         // }
-     }
+    }
 
     _handleConnectivityChange = (isConnected) => {
         if (isConnected == true) {
@@ -64,7 +65,7 @@ class AuthLoadingScreen extends React.Component {
                 netConnected: true,
                 user: Meteor.user(),
             })
-            this._bootstrapAsync();
+           this._bootstrapAsync();
 
         }
         else {
@@ -107,7 +108,7 @@ class AuthLoadingScreen extends React.Component {
           //  this._handleConnectivityChange
         );
     }
-
+con
     // Render any loading content that you like here
     render() {
         // if (this.props.user !== null) {
@@ -117,7 +118,7 @@ class AuthLoadingScreen extends React.Component {
              return ( <View style={styles.container}>
                  <View style={styles.logoContainer}>
                      <Text style={styles.headerText}>You are Offline</Text>
-                     <Text style={styles.subHeaderText} >Please check your internet connection...</Text>
+                     <Text style={styles.signupText} >Please check your internet connection...</Text>
                  </View>
              </View>)
          }
@@ -135,11 +136,11 @@ class AuthLoadingScreen extends React.Component {
         //          this.props.navigation.navigate('Auth')
         //  }
         else {
-            if(this.props.user){
+            if(this.props.user!==null && this.props.user!== undefined){
                 return <MainNavigation/>
             }
             else
-                return (<UnAuthorized/>);
+                return <UnAuthorized/>;
             }
     }
 };
@@ -156,7 +157,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
         padding:25
-    }
+    },
+    signupText: {
+        color: colors.primaryText,
+        fontSize: 16,
+        fontWeight: '700',
+        paddingVertical: 2
+    },
 });
 
 export default createContainer(() => {

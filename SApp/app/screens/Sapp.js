@@ -66,14 +66,14 @@ export const HomeStack = createStackNavigator({
 
 const CustomDrawerContentComponent=(props)=>(
     <Container>
-        <Header style={{height:200,backgroundColor:'white'}}>
+        <Header style={{height:200, backgroundColor: '#094c6b'}}>
             <Body style={{justifyContent:'center',alignItems:'center'}}>
             <Image
                 style={styles.drawerImage}
                 source={require('../images/duser.png')}/>
             </Body>
         </Header>
-        <Content>
+        <Content style={{backgroundColor:colors.appBackground}}>
             <DrawerItems {...props}/>
             {/*<TouchableOpacity style={{marginLeft:17, flexDirection: 'row'}} onPress={()=>{this.handleSignout()}}>*/}
                 {/*<Icon size={25} name='sign-out' style={{fontWeight:'100'}}  ></Icon>*/}

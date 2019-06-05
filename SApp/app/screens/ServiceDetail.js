@@ -8,7 +8,7 @@ import {
     Alert,
     ScrollView,
     StatusBar,
-    Modal
+    Modal, ToastAndroid
 } from 'react-native';
 import {Button, Container, Content, Textarea, Left, Icon,Body} from 'native-base'
 import Meteor, {createContainer} from "react-native-meteor";
@@ -18,6 +18,13 @@ import {Rating, AirbnbRating} from 'react-native-elements';
 import {colors} from "../config/styles";
 import call from "react-native-phone-call";
 import Loading from "../components/Loading/Loading";
+// import RNEsewaSdk from "react-native-esewa-sdk";
+
+import { DeviceEventEmitter } from 'react-native';
+
+import { NativeModules } from 'react-native';
+const { RNEsewaSdk } = NativeModules;
+
 
 class ServiceDetail extends Component {
 
@@ -27,12 +34,19 @@ class ServiceDetail extends Component {
         });
     }
     _callPhone = (number) => {
+      // let res=  this.onEsewaComplete();
+      // alert(res);
+      // console.log(res)
+
+
         const args = {
             number: number, // String value with the number to call
             prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
         }
         call(args).catch(console.error)
     }
+
+
 
     constructor(props) {
         super(props);
@@ -42,19 +56,55 @@ class ServiceDetail extends Component {
             showModal:false,
             comment:'',
         }
+
     }
 
-    handleChat = (id) => {
-        var channel = this.props.getChannel(id);
+    componentDidMount(){
+        // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
+    }
+
+    componentWillUnmount(){
+       // this.handler.unsubscribe()
+    }
+    onEsewaComplete =async() => {
+        const componentName = await RNEsewaSdk.resolveActivity();
+        if (!componentName) {
+            // You could also display a dialog with the link to the app store.
+            throw new Error(`Cannot resolve activity for intent . Did you install the app?`);
+        }
+
+        const response = await RNEsewaSdk.makePayment('1').then(function(response){
+            return response
+        }).catch(function(error) {
+                console.log('There has been a problem with your fetch operation: ' + error.message);
+                // ADD THIS THROW error
+                throw error;
+            });
+
+        // if (response.resultCode !== RNEsewaSdk.OK) {
+        //     throw new Error('Invalid result from child activity.');
+        // }
+        console.log(response.data);
+
+
+        return response.data;
+    };
+
+    handleChat = (Service) => {
+        console.log('service'+Service._id);
+        var channel = this.props.getChannel(Service._id);
         console.log('channel' + channel);
 
             if (channel === null || channel === undefined) {
-                Meteor.call('createChatChannel', {To: id}, (err, result) => {
+                this.setState({isLoading: true});
+                Meteor.call('createChatChannel', Service, (err, result) => {
+                    debugger;
                     if (err) {
                         console.log('err:' + err);
+                        this.setState({isLoading: false});
                     }
                     else {
-                        this.setState({isLoading: true});
+
                         console.log('resss' + result);
                         Meteor.subscribe('get-channel', (ready) => {
                             console.log('ready' + ready);
@@ -76,9 +126,36 @@ class ServiceDetail extends Component {
 
 
     _saveRatting=(id)=>{
-        this.setState({showModal:false});
-        alert(this.state.comment);
+      //  alert(this.state.comment);
         console.log(this.state.comment +this.state.starCount);
+        let rating={
+            count:this.state.starCount,
+            comment:this.state.comment
+        }
+
+        Meteor.call('updateRating',id,rating,(err,res)=>{
+            if (err) {
+                console.log('err:' + err);
+                ToastAndroid.showWithGravityAndOffset(
+                    err.message,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+            }
+            else {
+                console.log('resss' + res);
+                this.setState({showModal:false});
+                ToastAndroid.showWithGravityAndOffset(
+                    "Rating Updated Successfully!",
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+            }
+        })
     }
 
     clickEventListener(){
@@ -152,18 +229,20 @@ class ServiceDetail extends Component {
                                 this._callPhone(Service.contact)
                             }}><Text> Call </Text></Button>
                         </View>
-
+                        {this.props.user ?
+                            <View>
                         <View style={styles.addToCarContainer}>
-                            {this.props.user ?
-                            <Button block success rounded onPress={() => {this.handleChat(Service.createdBy)}} ><Text> Message </Text></Button> : <Text/>}
+                            {Service.createdBy!= null && this.props.user._id != Service.createdBy ?
+                            <Button block success rounded onPress={() => {this.handleChat(Service)}} ><Text> Message </Text></Button> : <Text/>}
                         </View>
                         <View style={styles.addToCarContainer}>
-                            {this.props.user ?
+                            {Service.createdBy!= null && this.props.user._id != Service.createdBy ?
                             <Button style={{marginBottom: 5}} block warning rounded onPress={() => {
                                 this.setState({showModal:true})
                             }}><Text> Rate </Text></Button>
                                 : <Text/>}
                         </View>
+                            </View> : <View/>}
                     </ScrollView>
                 </Content>
                 <View style={{marginTop: 22}}>
@@ -388,14 +467,12 @@ const styles = StyleSheet.create({
 });
 
 export default createContainer(() => {
-    const handle = Meteor.subscribe('details-list');
     Meteor.subscribe('get-channel');
     return {
         detailsReady: true,
-        details: Meteor.collection('details').find() || [],
         getChannel:(id)=>{
             // return Meteor.collection('chatChannels').findOne({users: { "$in" : [id]}});
-            return Meteor.collection('chatChannels').findOne({'otherUser._id':id});
+            return Meteor.collection('chatChannels').findOne({$and:[{'otherUser.serviceId':id},{createdBy:Meteor.userId()}]});
         },
         user: Meteor.user()
     };

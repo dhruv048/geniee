@@ -111,7 +111,8 @@ class Chat extends Component {
                     barStyle='light-content'
                 />
                 <CustomHeader
-                    centerComponent={{text:channel.createdBy===this.props.user._id ? channel.otherUser.name : channel.createUser.name,style:{color:'white'}}}
+                   // centerComponent={{text:channel.createdBy===this.props.user._id ? channel.otherUser.name : channel.createUser.name,style:{color:'white'}}}
+                    centerComponent={{text:channel.otherUser.title}}
                     leftComponent={ <Icon color='white' size={30} name="arrow-left" onPress={() => {
                         this.props.navigation.navigate('ChatList')}}></Icon>}
                 />
