@@ -34,6 +34,7 @@ Meteor.methods({
                                 categoryId: CategoryId,
                                 createdAt: new Date(),
                                 createdBy: currentUserId,
+                                ratings:[{count:0}],
                             });
 
                             return res;
@@ -159,6 +160,25 @@ Meteor.methods({
         }
         catch (e) {
             console.log('from search'+e.message)
+        }
+    },
+
+    'updateRating':function (Id,rating) {
+        try{
+            let user=Meteor.user();
+            rating.ratedBy={_id:Meteor.userId(),name:user.profile.name, coverImage:user.profile.profileImage};
+            rating.rateDate= new Date();
+            let Ratings = Service.findOne({_id:Id}).ratings;
+            Ratings.push(rating);
+            Service.update({_id: Id}, {
+                $set: {
+                    ratings: Ratings
+                }
+            });
+        }
+        catch (err) {
+            console.log(err.message);
+            throw new Meteor.Error(403, err.message)
         }
     }
 })

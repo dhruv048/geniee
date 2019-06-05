@@ -153,6 +153,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-esewa-sdk')
     implementation project(':react-native-maps')
     implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-image-crop-picker')

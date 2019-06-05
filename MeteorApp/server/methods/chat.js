@@ -31,25 +31,25 @@ Meteor.methods({
         }
     },
 
-    'createChatChannel':(Id,Service)=>{
+    'createChatChannel':(Service)=>{
         try{
             var user = Meteor.user();
-            console.log(user)
+           // console.log(Service)
            // var otherUserName=user.profile.role===0?Category.findOne({_id:Channel.To}).name : Meteor.users.findOne({_id:Channel.To}).profile.name;
-            var otherUser=Meteor.users.findOne({_id:Id});
-            var users=[Id,user._id]
+            var otherUser=Meteor.users.findOne({_id:Service.createdBy});
+            var users=[Service.createdBy,user._id]
           return  ChatChannel.insert({
               users:users,
               createdAt: new Date(),
               isActive:true,
               createdBy:user._id,
               createUser:{_id:user._id,name:user.profile.name,newMessage:0,contact:user.profile.contactNo},
-              otherUser:{_id:Id, name:otherUser.profile.name, title:Service.title,newMessage:0}
+              otherUser:{_id:otherUser._id, name:otherUser.profile.name, title:Service.title,newMessage:0,serviceId:Service._id}
           });
         }
         catch (e) {
             console.log(e.message);
-            // throw new Meteor.Error(403,e.message)
+             throw new Meteor.Error(403,e.message)
 
         }
     },
