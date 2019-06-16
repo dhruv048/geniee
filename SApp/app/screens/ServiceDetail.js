@@ -23,7 +23,7 @@ import Loading from "../components/Loading/Loading";
 import { DeviceEventEmitter } from 'react-native';
 
 import { NativeModules } from 'react-native';
-const { RNEsewaSdk } = NativeModules;
+//const { RNEsewaSdk } = NativeModules;
 
 
 class ServiceDetail extends Component {

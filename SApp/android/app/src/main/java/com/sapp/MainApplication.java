@@ -3,7 +3,6 @@ package com.sapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.roshan.esewa.RNEsewaSdkPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -31,7 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-            new RNEsewaSdkPackage(),
                     new MapsPackage(),
                     new NetInfoPackage(),
                     new PickerPackage(),
