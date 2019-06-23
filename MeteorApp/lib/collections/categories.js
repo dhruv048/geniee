@@ -4,6 +4,8 @@ import {Mongo} from 'meteor/mongo';
 
 Count = new Mongo.Collection('count');
 Categories = new  Mongo.Collection('categories');
+
+MainCategories= new Mongo.Collection('MainCategories');
 // Categories.schema== new SimpleSchema({
 //     name: {type: String},
 //     incompleteCount: {type: Number, defaultValue: 0},

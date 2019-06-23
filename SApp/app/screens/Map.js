@@ -72,7 +72,7 @@ class Map extends Component {
        // this.setState({ region:region });
     }
     render(){
-        console.log(height,width,this.props.markers[0])
+   //     console.log(height,width,this.props.markers[0])
         return(
             <View >
                     <MapView
@@ -94,7 +94,7 @@ class Map extends Component {
                                 key={i}
                                 coordinate={marker.latlng}
                                 title={marker.title}
-                                description={marker.description}
+                                description={marker.contact}
                             />
                         ))}
                     </MapView>

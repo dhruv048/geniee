@@ -32,4 +32,74 @@ Meteor.startup(function () {
         }
         )
     }
+
+    if(MainCategories.find().count()===0){
+
+        CSV.readCsvFileLineByLine(process.env.PWD + '/imports/categories.csv', {
+            headers: true,
+            delimiter: ";",
+        }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
+            // console.log(line);
+            line.subCategories=[];
+            MainCategories.insert(line);
+
+        }));
+        MainCategories.insert({ catId: '0', mainCategory: 'Others', subCategories:[] });
+        MainCategories.insert({ catId: '19', mainCategory: 'Emergency', subCategories:[] });
+    }
+    else{
+        CSV.readCsvFileLineByLine(process.env.PWD + '/imports/subcategories.csv', {
+            headers: true,
+            delimiter: ",",
+        }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
+            console.log(line);
+            var data={
+                subCatId:line.subCatId,
+                subCategory:line.subCategory
+            }
+            MainCategories.update({catId:line.parentId
+            },{
+                $addToSet:{subCategories:data}
+            })
+        }));
+    }
+
+    if(Service.find().count()<100){
+        CSV.readCsvFileLineByLine(process.env.PWD + '/imports/services.csv', {
+            headers: true,
+            delimiter: ",",
+        }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
+            console.log(line);
+            var data={
+                title : line.title,
+                description : line.description,
+                contact : line.contact,
+                contact1:line.phone1,
+                fax:line.fax,
+                email:line.email,
+                pobox:line.pobox,
+                isPaid : line.isPaid,
+                location : {
+                    formatted_address :  line.add1+', '+line.city+', '+line.add2,
+                    geometry : (line.lat!=null && line.lat !="NULL" && line.lat!=undefined && line.lat!='')? {
+                        location : {
+                            lat :parseFloat(line.lat),
+                            lng :parseFloat(line.lng)
+                        },
+                    } : null,
+                    website : line.webpage
+                },
+                radius : null,
+                coverImage : null,
+                homeDelivery : false,
+                categoryId : line.subCatId,
+                createdAt : new Date(),
+                createdBy : null,
+                ratings : [{count : 0}],
+                website : line.webpage,
+            };
+            Service.insert(data);
+        }));
+    }
+
 });

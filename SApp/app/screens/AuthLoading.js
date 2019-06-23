@@ -79,6 +79,7 @@ class AuthLoadingScreen extends React.Component {
 
     componentDidMount() {
         Meteor.connect(settings.METEOR_URL);
+        Meteor.subscribe('categories-list');
         NetInfo.isConnected.addEventListener(
             'connectionChange', this._handleConnectivityChange
         );

@@ -62,6 +62,7 @@ class Home extends Component {
             latitude: 27.700769,
             longitude: 85.300140,
         };
+
     }
 
     componentDidMount() {
@@ -104,12 +105,12 @@ class Home extends Component {
     componentWillMount() {
         this.mounted = true;
         // this._fetchMarkers()
-        Meteor.subscribe('categories-list', () => {
+        // Meteor.subscribe('categories-list', () => {
             this.setState({
                 data: Meteor.collection('service').find()
             })
             this.arrayholder = Meteor.collection('service').find();
-        })
+        // })
 
 
     }
@@ -177,7 +178,7 @@ class Home extends Component {
     _fetchMarkers = () => {
         let markers = [];
         this.state.data.map(item => {
-            if (item.location.hasOwnProperty('geometry')) {
+            if (item.location.hasOwnProperty('geometry') && item.location.geometry) {
                 let latlang = item.location.geometry.location;
                 console.log('item:' + latlang)
                 markers.push({
@@ -190,12 +191,14 @@ class Home extends Component {
                     description: item.description
                 })
             }
+            else{
+              console.log(item)
+            }
         })
-        console.log('markers:' + markers)
         // this.setState({
         //     markers
         // })
-        console.log('state.markers:' + this.state.markers)
+        // console.log('state.markers:' + this.state.markers)
         return markers
     }
 

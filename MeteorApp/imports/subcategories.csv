@@ -1,0 +1,582 @@
+subCatId,subCategory,parentId
+1,"Agriculture & Handicraft",0
+2,"Art & Entertainment",0
+3,"Automobile & Transportation",0
+4,"Banks & Financial",0
+5,"Service & Maintenance",0
+6,"Organization & Clubs",0
+7,"Education & Training",0
+8,"Electric & Electronics",0
+9,"Food & Restaurant",0
+10,"Doctors & Medicals",0
+11,"Hospitality & Tourism",0
+12,"Industrial & Construction",0
+13,"News & Events",0
+14,"Business & Trading",0
+101,Acupressure,10
+102,Adhesives,5
+103,"Advertising Agencies",14
+104,"Advertising- Internet",14
+105,"Advertising- Promotions",14
+106,"Agent & Authorised Dealers",5
+107,"Agricultural Equipment & Implements",1
+108,"Agricultural Seed Testing & Equipment Suppliers",1
+109,"Air Compressors",8
+110,"Air Condition Sales & Repair",8
+111,Airlines,5
+112,Airport,6
+113,"Aluminium & Products",5
+114,"Animal Feed",1
+115,"Animal Training Centers",1
+116,"Apartment- Hotel",11
+117,Aquariums,1
+118,"Art Galleries",2
+119,"Artist Material",2
+120,"Artists- Commercial",2
+121,"Associations & Clubs",6
+122,"Astrological Centers / Vastu Shastri",2
+123,"Audio & Video Cassettes Manufacturers",2
+124,"Audio & Video Recording Studios",2
+125,"Audio & Visual Equipment",2
+126,Auditors,14
+127,"Automobile Dealers",3
+128,"Automobile Repair & Services",3
+129,"Automobile Spareparts & Accessories",3
+130,"Automobiles- Body Dents/Paints",3
+131,Awning,5
+132,"Ayurvedic Clinics",10
+133,"Ayurvedic Products",10
+134,"Baby Articles",5
+135,"Baby Foods & Products",9
+136,"Badges & Caps",5
+137,"Bags & Wrappers",5
+138,Bakeries,9
+139,"Balance Equipment",8
+140,"Banking Equipment Suppliers",4
+141,Banks,4
+142,Barcode,5
+143,"Barracks- Army",6
+144,"Barter System",14
+145,"Bathroom Fixtures",5
+146,Batteries,8
+147,"Battery Charging Equipment",8
+148,Beads,1
+149,Bearings,5
+150,"Beauty Parlours",14
+151,"Bee Keeping Farms",1
+152,Beverages,9
+153,"Bicycles & Mountain Bike Sales & Repair",3
+154,Biscuits,9
+155,Bitumen,5
+156,Boiler,5
+157,"Book Dealers",5
+158,"Book Publishers",5
+159,"Book Shops",5
+160,"Drilling & Boring Companies",5
+161,"Drilling & Boring Equipment",5
+162,Boutiques,14
+163,Brassware,1
+164,Breweries,9
+165,"Bricks & Tiles",5
+166,Briquettes,5
+167,Bristles,5
+168,"Broadcasting- Radio Stations",13
+169,"Broadcasting- Television",13
+170,"Buddhist Institute",6
+171,"Bus Services",14
+172,"Business Management",5
+173,"Cable Car/Ropeway",14
+174,"Cables & Accessories",8
+175,"Camera Sales & Services",8
+176,Candles,1
+177,Cardamom,1
+178,"Cargo Services",14
+179,"Carpet Manufacturers & Exporters",1
+180,Casino,2
+181,"Catering Services",14
+182,Cement,12
+183,"Chambers of Commerce & Industry",6
+184,"Chartered Accountancy & Education",7
+185,"Chartered Accountant-Regulating Body",7
+186,"Chartered Accountants",14
+187,"Chemicals- Food",9
+188,"Chemicals Products",12
+189,"Chemicals- Raw",12
+190,"Cinema Halls",2
+191,Clinics,10
+192,"Coaching Centers",7
+193,Coal,12
+194,"Coffee Producer",1
+195,"Cold Stores",5
+196,Colleges,7
+197,"Color Lab Goods & Equipment",5
+198,"Color Labs",14
+199,"Color Scanning and Pre-press",14
+200,"Communication Centers",14
+201,"Communication Media",14
+202,"Computer- Accessories & Dealers",8
+203,"Computer- Consultants",14
+204,"Computer Network Solutions",14
+205,"Computer- Software Development",14
+206,"Computer- Training",7
+207,"Concrete Products",12
+208,Confectionery,12
+209,"Conferences, Exhibitions & Seminars Facilities",13
+210,"Construction Companies",12
+211,"Construction Equipment Sales",12
+212,"Construction Material Suppliers",12
+213,"Consulates & Embassies",6
+214,"Consultancies- Agricultural",14
+215,"Consultancies- Aviation",14
+216,"Consultancies- Commercial",14
+217,"Consultancies- Construction",14
+218,"Consultancies- D.V. Programme",14
+219,"Education Consultancies",7
+220,"Consultancies- Environment",14
+221,"Consultancies- Hospital",14
+222,"Consultancies- Industrial",14
+223,"Consultancies- Landscape",14
+224,"Consultancies- Management, Marketing & Research",14
+225,"Consultancies- Others",14
+226,Contraceptives,10
+227,"Copper Products",12
+228,Cosmetics,10
+229,"Courier Services",14
+230,"Credit Cards",4
+231,"CTEVT Affiliated Institutions",6
+232,"Cultural Groups",2
+233,"Curio Shops",1
+234,"Custom Clearing Agency",14
+235,"Cyber Cafes",14
+236,"Dairy Machinery",12
+237,"Dairy Products",9
+238,"Dental Clinics",10
+239,"Departments/Ministries- Nepal Government",6
+240,"Directory Publishers",14
+241,Disco,2
+242,Distilleries/Wines,12
+243,"Doctors- Acupuncture",10
+244,"Doctors- Anaesthesia",10
+245,"Doctors- Anatomy",10
+246,"Doctors- Ayurvedic",10
+247,"Doctors- Cardiology",10
+248,"Doctors- Cardio-Thorocic Surgery",10
+249,"Doctors- Chest Diseases",10
+250,"Doctors- Community Medicine",10
+251,"Doctors- Dentistry",10
+252,"Doctors- Dermatology",10
+253,"Doctors- ENT",10
+254,"Doctors- Epidemiology",10
+255,"Doctors- Family Planning",10
+256,"Doctors- Gastroentomology",10
+257,"Doctors- General",10
+258,"Doctors- Gynaecology & Obst.",10
+259,"Doctors- Homeopathy",10
+260,"Doctors- Manokranti Therapy",10
+261,"Doctors- Maternal Child Health",10
+262,"Doctors- Medicine",10
+263,"Doctors- Microbiology",10
+264,"Doctors- Naturopathy",10
+265,"Doctors- Nephrologist",10
+266,"Doctors- Neurology",10
+267,"Doctors- Occupational Medicine",10
+268,"Doctors- Ophthalmology",10
+269,"Doctors- Orthopaedics",10
+270,"Doctors- Paediatrics & Surgery",10
+271,"Doctors- Pathology",10
+272,"Doctors- Pediatrician/Pediatric Cardiologist",10
+273,"Doctors- Physiotherapist",10
+274,"Doctors- Plastic Surgery",10
+275,"Doctors- Psychiatry",10
+276,"Doctors- Public Health",10
+277,"Doctors- Radiology",10
+278,"Doctors- Sexology & Sexopsychology",10
+279,"Doctors- Surgery",10
+280,"Doctors- Ultrasound",10
+281,"Doctors- Urology",10
+282,"Doctors- Venereology",10
+283,"Doctors- Veterinary",10
+284,"Doctors- Yoga Therapy",10
+285,"Driving Institutes",7
+286,"Dry Cleaners",14
+287,"Dyeing Industries",12
+288,"Dyes & Chemicals",12
+289,"Edible Oil & Ghee",9
+290,"Educational Materials",7
+291,"Electrical Accessories/Equipment Sales & Repair",8
+292,"Electrical Cable Manufacturers",12
+293,"Electrical Fabrication",8
+294,"Electrical Goods Manufacturers",12
+295,"Electrical Vehicles",3
+296,"Electronic Components",8
+297,"Electronic Dealers",8
+298,"Electronic Products/Equipment Sales & Repair",8
+299,"Electronic Security Sollution",8
+300,Elevators,5
+301,Embroidery,14
+302,"Engineering- Architects",14
+303,"Engineering- Civil",14
+304,"Engineering- Consultancy",14
+305,"Engineering- Electric & Electronics",14
+306,"Engineering- Equipment & Suppliers",14
+307,"Engineering- Hydro",14
+308,"Engineering- Mechanical",14
+309,"Engineering- Structural",14
+310,"Essential Oil",9
+311,"Event Management & Promotion Agency",13
+312,Fertilizers,1
+313,"Fibre Glass & Products",5
+314,"Film Distributors",2
+315,"Film Post- Production Studio",2
+316,"Film Producers",2
+317,"Financial Cooperatives",4
+318,"Financial Institutions",4
+319,"Fire Protection Systems",5
+320,"Flex Printing",14
+321,"Flooring & Furnishing",5
+322,"Flour & Mills",1
+323,"Foams & Dunlops",5
+324,"Food Products",9
+325,"Foreign News Agencies",13
+326,"Funeral Vehicles",14
+327,Furniture,5
+328,"Furniture- Cane",5
+329,"Furniture- Metal",5
+330,"Furniture- Steel",5
+331,"Furniture- Wooden",5
+332,"G.I. Wire/Copper & Brass Sheets",12
+333,"Galvanized Sheets",12
+334,"Garment Machinery",8
+335,Garments,5
+336,Gas,12
+337,"Generators & Parts, Sales & Repair",5
+338,"Geotechnical Laboratory",14
+339,"Gifts & Novelties",2
+340,"Glass Etching",14
+341,"Glasses & Glassware",5
+342,"Golf Courses",2
+343,"Graphic Designers",14
+344,"Guest Houses, Lodges & Inns",11
+345,"Hair Color",14
+346,"Hair Replacement Systems",14
+347,"Hair Saloon",14
+348,"Hand Tools",8
+349,Handicrafts,1
+350,"Handicrafts- Bones & Horns",1
+351,"Handicrafts- Ceramics",1
+352,"Handicrafts- Dolls",1
+353,"Handicrafts- Felt",1
+354,"Handicrafts- Khukuri",1
+355,"Handicrafts- Knitwear",1
+356,"Handicrafts- Metal Statues",1
+357,"Handicrafts- Paper",1
+358,"Handicrafts- Prayer Flags",1
+359,"Handicrafts- Silver Jewelleries",1
+360,"Handicrafts- Stone Carving",1
+361,"Handicrafts- Thanka",1
+362,"Handicrafts- Wooden",1
+363,"Handicrafts- Woolen",1
+364,Handlooms,1
+365,"Hardware & Sanitaryware",5
+366,"Hat Shops",1
+367,"Health Clubs",10
+368,"Health Clubs Equipment & Suppliers",5
+369,"Heavy Equipment/Sales & Service",12
+370,"Helicopter Services",11
+371,Herbs,1
+372,"Hides & Skins",5
+373,"Hire- Audio & Video",14
+374,"Hire- Bicycles & Motorcycles",14
+375,"Hire- Vehicles",14
+376,Holograms,5
+377,"Home Delivery Services",14
+378,"Hosiery & Machinery",12
+379,"Hospital Equipment & Suppliers",5
+380,"Hospital Equipment Repair",14
+381,Hospitals,10
+382,Hostels,14
+383,"Hot Air Balloon",11
+384,"Hotel Equipment & Supplies",11
+385,Hotels,11
+386,"Hotline Counselling",14
+387,"Household Commodities",14
+388,"Housing Companies",12
+389,"Hydrology-Meteorology Equipment",12
+390,"Ice Cubes",5
+391,Ice-cream,9
+392,"Immigration Offices",6
+393,Incense,1
+394,"Industrial Estates",12
+395,"Industrial Instruments",12
+396,"Industrial Raw Materials",12
+397,"Installment Purchase",14
+398,"Insurance Companies",5
+399,"Insurance Surveyors",14
+400,"Interior Decorators",5
+401,"International Trade Fair",13
+402,"Internet Service Providers",14
+403,"Iron & Steel",12
+404,"Jewelleries & Gems",5
+405,Jute,1
+406,"Kitchenware / Kitchen Equipments",8
+407,"Lab Test Services",14
+408,Labels,5
+409,"Laboratory Instruments & Accessories",5
+410,"Lamination Services",14
+411,"Lamps, Lights & Luminaries",8
+412,"Laundry Equipment & Suppliers",5
+413,"Lawyers & Law Firms",14
+414,"Leather Goods",1
+415,Libraries,6
+416,Locksmiths,5
+417,Lubricants,3
+418,Luggages,5
+419,"Machinery & Tools",12
+420,Marble,12
+421,"Massage Parlours",14
+422,"Match Industries",12
+423,"Mattresses & Pillows",5
+424,"Meat Products",9
+425,"Medical & Surgical Appliances",10
+426,"Medical Disposable & Surgical Appliances",10
+427,"Medical Shops",10
+428,"Medicine Distributors",10
+429,"Merchant Exporter",5
+430,"Metal Works",5
+431,"Mineral Water",9
+432,Minerals,12
+433,Mirror,5
+434,"Mobile Sales & Repair",8
+435,"Model Agencies",7
+436,"Money Changers",4
+437,"Money Transfer",4
+438,"Mosquito Mat Manufacturer",12
+439,"Motorcycle Repair",3
+440,"Motorcycles, Mopeds & Scooters Sales",3
+441,Municipalities,6
+442,Museums,6
+443,"Musical Instruments/Band Baja",2
+444,"National Parks",6
+445,"Neon Signs",14
+446,"Newspapers & Magazine Distributors",13
+447,"Newspapers, Magazine & Periodicals",13
+448,"Niger Seeds",1
+449,Noodles,9
+450,Nurseries,1
+451,"Nursing Homes",10
+452,"Office Equipment",5
+453,"Online Shopping",5
+454,Opticians,5
+455,"Organic Farming",1
+456,"Orthopaedic Appliances",5
+457,"Overseas Employment Agencies",14
+458,"Oxygen Gas",12
+459,"Packaging Industries",12
+460,"Packaging Machinery",12
+461,"Packaging Materials",12
+462,"Packers & Movers",14
+463,"Painting Building",14
+464,"Paints Manufacturers & Dealers",12
+465,"Paper Products",12
+466,"Paper Shredders",12
+467,Paragliding,11
+468,Parquet,5
+469,Pashmina,1
+470,"PCR Reagents & Diagnostic Equipment",10
+471,"Pen Industry",12
+472,"Pest Control Service",14
+473,"Pet Bottles",5
+474,"Petrol Stations",14
+475,"Pharmaceutical Machinery",10
+476,Pharmaceuticals,10
+477,Philatelics,2
+478,"Photo Copy Machines & Centers",14
+479,"Photo Copy Machines & Centers- Color",14
+480,"Photo Studios",14
+481,"Photography & Videography",14
+482,"Pipes & Fittings",12
+483,"Pipes- HDPE",12
+484,"Pipes- Hume",12
+485,"Pipes- Metal",12
+486,"Pipes- Polythene",12
+487,"Pipes- PVC",12
+488,"Plastic Products",12
+489,"Plastic Wood",12
+490,"Plywood Shops",5
+491,"Police Stations",6
+492,"Political Parties",6
+493,"Postal Services",14
+494,"Poultry & Hatchery",1
+495,"Printers- Offset",14
+496,"Printers- Plastic",14
+497,"Printers- Silk Screen",14
+498,"Printing Machines, Materials & Suppliers",8
+499,"Project Promotion & Development",14
+500,"Public Utility Organizations",6
+501,Pulses,1
+502,"PVC Card",14
+503,"PVC Compound",12
+504,"PVC Films",12
+505,"PVC Products",12
+506,"Quality & Environment",5
+507,"Radio Sales & Repair",8
+508,"Rafting Agencies",11
+509,"Real Estate Agencies/Developers",12
+510,"Recondition Houses",3
+511,"Entertainment Centers",11
+512,"Recruitment & Placement Agencies",14
+513,"Refrigerator Sales & Repair",5
+514,"Rental Services",14
+515,"Research Centers",7
+516,"Resorts, Safaris & Jungle Lodges",11
+517,Restaurants,9
+518,Rice,1
+519,"Rice Mill Machinery & Tools",12
+520,"Road Carriers- Goods",14
+521,"Rolling Mills",12
+522,"Rolling Shutters",12
+523,"Rubber & Rubber Products",12
+524,"Rubber Stamps",14
+525,Rugs,5
+526,"Saree Shops",5
+527,"Satellite & TV Networks",13
+528,"Saw Mills",1
+529,"School Uniforms",7
+530,"Schools & Higher Secondary Schools",7
+531,"Scientific Instruments",4
+532,"Securities Market",14
+533,"Security Services",5
+534,"Security Systems / Automation",5
+535,"Sewing Machines",5
+536,"Shield & Trophies",7
+537,"Shipping Companies",14
+538,Shoes,5
+539,"Shopping Centers/Shopping Complex",5
+540,"Silk & Exporters",1
+541,Snooker,2
+542,"Soaps & Detergents",5
+543,"Social Marketing Organization",6
+544,"Social Service Organizations",6
+545,"Soil Test Equipment",12
+546,"Soil Test Laboratories",12
+547,"Solar Electricity",12
+548,"Solar Energy Equipment & Works",12
+549,"Solar Photovoltaic Manufacturers",12
+550,"Solar Water Heater",12
+551,"Sound & Light Equipment",8
+552,Spices,9
+553,"Sports Goods",2
+554,Stationery,5
+555,"Steel Fabricator",5
+556,"Stone Crusher / Propel Crusher Wash Plant",12
+557,"Stove & Petromax",5
+558,"Sugar Manufacturers",12
+559,"Supreme Court",6
+560,"Sweet Shops",9
+561,"Swimming Pools",2
+562,"Tailor Shops",14
+563,"Taxi Services",14
+564,Tea,12
+565,"Telephone, EPABX & Accessories",8
+566,"Television Assembling, Dealers & Distributors, Sales & Repair",8
+567,"Television Program Production",8
+568,"Tent & Tarpaulin",14
+569,Textiles,12
+570,"Texture Coating",5
+571,Tobacco,1
+572,"Tooth Products",5
+573,"Tourist Information Center",11
+574,Toys,2
+575,"Tractor Sales & Repair",3
+576,"Trading Houses",5
+577,"Training- Accounting",7
+578,"Training- Beauty Parlours",7
+579,"Electric & Electronics Training",7
+580,"Training- Film, TV & Theatre",7
+581,"Training- Hotel & Hospitality",7
+582,"Training- Languages",7
+583,"Training- Management & Marketing",7
+584,"Training- Martial Arts/Army",7
+585,"Training- Medical",7
+586,"Training- Mobile Repairing & Servicing",7
+587,"Training- Music & Dance",7
+588,"Training- Banking/Others",7
+589,"Training- Overseas Orientation",7
+590,"Training- Photography & Videography",7
+591,"Training- Pilot/Air Hostess",7
+592,"Training- Polytechnic",7
+593,"Training- Secretarial",7
+594,Transformers,8
+595,Translation,14
+596,"Travel Agencies",11
+597,"Trekking & Mountaineering Equipment",11
+598,"Trekking Agencies",11
+599,Turpentine,5
+600,"Tyres & Tubes",3
+601,"UPS & Inverters",8
+602,"Veterinary Clinics",10
+603,"Veterinary Medicine Shops",10
+604,"Video Film Makers & Distributors",2
+605,"Washing Machines Sales & Repair",5
+606,"Watches & Clocks Sales & Repair",5
+607,"Water Analysis Services",14
+608,"Water Meter",5
+609,"Water Proofing Materials",5
+610,"Water Pumps",5
+611,"Water Purifiers",5
+612,"Water Suppliers",5
+613,"Water Tanks Manufacturers & Sales",12
+614,"Water Treatment Plant & Services",12
+615,"Web Design/Development",14
+616,"Web Hosting",14
+617,"Wedding Planner",5
+618,"Weighing Machines & Equipment",10
+619,"Welding Equipment, Electrodes & Accessories",12
+620,"Wire Drawing Equipment",12
+621,Wool,1
+622,"Worship Places",6
+623,"X- Ray Chemicals",12
+624,"Yarns & Threads",1
+625,"Yoga Centers",10
+626,"Zip Fastener",5
+627,Zoo,2
+628,"Autogas Station",3
+629,"Montessori School",7
+631,"Consultancies- Hydropower",14
+633,"Commodity Market",5
+634,"Importers & Exporters",5
+635,"Survey Instruments",5
+636,"Digital Print",14
+637,"Mehendi Training Center",14
+638,"Sewarage Treatment Plants- Supply & Services",14
+639,"Home Care",10
+640,"Repair & Maintenance",14
+641,"Tattoo & Piercing",2
+642,"Prefab Products",12
+643,Futsal,2
+644,"Event Decorator",14
+645,"Tea & Coffee Machinery",5
+647,"Master Batches",5
+648,"Spa & Sauna",14
+649,"Party Palace",14
+650,"Clothing Store",14
+654,"Montessori Materials",7
+655,"Capital Market",14
+656,"UPVC Profiles",14
+657,"Restaurant Supply",9
+658,"Cleaning Product/Service",5
+659,"Online Business/Payment",14
+660,"False Ceiling",14
+663,"Hire Services",14
+664,"Fire & Safety",5
+666,Handicrafts-Consultancy,1
+667,Church,622
+668,"Pesticides & Chemical Purifier",5
+672,"Doctors- Hematology",10
+673,"Urgent",19
+674,"Ambulance",19
+675,"Blood Bank",19
+676,"No Light",19
+677,"Funeral Vehicle",19
+678,"Funeral Materials",19
+679,"Night Taxi",19
