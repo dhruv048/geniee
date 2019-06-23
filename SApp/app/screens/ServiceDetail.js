@@ -191,11 +191,15 @@ class ServiceDetail extends Component {
                             {Service.location.hasOwnProperty('formatted_address') ?
                                 <Text style={styles.availableText}>{Service.location.formatted_address}</Text> :
                                 <Text style={styles.unavailableText}>{'Address Unavailable!'}</Text>}
-                            {Service.location.hasOwnProperty('formatted_address') ?
+                            {(Service.hasOwnProperty('radius') && Service.radius>0) ?
                                 <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
                                     Address.</Text> : <Text/>}
                             <Text style={styles.description}>
                                 {Service.description}
+                            </Text>
+
+                            <Text >
+                               Contact: {Service.contact}
                             </Text>
                         </View>
                         <View style={styles.starContainer}>
