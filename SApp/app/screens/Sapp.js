@@ -17,6 +17,16 @@ import SignIn from "./SignIn";
 import Register from "./Register";
 import AuthLoadingScreen from "./AuthLoading";
 
+//import Splash from '../screens/Splash';
+
+//export const SplashStack = createStackNavigator({
+    //Splash: {
+        //screen: Splash,
+    //}
+//}, {
+    //headerMode: 'none',
+//});
+
 export const AuthStack = createStackNavigator({
     SignIn: {
         screen: SignIn,
@@ -223,12 +233,16 @@ const styles = StyleSheet.create({
 const Sapp=createAppContainer(createSwitchNavigator(
     {
         AuthLoading:AuthLoadingScreen,
+        //Splash: {
+            //screen: SplashStack,
+        //},
         App: MainNavigation,
         Auth: AuthStack,
         UnAuthorized:UnAuthorized
     },
     {
         initialRouteName: 'AuthLoading',
+        //initialRoute:Splash,
     }));
 export  default (Sapp);
 
