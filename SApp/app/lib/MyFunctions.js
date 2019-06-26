@@ -31,7 +31,9 @@ export const MyFunctions = {
             else
                 return false
         }
-    }
+    },
+
+
 };
 export default MyFunctions;
 

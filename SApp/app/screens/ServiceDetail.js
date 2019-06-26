@@ -199,17 +199,17 @@ class ServiceDetail extends Component {
                             </Text>
 
                             <Text >
-                               Contact: {Service.contact}
+                               Contact: {Service.contact1} {Service.contact}
+                            </Text>
+                            <Text >
+                                {Service.contact}
                             </Text>
                         </View>
                         <View style={styles.starContainer}>
-                            <AirbnbRating
-                                reviews={['Terrible', 'Bad', 'Okay', 'Good', 'Great']}
-                                count={5}
-                                defaultRating={this.state.starCount}
-                                size={20}
-                                showRating={false}
-                                readOnly={true}
+                            <Rating
+                                imageSize={20}
+                                readonly
+                                startingValue={Service.avgRate}
 
                             />
                         </View>

@@ -64,19 +64,21 @@ class Home extends Component {
             latitude: 27.700769,
             longitude: 85.300140,
         };
+        this.limit=0;
 
     }
 
-    componentDidMount() {
-        SplashScreen.hide();
-        
-        // Meteor.subscribe('categories-list',()=>{
-        //     // this.setState({
-        //     //     data:Meteor.collection('service').find()
-        //     // })
-        //     // this.arrayholder=Meteor.collection('service').find();
-        // })
+    loadData=()=>{
+        alert(this.props.categories.length)
+        this.setState({
+            data:Meteor.collection('service').find({},{limit:30})
+        })
+        this.arrayholder=Meteor.collection('service').find();
+    }
 
+    componentDidMount() {
+      //  this.loadData();
+        SplashScreen.hide();
         const granted = PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
@@ -107,13 +109,14 @@ class Home extends Component {
     }
 
     componentWillMount() {
+
         this.mounted = true;
         // this._fetchMarkers()
         // Meteor.subscribe('categories-list', () => {
-            this.setState({
-                data: Meteor.collection('service').find()
-            })
-            this.arrayholder = Meteor.collection('service').find();
+        //     this.setState({
+        //         data: Meteor.collection('service').find()
+        //     })
+        //     this.arrayholder = Meteor.collection('service').find();
         // })
 
 
@@ -133,6 +136,7 @@ class Home extends Component {
     }
 
     _handlItemPress = (service) => {
+        service.avgRate=this.averageRating(service.ratings);
         this.props.navigation.navigate('Service', {'Service': service});
     }
 
@@ -162,7 +166,7 @@ class Home extends Component {
                     {/*</Right>*/}
 
                     <Right>
-                         <Text style={{fontSize:25, fontWeight:'400'}}><Icon name={'star'} style={{color:'#094c6b'}}/> : {rowData.hasOwnProperty('ratings')? this.averageRating(rowData.ratings) : 0}</Text>
+                         <Text style={{fontSize:25, fontWeight:'400'}}><Icon name={'star'} style={{color:'#094c6b'}}/> : {rowData.hasOwnProperty('ratings')? this.averageRating(rowData.ratings): 0}</Text>
                     </Right>
 
                 </ListItem>
@@ -211,6 +215,8 @@ class Home extends Component {
             <List style={styles.contentList}
                   dataArray={this.state.data}
                   renderRow={this._getListItem}>
+                  onEndReached={() => this.loadData()}
+                  onEndReachedThreshold={0.1}
             </List>
         )
         switch (this.state.selectedTab) {
@@ -235,10 +241,25 @@ class Home extends Component {
                     data: this.props.categories,
                 });
                 this.arrayholder = this.props.categories;
-                this._search(this.state.currentSearch)
+                this._search(this.state.currentSearch);
                 break;
+
             case 'starred':
+                const newDat=this.props.categories;
+               let latest= newDat.sort((a,b)=>{
+                    return (this.averageRating( b.ratings)-this.averageRating(a.ratings));
+                });
+                alert(latest[1]._id);
+                this.setState({
+                    data:[]
+                });
+                this.setState({
+                    data:latest
+                });
+                this.arrayholder =latest;
+                this._search(this.state.currentSearch);
                 break;
+
             case 'myLocation':
                 const newData = this.arrayholder.filter(item => {
                     if (item.location.hasOwnProperty('geometry')) {
@@ -262,7 +283,7 @@ class Home extends Component {
             sum = sum + item.count;
         })
         var avg = sum / arr.length;
-        return avg;
+        return Math.round(avg);
     }
 
     _search = (text) => {
@@ -327,7 +348,6 @@ class Home extends Component {
     };
 
     render() {
-
 
         return (
             <Container style={{backgroundColor: colors.appBackground}}>
@@ -476,8 +496,8 @@ class Home extends Component {
     });
 
     export default createContainer(() => {
-        //Meteor.subscribe('categories-list');
+        Meteor.subscribe('categories-list');
         return {
-        categories: Meteor.collection('service').find()
+        categories: Meteor.collection('service').find({},{limit:100})
     }
     }, Home);

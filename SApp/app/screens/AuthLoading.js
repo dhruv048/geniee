@@ -6,12 +6,13 @@ import settings from '../config/settings'
 import {colors} from "../config/styles";
 import {StyleSheet, View,Text} from 'react-native';
 import {UnAuthorized,MainNavigation} from "./Sapp";
-
+import {initializeMeteorOffline} from "../lib/groundMeteor";
 try {
     Meteor.connect(settings.METEOR_URL);
+    initializeMeteorOffline({ log: true });
 }
-catch(e){
-    console.log("error"+e)
+catch (e) {
+    console.log("error" + e)
 }
 
 class AuthLoadingScreen extends React.Component {

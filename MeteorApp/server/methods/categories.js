@@ -11,6 +11,7 @@ Meteor.methods({
                 {  name: serviceInfo.Category.name,
                 createdAt: new Date(),
                 createdBy: Meteor.userId()});
+            serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lat,serviceInfo.location.geometry.location.lng]
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
@@ -54,6 +55,7 @@ Meteor.methods({
                     categoryId: CategoryId,
                     createdAt: new Date(),
                     createdBy: currentUserId,
+                    ratings:[{count:0}],
                 });
 
                 return res;
@@ -168,11 +170,15 @@ Meteor.methods({
             let user=Meteor.user();
             rating.ratedBy={_id:Meteor.userId(),name:user.profile.name, coverImage:user.profile.profileImage};
             rating.rateDate= new Date();
-            let Ratings = Service.findOne({_id:Id}).ratings;
+            let service = Service.findOne({_id:Id});
+            let Ratings = service.ratings;
+            let avg= service.hasOwnProperty('avgRate') ? service.avgRate : 0;
+            avg=avg+rating.count;
             Ratings.push(rating);
             Service.update({_id: Id}, {
                 $set: {
-                    ratings: Ratings
+                    ratings: Ratings,
+                    avgRate: avg
                 }
             });
         }

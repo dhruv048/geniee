@@ -1,6 +1,30 @@
 import {Mongo} from 'meteor/mongo';
 
- Service = new Mongo.Collection('service');
+var service = {
+    avgRate: function () {
+        let sum = 0;
+        this.ratings.forEach(item => {
+            sum = sum + item.count;
+        });
+        var avg = sum / this.ratings.length;
+        return avg;
+    }
+};
+
+Service = new Mongo.Collection('service');
+
+ // Service = new Mongo.Collection('service', {
+ //  transform: function (doc) {
+ //          doc.avgRate = function () {
+ //              let sum = 0;
+ //              doc.ratings.forEach(item => {
+ //                  sum = sum + item.count;
+ //              });
+ //              var avg = sum / this.ratings.length;
+ //              return avg;
+ //          };
+ //     return doc;
+ // }});
 
 Count = new Mongo.Collection('count');
 Categories = new  Mongo.Collection('categories');

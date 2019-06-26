@@ -8,15 +8,30 @@ import { Meteor } from 'meteor/meteor';
 //   });
 // }
 
-    Meteor.publish('categories-list', () => {
+    Meteor.publish('categories-list', function() {
         try {
             // console.log("list:"+Meteor.user().profile.createdBy)
             // if (Meteor.user().profile.role === 1) {
             //     return Category.find({createdBy: Meteor.userId()});
             // }
             // else {
-                return Service.find();
+                return Service.find({});
             // }
+
+         //    var data = Service.find({}, {
+         //        transform(doc) {
+         //            let sum = 0;
+         //            doc.ratings.forEach(item => {
+         //                sum = sum + item.count;
+         //            });
+         //            var avg = sum / doc.ratings.length;
+         //            doc.avgRate = avg;
+         //            return doc;
+         //        }
+         //    });
+         //
+         // console.log(data.fetch()[0]);
+         // return data;
         }
         catch (e) {
             console.log(e.message)

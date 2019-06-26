@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 Meteor.publish('get-channel',()=>{
    let user= Meteor.user();
-   if( user.profile.role===2){
+   if(user && user.profile.role===2){
        return ChatChannel.find();
    }else {
        return ChatChannel.find({users: {"$in": [Meteor.userId()]}});

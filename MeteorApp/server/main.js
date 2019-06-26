@@ -46,8 +46,7 @@ Meteor.startup(function () {
         }));
         MainCategories.insert({ catId: '0', mainCategory: 'Others', subCategories:[] });
         MainCategories.insert({ catId: '19', mainCategory: 'Emergency', subCategories:[] });
-    }
-    else{
+
         CSV.readCsvFileLineByLine(process.env.PWD + '/imports/subcategories.csv', {
             headers: true,
             delimiter: ",",
@@ -62,6 +61,9 @@ Meteor.startup(function () {
                 $addToSet:{subCategories:data}
             })
         }));
+    }
+    else{
+
     }
 
     if(Service.find().count()<100){
@@ -86,6 +88,7 @@ Meteor.startup(function () {
                             lat :parseFloat(line.lat),
                             lng :parseFloat(line.lng)
                         },
+                        coordinates:[parseFloat(line.lat),parseFloat(line.lng)]
                     } : null,
                     website : line.webpage
                 },
@@ -97,6 +100,7 @@ Meteor.startup(function () {
                 createdBy : null,
                 ratings : [{count : 0}],
                 website : line.webpage,
+
             };
             Service.insert(data);
         }));
