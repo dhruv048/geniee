@@ -15,7 +15,7 @@ import { Meteor } from 'meteor/meteor';
             //     return Category.find({createdBy: Meteor.userId()});
             // }
             // else {
-                return Service.find({});
+                return MainCategories.find({});
             // }
 
          //    var data = Service.find({}, {
@@ -42,4 +42,27 @@ import { Meteor } from 'meteor/meteor';
     return Categories.find({},{fields: {'name':1}});
     });
 
+
+     Meteor.publish('srvicesByLimit', function(obj) {
+         console.log(obj);
+         // try {
+             return Service.find({
+                 "location.geometry": {
+                     $near: {
+                         $geometry: {
+                             type: "Point",
+                             coordinates: obj.coordinates
+                         },
+                     }
+                 }
+             }, {limit: obj.limit});
+         // }
+         // catch(e){
+         //     console.log(e.message)
+         // }
+     });
+
+
+
+// }
 

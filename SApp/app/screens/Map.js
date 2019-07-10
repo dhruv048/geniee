@@ -1,9 +1,10 @@
 import React ,{Component} from 'react';
 import MapView ,{PROVIDER_GOOGLE,Marker} from 'react-native-maps';
 import {Container,Content} from 'native-base';
-import {View,Alert,StyleSheet,Dimensions,PermissionsAndroid} from 'react-native';
+import {View,Alert,StyleSheet,Dimensions,PermissionsAndroid,TouchableWithoutFeedback} from 'react-native';
 var {height, width} = Dimensions.get('window');
-
+import {Text,Item} from 'native-base';
+import {withNavigation} from 'react-navigation';
 
 class Map extends Component {
     constructor(props) {
@@ -11,10 +12,10 @@ class Map extends Component {
         this.mounted = false;
         this.state = {
             region: {
-                latitude: 27.700769,
-                longitude:85.300140,
-                latitudeDelta: 0.5,
-                longitudeDelta: 0.5,
+                latitude:27.712020,
+                longitude:85.312950,
+                latitudeDelta: 0.3,
+                longitudeDelta: 0.3,
             },
             markers:[]
         }
@@ -48,7 +49,7 @@ class Map extends Component {
                     };
                     this.setState({ region:region });
                 },
-                error => Alert.alert(error.message),
+                // error => Alert.alert(error.message),
                 { enableHighAccuracy: true, timeout: 5000}
             );
         } else {
@@ -68,6 +69,10 @@ class Map extends Component {
         };
     }
 
+    handleClick=(id)=>{
+        this.props.navigation.navigate('Service',{'Id':id});
+}
+
     onRegionChange(region) {
        // this.setState({ region:region });
     }
@@ -79,6 +84,8 @@ class Map extends Component {
                         provider={PROVIDER_GOOGLE}
                         region={this.state.region}
                         onRegionChange={this.onRegionChange}
+                        showsUserLocation={true}
+                        showsCompass={true}
                         style={{
                            // ...StyleSheet.absoluteFillObject,
                             height: height,
@@ -93,9 +100,11 @@ class Map extends Component {
                             <Marker
                                 key={i}
                                 coordinate={marker.latlng}
-                                title={marker.title}
-                                description={marker.contact}
-                            />
+                                onPress={() => {this.handleClick(marker._id)}}
+                               title={marker.title}
+                                description= {marker.description}
+                            >
+                            </Marker>
                         ))}
                     </MapView>
 
@@ -104,5 +113,19 @@ class Map extends Component {
     }
 
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    marker: {
+        backgroundColor: "#550bbc",
+        padding: 5,
+        borderRadius: 5,
+    },
+    text: {
+        color: "#FFF",
+        fontWeight: "bold"
+    }
+});
 
-export default Map
+export default withNavigation(Map)

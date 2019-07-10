@@ -34,12 +34,14 @@
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true">
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyBJ0EFcgmndRnro9Kw7m8cXo-Tsa6kD9zk"/>
+
     </application>
 
 </manifest>

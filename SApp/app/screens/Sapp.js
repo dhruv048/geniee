@@ -16,6 +16,7 @@ import LogOut from "./LogOut"
 import SignIn from "./SignIn";
 import Register from "./Register";
 import AuthLoadingScreen from "./AuthLoading";
+import Dashboard from "./Dashboard";
 
 //import Splash from '../screens/Splash';
 
@@ -53,6 +54,9 @@ export const ChatStack = createStackNavigator({
 
 
 export const HomeStack = createStackNavigator({
+    Dashboard:{
+        screen:Dashboard,
+    },
     Home: {
         screen: Home,
     },
@@ -72,6 +76,7 @@ export const HomeStack = createStackNavigator({
     // },
 },{
     headerMode: 'none',
+    initialRouteName:'Dashboard'
 });
 
 const CustomDrawerContentComponent=(props)=>(

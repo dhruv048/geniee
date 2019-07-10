@@ -1,5 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import {Accounts} from "meteor/accounts-base";
+const path = require('path')
 Meteor.startup(function () {
     Future = Npm.require('fibers/future');
     // chck if there is Super Admin, If not create one.
@@ -35,7 +36,7 @@ Meteor.startup(function () {
 
     if(MainCategories.find().count()===0){
 
-        CSV.readCsvFileLineByLine(process.env.PWD + '/imports/categories.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"? Assets.absoluteFilePath('csvFiles/categories.csv') : process.env.PWD + '/private/csvFiles/categories.csv', {
             headers: true,
             delimiter: ";",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
@@ -47,7 +48,7 @@ Meteor.startup(function () {
         MainCategories.insert({ catId: '0', mainCategory: 'Others', subCategories:[] });
         MainCategories.insert({ catId: '19', mainCategory: 'Emergency', subCategories:[] });
 
-        CSV.readCsvFileLineByLine(process.env.PWD + '/imports/subcategories.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/subCategories.csv') :process.env.PWD + '/private/csvFiles/subcategories.csv', {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
@@ -67,7 +68,7 @@ Meteor.startup(function () {
     }
 
     if(Service.find().count()<100){
-        CSV.readCsvFileLineByLine(process.env.PWD + '/imports/services.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/services.csv') :process.env.PWD + '/private/csvFiles/services.csv', {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
@@ -88,7 +89,8 @@ Meteor.startup(function () {
                             lat :parseFloat(line.lat),
                             lng :parseFloat(line.lng)
                         },
-                        coordinates:[parseFloat(line.lat),parseFloat(line.lng)]
+                        type:'Point',
+                        coordinates:[parseFloat(line.lng),parseFloat(line.lat)]
                     } : null,
                     website : line.webpage
                 },
@@ -105,5 +107,17 @@ Meteor.startup(function () {
             Service.insert(data);
         }));
     }
+    Service._ensureIndex({
+        "title": "text",
+        "description": "text",
+    });
+    Service._ensureIndex({
+        "location.geometry" : "2dsphere"
 
+    })
+
+   // Accounts.ensureIndex( { "profile.location" : "2dsphere" })
 });
+
+
+

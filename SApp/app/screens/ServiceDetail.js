@@ -37,7 +37,9 @@ class ServiceDetail extends Component {
       // let res=  this.onEsewaComplete();
       // alert(res);
       // console.log(res)
-
+     if(!number){
+         Alert.alert('Contact No. Unavailable for the Service')
+     }
 
         const args = {
             number: number, // String value with the number to call
@@ -161,9 +163,30 @@ class ServiceDetail extends Component {
     clickEventListener(){
         Alert.alert("Success", "Product has beed added to cart")
     }
+    averageRating = (arr) => {
+        let sum = 0;
+        arr.forEach(item => {
+            sum = sum + item.count;
+        })
+        var avg = sum / arr.length;
+        return Math.round(avg);
+    }
 
     render() {
-        const Service = this.props.navigation.getParam('Service');
+        const Id=this.props.navigation.getParam('Id');
+        console.log(Id)
+        let Service={};
+        if(typeof (Id)==="string" ){
+            Service=Meteor.collection('service').findOne({_id:Id});
+            Service.avgRate = this.averageRating(Service.ratings)
+        }
+        else{
+            console.log(Id)
+            Service=Id;
+        }
+        if(typeof (Id)==="string" ){
+
+        }
         const {navigate} = this.props.navigation;
         return (
             <Container style={styles.container}>
@@ -204,6 +227,9 @@ class ServiceDetail extends Component {
                             <Text >
                                 {Service.contact}
                             </Text>
+                            <Text >
+                                {Service.email||''}
+                            </Text>
                         </View>
                         <View style={styles.starContainer}>
                             <Rating
@@ -213,38 +239,25 @@ class ServiceDetail extends Component {
 
                             />
                         </View>
-                        {/*<View style={styles.contentColors}>*/}
-                        {/*<TouchableOpacity style={[styles.btnColor, {backgroundColor:"#00BFFF"}]}></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={[styles.btnColor, {backgroundColor:"#FF1493"}]}></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={[styles.btnColor, {backgroundColor:"#00CED1"}]}></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={[styles.btnColor, {backgroundColor:"#228B22"}]}></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={[styles.btnColor, {backgroundColor:"#20B2AA"}]}></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={[styles.btnColor, {backgroundColor:"#FF4500"}]}></TouchableOpacity>*/}
-                        {/*</View>*/}
-                        {/*<View style={styles.contentSize}>*/}
-                        {/*<TouchableOpacity style={styles.btnSize}><Text>S</Text></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={styles.btnSize}><Text>M</Text></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={styles.btnSize}><Text>L</Text></TouchableOpacity>*/}
-                        {/*<TouchableOpacity style={styles.btnSize}><Text>XL</Text></TouchableOpacity>*/}
                         {/*</View>*/}
                         <View style={styles.separator}></View>
                         <View style={styles.addToCarContainer}>
                             <Button block info rounded onPress={() => {
-                                this._callPhone(Service.contact)
+                                this._callPhone(Service.contact? Service.contact : Service.contact1)
                             }}><Text> Call </Text></Button>
                         </View>
                         {this.props.user ?
                             <View>
                         <View style={styles.addToCarContainer}>
                             {Service.createdBy!= null && this.props.user._id != Service.createdBy ?
-                            <Button block success rounded onPress={() => {this.handleChat(Service)}} ><Text> Message </Text></Button> : <Text/>}
+                            <Button block success rounded onPress={() => {this.handleChat(Service)}} ><Text> Message </Text></Button> : null}
                         </View>
                         <View style={styles.addToCarContainer}>
-                            {Service.createdBy!= null && this.props.user._id != Service.createdBy ?
+                            {this.props.user._id != Service.createdBy ?
                             <Button style={{marginBottom: 5}} block warning rounded onPress={() => {
                                 this.setState({showModal:true})
                             }}><Text> Rate </Text></Button>
-                                : <Text/>}
+                                : null}
                         </View>
                             </View> : <View/>}
                     </ScrollView>

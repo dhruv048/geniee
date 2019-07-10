@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import _ from 'lodash';
 import {
     Container,
@@ -26,25 +26,27 @@ import {
     Image,
     StatusBar,
     TouchableWithoutFeedback,
-    Keyboard,
+    ActivityIndicator,
     Alert,
-    PermissionsAndroid
+    PermissionsAndroid,
+    FlatList
 } from 'react-native';
 
 import Sidebar from '../components/MenuNav/MenuNav';
 import Loading from '../components/Loading';
 import logoImage from '../images/logo2-trans-640X640.png';
 import dUser from '../images/Image.png';
-import Meteor, {createContainer} from "react-native-meteor";
+import Meteor, {withTracker} from "react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
 import {colors} from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
-
+import Geolocation from '@react-native-community/geolocation';
 import SplashScreen from 'react-native-splash-screen';
+import call from "react-native-phone-call";
 
 
-class Home extends Component {
+class Home extends PureComponent {
     constructor(props) {
         super(props);
         this.mounted = false;
@@ -53,31 +55,25 @@ class Home extends Component {
             markers: [],
             currentSearch: "",
             loading: false,
-            data: Meteor.collection('service').find(),
+            data: [],
             error: null,
             searchText: '',
             selected: 'all'
         }
-        this.arrayholder = Meteor.collection('service').find();
+        this.arrayholder = [];
         this.currentSearch = '';
         this.region = {
-            latitude: 27.700769,
-            longitude: 85.300140,
+            latitude: 27.712020,
+            longitude:85.312950,
         };
-        this.limit=0;
+        this.limit = 50;
+        this.watchID;
 
     }
 
-    loadData=()=>{
-        alert(this.props.categories.length)
-        this.setState({
-            data:Meteor.collection('service').find({},{limit:30})
-        })
-        this.arrayholder=Meteor.collection('service').find();
-    }
+
 
     componentDidMount() {
-      //  this.loadData();
         SplashScreen.hide();
         const granted = PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -106,26 +102,33 @@ class Home extends Component {
         } else {
             console.log("Location permission denied")
         }
+
+        Geolocation.getCurrentPosition(
+            position => {
+                const initialPosition = JSON.stringify(position);
+                this.setState({initialPosition});
+                console.log(initialPosition)
+            },
+            error => console.log('Error', JSON.stringify(error)),
+            {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        );
+        this.watchID = Geolocation.watchPosition(position => {
+            const lastPosition = JSON.stringify(position);
+            this.setState({lastPosition});
+            console.log(lastPosition)
+        });
+        this.setState({
+         data:this.props.categories
+        })
+        this.arrayholder=this.props.categories
     }
 
-    componentWillMount() {
 
-        this.mounted = true;
-        // this._fetchMarkers()
-        // Meteor.subscribe('categories-list', () => {
-        //     this.setState({
-        //         data: Meteor.collection('service').find()
-        //     })
-        //     this.arrayholder = Meteor.collection('service').find();
-        // })
-
-
-    }
 
     componentWillReceiveProps(newProps) {
         const oldProps = this.props
         if (oldProps.categories !== newProps.categories) {
-            this.setState({data: newProps.categories})
+            this.setState({data: newProps.categories, loading:false})
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch)
         }
@@ -133,40 +136,56 @@ class Home extends Component {
 
     componentWillUnmount() {
         this.mounted = false;
+        this.watchID != null && Geolocation.clearWatch(this.watchID);
+    }
+    _callPhone = (number) => {
+        // let res=  this.onEsewaComplete();
+        // alert(res);
+        // console.log(res)
+        if(!number){
+            Alert.alert('Contact No. Unavailable for the Service')
+        }
+
+        const args = {
+            number: number, // String value with the number to call
+            prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
+        }
+        call(args).catch(console.error)
     }
 
     _handlItemPress = (service) => {
-        service.avgRate=this.averageRating(service.ratings);
-        this.props.navigation.navigate('Service', {'Service': service});
+        service.avgRate = this.averageRating(service.ratings);
+        this.props.navigation.navigate('Service', {Id:service});
     }
 
-    _getListItem = (rowData) => {
+    _getListItem = (data, index) => {
+        rowData = data.item
         return (
-            <TouchableWithoutFeedback onPress={() => {
-                this._handlItemPress(rowData)
+            <TouchableWithoutFeedback   Key={rowData._id} onPress={() => {
+              this._handlItemPress(data.item)
             }}>
                 <ListItem thumbnail>
                     <Left>
                         {rowData.coverImage === null ?
-                            <Thumbnail style={styles.banner} square source={dUser}/> :
+                         //   <Thumbnail style={styles.banner} square source={dUser}/> :
+                            <Text></Text>:
                             <Thumbnail style={styles.banner}
                                        source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
                     </Left>
                     <Body>
                     <Text numberOfLines={1}>{rowData.title}</Text>
-                    <Text note numberOfLines={1}>{rowData.description}</Text>
+                    {rowData.location.formatted_address?
+                    <Text note numberOfLines={1}>{rowData.location.formatted_address}</Text>:null}
                     {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                     </Body>
-                    {/*<Right>*/}
-                    {/*<Button onPress={() => {*/}
-                    {/*this._handlItemPress(rowData)*/}
-                    {/*}} transparent>*/}
-                    {/*<Text>View</Text>*/}
-                    {/*</Button>*/}
-                    {/*</Right>*/}
-
                     <Right>
-                         <Text style={{fontSize:25, fontWeight:'400'}}><Icon name={'star'} style={{color:'#094c6b'}}/> : {rowData.hasOwnProperty('ratings')? this.averageRating(rowData.ratings): 0}</Text>
+                        {this.averageRating(rowData.ratings)>0?
+                        <Text style={{fontSize: 20, fontWeight: '400'}}><Icon name={'star'}
+                                                                              style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
+                        </Text>:null}
+                        <Button transparent onPress={() => {
+                            this._callPhone(rowData.contact? rowData.contact : rowData.contact1)
+                        }}><Icon name={'call'} color={'green'} /></Button>
                     </Right>
 
                 </ListItem>
@@ -188,19 +207,21 @@ class Home extends Component {
         this.state.data.map(item => {
             if (item.location.hasOwnProperty('geometry') && item.location.geometry) {
                 let latlang = item.location.geometry.location;
-                console.log('item:' + latlang)
+                // console.log('item:' + latlang)
                 markers.push({
+                    _id:item._id,
                     latlng:
                         {
                             latitude: latlang.lat,
                             longitude: latlang.lng
                         },
+                    coordinate:latlang,
                     title: item.title,
                     description: item.description
                 })
             }
-            else{
-              console.log(item)
+            else {
+                console.log(item)
             }
         })
         // this.setState({
@@ -208,16 +229,31 @@ class Home extends Component {
         // })
         // console.log('state.markers:' + this.state.markers)
         return markers
+    };
+
+    _onEndReached = (distance) => {
+        console.log(distance);
+        if(!this.currentSearch) {
+            this.limit = this.limit + 50;
+            this.setState({loading: true})
+            Meteor.subscribe('srvicesByLimit', {limit:this.limit,coordinates:[this.region.longitude,this.region.latitude]}, () => {
+                this.setState({loading: false})
+            });
+        }
     }
 
     renderSelectedTab() {
         const home = (
-            <List style={styles.contentList}
-                  dataArray={this.state.data}
-                  renderRow={this._getListItem}>
-                  onEndReached={() => this.loadData()}
-                  onEndReachedThreshold={0.1}
-            </List>
+            <FlatList style={styles.contentList}
+                      data={this.state.data}
+                      renderItem={this._getListItem}
+                      keyExtractor={(item, index) => item._id}
+                      initialNumToRender={10}
+                      onEndReached={(distance) => this._onEndReached(distance)}
+                      onEndReachedThreshold={0.1}
+                      ListFooterComponent={this.state.loading? <ActivityIndicator style={{height:80}}/>: null}
+            />
+
         )
         switch (this.state.selectedTab) {
             case 'home':
@@ -241,23 +277,22 @@ class Home extends Component {
                     data: this.props.categories,
                 });
                 this.arrayholder = this.props.categories;
-                this._search(this.state.currentSearch);
+               // this._search(this.state.currentSearch);
                 break;
 
             case 'starred':
-                const newDat=this.props.categories;
-               let latest= newDat.sort((a,b)=>{
-                    return (this.averageRating( b.ratings)-this.averageRating(a.ratings));
-                });
-                alert(latest[1]._id);
-                this.setState({
-                    data:[]
+                const newDat = this.arrayholder;
+                let latest = newDat.sort((a, b) => {
+                    return (this.averageRating(b.ratings) - this.averageRating(a.ratings));
                 });
                 this.setState({
-                    data:latest
+                    data: []
                 });
-                this.arrayholder =latest;
-                this._search(this.state.currentSearch);
+                this.setState({
+                    data: latest
+                });
+               // this.arrayholder = latest;
+              //  this._search(this.state.currentSearch);
                 break;
 
             case 'myLocation':
@@ -271,7 +306,7 @@ class Home extends Component {
                 });
                 this.setState({data: newData});
                 this.arrayholder = newData;
-                this._search(this.state.currentSearch)
+             //   this._search(this.state.currentSearch)
                 break;
             default:
         }
@@ -287,64 +322,70 @@ class Home extends Component {
     }
 
     _search = (text) => {
-        //  debugger
-        // let searchText = this.state.searchText.trim();
-        //  if (searchText === this.state.currentSearch) {
-        //      // abort search if query wasn't different
-        //      return;
-        //  }
-        //  // clear results immediately (don't show expired results)
-        //  // NOTE: this can cause "flicker" as results are removed / re added
-        //  if (searchText === ""){
-        //      this.setState({
-        //          result:this.props.categories
-        //      });
-        //      return;
-        //  }
-        //  this.setState({
-        //      searching: true,
-        //  });
-        //  _.debounce((searchText) => {
-        //      this.setState({currentSearch: searchText});
-        //      Meteor.call('SearchService', searchText, (err, res) => {
-        //          debugger;
-        //          if (err) {
-        //              console.error(err);
-        //          }
-        //          if (this.state.currentSearch !== this.state.searchText) {
-        //              this.setState({
-        //                  searching: false,
-        //              });
-        //              // query changed, results aren't relevant
-        //              return;
-        //          }
-        //          this.setState({
-        //              result: res,
-        //              searching: false
-        //          })
-        //      })
-        //  }, 300);
-
-        const textData = text.trim().toUpperCase();
-        this.setState({loading: true});
-        // if (textData === this.currentSearch) {
-        //     // abort search if query wasn't different
-        //     return;
-        // }
-        if (textData === "") {
+        var delayTimer;
+        if (text === this.currentSearch)
+            return;
+        if (text === "") {
+            this.setState(
+                {
+                    loading: true,
+                }
+            );
+            var data=this.props.categories;
             this.setState({
-                data: this.arrayholder, loading: false
+                data: data, loading: false
             });
+            this.arrayholder=data;
             return;
         }
+        if(text.length>3) {
+            clearTimeout(delayTimer);
+            // delayTimer = setTimeout(function() {
+            this.currentSearch = text;
+            var dataToSend = {Ids: this.props.navigation.getParam('Id'), searchValue: text};
+            return fetch(settings.jsonRoute_URl + 'search/',{ method: "POST",//Request Type
+                body:JSON.stringify(dataToSend),//post body
+                headers: {//Header Defination
+                    'Content-Type': 'application/json'
+                }})
+                .then(response => response.json())
+                .then(responseJson => {
+                    console.log(responseJson);
+                    this.setState(
+                        {
+                            loading: false,
+                            data: responseJson.data,
+                        }
+                    );
+                    this.arrayholder = responseJson.data
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            // },2000);
+        }
 
-        this.currentSearch = textData;
-        const newData = this.arrayholder.filter(item => {
-            const itemData =
-                `${item.title.toUpperCase()} ${item.description.toUpperCase()}`;
-            return itemData.indexOf(textData) > -1;
-        });
-        this.setState({data: newData, loading: false});
+
+        // const textData = text.trim().toUpperCase();
+        // this.setState({loading: true});
+        // // if (textData === this.currentSearch) {
+        // //     // abort search if query wasn't different
+        // //     return;
+        // // }
+        // if (textData === "") {
+        //     this.setState({
+        //         data: this.arrayholder, loading: false
+        //     });
+        //     return;
+        // }
+        //
+        // this.currentSearch = textData;
+        // const newData = this.arrayholder.filter(item => {
+        //     const itemData =
+        //         `${item.title.toUpperCase()} ${item.description.toUpperCase()}`;
+        //     return itemData.indexOf(textData) > -1;
+        // });
+        // this.setState({data: newData, loading: false});
     };
 
     render() {
@@ -399,22 +440,21 @@ class Home extends Component {
                     </Item>
                     </Body>
                     {/*<Right>*/}
-                        {/*/!*<Button transparent onPress={()=>this.openDrawer()}>*!/*/}
-                        {/*/!*<Icon name='more' />*!/*/}
-                        {/*/!*</Button>*!/*/}
-                     {/**/}
+                    {/*/!*<Button transparent onPress={()=>this.openDrawer()}>*!/*/}
+                    {/*/!*<Icon name='more' />*!/*/}
+                    {/*/!*</Button>*!/*/}
+                    {/**/}
                     {/*</Right>*/}
                 </Header>
 
-                <Content style={styles.content}>
+                <Content style={styles.content}   contentContainerStyle={{flex: 1}} >
+                    {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {this.renderSelectedTab()}
                     {/*<List style={styles.contentList}*/}
                     {/*dataArray={this.props.categories}*/}
                     {/*renderRow={this._getListItem} >*/}
                     {/*</List>*/}
                 </Content>
-                {this.state.loading === true ?
-                    <Loading/> : <Text style={{height: 0}}/>}
                 <Footer>
                     <FooterTab style={styles.footerTab}>
                         <Button vertical active={this.state.selectedTab === 'home'}
@@ -434,53 +474,49 @@ class Home extends Component {
             </Container>
 
 
-    );
+        );
     };
-    }
+}
 
 
-
-    const styles = StyleSheet.create({
-        content: {
+const styles = StyleSheet.create({
+    content: {
         backgroundColor: colors.appBackground,
-        //backgroundColor: '#05a5d10d',
-        //borderTopWidth: 3,
-        //borderTopColor: '#000000',
-        //borderBottomWidth: 3,
-        //borderBottomColor: '#000000',        
+        flex: 1
+
     },
-        contentList: {
+    contentList: {
         //marginVertical: 3,
         //paddingVertical: 3
     },
-        image: {
+    image: {
         width: 50,
         height: 56,
         borderRadius: 25,
         backgroundColor: '#000000'
     },
-        banner: {
+    banner: {
         width: 80,
         height: 50,
         borderRadius: 3,
         backgroundColor: '#000000'
     },
-        footerTab: {
+    footerTab: {
         backgroundColor: '#094c6b',
         //borderTopWidth: 3,
         //borderTopColor: '#000000',
     },
-        activeTab: {
+    activeTab: {
         //borderBottomWidth: 1,
         //borderBottomColor: '#f2f2f2',        
     },
-        activeTabIcon: {
+    activeTabIcon: {
         color: '#ffffff'
     },
-        activeTabText: {
+    activeTabText: {
         color: '#ffffff'
     },
-        searchInput: {
+    searchInput: {
         //borderBottomWidth: 3,
         //borderBottomColor: '#000000',
         color: '#ffffff',
@@ -493,11 +529,11 @@ class Home extends Component {
         borderLeftWidth: 0,
         borderBottomWidth: 0,
     }
-    });
+});
 
-    export default createContainer(() => {
-        Meteor.subscribe('categories-list');
-        return {
-        categories: Meteor.collection('service').find({},{limit:100})
+export default withTracker((props) => {
+   let Ids=props.navigation.getParam('Id')
+    return {
+        categories: Meteor.collection('service').find({categoryId:{$in:Ids}})
     }
-    }, Home);
+})( Home);

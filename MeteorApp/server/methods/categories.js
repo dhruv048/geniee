@@ -11,7 +11,19 @@ Meteor.methods({
                 {  name: serviceInfo.Category.name,
                 createdAt: new Date(),
                 createdBy: Meteor.userId()});
-            serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lat,serviceInfo.location.geometry.location.lng]
+            let location={
+                geometry:{
+                    coordinates:[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat],
+                    type:'Point',
+                    location:{
+                        lat:serviceInfo.location.geometry.location.lat,
+                        lng:serviceInfo.location.geometry.location.lng
+                    }
+                },
+                formatted_address:serviceInfo.location.formatted_address,
+            }
+       //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
+            serviceInfo.location=location;
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
