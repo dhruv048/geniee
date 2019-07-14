@@ -34,21 +34,31 @@ Meteor.startup(function () {
         )
     }
 
-    if(MainCategories.find().count()===0){
+    if(MainCategories.find().count()<1){
 
-        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"? Assets.absoluteFilePath('csvFiles/categories.csv') : process.env.PWD + '/private/csvFiles/categories.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"? Assets.absoluteFilePath('csvFiles/newCategories.csv') : process.env.PWD + '/private/csvFiles/newCategories.csv', {
             headers: true,
-            delimiter: ";",
+            delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
-            // console.log(line);
+           //  console.log(line);
             line.subCategories=[];
             MainCategories.insert(line);
 
         }));
-        MainCategories.insert({ catId: '0', mainCategory: 'Others', subCategories:[] });
-        MainCategories.insert({ catId: '19', mainCategory: 'Emergency', subCategories:[] });
+       // var categories= Meteor.settings.public.categories;
+       // console.log(categories)
+       // categories.forEach(item=>{
+       //      let cat ={
+       //          catId:item[0],
+       //          mainCategory:item[1],
+       //          icon:item[2],
+       //          subCategories:[]
+       //      }
+       //      console.log(cat)
+       //      MainCategories.insert(cat);
+       //  });
 
-        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/subCategories.csv') :process.env.PWD + '/private/csvFiles/subcategories.csv', {
+        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/subcategories.csv') :process.env.PWD + '/private/csvFiles/subcategories.csv'), {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
