@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import _ from 'lodash';
 import {
     Container,
@@ -29,28 +29,24 @@ import {
     ActivityIndicator,
     Alert,
     PermissionsAndroid,
-    FlatList
+    FlatList, View
 } from 'react-native';
 
-import Sidebar from '../components/MenuNav/MenuNav';
-import Loading from '../components/Loading';
-import logoImage from '../images/logo2-trans-640X640.png';
-import dUser from '../images/Image.png';
+
 import Meteor, {withTracker} from "react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
 import {colors} from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
-import SplashScreen from 'react-native-splash-screen';
 import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
 
-class Home extends PureComponent {
+class Home extends Component {
     _callPhone = (number) => {
         // let res=  this.onEsewaComplete();
         // alert(res);
-        // console.log(res)
-        if(!number){
+        console.log(number)
+        if (!number) {
             Alert.alert('Contact No. Unavailable for the Service')
         }
 
@@ -62,44 +58,9 @@ class Home extends PureComponent {
     }
     _handlItemPress = (service) => {
         service.avgRate = this.averageRating(service.ratings);
-        this.props.navigation.navigate('Service', {Id:service});
+        this.props.navigation.navigate('Service', {Id: service});
     }
-    _getListItem = (data, index) => {
-        rowData = data.item;
-        return (
-            <TouchableWithoutFeedback   Key={rowData._id} onPress={() => {
-              this._handlItemPress(data.item)
-            }}>
-                <ListItem thumbnail>
-                    <Left>
-                        {rowData.coverImage === null ?
-                         //   <Thumbnail style={styles.banner} square source={dUser}/> :
-                            <Text></Text>:
-                            <Thumbnail style={styles.banner}
-                                       source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
-                    </Left>
-                    <Body>
-                    <Text numberOfLines={1}>{rowData.title}</Text>
-                    {rowData.location.formatted_address?
-                    <Text note numberOfLines={1}>{rowData.location.formatted_address}</Text>:null}
-                    <Text note>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>
-                    {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
-                    </Body>
-                    <Right>
-                        {this.averageRating(rowData.ratings)>0?
-                        <Text style={{fontSize: 20, fontWeight: '400'}}><Icon name={'star'}
-                                                                              style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-                        </Text>:null}
-                        <Button transparent onPress={() => {
-                            this._callPhone(rowData.contact? rowData.contact : rowData.contact1)
-                        }}><Icon name={'call'} color={'green'} /></Button>
-                    </Right>
 
-                </ListItem>
-            </TouchableWithoutFeedback>
-        )
-
-    }
     _fetchMarkers = () => {
         let markers = [];
         this.state.data.map(item => {
@@ -107,13 +68,13 @@ class Home extends PureComponent {
                 let latlang = item.location.geometry.location;
                 // console.log('item:' + latlang)
                 markers.push({
-                    _id:item._id,
+                    _id: item._id,
                     latlng:
                         {
                             latitude: latlang.lat,
                             longitude: latlang.lng
                         },
-                    coordinate:latlang,
+                    coordinate: latlang,
                     title: item.title,
                     description: item.description
                 })
@@ -130,10 +91,14 @@ class Home extends PureComponent {
     };
     _onEndReached = (distance) => {
         console.log(distance);
-        if(!this.currentSearch) {
-            this.limit = this.limit + 10;
+        if (!this.currentSearch) {
+            this.limit = this.limit + 20;
             this.setState({loading: true})
-            Meteor.subscribe('nearByService',{limit:this.limit,coords:[this.region.longitude,this.region.latitude],subCatIds:this.props.navigation.getParam('Id')},()=>{
+            Meteor.subscribe('nearByService', {
+                limit: this.limit,
+                coords: [this.region.longitude, this.region.latitude],
+                subCatIds: this.props.navigation.getParam('Id')
+            }, () => {
                 this.setState({loading: false})
             });
         }
@@ -147,6 +112,7 @@ class Home extends PureComponent {
         return Math.round(avg);
     }
     _search = (text) => {
+        console.log('search')
         var delayTimer;
         if (text === this.currentSearch)
             return;
@@ -156,23 +122,30 @@ class Home extends PureComponent {
                     loading: true,
                 }
             );
-            var data=this.props.categories;
+            var data = this.props.categories;
             this.setState({
                 data: data, loading: false
             });
-            this.arrayholder=data;
+            this.arrayholder = data;
             return;
         }
-        if(text.length>3) {
+        if (text.length > 3) {
             clearTimeout(delayTimer);
             // delayTimer = setTimeout(function() {
             this.currentSearch = text;
-            var dataToSend = {subCatIds: this.props.navigation.getParam('Id'), searchValue: text,coords:[this.region.longitude,this.region.latitude]};
-            return fetch(settings.jsonRoute_URl + 'search',{ method: "POST",//Request Type
-                body:JSON.stringify(dataToSend),//post body
+            var dataToSend = {
+                subCatIds: this.props.navigation.getParam('Id'),
+                searchValue: text,
+                coords: [this.region.longitude, this.region.latitude]
+            };
+            console.log('fetch')
+            return fetch(settings.jsonRoute_URl + 'search', {
+                method: "POST",//Request Type
+                body: JSON.stringify(dataToSend),//post body
                 headers: {//Header Defination
                     'Content-Type': 'application/json'
-                }})
+                }
+            })
                 .then(response => response.json())
                 .then(responseJson => {
                     console.log(responseJson);
@@ -229,27 +202,18 @@ class Home extends PureComponent {
         this.currentSearch = '';
         this.region = {
             latitude: 27.712020,
-            longitude:85.312950,
+            longitude: 85.312950,
         };
         this.limit = 20;
         this.watchID;
-        this.granted=false;
+        this.granted = false;
 
     }
 
 
-
-    async componentDidMount () {
-        SplashScreen.hide();
-
-        // const data = Meteor.getData();
-        // const db = data && data.db;
-        // if (db) {
-        //     if (!db['serviceReact']) {
-        //         db.addCollection('serviceReact');
-        //     }
-        // }
-        this.granted =await PermissionsAndroid.request(
+    async componentDidMount() {
+        this.region=this.props.navigation.getParam('Region');
+        this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
                 'title': 'Location Permission',
@@ -262,51 +226,59 @@ class Home extends PureComponent {
             console.log("You can use locations ")
             Geolocation.getCurrentPosition(
                 (position) => {
-                    console.log(position);
-                    let region={
-                        latitude:position.coords.latitude,
-                        longitude:position.coords.longitude
+                  //  console.log(position);
+                    let region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
                     }
-                    this.region=region;
+                    this.region = region;
                 },
                 (error) => {
                     // See error code charts below.
                     console.log(error.code, error.message);
                 },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
             );
         } else {
             console.log("Location permission denied")
         }
-        this.watchID= Geolocation.watchPosition(
+        this.watchID = Geolocation.watchPosition(
             (position) => {
                 console.log(position);
-                let region={
-                    latitude:position.coords.latitude,
-                    longitude:position.coords.longitude
+                let region = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
                 }
-               this.region=region;
+                this.region = region;
+                Meteor.subscribe('nearByService', {
+                    limit: this.limit+20,
+                    coords: [this.region.longitude, this.region.latitude],
+                    subCatIds: this.props.navigation.getParam('Id')
+                })
             },
             (error) => {
                 // See error code charts below.
                 console.log(error.code, error.message);
             },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
         );
 
 
-
-        Meteor.subscribe('nearByService',{limit:this.limit,coords:[this.region.longitude,this.region.latitude],subCatIds:this.props.navigation.getParam('Id')})
-        this.setState({
-            data:this.props.categories, loading:false
+        Meteor.subscribe('nearByService', {
+            limit: this.limit,
+            coords: [this.region.longitude, this.region.latitude],
+            subCatIds: this.props.navigation.getParam('Id')
         })
-        this.arrayholder=this.props.categories;
+        this.setState({
+            data: this.props.categories, loading: false
+        })
+        this.arrayholder = this.props.categories;
     }
 
     componentWillReceiveProps(newProps) {
         const oldProps = this.props
         if (oldProps.categories !== newProps.categories) {
-            this.setState({data: newProps.categories, loading:false})
+            this.setState({data: newProps.categories, loading: false})
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch)
         }
@@ -325,16 +297,57 @@ class Home extends PureComponent {
         this.drawer._root.open();
     }
 
+    _getListItem = (data) => {
+        rowData = data.item;
+        return (
+            <View key={data.item._id}>
+                <TouchableWithoutFeedback onPress={() => {
+                    this._handlItemPress(data.item)
+                }}>
+                    <ListItem thumbnail>
+                        <Left>
+                            {rowData.coverImage === null ?
+                                //   <Thumbnail style={styles.banner} square source={dUser}/> :
+                                <Text></Text> :
+                                <Thumbnail style={styles.banner}
+                                           source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
+                        </Left>
+                        <Body>
+                        <Text numberOfLines={1}>{rowData.title}</Text>
+                        {rowData.location.formatted_address ?
+                            <Text note numberOfLines={1}>{rowData.location.formatted_address}</Text> : null}
+
+                        {rowData.dist?
+                        <Text note>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
+                        {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
+                        </Body>
+                        <Right>
+                            {this.averageRating(rowData.ratings) > 0 ?
+                                <Text style={{fontSize: 20, fontWeight: '400'}}><Icon name={'star'}
+                                                                                      style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
+                                </Text> : null}
+                            <Button transparent onPress={() => {
+                                this._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
+                            }}><Icon name={'call'} color={'green'}/></Button>
+                        </Right>
+
+                    </ListItem>
+                </TouchableWithoutFeedback>
+            </View>
+        )
+
+    }
+
     renderSelectedTab() {
         const home = (
             <FlatList style={styles.contentList}
                       data={this.state.data}
                       renderItem={this._getListItem}
-                      keyExtractor={(item, index) => item._id}
-                      initialNumToRender={10}
+                      initialNumToRender={15}
                       onEndReached={(distance) => this._onEndReached(distance)}
                       onEndReachedThreshold={0.1}
-                      ListFooterComponent={this.state.loading? <ActivityIndicator style={{height:80}}/>: null}
+                      ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
+                      keyExtractor={(item, index) => index.toString()}
             />
 
         )
@@ -360,7 +373,7 @@ class Home extends PureComponent {
                     data: this.props.categories,
                 });
                 this.arrayholder = this.props.categories;
-               // this._search(this.state.currentSearch);
+                // this._search(this.state.currentSearch);
                 break;
 
             case 'starred':
@@ -374,8 +387,8 @@ class Home extends PureComponent {
                 this.setState({
                     data: latest
                 });
-               // this.arrayholder = latest;
-              //  this._search(this.state.currentSearch);
+                // this.arrayholder = latest;
+                //  this._search(this.state.currentSearch);
                 break;
 
             case 'myLocation':
@@ -389,7 +402,7 @@ class Home extends PureComponent {
                 });
                 this.setState({data: newData});
                 this.arrayholder = newData;
-             //   this._search(this.state.currentSearch)
+                //   this._search(this.state.currentSearch)
                 break;
             default:
         }
@@ -411,7 +424,7 @@ class Home extends PureComponent {
                         </Left>*/}
 
                     <Body style={{flexDirection: 'row'}}>
-                    <Item  style={{height: 40, flex: 4,paddingVertical:5}}>
+                    <Item style={{height: 40, flex: 4, paddingVertical: 5}}>
                         {/*<Button transparent onPress={()=>{}}>*/}
                         <Icon style={styles.activeTabIcon} name='search'/>
                         {/*</Button>*/}
@@ -431,7 +444,7 @@ class Home extends PureComponent {
                         {/*</Button>*/}
 
                     </Item>
-                    <Item  style={{height: 40, flex: 2, marginLeft: 4}}>
+                    <Item style={{height: 40, flex: 2, marginLeft: 4}}>
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}
@@ -454,7 +467,7 @@ class Home extends PureComponent {
                     {/*</Right>*/}
                 </Header>
 
-                <Content style={styles.content}   contentContainerStyle={{flex: 1}} >
+                <Content style={styles.content} contentContainerStyle={{flex: 1}}>
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {this.renderSelectedTab()}
                     {/*<List style={styles.contentList}*/}
@@ -533,8 +546,8 @@ const styles = StyleSheet.create({
 });
 
 export default withTracker((props) => {
-   let Ids= props.navigation.getParam('Id')
+    let Ids = props.navigation.getParam('Id')
     return {
-        categories: Meteor.collection('serviceReact').find({categoryId:{$in:Ids}})
+        categories: Meteor.collection('serviceReact').find({categoryId: {$in: Ids}})
     }
-})( Home);
+})(Home);

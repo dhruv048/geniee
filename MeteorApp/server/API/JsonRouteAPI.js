@@ -1,6 +1,6 @@
 var Grid = require('gridfs-stream');
 import { MongoInternals } from 'meteor/mongo';
-
+import { Promise } from 'meteor/promise';
 // Set up mongoose connection
 const mongoose = require('mongoose');
 Grid.mongo = mongoose.mongo;
@@ -44,38 +44,38 @@ if (Meteor.isServer) {
         }
     }),
         JsonRoutes.add('post', '/api/search', function (req, res, next) {
-            // console.log('called search', req.body)
+            console.log('called search',  req.body.searchValue)
             try {
                 res.writeHead(200, {
                     'Content-Type': 'application/json',
                 });
                 let Ids= req.body.Ids;
-                let result = [];
+                let result=[];
                 let searchValue =  req.body.searchValue;
-                // if (!searchValue) {
-                //     result = Service.find({}, {limit: 100}).fetch();
-                // }
-                // else {
-                //     result = Service.find({$and:[
-                //         {$text: {$search: searchValue}},{categoryId:{$in:Ids}}]},
-                //         {
-                //             // `fields` is where we can add MongoDB projections. Here we're causing
-                //             // each document published to include a property named `score`, which
-                //             // contains the document's search rank, a numerical value, with more
-                //             // relevant documents having a higher score.
-                //             fields: {
-                //                 titleScore: {$meta: "textScore"},
-                //             },
-                //             // This indicates that we wish the publication to be sorted by the
-                //             // `score` property specified in the projection fields above.
-                //             sort: {
-                //                 titleScore: {$meta: "textScore"}
-                //             }
-                //         },{limit:50}
-                //     ).fetch();
-                // }
-
-            result=Service.aggregate([
+          //       if (!searchValue) {
+          //           result = Service.find({}, {limit: 100}).fetch();
+          //       }
+          //       else {
+          //           result = Service.find({$and:[
+          //               {$text: {$search: searchValue}},{categoryId:{$in:req.body.subCatIds}}]},
+          //               {
+          //                   // `fields` is where we can add MongoDB projections. Here we're causing
+          //                   // each document published to include a property named `score`, which
+          //                   // contains the document's search rank, a numerical value, with more
+          //                   // relevant documents having a higher score.
+          //                   fields: {
+          //                       titleScore: {$meta: "textScore"},
+          //                   },
+          //                   // This indicates that we wish the publication to be sorted by the
+          //                   // `score` property specified in the projection fields above.
+          //                   sort: {
+          //                       titleScore: {$meta: "textScore"}
+          //                   }
+          //               },{limit:50}
+          //           ).fetch();
+          //       }
+          //
+          var  pipeline=[
                 {
                     $geoNear: {
                         near: { type: "Point", coordinates: req.body.coords },
@@ -86,9 +86,21 @@ if (Meteor.isServer) {
                         spherical: true,
                         distanceMultiplier : 0.001
                     }
-                },{$limit:100}
-            ],{allowDiskUse: true})
-            res.end(JSON.stringify({ data: result }));
+                }
+            ]
+
+                let Service = MongoInternals.defaultRemoteCollectionDriver().mongo.db.collection('service');
+                Service.aggregate(
+                    pipeline,{cursor:{}}
+                ).toArray(function(err, doc) {
+            if(doc) {
+              console.log('doc',doc.length)
+                res.end(JSON.stringify({ data: doc }));
+                return false;
+            }
+        });
+          //  console.log('result',result)
+          //  res.end(JSON.stringify({ data: result }));
         }
             catch (e) {
                 console.log(e.message);

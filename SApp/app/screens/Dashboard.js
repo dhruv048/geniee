@@ -10,7 +10,7 @@ import {
     ActivityIndicator,
     FlatList
 } from 'react-native';
-import PropTypes from 'prop-types';
+import Geolocation from 'react-native-geolocation-service';
 import {Header, Container, Content, Item, Body, Left, Button,Right, Text, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../config/styles';
@@ -35,11 +35,45 @@ class Dashboard extends Component {
         };
         this.arrayholder;
         this.currentSearch = '';
+        this.region = {
+            latitude: 27.712020,
+            longitude: 85.312950,
+        };
+        this.granted;
     }
 
-    componentDidMount() {
+    async componentDidMount  () {
         Meteor.subscribe('categories-list');
-        SplashScreen.hide();
+        this.granted = await PermissionsAndroid.request(
+           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                'title': 'Location Permission',
+                'message': 'This App needs access to your location ' +
+                'so we can know where you are.'
+            }
+        )
+        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+
+            console.log("You can use locations ")
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    console.log(position);
+                    let region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                    this.region = region;
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                },
+                {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+            );
+        } else {
+            console.log("Location permission denied")
+        }
+
         this.setState({categories: Meteor.collection('MainCategories').find(), loading: false})
         this.arrayholder = Meteor.collection('MainCategories').find()
     }
@@ -79,14 +113,14 @@ class Dashboard extends Component {
         item.subCategories.map(item => {
             Ids.push(item.subCatId)
         })
-        this.props.navigation.navigate("Home", {Id: Ids})
+        this.props.navigation.navigate("Home", {Id: Ids,Region:this.region})
     }
 
     renderItem = (data, index) => {
         var item = data.item;
         return (
             <View key={item._id} style={styles.containerStyle}>
-                <TouchableOpacity onPress={() => this._itemClick(item)}>
+                <TouchableOpacity  onPress={() => this._itemClick(item)}>
                     <Body>
                     <Icon name={item.icon} size={40}/>
                     </Body>
@@ -136,6 +170,7 @@ class Dashboard extends Component {
                               data={this.state.categories}
                               numColumns={2}
                               renderItem={this.renderItem}
+                              keyExtractor={item=>item._id}
                     />
                     {/*</ScrollView>*/}
                 </Content>

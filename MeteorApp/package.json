@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
+    "bcrypt": "^3.0.6",
     "bcrypt-nodejs": "0.0.3",
     "fs-extra": "^7.0.1",
     "gm": "^1.23.1",

@@ -72,6 +72,20 @@ Meteor.startup(function () {
                 $addToSet:{subCategories:data}
             })
         }));
+        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/emergency.csv') :process.env.PWD + '/private/csvFiles/emergency.csv'), {
+            headers: true,
+            delimiter: ",",
+        }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
+            console.log(line);
+            var data={
+                subCatId:line.subCatId,
+                subCategory:line.subCategory
+            }
+            MainCategories.update({catId:19
+            },{
+                $addToSet:{subCategories:data}
+            })
+        }));
     }
     else{
 
