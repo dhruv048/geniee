@@ -13,7 +13,8 @@ export const settings = {
     env: process.env.NODE_ENV,
     METEOR_URL,
     GOOGLE_MAP_API_KEY,
-    API_URL
+    API_URL,
+    IMAGE_URL
 };
 export const userType = {
     NORMAL: 0,
