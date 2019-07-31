@@ -1,88 +1,89 @@
-import { Meteor } from 'meteor/meteor';
+import {ChatChannels} from "../../lib/collections/chat";
+import {ChatItems} from "../../lib/collections/chat";
+
+
+
 
 Meteor.methods({
-    'addChatItem':(Mesage)=>{
-        try{
-            ChatItem.insert({
-                From:Meteor.userId(),
-                To:Mesage.To,
-                createdAt: new Date(),
-                chat:Mesage.chat,
-                channelId:Mesage.channelId,
-            })
-            let channel=ChatChannel.findOne({_id:Mesage.channelId});
-            if(channel.createUser._id===Mesage.To){
-                channel.createUser.newMessage++;
+    'addChatChannel': (ServiceId) => {
+        try {
+            let service=Service.findOne({_id:ServiceId});
+            let logged = Meteor.user();
+            let channel = ChatChannels.findOne({$and: [{'service.Id': ServiceId}, {users: logged._id}]});
+            if (channel) {
+                return channel._id;
             }
-            else{
-                channel.otherUser.newMessage++;
-            }
-            ChatChannel.update({_id: channel._id}, {
-                $set: {
-                   createUser:channel.createUser,
-                    otherUser:channel.otherUser
+            else {
+                let ChatChannel = {
+                    users: [service.createdBy, logged._id],
+                    service:{Id:ServiceId,title:service.title},
+                    creator: logged._id,
+                    createDate: new Date(new Date().toUTCString()),
+                    lastMessage: null,
                 }
-            });
-        }
-        catch (e) {
-            console.log(e.message);
-            throw new Meteor.Error(403,e.message)
-
-        }
-    },
-
-    'createChatChannel':(Service)=>{
-        try{
-            var user = Meteor.user();
-           // console.log(Service)
-           // var otherUserName=user.profile.role===0?Category.findOne({_id:Channel.To}).name : Meteor.users.findOne({_id:Channel.To}).profile.name;
-            var otherUser=Meteor.users.findOne({_id:Service.createdBy});
-            var users=[Service.createdBy,user._id]
-          return  ChatChannel.insert({
-              users:users,
-              createdAt: new Date(),
-              isActive:true,
-              createdBy:user._id,
-              createUser:{_id:user._id,name:user.profile.name,newMessage:0,contact:user.profile.contactNo},
-              otherUser:{_id:otherUser._id, name:otherUser.profile.name, title:Service.title,newMessage:0,serviceId:Service._id}
-          });
-        }
-        catch (e) {
-            console.log(e.message);
-             throw new Meteor.Error(403,e.message)
-
-        }
-    },
-
-    'removeMessageCount':(channelId)=>{
-        let channel=ChatChannel.findOne({_id:channelId});
-        if(channel.createUser._id===Meteor.userId()){
-            channel.createUser.newMessage=0;
-        }
-        else{
-            channel.otherUser.newMessage=0;
-        }
-        ChatChannel.update({_id: channel._id}, {
-            $set: {
-                createUser:channel.createUser,
-                otherUser:channel.otherUser
+                return ChatChannels.insert(ChatChannel);
             }
-        });
+        }
+        catch (e) {
+            throw new Meteor.Error(500, e.message);
+        }
     },
-    // async getMessageCount() {
-    //    let getcount=async()=>{
-    //        let user= await Meteor.user();
-    //        let channels= await ChatChannel.find();
-    //        var count=0;
-    //        channels.map((itm) => {
-    //                 count = user.profile.role !== 2 ? (itm.otherUser._id === user._id ? count + itm.otherUser.newMessage : count + 0) : count + itm.otherUser.newMessage;
-    //             })
-    //         return count;
-    //     }
-    //
-    //     let countt= await getcount();
-    //    return await countt;
-    // }
-});
 
+    'addChatMessage': (Message,from) => {
+        try {
+            let chatChanel = ChatChannels.findOne({_id: Message.channelId});
+            let ChatItem = {
+                from: from? from :Meteor.userId(),
+                messageOn: new Date(new Date().toUTCString()),
+                messageData: Message.data,
+                channelId: Message.channelId,
+                seen: false
+            }
+            return ChatItems.insert(ChatItem);
+        }
+        catch (e) {
+            throw new Meteor.Error(500, e.message);
+        }
+    },
 
+    'updateMessageSeen': function (messagesList) {
+        try {
+            ChatItems.update({_id: {$in: messagesList}},
+                {
+                    $set: {seen: true}
+                },
+                {multi: true});
+
+        }
+        catch (e) {
+            Meteor.Error(500, e.message)
+        }
+    },
+
+    'uploadChatFile':function  (file,channelId) {
+        let from=Meteor.userId()
+        ChatFiles.write(new Buffer(file.data, 'base64'),
+            {
+                fileName: file.name,
+                type: file.mime
+            },
+            (err, res) => {
+                if (err) {
+                   throw new Meteor.Error(err)
+                }
+                else {
+                    console.log('res',res._id)
+                    let Message = {
+                        channelId: channelId,
+                        data:{
+                            src: res._id,
+                            type: file.mime,
+                            fileName: file.fileName
+                        }
+                    };
+
+                    Meteor.call('addChatMessage',Message,from)
+                }
+            }, proceedAfterUpload = true)
+    }
+})

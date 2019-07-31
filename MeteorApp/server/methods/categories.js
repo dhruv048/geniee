@@ -10,7 +10,7 @@ Meteor.methods({
             let Id=Moment().format('DDMMYYx');
             let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
                 MainCategories.update(
-                {catId: 0},
+                {catId: "0"},
                 {$addToSet:
                         {
                             subCategories: {subCatId:Id, subCategory: serviceInfo.Category.subCategory}

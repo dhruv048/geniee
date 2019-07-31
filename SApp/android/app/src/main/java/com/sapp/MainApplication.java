@@ -3,6 +3,9 @@ package com.sapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
+import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.airbnb.android.react.maps.MapsPackage;
@@ -32,6 +35,9 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RNFSPackage(),
+            new DocumentPickerPackage(),
+            new RNFileViewerPackage(),
             new RNFusedLocationPackage(),
                     new SplashScreenReactPackage(),
                     new MapsPackage(),

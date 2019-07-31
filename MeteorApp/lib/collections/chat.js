@@ -1,5 +1,2 @@
-import {Mongo} from 'meteor/mongo';
-
-ChatChannel = new Mongo.Collection('chatChannels');
-
-ChatItem= new Mongo.Collection('chatItems');
+export const ChatChannels = new Mongo.Collection('chatChannels');
+export const ChatItems = new Mongo.Collection('chatItems');

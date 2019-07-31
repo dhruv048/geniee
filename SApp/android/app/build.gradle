@@ -153,6 +153,9 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-fs')
+    implementation project(':react-native-document-picker')
+    implementation project(':react-native-file-viewer')
     implementation project(':react-native-geolocation-service')
     implementation project(':react-native-splash-screen')
     implementation project(':react-native-maps')
@@ -175,4 +178,10 @@ dependencies {
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
+}
+
+preBuild.doFirst {
+    ant.replaceregexp(match:'androidx.core.content.', replace:'android.support.v4.content.', flags:'g', byline:true) {
+        fileset(dir: '../../node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer', includes: '*.java')
+    }
 }
