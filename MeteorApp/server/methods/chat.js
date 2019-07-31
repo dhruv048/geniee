@@ -85,5 +85,27 @@ Meteor.methods({
                     Meteor.call('addChatMessage',Message,from)
                 }
             }, proceedAfterUpload = true)
+    },
+
+    'uploadProfileImage':function(image){
+        console.log(image.name)
+        let userId=Meteor.userId();
+        ProfilePhoto.write(new Buffer(image.data, 'base64'),
+            {
+                fileName: image.name,
+                type: image.mime
+            },
+            (err, res) => {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("imageId",res._id)
+                    Meteor.users.update({_id:userId},{
+                        $set:{'profile.profileImage':res._id}
+                    })
+                    return res._id;
+                }
+            },proceedAfterUpload = true)
     }
 })

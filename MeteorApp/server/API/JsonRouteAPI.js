@@ -19,7 +19,6 @@ if (Meteor.isServer) {
                     res.writeHead(400);
                     res.end('cannot find image with id=' + req.params.id);
                 }
-
                 /** create read stream */
                 var readstream = gfs.createReadStream({
                     filename: files[0].filename,
@@ -51,6 +50,8 @@ if (Meteor.isServer) {
                         res.writeHead(400);
                         res.end('cannot find image with id=' + req.params.id);
                     }
+
+
                     /** create read stream */
                     var readstream = gfs.createReadStream({
                         filename: files[0].filename,
@@ -59,7 +60,7 @@ if (Meteor.isServer) {
 
                     /** set the proper content type */
                     res.writeHead(200, {
-                        'Content-Type': 'image/png',
+                        'Content-Type': files[0].metadata.mime,
                     });
 
                     /** return response */

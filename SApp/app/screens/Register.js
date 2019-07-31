@@ -297,6 +297,7 @@ const GooglePlaceSerachStyle={
     container:{
         padding:0,
         borderRadius: 25,
+
     },
     description: {
         fontWeight: 'bold',

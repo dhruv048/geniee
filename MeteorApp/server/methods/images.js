@@ -9,6 +9,7 @@ Meteor.methods({
         });
         console.log(re);
         return res
-    }
+    },
+
 
 })

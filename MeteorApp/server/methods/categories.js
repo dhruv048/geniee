@@ -42,20 +42,12 @@ Meteor.methods({
                         }
                         else {
                             console.log(res._id)
-                            var res = Service.insert({
-                                title: serviceInfo.title,
-                                description: serviceInfo.description,
-                                contact: serviceInfo.contact,
-                                location: serviceInfo.location,
-                                radius: serviceInfo.radius,
-                                coverImage: res._id,
-                                homeDelivery: serviceInfo.homeDelivery,
-                                categoryId: CategoryId,
-                                createdAt: new Date(),
-                                createdBy: currentUserId,
-                                ratings: [{count: 0}],
-                            });
-
+                            serviceInfo.createdAt=new Date(new Date().toUTCString());
+                            serviceInfo.createdBy= currentUserId;
+                            serviceInfo.coverImage=res._id;
+                            serviceInfo.categoryId=CategoryId;
+                            serviceInfo.ratings= [{count: 0}];
+                            var res = Service.insert(serviceInfo);
                             return res;
                         }
                     }, proceedAfterUpload = true)

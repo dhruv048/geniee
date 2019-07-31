@@ -8,7 +8,7 @@ import {
     Alert,
     ScrollView,
     StatusBar,
-    Modal, ToastAndroid
+    Modal, ToastAndroid,Linking
 } from 'react-native';
 import {Button, Container, Content, Textarea, Left, Icon,Body} from 'native-base'
 import Meteor, {createContainer} from "react-native-meteor";
@@ -169,6 +169,10 @@ class ServiceDetail extends Component {
         return Math.round(avg);
     }
 
+    _browse=(url)=>{
+        Linking.openURL(url).catch((err) => console.error('An error occurred', err));
+    }
+
     render() {
         const Id=this.props.navigation.getParam('Id');
         console.log(Id)
@@ -225,6 +229,11 @@ class ServiceDetail extends Component {
                             <Text >
                                 {Service.email||''}
                             </Text>
+                            <TouchableOpacity onPress={()=>this._browse(Service.website)}>
+                            <Text style={{color:colors.statusBar}} >
+                                {Service.website||''}
+                            </Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.starContainer}>
                             <Rating

@@ -17,6 +17,7 @@ import SignIn from "./SignIn";
 import Register from "./Register";
 import AuthLoadingScreen from "./AuthLoading";
 import Dashboard from "./Dashboard";
+import UploadProfilePic from '../components/UploadProfilePic/UploadProfilePic';
 
 //import Splash from '../screens/Splash';
 
@@ -83,9 +84,7 @@ const CustomDrawerContentComponent=(props)=>(
     <Container>
         <Header style={{height:200, backgroundColor: '#094c6b'}}>
             <Body style={{justifyContent:'center',alignItems:'center'}}>
-            <Image
-                style={styles.drawerImage}
-                source={require('../images/duser.png')}/>
+           <UploadProfilePic/>
             </Body>
         </Header>
         <Content style={{backgroundColor:colors.appBackground}}>

@@ -219,6 +219,7 @@ class AddService extends React.PureComponent {
             Image: null,
             price: null,
             unit: null,
+            webLink:''
         };
 
         this.categories = []
@@ -304,6 +305,7 @@ class AddService extends React.PureComponent {
                     contact: '',
                     price: null,
                     unit: null,
+                    webLink:''
                 });
                 this.props.navigation.navigate('Home');
             }
@@ -311,7 +313,7 @@ class AddService extends React.PureComponent {
 
     };
     _saveService = () => {
-        const {title, description, radius, contact, homeDelivery, selectedCategory, query, price, unit, location} = this.state;
+        const {title, description, radius, contact, homeDelivery, selectedCategory, query, price, unit, location, webLink} = this.state;
         let service = {
             title: title,
             description: description,
@@ -322,6 +324,7 @@ class AddService extends React.PureComponent {
             homeDelivery: homeDelivery,
             price: price,
             unit: unit,
+            website:webLink,
         };
         if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !location) {
             ToastAndroid.showWithGravityAndOffset(
@@ -525,6 +528,14 @@ class AddService extends React.PureComponent {
                                            placeholder='Contact No (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(contact) => this.setState({contact})}
+                                    />
+                                </Item>
+                                <Item>
+                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputText}
+                                           placeholder='Website'
+                                           onChangeText={(webLink) => this.setState({webLink})}
                                     />
                                 </Item>
                                 <Button block success onPress={this._saveService}><Text> Save </Text></Button>
