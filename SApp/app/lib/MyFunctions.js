@@ -133,7 +133,7 @@ export const MyFunctions = {
 
     _openFile: (url, fileName) => {
         let options = {
-            fromUrl: settings.API_URL+'image/' + url,
+            fromUrl: settings.API_URL+'chatFiles/'+ url,
             toFile: _getLocalPath(settings.API_URL+'image/' + url)
         };
         RNFS.downloadFile(options).promise

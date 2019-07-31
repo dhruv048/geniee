@@ -56,7 +56,7 @@ class ChatList extends Component {
                     <View style={{flexDirection: 'row', width: '100%'}}>
                         <View>
                             <Thumbnail
-                                source={item.user.profile.profileImage ? {uri: settings.API_URL+'images/' + item.user.profile.profileImage} : require('../../images/duser.png')}/>
+                                source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL+'images/' + item.user.profile.profileImage} : require('../../images/duser.png')}/>
                         </View>
                         <View style={{marginHorizontal: 10}}>
                             <Text>{item.user.profile.name}</Text>

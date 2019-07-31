@@ -43,7 +43,7 @@ class Chat extends Component {
                                         height: 200,
                                         resizeMode: 'contain'
                                     }}
-                                           source={{uri: settings.API_URL+'images/' + Message.src}}/>
+                                           source={{uri: settings.IMAGE_URL+'chatFiles/' + Message.src+'/'+Message.fileName}}/>
                                     :
                                     <Icon style={{alignSelf: 'flex-start'}} name={'file-text'} size={50}/>}
                                 <Text style={{
@@ -66,7 +66,7 @@ class Chat extends Component {
                         <View>
                             {Message.type.includes('image') ?
                                 <Image style={{alignSelf: 'flex-end', width: 200, height: 200, resizeMode: 'contain'}}
-                                       source={{uri: settings.API_URL+'images/' + Message.src}}/>
+                                       source={{uri: settings.IMAGE_URL+'chatFiles/' + Message.src+'/'+Message.fileName}}/>
                                 :
                                 <Icon style={{alignSelf: 'flex-end'}} name={'file-text'} size={50}/>}
                             <Text
@@ -178,7 +178,7 @@ class Chat extends Component {
     _senFile = async () => {
         try {
             const file = await DocumentPicker.pick({
-                type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
+                type: [DocumentPicker.types.images, DocumentPicker.types.allFiles],
                 readContent: true
             });
             // console.log(
@@ -269,7 +269,7 @@ class Chat extends Component {
             FileViewer.open(file.src, {showOpenWithDialog: true, displayName: file.fileName})
         }
         else {
-            MyFunctions._openFile(settings.API_URL+'images/' + file.src, file.fileName)
+            MyFunctions._openFile( file.src+'/'+file.fileName, file.fileName)
         }
     }
 
@@ -302,7 +302,7 @@ class Chat extends Component {
                     </Body>
                     <Right style={{margin: 7}}>
                         <Thumbnail
-                            source={channel.user.profileImage ? {uri: settings.API_URL +'images/'+ channel.user.profileImage} : require('../../images/duser.png')}/>
+                            source={channel.user.profileImage ? {uri: settings.IMAGE_URL +'images/'+ channel.user.profileImage} : require('../../images/duser.png')}/>
                     </Right>
                 </Header>
                 <View style={styles.content}>
@@ -324,7 +324,7 @@ class Chat extends Component {
                         {this.state.files.map((file, index) => (
                             <TouchableOpacity onPress={() => this._showFile(file, true)} key={index}>
                                 <View style={{
-                                    marginVertical: 5, backgroundColor: colors.appLayout,
+                                    marginVertical: 5, backgroundColor: colors.st,
                                     flexDirection: 'row'
                                 }}>
 
