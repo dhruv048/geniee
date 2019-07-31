@@ -51,7 +51,8 @@ const reducer = (state = {}, action) => {
                 },
             };
         case REMOVED:
-            if (state[collection] && state[collection][id]) {
+            if (state[collection] && state[collection][id] && state[collection]!=="MainCategories"  ) {
+                console.log("removing"+state[collection])
                 return {
                     ...state,
                     [collection]: _.omit(state[collection], id),

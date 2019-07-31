@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-
+import Moment from 'moment';
 
 Meteor.methods({
 
@@ -7,27 +7,33 @@ Meteor.methods({
         try {
             console.log('addNewCategory:::=>>>');
             var currentUserId = Meteor.userId();
-            let CategoryId = serviceInfo.Category._id !== null ? serviceInfo.Category._id : Categories.insert(
-                {  name: serviceInfo.Category.name,
-                createdAt: new Date(),
-                createdBy: Meteor.userId()});
-            let location={
-                geometry:{
-                    coordinates:[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat],
-                    type:'Point',
-                    location:{
-                        lat:serviceInfo.location.geometry.location.lat,
-                        lng:serviceInfo.location.geometry.location.lng
+            let Id=Moment().format('DDMMYYx');
+            let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
+                MainCategories.update(
+                {catId: 0},
+                {$addToSet:
+                        {
+                            subCategories: {subCatId:Id, subCategory: serviceInfo.Category.subCategory}
+                        }
+                }
+            )
+            let location = {
+                geometry: {
+                    coordinates: [serviceInfo.location.geometry.location.lng, serviceInfo.location.geometry.location.lat],
+                    type: 'Point',
+                    location: {
+                        lat: serviceInfo.location.geometry.location.lat,
+                        lng: serviceInfo.location.geometry.location.lng
                     }
                 },
-                formatted_address:serviceInfo.location.formatted_address,
+                formatted_address: serviceInfo.location.formatted_address,
             }
-       //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
-            serviceInfo.location=location;
+            //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
+            serviceInfo.location = location;
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
-                        fileName: serviceInfo.Image.modificationDate+'.jpg',
+                        fileName: serviceInfo.Image.modificationDate + '.jpg',
                         type: serviceInfo.Image.mime
                     },
                     (err, res) => {
@@ -47,14 +53,14 @@ Meteor.methods({
                                 categoryId: CategoryId,
                                 createdAt: new Date(),
                                 createdBy: currentUserId,
-                                ratings:[{count:0}],
+                                ratings: [{count: 0}],
                             });
 
                             return res;
                         }
                     }, proceedAfterUpload = true)
             }
-            else{
+            else {
 
                 var res = Service.insert({
                     title: serviceInfo.title,
@@ -67,7 +73,7 @@ Meteor.methods({
                     categoryId: CategoryId,
                     createdAt: new Date(),
                     createdBy: currentUserId,
-                    ratings:[{count:0}],
+                    ratings: [{count: 0}],
                 });
 
                 return res;
@@ -165,7 +171,7 @@ Meteor.methods({
 
     },
 
-    'SearchService': function(searchText){
+    'SearchService': function (searchText) {
         try {
             // check(searchText, String);
             // this.unblock();
@@ -173,19 +179,19 @@ Meteor.methods({
             return Service.find({$or: [{title: searchExp}, {description: searchText}]}).fetch();
         }
         catch (e) {
-            console.log('from search'+e.message)
+            console.log('from search' + e.message)
         }
     },
 
-    'updateRating':function (Id,rating) {
-        try{
-            let user=Meteor.user();
-            rating.ratedBy={_id:Meteor.userId(),name:user.profile.name, coverImage:user.profile.profileImage};
-            rating.rateDate= new Date();
-            let service = Service.findOne({_id:Id});
+    'updateRating': function (Id, rating) {
+        try {
+            let user = Meteor.user();
+            rating.ratedBy = {_id: Meteor.userId(), name: user.profile.name, coverImage: user.profile.profileImage};
+            rating.rateDate = new Date();
+            let service = Service.findOne({_id: Id});
             let Ratings = service.ratings;
-            let avg= service.hasOwnProperty('avgRate') ? service.avgRate : 0;
-            avg=avg+rating.count;
+            let avg = service.hasOwnProperty('avgRate') ? service.avgRate : 0;
+            avg = avg + rating.count;
             Ratings.push(rating);
             Service.update({_id: Id}, {
                 $set: {

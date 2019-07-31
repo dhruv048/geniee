@@ -25,4 +25,5 @@ ostrio:files
 nimble:restivus
 simple:json-routes
 clinical:csv
-meteorhacks:aggregate
+tunguska:reactive-aggregate
+sakulstra:aggregate

@@ -4,6 +4,30 @@
       "password": "2041",
       "username": "9813798508",
       "email": "roshanshah.011@gmail.com"
+    },
+    "public":{
+      "categories":[
+        [1,"Apparels & Accessories","chain"],
+        [2,"Audio & Video","film"],
+        [3,"Automobiles","truck"],
+        [4,"Beauty & Health","heart"],
+        [5,"Books & Magazines","book"],
+        [6,"Computer & Peripherals","desktop"],
+        [7,"Consumer Electronics","plug"],
+        [8,"Educations","university"],
+        [9,"Fun & Entertainment","headphones"],
+        [10,"Home, Tool & Appliances","home"],
+        [11,"Jobs & Services","black-tie"],
+        [12,"Mobile & Accessories","mobile"],
+        [13,"Music & Sports","music"],
+        [14,"Real Estate","building"],
+        [15,"Toys & Video Games","gamepad"],
+        [16,"Travel, Ticket & Vouchers","plane"],
+        [17,"Want To Buy (Buyer List)","shopping-cart"],
+        [18,"Announcements","bullhorn"],
+        [0,"Others","question-circle"],
+        [19,"Emergency","fire-extinguisher"]
+      ]
     }
   }
 }

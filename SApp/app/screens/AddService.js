@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal,StatusBar} from "react-native";
+import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal, StatusBar} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SafeAreaView} from "react-navigation";
 import Autocomplete from 'native-base-autocomplete';
@@ -127,11 +127,6 @@ const styles = StyleSheet.create({
         // flex: 1,
 
     },
-    // itemText: {
-    //     fontSize: 15,
-    //     margin: 2,
-    //     backgroundColor:'green',
-    // },
     descriptionContainer: {
         // `backgroundColor` needs to be set otherwise the
         // autocomplete input will disappear on text input.
@@ -174,7 +169,34 @@ const styles = StyleSheet.create({
         width: `100%`,
         flexDirection: 'row',
         // paddingTop: 15,
-    }
+    },
+    textInputContainer: {
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0)',
+        borderTopWidth: 0,
+        borderBottomWidth:0,
+        margin:0,
+        height:60
+    },
+    description: {
+        fontWeight: 'bold'
+    },
+    predefinedPlacesDescription: {
+        color: '#1faadb'
+    },
+    textInput: {
+        backgroundColor: `rgba(243, 247, 255, 1)`,
+        borderRadius: 5,
+        color: `rgba(0, 0, 0, 1)`,
+        fontFamily: `Source Sans Pro`,
+        fontSize: 18,
+        // padding: 10,
+        paddingLeft: 40,
+        width: `100%`,
+        marginBottom: 4,
+        marginTop: 4,
+        height:50
+    },
 
 });
 
@@ -194,41 +216,54 @@ class AddService extends React.PureComponent {
             avatarSource: null,
             selected: 'Keynull',
             modalVisible: false,
-            Image:null
+            Image: null,
+            price: null,
+            unit: null,
         };
 
+        this.categories = []
+
+    }
+
+    componentDidMount() {
+        Meteor.subscribe('categories-list', () => {
+           let MaiCategories= Meteor.collection('MainCategories').find();
+           MaiCategories.forEach(item => {
+               this.categories= this.categories.concat(item.subCategories);
+            })
+        })
     }
 
     _handleImageUpload = (selected) => {
         this.setModalVisible(false);
-        if(selected ==='key0'){
+        if (selected === 'key0') {
             ImagePicker.openCamera({
                 width: 400,
                 height: 200,
                 cropping: true,
-                includeBase64:true
+                includeBase64: true
             }).then(image => {
                 console.log(image);
-               this._onImageChange(image)
+                this._onImageChange(image)
             });
         }
-        else if (selected ==='key1'){
+        else if (selected === 'key1') {
             ImagePicker.openPicker({
                 width: 400,
                 height: 200,
                 cropping: true,
-                includeBase64:true
+                includeBase64: true
             }).then(image => {
                 console.log(image);
-               this._onImageChange(image)
+                this._onImageChange(image)
             });
         }
     };
-    _onImageChange=(image)=>{
+    _onImageChange = (image) => {
         this.setState({
-            avatarSource:{ uri: `data:${image.mime};base64,${image.data}`},
-          //  avatarSource:{ uri:  image.path }
-            Image:image
+            avatarSource: {uri: `data:${image.mime};base64,${image.data}`},
+            //  avatarSource:{ uri:  image.path }
+            Image: image
         });
 
         ImagePicker.clean().then(() => {
@@ -237,95 +272,99 @@ class AddService extends React.PureComponent {
             alert(e);
         });
     }
-        _updateHomeDelivery = () => {
-            let current = this.state.homeDelivery;
-            this.setState(
-                {homeDelivery: current === false ? true : false}
-            )
-        };
-        _callSaveServiceMethod = (service) => {
-            service.Image=this.state.Image;
-            Meteor.call('addNewService', service, (err, res) => {
-                if (err) {
-                    ToastAndroid.showWithGravityAndOffset(
-                        err.reason,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        50,
-                    );
-                    console.log(err.reason);
-                } else {
-                    // hack because react-native-meteor doesn't login right away after sign in
-                    console.log('Reslut from addNewService' + res);
-                    this.setState({
-                        query: '',
-                        selectedCategory: null,
-                        title: '',
-                        homeDelivery: false,
-                        radius: 0,
-                        description: '',
-                        location: '',
-                        contact: ''
-                    });
-                    this.props.navigation.navigate('Home');
-                }
-            });
-
-        };
-        _saveService = () => {
-            const {title, description, radius, contact, homeDelivery, selectedCategory, query} = this.state;
-            let service = {
-                title: title,
-                description: description,
-                contact: contact,
-                location: this.state.location,
-                radius: radius,
-                coverImage: null,
-                homeDelivery: homeDelivery,
-            };
-            if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0) {
+    _updateHomeDelivery = () => {
+        let current = this.state.homeDelivery;
+        this.setState(
+            {homeDelivery: current === false ? true : false}
+        )
+    };
+    _callSaveServiceMethod = (service) => {
+        service.Image = this.state.Image;
+        Meteor.call('addNewService', service, (err, res) => {
+            if (err) {
                 ToastAndroid.showWithGravityAndOffset(
-                    'Please Enter all the fields.',
+                    err.reason,
                     ToastAndroid.LONG,
                     ToastAndroid.TOP,
                     0,
                     50,
                 );
-                //valid = false;
+                console.log(err.reason);
+            } else {
+                // hack because react-native-meteor doesn't login right away after sign in
+                console.log('Reslut from addNewService' + res);
+                this.setState({
+                    query: '',
+                    selectedCategory: null,
+                    title: '',
+                    homeDelivery: false,
+                    radius: 0,
+                    description: '',
+                    location: '',
+                    contact: '',
+                    price: null,
+                    unit: null,
+                });
+                this.props.navigation.navigate('Home');
+            }
+        });
+
+    };
+    _saveService = () => {
+        const {title, description, radius, contact, homeDelivery, selectedCategory, query, price, unit, location} = this.state;
+        let service = {
+            title: title,
+            description: description,
+            contact: contact,
+            location: this.state.location,
+            radius: radius,
+            coverImage: null,
+            homeDelivery: homeDelivery,
+            price: price,
+            unit: unit,
+        };
+        if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !location) {
+            ToastAndroid.showWithGravityAndOffset(
+                'Please Enter all the fields with *.',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
+            //valid = false;
+        }
+        else {
+            if (selectedCategory === null && query.length > 3) {
+                // Meteor.call('addCategory', this.state.query, (err, res) => {
+                //     if (err) {
+                //         console.log(err)
+                //     }
+                //     else {
+                service.Category = {subCatId: null, subCategory: query}
+                this._callSaveServiceMethod(service)
+                //     }
+                // })
+            }
+            else if (selectedCategory) {
+                service.Category = selectedCategory;
+                this._callSaveServiceMethod(service)
             }
             else {
-                if (selectedCategory === null && query.length > 3) {
-                    // Meteor.call('addCategory', this.state.query, (err, res) => {
-                    //     if (err) {
-                    //         console.log(err)
-                    //     }
-                    //     else {
-                            service.Category = {_id: null, name: query}
-                             this._callSaveServiceMethod(service)
-                    //     }
-                    // })
-                }
-                else if (selectedCategory) {
-                    service.Category = selectedCategory;
-                    this._callSaveServiceMethod(service)
-                }
-                else {
-                    ToastAndroid.showWithGravityAndOffset(
-                        'Please Enter Category Name with length greater than 3',
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        50,
-                    );
-                }
+                ToastAndroid.showWithGravityAndOffset(
+                    'Please Enter Category Name with length greater than 3',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
             }
         }
+    }
 
-    handleLocation=(data,Detail)=>{
-            console.log(data,'Detail :'+Detail)
+    handleLocation = (data, Detail) => {
+        console.log(data, 'Detail :' + Detail)
         this.setState({
-            location:data
+            location: data
         })
     }
 
@@ -338,9 +377,9 @@ class AddService extends React.PureComponent {
             return [];
         }
 
-        const categories = this.props.categories;
+        const categories = this.categories;
         const regex = new RegExp(`${query.trim()}`, 'i');
-        return categories.filter(category => category.name.search(regex) >= 0);
+        return categories.filter(category => category.subCategory.search(regex) >= 0);
     }
 
     render() {
@@ -366,7 +405,9 @@ class AddService extends React.PureComponent {
                         <SafeAreaView style={styles.sb85086c9} keyboardShouldPersistTaps='always'>
                             <View style={styles.sbc83915f}>
                                 <Text style={styles.s1f0fdd20}>{`Add Service`}</Text>
-                                <TouchableOpacity style={styles.imageView} onPress={()=>{this.setModalVisible(true)}}>
+                                <TouchableOpacity style={styles.imageView} onPress={() => {
+                                    this.setModalVisible(true)
+                                }}>
                                     {this.state.avatarSource !== null ?
                                         <Image style={{
                                             width: 147,
@@ -388,28 +429,28 @@ class AddService extends React.PureComponent {
                                     autoCapitalize="none"
                                     style={styles.inputText}
                                     autoCorrect={false}
-                                    data={categories.length === 1 && comp(query, categories[0].name)
+                                    data={categories.length === 1 && comp(query, categories[0].subCategory)
                                         ? [] : categories}
                                     defaultValue={query}
-                                    hideResults={selectedCategory && selectedCategory.name === query}
+                                    hideResults={selectedCategory && selectedCategory.subCategory === query}
                                     onChangeText={text => this.setState({query: text})}
-                                    placeholder="Enter Category's name"
+                                    placeholder="Enter Category's name (*)"
                                     placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                     renderItem={cat => <ListItem style={{backgroundColor: colors.bgBrightGreen}}
                                                                  onPress={() => (
                                                                      this.setState({
-                                                                         query: cat.name,
+                                                                         query: cat.subCategory,
                                                                          selectedCategory: cat
                                                                      })
                                                                  )}
 
                                                                  style={styles.inputText}
                                     >
-                                        <Text>{cat.name}</Text>
+                                        <Text>{cat.subCategory}</Text>
                                     </ListItem>}
                                 />
                                 <Item>
-                                    <Input placeholder='Title'
+                                    <Input placeholder='Title (*)'
                                            style={styles.inputText}
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            underlineColorAndroid='rgba(0,0,0,0)'
@@ -417,7 +458,7 @@ class AddService extends React.PureComponent {
                                            onChangeText={(title) => this.setState({title})}
                                     />
                                 </Item>
-                                <Textarea rowSpan={4} placeholder="Description"
+                                <Textarea rowSpan={4} placeholder="Description (*)"
                                           style={styles.inputText}
                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                           underlineColorAndroid='rgba(0,0,0,0)'
@@ -427,19 +468,20 @@ class AddService extends React.PureComponent {
                                 <View style={styles.s50325ddf}/>
                                 <Item>
                                     {/*<Input disabled*/}
-                                           {/*style={styles.inputText}*/}
-                                           {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
-                                           {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                           {/*placeholder='Location'*/}
-                                           {/*keyboardType='phone-pad'*/}
-                                           {/*onChangeText={(location) => this.setState({location})}*/}
+                                    {/*style={styles.inputText}*/}
+                                    {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                    {/*placeholder='Location'*/}
+                                    {/*keyboardType='phone-pad'*/}
+                                    {/*onChangeText={(location) => this.setState({location})}*/}
                                     {/*/>*/}
                                     <GooglePlaceSearchBox
                                         onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                        console.log(data, details);
-                                        this.handleLocation(details)
-                                    }}
-
+                                            console.log(data, details);
+                                            this.handleLocation(details)
+                                        }}
+                                        placeholder='Enter Address (*)'
+                                        styles={[styles.textInputContainer,styles.description,styles.predefinedPlacesDescription,styles.textInput]}
                                     ></GooglePlaceSearchBox>
 
                                 </Item>
@@ -448,21 +490,39 @@ class AddService extends React.PureComponent {
                                     <Input underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputText}
-                                           placeholder='Radius in KiloMeter'
+                                           placeholder='Radius for Service Area in KiloMeter (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(radius) => this.setState({radius})}
                                     />
                                 </Item>
                                 <View style={styles.checkBokView}>
-                                    <CheckBox style={{marginRight:15}} checked={this.state.homeDelivery} onPress={this._updateHomeDelivery}/>
-                                    <Text style={{color:`rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text>
+                                    <CheckBox style={{marginRight: 15}} checked={this.state.homeDelivery}
+                                              onPress={this._updateHomeDelivery}/>
+                                    <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text>
                                 </View>
                                 <View style={styles.s50325ddf}/>
                                 <Item>
                                     <Input underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputText}
-                                           placeholder='Contact No'
+                                           placeholder='Unit'
+                                           onChangeText={(unit) => this.setState({unit})}
+                                    />
+                                </Item>
+                                <Item>
+                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputText}
+                                           placeholder='Price per Unit'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(price) => this.setState({price})}
+                                    />
+                                </Item>
+                                <Item>
+                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputText}
+                                           placeholder='Contact No (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(contact) => this.setState({contact})}
                                     />
@@ -476,30 +536,36 @@ class AddService extends React.PureComponent {
                                     transparent={true}
                                     visible={this.state.modalVisible}
                                     onRequestClose={() => {
-                                       this.setModalVisible
+                                        this.setModalVisible
                                     }}>
                                     <View style={{
                                         flex: 1,
                                         flexDirection: 'column',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                       }}>
+                                    }}>
 
                                         <View style={{
-                                            backgroundColor:'white',
+                                            backgroundColor: 'white',
                                             width: 350,
                                             height: 200,
-                                        padding:30,
+                                            padding: 30,
 
                                         }}>
 
-                                            <Button block bordered info onPress={()=>{this._handleImageUpload('key0')}} >
+                                            <Button block bordered info onPress={() => {
+                                                this._handleImageUpload('key0')
+                                            }}>
                                                 <Text style={styles.item_text}>Picture from Camera</Text>
                                             </Button>
-                                            <Button style={{marginTop:10}} info block bordered  onPress={()=>{this._handleImageUpload('key1')}} >
+                                            <Button style={{marginTop: 10}} info block bordered onPress={() => {
+                                                this._handleImageUpload('key1')
+                                            }}>
                                                 <Text style={styles.item_text}>Picture from Gallery </Text>
                                             </Button>
-                                            <Button  transparent danger onPress={()=>{this.setModalVisible(false)}}>
+                                            <Button transparent danger onPress={() => {
+                                                this.setModalVisible(false)
+                                            }}>
                                                 <Text>Cancel</Text>
                                             </Button>
                                         </View>

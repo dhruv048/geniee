@@ -15,10 +15,11 @@ import {
 import {RadioGroup} from 'react-native-btr';
 
 import Meteor from 'react-native-meteor';
-
+import GooglePlaceSearchBox from '../components/GooglePlaceSearch';
 import Logo from '../components/Logo/Logo';
 import {colors} from '../config/styles';
 import {userType} from '../config/settings';
+import {Item} from 'native-base';
 
 class Register extends Component {
     validInput = (overrideConfirm) => {
@@ -27,7 +28,7 @@ class Register extends Component {
 
         if (email.length === 0 || password.length === 0) {
             ToastAndroid.showWithGravityAndOffset(
-                'Email and password cannot be empty.',
+                'Email or password cannot be empty.',
                 ToastAndroid.LONG,
                 ToastAndroid.TOP,
                 0,
@@ -83,11 +84,11 @@ class Register extends Component {
     }
     handleCreateAccount = () => {
         if (this.validInput()) {
-            const {email, password, name, contact, userType} = this.state;
-            if (name.length === 0 || contact.length === 0) {
+            const {email, password, name, contact, userType, location} = this.state;
+            if (name.length === 0 || contact.length === 0 || !location) {
                 console.log('Empty');
                 ToastAndroid.showWithGravityAndOffset(
-                    'Name and Contact cannot be empty.',
+                    'Name, Location or Contact cannot be empty.',
                     ToastAndroid.LONG,
                     ToastAndroid.TOP,
                     0,
@@ -109,7 +110,7 @@ class Register extends Component {
                         name: name,
                         contactNo: contact,
                         profileImage: null,
-
+                        location:location
                     }
                 };
                 Meteor.call('signUpUser', user, (err, res) => {
@@ -134,6 +135,7 @@ class Register extends Component {
             email: '',
             contact: '',
             password: '',
+            location: '',
             confirmPassword: '',
             confirmPasswordVisible: false,
             userType: null,
@@ -164,6 +166,13 @@ class Register extends Component {
 
     }
 
+    handleLocation = (data, Detail) => {
+        console.log(data, 'Detail :' + Detail)
+        this.setState({
+            location: data
+        })
+    }
+
     render() {
         const {navigate} = this.props.navigation;
 
@@ -179,12 +188,12 @@ class Register extends Component {
 
                     <View style={styles.containerRegister}>
                         <TextInput style={styles.inputBox}
-                        underlineColorAndroid='rgba(0,0,0,0)'
-                        placeholder='Full Name'
-                        placeholderTextColor='#ffffff'
-                        selectionColor='#ffffff'
-                        onSubmitEditing={() => this.email.focus()}
-                        onChangeText={(name) => this.setState({name})}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Full Name'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   onSubmitEditing={() => this.email.focus()}
+                                   onChangeText={(name) => this.setState({name})}
                         />
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
@@ -193,7 +202,7 @@ class Register extends Component {
                                    selectionColor='#ffffff'
                                    keyboardType='email-address'
                                    ref={(input) => this.email = input}
-                                   onSubmitEditing={() => this.password.focus()}
+                                   onSubmitEditing={() => this.contact.focus()}
                                    onChangeText={(email) => this.setState({email})}
                         />
                         <TextInput style={styles.inputBox}
@@ -202,31 +211,42 @@ class Register extends Component {
                                    placeholderTextColor='#ffffff'
                                    selectionColor='#ffffff'
                                    keyboardType='phone-pad'
-                                   ref={(input) => this.contactNumber = input}
                                    onChangeText={(contact) => this.setState({contact})}
                         />
-                        <TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Password'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
-                                   secureTextEntry
-                                   ref={(input) => this.password = input}
-                                   onSubmitEditing={() => this.confirmPassword.focus()}
-                                   onChangeText={(password) => this.setState({password})}
-                        />
-                        <TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Confirm Password'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
-                                   secureTextEntry
-                                   ref={(input) => this.confirmPassword = input}
-                                   onSubmitEditing={() => this.contactNumber.focus()}
-                                   onChangeText={(confirmPassword) => this.setState({confirmPassword})}
-                        />
+                        <View style={{width:300,minHeight:50,  marginVertical: 5}}>
+                        <GooglePlaceSearchBox
+                            underlineColorAndroid='rgba(0,0,0,0)'
+                            placeholderTextColor='#ffffff'
+                            styles={GooglePlaceSerachStyle}
+                            onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                                console.log(data, details);
+                                this.handleLocation(details)
+                            }}
+                            ref={(input) => this.password = input}
+                            placeholder='Enter Address (*)'
+                        ></GooglePlaceSearchBox>
+                    </View>
+                    <TextInput style={styles.inputBox}
+                               underlineColorAndroid='rgba(0,0,0,0)'
+                               placeholder='Password'
+                               placeholderTextColor='#ffffff'
+                               selectionColor='#ffffff'
+                               secureTextEntry
+                               ref={(input) => this.password = input}
+                               onSubmitEditing={() => this.confirmPassword.focus()}
+                               onChangeText={(password) => this.setState({password})}
+                    />
+                    <TextInput style={styles.inputBox}
+                               underlineColorAndroid='rgba(0,0,0,0)'
+                               placeholder='Confirm Password'
+                               placeholderTextColor='#ffffff'
+                               selectionColor='#ffffff'
+                               secureTextEntry
+                               ref={(input) => this.confirmPassword = input}
+                               onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+                    />
 
-                        {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
+                    {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
                             selectedValue={this.state.userType}
                             onValueChange={(itemValue, itemIndex) =>
                                 this.setState({userType:itemValue})
@@ -236,33 +256,72 @@ class Register extends Component {
                             <Picker.Item label="User" value="0"/>
                             <Picker.Item label="Service Provider" value="1"/>
                         </Picker></View>*/}
-                        <View style={styles.radioView}>
-                            <Text style={styles.radioTypeText}>Register As</Text>
-                            <RadioGroup style={styles.radioGrp}
-                                        color='#094c6b'
-                                //flexDirection='row'
-                                        labelStyle={{fontSize: 16, color: '#094c6b'}}
-                                        radioButtons={this.state.radioButtons}
-                                        onPress={radioButtons => this.setState({radioButtons})}
-                            />
-                        </View>
-
-                        <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
-                            <Text style={styles.buttonText}>Register</Text>
-                        </TouchableOpacity>
+                    <View style={styles.radioView}>
+                        <Text style={styles.radioTypeText}>Register As</Text>
+                        <RadioGroup style={styles.radioGrp}
+                                    color='#094c6b'
+                            //flexDirection='row'
+                                    labelStyle={{fontSize: 16, color: '#094c6b'}}
+                                    radioButtons={this.state.radioButtons}
+                                    onPress={radioButtons => this.setState({radioButtons})}
+                        />
                     </View>
 
-                    <View style={styles.signupCont}>
-                        <Text style={styles.signupText}>Already have an account?</Text>
-                        <TouchableOpacity style={styles.navButton} onPress={() => navigate('SignIn')}>
-                            <Text style={styles.navButtonText}>Login</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
+                        <Text style={styles.buttonText}>Register</Text>
+                    </TouchableOpacity>
                 </View>
-            </TouchableWithoutFeedback>
-        );
+
+                <View style={styles.signupCont}>
+                    <Text style={styles.signupText}>Already have an account?</Text>
+                    <TouchableOpacity style={styles.navButton} onPress={() => navigate('SignIn')}>
+                        <Text style={styles.navButtonText}>Login</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+    </TouchableWithoutFeedback>
+    )
+        ;
 
     }
+}
+
+const GooglePlaceSerachStyle={
+    textInputContainer: {
+        width: 300,
+        backgroundColor: 'rgba(0,0,0,0)',
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        padding:0
+    },
+    container:{
+        padding:0,
+        borderRadius: 25,
+    },
+    description: {
+        fontWeight: 'bold',
+        color: colors.appLayout
+    },
+    predefinedPlacesDescription: {
+        color: colors.appLayout
+    },
+    textInput: {
+        width: 300,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        // marginVertical: 5,
+        height:50,
+        margin:0 ,
+        marginTop:0,
+        marginLeft:0,
+        marginRight:0,
+        paddingTop:0,
+        paddingButtom:0
+    },
+
 }
 
 const styles = StyleSheet.create({
@@ -277,6 +336,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        width: '100%'
     },
 
     inputBox: {
@@ -286,8 +346,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         fontSize: 16,
         color: colors.whiteText,
-        marginVertical: 5
+        marginVertical: 5,
     },
+
 
     radioView: {
         //flexGrow: 1,
@@ -307,27 +368,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         marginVertical: 0,
     },
-
-    //radioGrp: {
-    //flexGrow: 1,
-    //alignItems: 'flex-end',
-    //justifyContent: 'center',
-    //paddingVertical: 16,
-    //flexDirection: 'row'
-    //},
-
-    //pickerView: {
-    //overflow: 'hidden',
-    ////width: 300,
-    //borderRadius: 100,
-    //},
-    //selectBox: {
-    // width: 300,
-    //backgroundColor: colors.inputBackground,
-    //paddingHorizontal: 16,
-    //color: colors.whiteText,
-    //marginVertical: 5
-    //},
 
     button: {
         width: 300,

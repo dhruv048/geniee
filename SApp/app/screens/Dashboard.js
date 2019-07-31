@@ -1,8 +1,17 @@
 import React, {Component} from 'react';
 import Meteor, {withTracker} from 'react-native-meteor';
-import {StyleSheet, Dimensions, StatusBar, View, Image, TouchableOpacity,ScrollView} from 'react-native';
-import PropTypes from 'prop-types';
-import {Header, Container, Content, Item, Body, Left, Right, Text, Input} from 'native-base';
+import {
+    StyleSheet,
+    Dimensions,
+    StatusBar,
+    View,
+    Image,
+    TouchableOpacity,
+    ActivityIndicator,
+    FlatList
+} from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
+import {Header, Container, Content, Item, Body, Left, Button,Right, Text, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../config/styles';
 import SplashScreen from "react-native-splash-screen";
@@ -18,24 +27,65 @@ class Dashboard extends Component {
         )
     }
 
-    constructor(props){
+    constructor(props) {
         super(props)
-        this.state={
-            categories:[],
-            loading:true,
+        this.state = {
+            categories: [],
+            loading: true,
         };
         this.arrayholder;
-        this.currentSearch='';
-    }
-    componentDidMount() {
-        Meteor.subscribe('categories-list',()=>{
-            SplashScreen.hide();
-            this.setState({categories:Meteor.collection('MainCategories').find(),loading:false})
-        });
-        this.arrayholder=Meteor.collection('MainCategories').find();
+        this.currentSearch = '';
+        this.region = {
+            latitude: 27.712020,
+            longitude: 85.312950,
+        };
+        this.granted;
     }
 
-    _search=(text)=>{
+    async componentDidMount  () {
+        Meteor.subscribe('categories-list');
+        this.granted = await PermissionsAndroid.request(
+           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                'title': 'Location Permission',
+                'message': 'This App needs access to your location ' +
+                'so we can know where you are.'
+            }
+        )
+        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+
+            console.log("You can use locations ")
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    console.log(position);
+                    let region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                    this.region = region;
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                },
+                {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+            );
+        } else {
+            console.log("Location permission denied")
+        }
+
+        this.setState({categories: Meteor.collection('MainCategories').find(), loading: false})
+        this.arrayholder = Meteor.collection('MainCategories').find()
+    }
+    componentWillReceiveProps(newProps) {
+        const oldProps = this.props
+        if (oldProps.categories !== newProps.categories) {
+            this.setState({categories: newProps.categories, loading:false})
+            this.arrayholder = newProps.categories;
+            this._search(this.currentSearch)
+        }
+    }
+    _search = (text) => {
         const textData = text.trim().toUpperCase();
         this.setState({loading: true});
         // if (textData === this.currentSearch) {
@@ -52,31 +102,51 @@ class Dashboard extends Component {
         this.currentSearch = textData;
         const newData = this.arrayholder.filter(item => {
             const itemData =
-                `${item.title.toUpperCase()} ${item.description.toUpperCase()}`;
+                `${item.mainCategory.toUpperCase()}`;
             return itemData.indexOf(textData) > -1;
         });
         this.setState({categories: newData, loading: false});
     };
 
-    _itemClick=(item)=>{
-        let Ids=[];
-       item.subCategories.map(item=>{
+    _itemClick = (item) => {
+        let Ids = [];
+        item.subCategories.map(item => {
             Ids.push(item.subCatId)
         })
-        this.props.navigation.navigate("Home", {Id:Ids})
+        this.props.navigation.navigate("Home", {Id: Ids,Region:this.region})
+    }
+
+    renderItem = (data, index) => {
+        var item = data.item;
+        return (
+            <View key={item._id} style={styles.containerStyle}>
+                <TouchableOpacity  onPress={() => this._itemClick(item)}>
+                    <Body>
+                    <Icon name={item.icon} size={40}/>
+                    </Body>
+
+                    <Text>
+                        <Text>{item.mainCategory}</Text>
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        )
     }
 
     render() {
         return (
-            <Container style={{flex:1,backgroundColor: colors.appBackground}}>
+            <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
                 <StatusBar
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'
                 />
                 <Header style={{backgroundColor: '#094c6b'}}>
-
-                    <Body style={{flexDirection: 'row',marginHorizontal:30}}>
-                    <Item style={{height: 40, flex: 4}}>
+                    <Left style={{flex:1}}>
+                        <Button transparent onPress={()=>{this.props.navigation.openDrawer()}}>
+                            <Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>
+                    </Left>
+                    <Body style={{flexDirection: 'row',flex:6}}>
+                    <Item style={{height: 40, width:'90%'}}>
                         {/*<Button transparent onPress={()=>{}}>*/}
                         <Icon style={styles.activeTabIcon} name='search' size={15}/>
                         {/*</Button>*/}
@@ -93,23 +163,17 @@ class Dashboard extends Component {
                     </Body>
 
                 </Header>
-                <ScrollView style={{width: '100%', flex: 1}}>
-                    <View style={styles.mainContainer}>
-                    {this.state.categories.map(item => (
-                        <View key={item._id} style={styles.containerStyle}>
-                            <TouchableOpacity onPress={() => this._itemClick(item)}>
-                                <Body>
-                                <Icon name={item.icon} size={40}/>
-                                </Body>
-
-                                <Text>
-                                    <Text>{item.mainCategory}</Text>
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-                    </View>
-                </ScrollView>
+                {this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}
+                <Content style={{width: '100%', flex: 1,}}>
+                    {/*<ScrollView style={{width: '100%', flex: 1}}>*/}
+                    <FlatList style={styles.mainContainer}
+                              data={this.state.categories}
+                              numColumns={2}
+                              renderItem={this.renderItem}
+                              keyExtractor={item=>item._id}
+                    />
+                    {/*</ScrollView>*/}
+                </Content>
             </Container>
         )
     }
@@ -118,26 +182,23 @@ class Dashboard extends Component {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'column',
         flexWrap: 'wrap',
-        justifyContent:'space-around'
 
     },
     containerStyle: {
         padding: 10,
         backgroundColor: 'white',
         borderWidth: 0,
-        marginBottom: 10,
-        marginLeft: 10,
-        marginRight: 10,
+        marginVertical: 8,
         borderColor: '#808080',
-        marginTop: 10,
         elevation: 10,
-        width: '43%',
-        height:100,
+        width: '42%',
+        marginHorizontal: '4%',
+        height: 100,
         borderRadius: 5,
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     activeTabIcon: {
         color: '#ffffff'
@@ -160,12 +221,11 @@ const styles = StyleSheet.create({
     }
 })
 export default withTracker(() => {
-    console.log(Meteor.collection('MainCategories').find())
     return {
         categories: Meteor.collection('MainCategories').find()
     }
 })(Dashboard);
-Dashboard.defaultProps={
+Dashboard.defaultProps = {
     categories: [],
 }
 

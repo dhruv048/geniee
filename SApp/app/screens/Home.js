@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import _ from 'lodash';
 import {
     Container,
@@ -29,120 +29,24 @@ import {
     ActivityIndicator,
     Alert,
     PermissionsAndroid,
-    FlatList
+    FlatList, View
 } from 'react-native';
 
-import Sidebar from '../components/MenuNav/MenuNav';
-import Loading from '../components/Loading';
-import logoImage from '../images/logo2-trans-640X640.png';
-import dUser from '../images/Image.png';
+
 import Meteor, {withTracker} from "react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
 import {colors} from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
-import Geolocation from '@react-native-community/geolocation';
-import SplashScreen from 'react-native-splash-screen';
 import call from "react-native-phone-call";
+import Geolocation from 'react-native-geolocation-service';
 
-
-class Home extends PureComponent {
-    constructor(props) {
-        super(props);
-        this.mounted = false;
-        this.state = {
-            selectedTab: 'home',
-            markers: [],
-            currentSearch: "",
-            loading: false,
-            data: [],
-            error: null,
-            searchText: '',
-            selected: 'all'
-        }
-        this.arrayholder = [];
-        this.currentSearch = '';
-        this.region = {
-            latitude: 27.712020,
-            longitude:85.312950,
-        };
-        this.limit = 50;
-        this.watchID;
-
-    }
-
-
-
-    componentDidMount() {
-        SplashScreen.hide();
-        const granted = PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-                'title': 'Location Permission',
-                'message': 'This App needs access to your location ' +
-                'so we can know where you are.'
-            }
-        )
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-
-            console.log("You can use locations ")
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    console.log(position)
-                    //   const location = JSON.stringify(position);
-                    let region = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                    };
-                    this.region = region;
-                },
-                error => Alert.alert(error.message),
-                {enableHighAccuracy: true, timeout: 5000}
-            );
-        } else {
-            console.log("Location permission denied")
-        }
-
-        Geolocation.getCurrentPosition(
-            position => {
-                const initialPosition = JSON.stringify(position);
-                this.setState({initialPosition});
-                console.log(initialPosition)
-            },
-            error => console.log('Error', JSON.stringify(error)),
-            {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
-        );
-        this.watchID = Geolocation.watchPosition(position => {
-            const lastPosition = JSON.stringify(position);
-            this.setState({lastPosition});
-            console.log(lastPosition)
-        });
-        this.setState({
-         data:this.props.categories
-        })
-        this.arrayholder=this.props.categories
-    }
-
-
-
-    componentWillReceiveProps(newProps) {
-        const oldProps = this.props
-        if (oldProps.categories !== newProps.categories) {
-            this.setState({data: newProps.categories, loading:false})
-            this.arrayholder = newProps.categories;
-            this._search(this.currentSearch)
-        }
-    }
-
-    componentWillUnmount() {
-        this.mounted = false;
-        this.watchID != null && Geolocation.clearWatch(this.watchID);
-    }
+class Home extends Component {
     _callPhone = (number) => {
         // let res=  this.onEsewaComplete();
         // alert(res);
-        // console.log(res)
-        if(!number){
+        console.log(number)
+        if (!number) {
             Alert.alert('Contact No. Unavailable for the Service')
         }
 
@@ -152,54 +56,9 @@ class Home extends PureComponent {
         }
         call(args).catch(console.error)
     }
-
     _handlItemPress = (service) => {
         service.avgRate = this.averageRating(service.ratings);
-        this.props.navigation.navigate('Service', {Id:service});
-    }
-
-    _getListItem = (data, index) => {
-        rowData = data.item
-        return (
-            <TouchableWithoutFeedback   Key={rowData._id} onPress={() => {
-              this._handlItemPress(data.item)
-            }}>
-                <ListItem thumbnail>
-                    <Left>
-                        {rowData.coverImage === null ?
-                         //   <Thumbnail style={styles.banner} square source={dUser}/> :
-                            <Text></Text>:
-                            <Thumbnail style={styles.banner}
-                                       source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
-                    </Left>
-                    <Body>
-                    <Text numberOfLines={1}>{rowData.title}</Text>
-                    {rowData.location.formatted_address?
-                    <Text note numberOfLines={1}>{rowData.location.formatted_address}</Text>:null}
-                    {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
-                    </Body>
-                    <Right>
-                        {this.averageRating(rowData.ratings)>0?
-                        <Text style={{fontSize: 20, fontWeight: '400'}}><Icon name={'star'}
-                                                                              style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-                        </Text>:null}
-                        <Button transparent onPress={() => {
-                            this._callPhone(rowData.contact? rowData.contact : rowData.contact1)
-                        }}><Icon name={'call'} color={'green'} /></Button>
-                    </Right>
-
-                </ListItem>
-            </TouchableWithoutFeedback>
-        )
-
-    }
-
-    closeDrawer() {
-        this.drawer._root.close();
-    }
-
-    openDrawer() {
-        this.drawer._root.open();
+        this.props.navigation.navigate('Service', {Id: service});
     }
 
     _fetchMarkers = () => {
@@ -209,13 +68,13 @@ class Home extends PureComponent {
                 let latlang = item.location.geometry.location;
                 // console.log('item:' + latlang)
                 markers.push({
-                    _id:item._id,
+                    _id: item._id,
                     latlng:
                         {
                             latitude: latlang.lat,
                             longitude: latlang.lng
                         },
-                    coordinate:latlang,
+                    coordinate: latlang,
                     title: item.title,
                     description: item.description
                 })
@@ -230,16 +89,253 @@ class Home extends PureComponent {
         // console.log('state.markers:' + this.state.markers)
         return markers
     };
-
     _onEndReached = (distance) => {
         console.log(distance);
-        if(!this.currentSearch) {
-            this.limit = this.limit + 50;
+        if (!this.currentSearch) {
+            this.limit = this.limit + 20;
             this.setState({loading: true})
-            Meteor.subscribe('srvicesByLimit', {limit:this.limit,coordinates:[this.region.longitude,this.region.latitude]}, () => {
+            Meteor.subscribe('nearByService', {
+                limit: this.limit,
+                coords: [this.region.longitude, this.region.latitude],
+                subCatIds: this.props.navigation.getParam('Id')
+            }, () => {
                 this.setState({loading: false})
             });
         }
+    }
+    averageRating = (arr) => {
+        let sum = 0;
+        arr.forEach(item => {
+            sum = sum + item.count;
+        })
+        var avg = sum / arr.length;
+        return Math.round(avg);
+    }
+    _search = (text) => {
+        console.log('search')
+        var delayTimer;
+        if (text === this.currentSearch)
+            return;
+        if (text === "") {
+            this.setState(
+                {
+                    loading: true,
+                }
+            );
+            var data = this.props.categories;
+            this.setState({
+                data: data, loading: false
+            });
+            this.arrayholder = data;
+            return;
+        }
+        if (text.length > 3) {
+            clearTimeout(delayTimer);
+            // delayTimer = setTimeout(function() {
+            this.currentSearch = text;
+            var dataToSend = {
+                subCatIds: this.props.navigation.getParam('Id'),
+                searchValue: text,
+                coords: [this.region.longitude, this.region.latitude]
+            };
+            console.log('fetch')
+            return fetch(settings.jsonRoute_URl + 'search', {
+                method: "POST",//Request Type
+                body: JSON.stringify(dataToSend),//post body
+                headers: {//Header Defination
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(responseJson => {
+                    console.log(responseJson);
+                    this.setState(
+                        {
+                            loading: false,
+                            data: responseJson.data,
+                        }
+                    );
+                    this.arrayholder = responseJson.data
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            // },2000);
+        }
+
+        // const textData = text.trim().toUpperCase();
+        // this.setState({loading: true});
+        // // if (textData === this.currentSearch) {
+        // //     // abort search if query wasn't different
+        // //     return;
+        // // }
+        // if (textData === "") {
+        //     this.setState({
+        //         data: this.arrayholder, loading: false
+        //     });
+        //     return;
+        // }
+        //
+        // this.currentSearch = textData;
+        // const newData = this.arrayholder.filter(item => {
+        //     const itemData =
+        //         `${item.title.toUpperCase()} ${item.description.toUpperCase()}`;
+        //     return itemData.indexOf(textData) > -1;
+        // });
+        // this.setState({data: newData, loading: false});
+    };
+
+    constructor(props) {
+        super(props);
+        this.mounted = false;
+        this.state = {
+            selectedTab: 'home',
+            markers: [],
+            currentSearch: "",
+            loading: true,
+            data: [],
+            error: null,
+            searchText: '',
+            selected: 'all'
+        }
+        this.arrayholder = [];
+        this.currentSearch = '';
+        this.region = {
+            latitude: 27.712020,
+            longitude: 85.312950,
+        };
+        this.limit = 20;
+        this.watchID;
+        this.granted = false;
+
+    }
+
+
+    async componentDidMount() {
+        this.region=this.props.navigation.getParam('Region');
+        this.granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                'title': 'Location Permission',
+                'message': 'This App needs access to your location ' +
+                'so we can know where you are.'
+            }
+        )
+        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+
+            console.log("You can use locations ")
+            Geolocation.getCurrentPosition(
+                (position) => {
+                  //  console.log(position);
+                    let region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                    this.region = region;
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                },
+                {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+            );
+        } else {
+            console.log("Location permission denied")
+        }
+        this.watchID = Geolocation.watchPosition(
+            (position) => {
+                console.log(position);
+                let region = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                }
+                this.region = region;
+                Meteor.subscribe('nearByService', {
+                    limit: this.limit+20,
+                    coords: [this.region.longitude, this.region.latitude],
+                    subCatIds: this.props.navigation.getParam('Id')
+                })
+            },
+            (error) => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+            },
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+        );
+
+
+        Meteor.subscribe('nearByService', {
+            limit: this.limit,
+            coords: [this.region.longitude, this.region.latitude],
+            subCatIds: this.props.navigation.getParam('Id')
+        })
+        this.setState({
+            data: this.props.categories, loading: false
+        })
+        this.arrayholder = this.props.categories;
+    }
+
+    componentWillReceiveProps(newProps) {
+        const oldProps = this.props
+        if (oldProps.categories !== newProps.categories) {
+            this.setState({data: newProps.categories, loading: false})
+            this.arrayholder = newProps.categories;
+            this._search(this.currentSearch)
+        }
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        this.watchID != null && Geolocation.clearWatch(this.watchID);
+    }
+
+    closeDrawer() {
+        this.drawer._root.close();
+    }
+
+    openDrawer() {
+        this.drawer._root.open();
+    }
+
+    _getListItem = (data) => {
+        rowData = data.item;
+        return (
+            <View key={data.item._id}>
+                <TouchableWithoutFeedback onPress={() => {
+                    this._handlItemPress(data.item)
+                }}>
+                    <ListItem thumbnail>
+                        <Left>
+                            {rowData.coverImage === null ?
+                                //   <Thumbnail style={styles.banner} square source={dUser}/> :
+                                <Text></Text> :
+                                <Thumbnail style={styles.banner}
+                                           source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
+                        </Left>
+                        <Body>
+                        <Text numberOfLines={1}>{rowData.title}</Text>
+                        {rowData.location.formatted_address ?
+                            <Text note numberOfLines={1}>{rowData.location.formatted_address}</Text> : null}
+
+                        {rowData.dist?
+                        <Text note>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
+                        {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
+                        </Body>
+                        <Right>
+                            {this.averageRating(rowData.ratings) > 0 ?
+                                <Text style={{fontSize: 20, fontWeight: '400'}}><Icon name={'star'}
+                                                                                      style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
+                                </Text> : null}
+                            <Button transparent onPress={() => {
+                                this._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
+                            }}><Icon name={'call'} color={'green'}/></Button>
+                        </Right>
+
+                    </ListItem>
+                </TouchableWithoutFeedback>
+            </View>
+        )
+
     }
 
     renderSelectedTab() {
@@ -247,11 +343,11 @@ class Home extends PureComponent {
             <FlatList style={styles.contentList}
                       data={this.state.data}
                       renderItem={this._getListItem}
-                      keyExtractor={(item, index) => item._id}
-                      initialNumToRender={10}
+                      initialNumToRender={15}
                       onEndReached={(distance) => this._onEndReached(distance)}
                       onEndReachedThreshold={0.1}
-                      ListFooterComponent={this.state.loading? <ActivityIndicator style={{height:80}}/>: null}
+                      ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
+                      keyExtractor={(item, index) => index.toString()}
             />
 
         )
@@ -277,7 +373,7 @@ class Home extends PureComponent {
                     data: this.props.categories,
                 });
                 this.arrayholder = this.props.categories;
-               // this._search(this.state.currentSearch);
+                // this._search(this.state.currentSearch);
                 break;
 
             case 'starred':
@@ -291,8 +387,8 @@ class Home extends PureComponent {
                 this.setState({
                     data: latest
                 });
-               // this.arrayholder = latest;
-              //  this._search(this.state.currentSearch);
+                // this.arrayholder = latest;
+                //  this._search(this.state.currentSearch);
                 break;
 
             case 'myLocation':
@@ -306,86 +402,10 @@ class Home extends PureComponent {
                 });
                 this.setState({data: newData});
                 this.arrayholder = newData;
-             //   this._search(this.state.currentSearch)
+                //   this._search(this.state.currentSearch)
                 break;
             default:
         }
-    };
-
-    averageRating = (arr) => {
-        let sum = 0;
-        arr.forEach(item => {
-            sum = sum + item.count;
-        })
-        var avg = sum / arr.length;
-        return Math.round(avg);
-    }
-
-    _search = (text) => {
-        var delayTimer;
-        if (text === this.currentSearch)
-            return;
-        if (text === "") {
-            this.setState(
-                {
-                    loading: true,
-                }
-            );
-            var data=this.props.categories;
-            this.setState({
-                data: data, loading: false
-            });
-            this.arrayholder=data;
-            return;
-        }
-        if(text.length>3) {
-            clearTimeout(delayTimer);
-            // delayTimer = setTimeout(function() {
-            this.currentSearch = text;
-            var dataToSend = {Ids: this.props.navigation.getParam('Id'), searchValue: text};
-            return fetch(settings.jsonRoute_URl + 'search/',{ method: "POST",//Request Type
-                body:JSON.stringify(dataToSend),//post body
-                headers: {//Header Defination
-                    'Content-Type': 'application/json'
-                }})
-                .then(response => response.json())
-                .then(responseJson => {
-                    console.log(responseJson);
-                    this.setState(
-                        {
-                            loading: false,
-                            data: responseJson.data,
-                        }
-                    );
-                    this.arrayholder = responseJson.data
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-            // },2000);
-        }
-
-
-        // const textData = text.trim().toUpperCase();
-        // this.setState({loading: true});
-        // // if (textData === this.currentSearch) {
-        // //     // abort search if query wasn't different
-        // //     return;
-        // // }
-        // if (textData === "") {
-        //     this.setState({
-        //         data: this.arrayholder, loading: false
-        //     });
-        //     return;
-        // }
-        //
-        // this.currentSearch = textData;
-        // const newData = this.arrayholder.filter(item => {
-        //     const itemData =
-        //         `${item.title.toUpperCase()} ${item.description.toUpperCase()}`;
-        //     return itemData.indexOf(textData) > -1;
-        // });
-        // this.setState({data: newData, loading: false});
     };
 
     render() {
@@ -404,7 +424,7 @@ class Home extends PureComponent {
                         </Left>*/}
 
                     <Body style={{flexDirection: 'row'}}>
-                    <Item rounded style={{height: 40, flex: 4}}>
+                    <Item style={{height: 40, flex: 4, paddingVertical: 5}}>
                         {/*<Button transparent onPress={()=>{}}>*/}
                         <Icon style={styles.activeTabIcon} name='search'/>
                         {/*</Button>*/}
@@ -424,7 +444,7 @@ class Home extends PureComponent {
                         {/*</Button>*/}
 
                     </Item>
-                    <Item rounded style={{height: 40, flex: 2, marginLeft: 4}}>
+                    <Item style={{height: 40, flex: 2, marginLeft: 4}}>
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}
@@ -447,7 +467,7 @@ class Home extends PureComponent {
                     {/*</Right>*/}
                 </Header>
 
-                <Content style={styles.content}   contentContainerStyle={{flex: 1}} >
+                <Content style={styles.content} contentContainerStyle={{flex: 1}}>
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {this.renderSelectedTab()}
                     {/*<List style={styles.contentList}*/}
@@ -503,12 +523,12 @@ const styles = StyleSheet.create({
     },
     footerTab: {
         backgroundColor: '#094c6b',
-        //borderTopWidth: 3,
-        //borderTopColor: '#000000',
+        borderTopWidth: 3,
+        borderTopColor: '#000000',
     },
     activeTab: {
-        //borderBottomWidth: 1,
-        //borderBottomColor: '#f2f2f2',        
+        borderBottomWidth: 1,
+        borderBottomColor: '#f2f2f2',
     },
     activeTabIcon: {
         color: '#ffffff'
@@ -517,13 +537,7 @@ const styles = StyleSheet.create({
         color: '#ffffff'
     },
     searchInput: {
-        //borderBottomWidth: 3,
-        //borderBottomColor: '#000000',
         color: '#ffffff',
-        //backgroundColor: '#898e907a',
-        // height: 40,
-        // width: 300,
-        // paddingHorizontal: 16,
         borderTopWidth: 0,
         borderRightWidth: 0,
         borderLeftWidth: 0,
@@ -532,8 +546,8 @@ const styles = StyleSheet.create({
 });
 
 export default withTracker((props) => {
-   let Ids=props.navigation.getParam('Id')
+    let Ids = props.navigation.getParam('Id')
     return {
-        categories: Meteor.collection('service').find({categoryId:{$in:Ids}})
+        categories: Meteor.collection('serviceReact').find({categoryId: {$in: Ids}})
     }
-})( Home);
+})(Home);

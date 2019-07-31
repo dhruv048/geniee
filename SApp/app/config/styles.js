@@ -6,4 +6,5 @@ export const colors = {
   primaryText: '#094c6b',
   redText: '#a51822',
   whiteText: '#ffffff',
+    appLayout:'#094c6b'
 };

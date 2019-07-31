@@ -4,18 +4,13 @@ import Meteor, {createContainer} from "react-native-meteor";
 import Loading from '../components/Loading/index';
 import settings from '../config/settings'
 import {colors} from "../config/styles";
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text,AsyncStorage} from 'react-native';
 import {UnAuthorized, MainNavigation} from "./Sapp";
 import {initializeMeteorOffline} from "../lib/groundMeteor";
-import Geolocation from '@react-native-community/geolocation';
-
-try {
-    Meteor.connect(settings.METEOR_URL);
-    initializeMeteorOffline({log: true});
-}
-catch (e) {
-    console.log("error" + e)
-}
+import Geolocation from 'react-native-geolocation-service';
+import SplashScreen from "react-native-splash-screen";
+Meteor.connect(settings.METEOR_URL);
+initializeMeteorOffline({log: false});
 
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
@@ -28,24 +23,27 @@ class AuthLoadingScreen extends React.Component {
             initialPosition: 'unknown',
             lastPosition: 'unknown',
         }
+
+        this.watchID=  null;
+        this.initialPosition={
+            coords:{latitude:27.712020,longitude:85.312950}
+        }
         this._bootstrapAsync();
         Meteor.ddp.on('connected', connected => {
             console.log('alert' + connected);
             this.setState({connected: true})
             this._bootstrapAsync()
         })
-        this.watchID=  null;
     }
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        //this.props.navigation.navigate('App')
-        if (this.props.user !== null) {
-            this.props.navigation.navigate('App')
-        }
-        else {
-            this.props.navigation.navigate('UnAuthorized')
-        }
+        const userToken = await AsyncStorage.getItem('reactnativemeteor_usertoken');
+        console.log(userToken)
+        this.props.navigation.navigate(userToken ? 'App' : 'UnAuthorized');
+
+
+
         // else if (!this.state.netConnected) {
         //    // alert("You are Offline \n Please check your internet connection...");
         //     return ;
@@ -84,8 +82,10 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidMount() {
-        Meteor.connect(settings.METEOR_URL);
 
+        SplashScreen.hide();
+     //   Meteor.subscribe('srvicesByLimit', {limit:100,coordinates:[this.initialPosition.coords.longitude||85.312950,this.initialPosition.coords.latitude||27.712020]})
+        Meteor.subscribe('categories-list');
         NetInfo.isConnected.addEventListener(
             'connectionChange', this._handleConnectivityChange
         );
@@ -112,20 +112,15 @@ class AuthLoadingScreen extends React.Component {
                 const initialPosition = JSON.stringify(position);
                 this.setState({initialPosition});
                 console.log('initial'+initialPosition)
-                Meteor.subscribe('srvicesByLimit', {limit:100,coordinates:[initialPosition.coords.longitude||85.312950,initialPosition.coords.latitude||27.712020]});
+                this.initialPosition=initialPosition
+
             },
             error =>{
                 console.log('Error', JSON.stringify(error))
-                Meteor.subscribe('srvicesByLimit', {limit:50,coordinates:[85.312950,27.712020]});
+               // Meteor.subscribe('srvicesByLimit', {limit:200,coordinates:[85.312950,27.712020]});
             },
             {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
         );
-        this.watchID = Geolocation.watchPosition(position => {
-            const lastPosition = JSON.stringify(position);
-            console.log(lastPosition);
-            this.setState({lastPosition});
-        });
-
 
     }
 
@@ -167,11 +162,9 @@ class AuthLoadingScreen extends React.Component {
         //          this.props.navigation.navigate('Auth')
         //  }
         else {
-            if (this.props.user !== null && this.props.user !== undefined) {
-                return <MainNavigation/>
-            }
-            else
-                return <UnAuthorized/>;
+            return(
+           <Loading/>
+            )
         }
     }
 };

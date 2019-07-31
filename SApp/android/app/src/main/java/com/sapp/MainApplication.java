@@ -3,7 +3,7 @@ package com.sapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.reactnativecommunity.geolocation.GeolocationPackage;
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
@@ -32,7 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-            new GeolocationPackage(),
+            new RNFusedLocationPackage(),
                     new SplashScreenReactPackage(),
                     new MapsPackage(),
                     new NetInfoPackage(),

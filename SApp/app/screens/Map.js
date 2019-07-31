@@ -3,7 +3,7 @@ import MapView ,{PROVIDER_GOOGLE,Marker} from 'react-native-maps';
 import {Container,Content} from 'native-base';
 import {View,Alert,StyleSheet,Dimensions,PermissionsAndroid,TouchableWithoutFeedback} from 'react-native';
 var {height, width} = Dimensions.get('window');
-import {Text,Item} from 'native-base';
+import Geolocation from 'react-native-geolocation-service';
 import {withNavigation} from 'react-navigation';
 
 class Map extends Component {
@@ -14,14 +14,17 @@ class Map extends Component {
             region: {
                 latitude:27.712020,
                 longitude:85.312950,
-                latitudeDelta: 0.3,
-                longitudeDelta: 0.3,
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.05,
             },
             markers:[]
         }
+        this.watchID=null;
 
     }
-
+  componentWillUnmount(){
+      this.watchID != null && Geolocation.clearWatch(this.watchID);
+  }
   async  componentDidMount(){
         // this.setState({
         //     markers:this.props.markers
@@ -37,15 +40,15 @@ class Map extends Component {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
 
             console.log("You can use locations ")
-            navigator.geolocation.getCurrentPosition(
+           Geolocation.getCurrentPosition(
                 ( position) => {
                     console.log(position)
                  //   const location = JSON.stringify(position);
                     let region= {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
-                        latitudeDelta: 0.4,
-                        longitudeDelta: 0.4,
+                        latitudeDelta: 0.05,
+                        longitudeDelta: 0.05,
                     };
                     this.setState({ region:region });
                 },
@@ -56,16 +59,29 @@ class Map extends Component {
             console.log("Location permission denied")
         }
 
+      this.watchID = Geolocation.watchPosition(
+          (position) => {
+              console.log(position);
+              let region= {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05,
+              };
+              this.setState({ region:region });
+          },
+          (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+          },
+          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+      );
+
     }
 
     getInitialState() {
         return {
-            region: {
-                latitude: 37.78825,
-                longitude: -122.4324,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            },
+            region: this.region,
         };
     }
 

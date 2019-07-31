@@ -7,10 +7,10 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import PropTypes from 'prop-types';
 
 const GooglePlaceSearchBox=(props)=>{
-    const {  onPress ,listDisplay} = props;
+    const {  onPress ,listDisplay,placeholder,styles} = props;
     return (
         <GooglePlacesAutocomplete
-            placeholder='Enter Location'
+            placeholder={placeholder}
             minLength={3} // minimum length of text to search
             autoFocus={false}
             returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -28,35 +28,7 @@ const GooglePlaceSearchBox=(props)=>{
                 components:'country:np'
             }}
 
-            styles={{
-                textInputContainer: {
-                    width: '100%',
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    borderTopWidth: 0,
-                    borderBottomWidth:0,
-                    margin:0,
-                    height:60
-                },
-                description: {
-                    fontWeight: 'bold'
-                },
-                predefinedPlacesDescription: {
-                    color: '#1faadb'
-                },
-                textInput: {
-                    backgroundColor: `rgba(243, 247, 255, 1)`,
-                    borderRadius: 5,
-                    color: `rgba(0, 0, 0, 1)`,
-                    fontFamily: `Source Sans Pro`,
-                    fontSize: 18,
-                   // padding: 10,
-                    paddingLeft: 40,
-                    width: `100%`,
-                    marginBottom: 4,
-                    marginTop: 4,
-                    height:50
-                },
-            }}
+            styles={styles}
             // predefinedPlaces={yourPlace}
           //  currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
           //  currentLocationLabel="Your current location"

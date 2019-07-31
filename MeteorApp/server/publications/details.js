@@ -1,4 +1,6 @@
 import { Meteor } from 'meteor/meteor';
+import { ReactiveAggregate } from 'meteor/tunguska:reactive-aggregate';
+
 // import { Details } from '/lib/collections';
 
 
@@ -62,7 +64,21 @@ import { Meteor } from 'meteor/meteor';
          // }
      });
 
-
+Meteor.publish('nearByService',function(obj){
+    console.log('nearByService')
+   ReactiveAggregate(this, Service, [
+        {
+            $geoNear: {
+                near: { type: "Point", coordinates: obj.coords },
+                distanceField: "dist.calculated",
+                query:{categoryId:{$in: obj.subCatIds}},
+                spherical: true,
+                distanceMultiplier : 0.001
+            }
+        },{$limit:obj.limit}
+    ], { clientCollection: 'serviceReact' },{allowDiskUse: true}
+    )
+})
 
 // }
 

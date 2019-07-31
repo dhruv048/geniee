@@ -177,7 +177,7 @@ class ServiceDetail extends Component {
         console.log(Id)
         let Service={};
         if(typeof (Id)==="string" ){
-            Service=Meteor.collection('service').findOne({_id:Id});
+            Service=Meteor.collection('serviceReact').findOne({_id:Id});
             Service.avgRate = this.averageRating(Service.ratings)
         }
         else{
