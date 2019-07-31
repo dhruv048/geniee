@@ -436,7 +436,7 @@ class AddService extends React.PureComponent {
                                     onChangeText={text => this.setState({query: text})}
                                     placeholder="Enter Category's name (*)"
                                     placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    renderItem={cat => <ListItem style={{backgroundColor: colors.bgBrightGreen}}
+                                    renderItem={cat => <ListItem style={{backgroundColor: colors.bgBrightGreen,flex:1}}
                                                                  onPress={() => (
                                                                      this.setState({
                                                                          query: cat.subCategory,

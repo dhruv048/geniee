@@ -1,0 +1,75 @@
+id,category_id,name,address,phone
+1, 1,"PHONE ENQUIRY",,197
+2, 1,"FIRE BIGRADE",,101
+3, 1,POLICE,,"100, 110, 120"
+4, 1,TRAFFIC,,103
+5, 1,"CHILD LOST",,104
+6, 1,"CHILD HELPLINE",,1098
+7, 1,"PHONE MAINTENANCE",,198
+8, 2,"Ambulance Sewa","Mahapal, Lalitpur","5548000, 9841701803"
+9, 2,"Agrawal Sewa Kendra",Kamalpokhari,"4423010, 4410295"
+10,2,"B. & B. Hospital",Gwarko,"5535739, 5533206"
+11,2,"Bhaktapur Ambulance",Bhaktapur,"6612945, 6610570"
+12,2,"Bir Hospital",Tundikhel,"4221119, 4223807"
+13,2,"Bishal Bazar","New Road",4244121
+14,2,"Boudha Ambulance",Boudha,4473166
+15,2,"Gothatar VDC",Gothatar,"4499813, 4495175"
+16,2,"HAMS Hospital",Buddhanagar,"4785156, 4786111"
+17,2,"Himal Hospital Pvt. Ltd.",Ganeshwor,"4415076, 4419672"
+18,2,"Janaswasthya Sewa",Kalimati,"4275641, 4278612"
+19,2,"Jawalakhel Ambulance Sewa",Jawalakhel,"5530104, 5542357"
+20,2,"Kantipur Hospital","New Baneswor","4498758, 4498757"
+21,2,"Kathmandu Model Hospital",Bhrikutimandap,"4222450, 4250848"
+22,2,"Kathmandu Nursing Home",Tripureshwor,"4261018, 4261018, 4262194"
+23,2,"Kist Hospital",Gwarko,"5201681, 5201682"
+24,2,"Kirtipur Ambulance",Kirtipur,4330200
+25,2,"Kirtipur City Ambulance",Kirtipur,"4331693, 4331805"
+26,2,"KMC Teaching Hospital",Sinamangal,"4476152, 4469064"
+27,2,"Lalitpur Sub Metropolitan",Pulchowk,"5527003, 5540904-6"
+28,2,"Lalitpur Red Cross Ambulance",Lalitpur,"5541320, 5545666"
+29,2,"Lions Club of Kathmandu",Kathmandu,4472211
+30,2,"Lubhoo Ambulance Sewa",Lubhoo,5580297
+31,2,"Magar Samittee",Satdobato,"5533504, 5541683"
+32,2,"Medicare National Hospital Ambulance",Chabahil,"4468610, 4467067"
+33,2,"Nepal Chamber of Commerce",Kantipath,"4230213, 4222890, 4230947"
+34,2,"Nepal Red Cross Society",Baghbazar,"4229410, 4228094"
+35,2,"NMC Teaching Hospital",Attarkhel,"4487052, 4486008, 4486009"
+36,2,"Norvic Hospital",Thapathali,"4249490, 4258554"
+37,2,"Om Hospital & Research Centre",Chabahil,"4476225, 4466178, 4466179"
+38,2,"Paropakar Sewa",Bhimsensthan,"4251614, 4260859"
+39,2,"Patan Hospital",Patan,5522266
+40,2,"Public Health Ambulance",Kalimati,4278612
+41,2,"Public Health Concern Trust Nepal","Exhibition Road",4240805-6
+42,2,"Rural Health Center ",Mulpani,4450493
+43,2,"Sai Ambulance",Battisputali,4498035
+44,2,"Satungal Ambulance",Satungal,4310117
+45,2,"Shiva Shakti Yuba Sewa","Old Baneswor",4478111
+46,2,"Sundhara Ambulance Sewa","Sudhara, Patan",5545666
+47,2,"Sushama Koirala Memorial Hospital",Sankhu,"4450826, 4450304"
+48,2,"Srongtsen Bhrikuti Samajik Tatha Sanskri",Boudha,4473166
+49,2,"Teaching Hospital",Maharajgunj,"4412505, 4412808"
+50,2,"Thakali Sewa Samitee",Balaju,"4380683, 4360388"
+51,2,"Thimi Ambulance",Thimi,6631000
+52,3,"Blood Transfusion Service",Bhrikutimandap,"4229344, 4225344"
+53,3,"Blood Transfusion Service",Bhaktapur,"6612266, 6611661"
+54,4,Balaju,Kathmandu,4350896
+55,4,Baneshwor,Kathmandu,"4474161, 4471201"
+56,4,Chabahil,Kathmandu,4474164
+57,4,Kirtipur,Kathmandu,4330428
+58,4,Kuleshwor,Kathmandu,"4272404, 4272402"
+59,4,Maharajgunj,Kathmandu,4357219
+60,4,"Ratna Park",Kathmandu,"4227061, 4225584"
+61,4,Lagankhel,Lalitpur,"5004218, 5004312"
+62,4,Pulchowk,Lalitpur,"5551422, 5523016"
+63,4,Bhaktapur,Bhaktapur,6610065
+64,4,"Thimi (Old)",Bhaktapur,6610126
+65,4,"Thimi (New)",Bhaktapur,"6610065, 6610319"
+66,5,"Bir Hospital",Tundikhel,"4221119, 4221988"
+67,5,"Lalitpur Sub Metropolitan",Pulchowk,"5527003, 5540904-6"
+68,5,"Marwadi Sewa Samiti",Phasikeba,"4255541, 4255540, 4255740"
+69,5,"Nepal Chamber of Commerce",Kantipath,"4222890, 4230927, 4230947"
+70,5,"Shree Satya Sai Kendra",Battisputali,4498035
+71,5,"Srongtsen Bhrikuti Samajik Tatha Sanskri",Boudha,4473166
+72,5,"Thakali Sewa Samitee",Balaju,"4380683, 4360388"
+73,6,"Shree Pashupatinath Aryaghat Sewa Kendra",Pashupati,4492999
+74,7,"Night Taxi Service","New Road, Kathmadnu","4224374, 4263378"

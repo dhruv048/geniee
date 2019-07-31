@@ -44,6 +44,7 @@ class Dashboard extends Component {
 
     async componentDidMount  () {
         Meteor.subscribe('categories-list');
+        Meteor.subscribe('aggChatChannels')
         this.granted = await PermissionsAndroid.request(
            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {

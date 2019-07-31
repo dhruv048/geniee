@@ -94,39 +94,36 @@ class ServiceDetail extends Component {
 
     handleChat = (Service) => {
         console.log('service'+Service._id);
-        var channel = this.props.getChannel(Service._id);
-        console.log('channel' + channel);
-
-            if (channel === null || channel === undefined) {
-                this.setState({isLoading: true});
-                Meteor.call('createChatChannel', Service, (err, result) => {
-                    debugger;
-                    if (err) {
-                        console.log('err:' + err);
-                        this.setState({isLoading: false});
-                    }
-                    else {
-
-                        console.log('resss' + result);
-                        Meteor.subscribe('get-channel', (ready) => {
-                            console.log('ready' + ready);
-                            let channel = Meteor.collection('chatChannels').findOne({_id: result});
-                            console.log('new Channel' + channel);
-                            // this.props.navigation.navigate('Chat', {'channel': this.props.getChannel(id)})
-                            this.setState({isLoading: false});
-                            this.props.navigation.navigate('Chat', {'channel': channel})
-
-                        })
-                    }
-                })
+        this._getChatChannel(Service._id).then(channelId => {
+            console.log(channelId);
+            let Channel = {
+                channelId: channelId,
+                user: {
+                    userId: Service.createdBy,
+                    name: "",
+                    profileImage:null,
+                },
+                service:Service
             }
-            else {
-
-                this.props.navigation.navigate('Chat', {'channel': channel})
-            }
+            this.props.navigation.navigate('Message', {Channel: Channel});
+        }).catch(error => {
+            console.error(error);
+        });
     }
 
-
+    _getChatChannel = (userId) => {
+        var channelId = new Promise(function (resolve, reject) {
+            Meteor.call('addChatChannel', userId, function (error, result) {
+                if (error) {
+                    reject(error);
+                } else {
+                    // Now I can access `result` and make an assign `result` to variable `resultData`
+                    resolve(result);
+                }
+            });
+        });
+        return channelId;
+    }
     _saveRatting=(id)=>{
       //  alert(this.state.comment);
         console.log(this.state.comment +this.state.starCount);
@@ -184,9 +181,7 @@ class ServiceDetail extends Component {
             console.log(Id)
             Service=Id;
         }
-        if(typeof (Id)==="string" ){
 
-        }
         const {navigate} = this.props.navigation;
         return (
             <Container style={styles.container}>

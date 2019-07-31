@@ -52,10 +52,10 @@ class Register extends Component {
     }
     handleSignIn = () => {
         if (this.validInput(true)) {
-            const {contact, password} = this.state;
+            const {email, password} = this.state;
 
             try {
-                Meteor.loginWithPassword({username: contact}, password, function (err, res) {
+                Meteor.loginWithPassword(email, password, function (err, res) {
                     // Meteor.call('loginUser',{email, password}, (err,res) => {
                     if (err) {
                         console.log("err::" + err.message);
@@ -256,16 +256,16 @@ class Register extends Component {
                             <Picker.Item label="User" value="0"/>
                             <Picker.Item label="Service Provider" value="1"/>
                         </Picker></View>*/}
-                    <View style={styles.radioView}>
-                        <Text style={styles.radioTypeText}>Register As</Text>
-                        <RadioGroup style={styles.radioGrp}
-                                    color='#094c6b'
-                            //flexDirection='row'
-                                    labelStyle={{fontSize: 16, color: '#094c6b'}}
-                                    radioButtons={this.state.radioButtons}
-                                    onPress={radioButtons => this.setState({radioButtons})}
-                        />
-                    </View>
+                    {/*<View style={styles.radioView}>*/}
+                        {/*<Text style={styles.radioTypeText}>Register As</Text>*/}
+                        {/*<RadioGroup style={styles.radioGrp}*/}
+                                    {/*color='#094c6b'*/}
+                            {/*//flexDirection='row'*/}
+                                    {/*labelStyle={{fontSize: 16, color: '#094c6b'}}*/}
+                                    {/*radioButtons={this.state.radioButtons}*/}
+                                    {/*onPress={radioButtons => this.setState({radioButtons})}*/}
+                        {/*/>*/}
+                    {/*</View>*/}
 
                     <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
                         <Text style={styles.buttonText}>Register</Text>

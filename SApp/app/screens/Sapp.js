@@ -5,13 +5,13 @@ import Settings,{userType} from '../screens/Settings';
 import ServiceDetail from '../screens/ServiceDetail';
 import Details from '../screens/Details';
 import AddService from '../screens/AddService';
-import ChatList from '../screens/ChatList';
+import ChatList from './chat/ChatList';
 import {Container, Content, Header,Body} from 'native-base';
 import React from 'react';
 import { colors } from '../config/styles';
 import Icon  from 'react-native-vector-icons/FontAwesome';
 import Meteor from "react-native-meteor";
-import Chat from "./Chat";
+import Chat from "./chat/Chat";
 import LogOut from "./LogOut"
 import SignIn from "./SignIn";
 import Register from "./Register";
@@ -45,7 +45,7 @@ export const ChatStack = createStackNavigator({
     ChatList: {
         screen: ChatList,
     },
-    Chat:{
+    Message:{
         screen: Chat,
     }
 },{
@@ -135,7 +135,7 @@ export  const MainNavigation= createDrawerNavigator({
         }
     },
 
-    Message:{
+    CHAT:{
         screen:ChatStack,
         navigationOptions:{
             drawerLabel: 'MESSAGE',
