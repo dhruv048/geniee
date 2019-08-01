@@ -295,18 +295,10 @@ const GooglePlaceSerachStyle={
         borderBottomWidth: 0,
         padding:0
     },
-<<<<<<< HEAD
     //container:{
         //padding:0,
         //borderRadius: 25,
     //},
-=======
-    container:{
-        padding:0,
-        borderRadius: 25,
-
-    },
->>>>>>> a6cc0ee19fabdfb1a1089de4341a12b1dc0c85ee
     description: {
         fontWeight: 'bold',
         color: colors.appLayout
@@ -419,15 +411,6 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.whiteText,
         textAlign: 'center'
-    },
-
-    s50325ddf: {
-        backgroundColor: `rgba(0, 0, 0, 0.11)`,
-        height: 1,
-        marginBottom: 2,
-        marginTop: 2,
-        width: `100%`,
-
     },
 
     //signupButton: {
