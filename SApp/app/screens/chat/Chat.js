@@ -27,12 +27,11 @@ class Chat extends Component {
         let Message = message.messageData;
         if (message.from != loggedUser)
             return (
-                <View key={message._id} style={{padding: 3, marginRight: 35, marginLeft: 10, width: '100%'}}>
+                <View key={message._id} style={{marginRight: '20%', marginLeft: '1%',marginTop:5, width:'79%'}}>
+                    <View style={{  backgroundColor: '#e6e6e6',padding: 5, borderRadius: 8}}>
                     {Message.type === 'text' ?
                         <Text style={{
                             alignSelf: 'flex-start',
-                            backgroundColor: colors.bgBrightYellow,
-                            padding: 2
                         }}>{Message.message}</Text>
                         : <TouchableOpacity onPress={() => this._showFile(Message, false)}>
                             <View>
@@ -53,14 +52,16 @@ class Chat extends Component {
                             </View>
                         </TouchableOpacity>
                     }
+                    </View>
                     <Text style={{alignSelf: 'flex-start'}}
                           note>{Moment(message.messageOn).local().format('hh:mm A')}</Text>
                 </View>
             )
         else return (
-            <View key={message._id} style={{padding: 3, marginRight: 10, marginLeft: 35, padding: 2, width: '100%'}}>
+            <View key={message._id} style={{marginRight: '1%', marginLeft: '20%',marginTop:5, width:'79%'}}>
+                <View style={{  backgroundColor: '#acd1e3',padding: 5, borderRadius: 8}}>
                 {Message.type === 'text' ?
-                    <Text style={{alignSelf: 'flex-end', backgroundColor: 'white'}}>{Message.message}</Text>
+                    <Text style={{alignSelf: 'flex-end'}}>{Message.message}</Text>
                     :
                     <TouchableOpacity onPress={() => this._showFile(Message, false)}>
                         <View>
@@ -74,6 +75,7 @@ class Chat extends Component {
                         </View>
                     </TouchableOpacity>
                 }
+                </View>
                 <View style={{
                     flexDirection: 'row',
                     justifyContent: 'center',
@@ -324,7 +326,7 @@ class Chat extends Component {
                         {this.state.files.map((file, index) => (
                             <TouchableOpacity onPress={() => this._showFile(file, true)} key={index}>
                                 <View style={{
-                                    marginVertical: 5, backgroundColor: colors.st,
+                                    marginVertical: 5, backgroundColor: '#5093b3',
                                     flexDirection: 'row'
                                 }}>
 

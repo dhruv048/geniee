@@ -295,10 +295,18 @@ const GooglePlaceSerachStyle={
         borderBottomWidth: 0,
         padding:0
     },
+<<<<<<< HEAD
     //container:{
         //padding:0,
         //borderRadius: 25,
     //},
+=======
+    container:{
+        padding:0,
+        borderRadius: 25,
+
+    },
+>>>>>>> a6cc0ee19fabdfb1a1089de4341a12b1dc0c85ee
     description: {
         fontWeight: 'bold',
         color: colors.appLayout

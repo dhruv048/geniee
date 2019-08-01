@@ -139,7 +139,7 @@ class Home extends Component {
                 coords: [this.region.longitude, this.region.latitude]
             };
             console.log('fetch')
-            return fetch(settings.jsonRoute_URl + 'search', {
+            return fetch(settings.API_URL + 'search', {
                 method: "POST",//Request Type
                 body: JSON.stringify(dataToSend),//post body
                 headers: {//Header Defination

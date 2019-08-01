@@ -85,5 +85,7 @@ Meteor.methods({
                     Meteor.call('addChatMessage',Message,from)
                 }
             }, proceedAfterUpload = true)
-    }
+    },
+
+
 })
