@@ -135,7 +135,7 @@ class Register extends Component {
             email: '',
             contact: '',
             password: '',
-            location: '',
+            location: null,
             confirmPassword: '',
             confirmPasswordVisible: false,
             userType: null,
@@ -213,7 +213,8 @@ class Register extends Component {
                                    keyboardType='phone-pad'
                                    onChangeText={(contact) => this.setState({contact})}
                         />
-                        <View style={{width:300,minHeight:50,  marginVertical: 5}}>
+                        {/*<View style={{width:300,minHeight:40,  marginVertical: 5}}>*/}
+                                <Item style={{width:300,minHeight:40,  marginVertical: 5}}>
                         <GooglePlaceSearchBox
                             underlineColorAndroid='rgba(0,0,0,0)'
                             placeholderTextColor='#ffffff'
@@ -225,7 +226,7 @@ class Register extends Component {
                             ref={(input) => this.password = input}
                             placeholder='Enter Address (*)'
                         ></GooglePlaceSearchBox>
-                    </View>
+                    </Item>
                     <TextInput style={styles.inputBox}
                                underlineColorAndroid='rgba(0,0,0,0)'
                                placeholder='Password'
@@ -294,10 +295,10 @@ const GooglePlaceSerachStyle={
         borderBottomWidth: 0,
         padding:0
     },
-    container:{
-        padding:0,
-        borderRadius: 25,
-    },
+    //container:{
+        //padding:0,
+        //borderRadius: 25,
+    //},
     description: {
         fontWeight: 'bold',
         color: colors.appLayout
@@ -313,7 +314,7 @@ const GooglePlaceSerachStyle={
         fontSize: 16,
         color: colors.whiteText,
         // marginVertical: 5,
-        height:50,
+        height:40,
         margin:0 ,
         marginTop:0,
         marginLeft:0,
@@ -341,6 +342,7 @@ const styles = StyleSheet.create({
 
     inputBox: {
         width: 300,
+        height: 40,
         backgroundColor: colors.inputBackground,
         borderRadius: 25,
         paddingHorizontal: 16,
@@ -409,6 +411,15 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.whiteText,
         textAlign: 'center'
+    },
+
+    s50325ddf: {
+        backgroundColor: `rgba(0, 0, 0, 0.11)`,
+        height: 1,
+        marginBottom: 2,
+        marginTop: 2,
+        width: `100%`,
+
     },
 
     //signupButton: {
