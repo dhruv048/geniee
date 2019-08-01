@@ -229,7 +229,7 @@ class ServiceDetail extends Component {
                             <Text >
                                 {Service.email||''}
                             </Text>
-                            <TouchableOpacity onPress={()=>this._browse(Service.website)}>
+                            <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
                             <Text style={{color:colors.statusBar}} >
                                 {Service.website||''}
                             </Text>
