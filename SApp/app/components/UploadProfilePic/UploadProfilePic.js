@@ -99,6 +99,7 @@ class UploadProfilePic extends React.Component {
 
         return (
             <View style={{justifyContent:'center', alignItems:'center'}}>
+                {this.state.user?
                 <TouchableOpacity style={styles.imageView} onPress={() => {
                     this.setModalVisible(true)
                 }}>
@@ -115,7 +116,9 @@ class UploadProfilePic extends React.Component {
                     {this.state.user?
                     <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}
 
-                </TouchableOpacity>
+                </TouchableOpacity>:
+                    <Image style={{width: 170, height: 170}}
+                           source={require('../../images/logo2-trans-640X640.png')} />}
                 <Text style={{fontSize:16,fontWeight:"400",color:'white'}}>WELLCOME</Text>
                 {this.state.user?
                     <Text style={{fontSize:14,fontWeight:"200",color:'white'}}>{this.state.user.profile.name}</Text>:null}
