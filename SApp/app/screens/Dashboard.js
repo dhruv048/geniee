@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     }
 })
 export default withTracker(() => {
+    Meteor.subscribe('categories-list');
     return {
         categories: Meteor.collection('MainCategories').find()
     }
