@@ -117,7 +117,7 @@ class UploadProfilePic extends React.Component {
                     <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}
 
                 </TouchableOpacity>:
-                    <Image style={{width: 170, height: 170}}
+                    <Image style={{width: 150, height: 150}}
                            source={require('../../images/logo2-trans-640X640.png')} />}
                 <Text style={{fontSize:16,fontWeight:"400",color:'white'}}>WELLCOME</Text>
                 {this.state.user?

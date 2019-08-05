@@ -25,6 +25,7 @@ import AuthLoadingScreen from "./AuthLoading";
 import Dashboard from "./Dashboard";
 import UploadProfilePic from '../components/UploadProfilePic/UploadProfilePic';
 import ForgotPassword from './ForgotPassword';
+import ContactUs from "./ContactUs";
 
 //import Splash from '../screens/Splash';
 
@@ -163,6 +164,16 @@ export const MainNavigation = createDrawerNavigator({
             )
         }
     },
+    ContactUs:{
+        screen: ContactUs,
+        navigationOptions: {
+            drawerLabel: 'CONTACT US',
+            drawerIcon: (
+                <Icon name='envelope' size={24}/>
+            )
+        }
+    },
+
     // Login:{
     //     screen: AuthStack,
     //     navigationOptions:{
@@ -202,6 +213,15 @@ export const UnAuthorized = createDrawerNavigator({
                 drawerLabel: 'FORGOT PASSWORD',
                 drawerIcon: (
                     <Icon name='key' size={24}/>
+                )
+            }
+        },
+        ContactUs:{
+            screen: ContactUs,
+            navigationOptions: {
+                drawerLabel: 'CONTACT US',
+                drawerIcon: (
+                    <Icon name='envelope' size={24}/>
                 )
             }
         },
