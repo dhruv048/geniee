@@ -1,7 +1,9 @@
 import {Meteor} from "meteor/meteor";
 import {Accounts} from "meteor/accounts-base";
+import FacebookOAuthInit from "./oauth-facebook";
 const path = require('path')
 Meteor.startup(function () {
+    FacebookOAuthInit();
     Future = Npm.require('fibers/future');
     // chck if there is Super Admin, If not create one.
     if (Meteor.users.find().count() === 0) {

@@ -93,7 +93,7 @@ export const HomeStack = createStackNavigator({
 
 const CustomDrawerContentComponent = (props) => (
     <Container>
-        <Header style={{height: 200, backgroundColor: '#094c6b'}}>
+        <Header style={{height: 220, backgroundColor: '#094c6b'}}>
             <Body style={{justifyContent: 'center', alignItems: 'center'}}>
             <UploadProfilePic/>
             </Body>

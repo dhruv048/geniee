@@ -11,7 +11,7 @@ import Geolocation from 'react-native-geolocation-service';
 import SplashScreen from "react-native-splash-screen";
 Meteor.connect(settings.METEOR_URL);
 initializeMeteorOffline({log: false});
-
+const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -38,7 +38,7 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('reactnativemeteor_usertoken');
+        const userToken = await AsyncStorage.getItem(USER_TOKEN_KEY);
         console.log(userToken)
         this.props.navigation.navigate(userToken ? 'App' : 'UnAuthorized');
 

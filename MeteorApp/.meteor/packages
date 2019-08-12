@@ -27,3 +27,6 @@ simple:json-routes
 clinical:csv
 tunguska:reactive-aggregate
 sakulstra:aggregate
+accounts-facebook
+service-configuration
+http
