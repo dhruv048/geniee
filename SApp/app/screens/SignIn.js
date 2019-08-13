@@ -188,9 +188,9 @@ class SignIn extends Component {
                             <Text style={styles.buttonText}>Login</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.button,{backgroundColor:'blue'}]} onPress={this._loginFacabook}>
+                        <TouchableOpacity style={[styles.button,{backgroundColor:'#3b5998'}]} onPress={this._loginFacabook}>
                             <Text style={styles.buttonText}>
-                                <Icon name='facebook' size={22}
+                                <Icon name='facebook' size={20}
                                       style={{alignSelf: 'flex-start', color: 'white'}}/> Facebook Login</Text>
 
                         </TouchableOpacity>

@@ -112,7 +112,7 @@ class UploadProfilePic extends React.Component {
                             justifyContent: `center`,
                             alignSelf: 'center',
                             borderColor: `rgba(87, 150, 252, 1)`
-                        }} source={this.state.avatarSource? {uri:settings.IMAGE_URL+'images/'+this.state.avatarSource} : require('../../images/duser.png')}/>
+                        }} source={this.state.avatarSource? {uri:this.state.avatarSource.includes('https://')?this.state.avatarSource :  settings.IMAGE_URL+'images/'+this.state.avatarSource} : require('../../images/duser.png')}/>
                     {this.state.user?
                     <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}
 
