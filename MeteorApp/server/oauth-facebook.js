@@ -1,19 +1,19 @@
 import {ServiceConfiguration} from 'meteor/service-configuration';
 import {Meteor} from 'meteor/meteor';
 
-const settings = Meteor.settings.oauth.facebook;
+//const settings = Meteor.settings.oauth.facebook;
 
 const init = () => {
-    if (!settings) return;
-    ServiceConfiguration.configurations.upsert(
-        {service: "facebook"},
-        {
-            $set: {
-                appId: settings.appId,
-                secret: settings.secret
-            }
-        }
-    );
+    // if (!settings) return;
+    // ServiceConfiguration.configurations.upsert(
+    //     {service: "facebook"},
+    //     {
+    //         $set: {
+    //             appId: settings.appId,
+    //             secret: settings.secret
+    //         }
+    //     }
+    // );
     registerHandler();
 }
 const registerHandler = () => {
@@ -21,7 +21,7 @@ const registerHandler = () => {
         // console.log(params)
         if (params.hasOwnProperty('data') && params.data.type === 'meteor') {
             let user = Accounts.findUserByEmail(params.data.email);
-            if (user && user.profile.role == 1) {
+            if (user) {
                 var res= Accounts._checkPassword(user,params.data.password)
                 // console.log(res);
                 return res

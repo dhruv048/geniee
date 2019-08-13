@@ -60,7 +60,7 @@ class Register extends Component {
                     if (err) {
                         console.log("err::" + err.message);
                         ToastAndroid.showWithGravityAndOffset(
-                            'Invalid login details!',
+                           err.reason,
                             ToastAndroid.LONG,
                             ToastAndroid.TOP,
                             0,
@@ -72,7 +72,7 @@ class Register extends Component {
                         this.setState({
                             isLogged: true
                         })
-                        //this.props.navigation.navigate('Details');
+                        this.props.navigation.navigate('App');
                     }
                 }.bind(this));
             }
@@ -116,10 +116,25 @@ class Register extends Component {
                 Meteor.call('signUpUser', user, (err, res) => {
                     if (err) {
                         console.log(err.reason);
+                        ToastAndroid.showWithGravityAndOffset(
+                            err.reason,
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            50,
+                        );
                     } else {
                         // hack because react-native-meteor doesn't login right away after sign in
                         console.log('Reslut from register' + res);
-                        this.handleSignIn();
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Registered Successfully',
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            50,
+                        );
+                      //  this.handleSignIn();
+                        this.props.navigation.navigate('SignIn');
                     }
                 });
             }

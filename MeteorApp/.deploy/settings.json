@@ -5,6 +5,12 @@
       "username": "9813798508",
       "email": "roshanshah.011@gmail.com"
     },
+    "oauth": {
+      "facebook": {
+        "appId": "1158795330975784",
+        "secret": "e9b33c9668af5ec27aabe7823d2109aa"
+      }
+    },
     "public":{
       "categories":[
         [1,"Apparels & Accessories","chain"],

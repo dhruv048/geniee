@@ -101,47 +101,47 @@ class SignIn extends Component {
             const { email, password } = this.state;            
 
             try {
-               // Meteor.loginWithPassword(email, password, function (err, res) {
-                // //     if (err) {
-                // //         console.log("err::" + err.message);
-                // //         ToastAndroid.showWithGravityAndOffset(
-                // //             'Invalid login details!',
-                // //             ToastAndroid.LONG,
-                // //             ToastAndroid.TOP,
-                // //             0,
-                // //             50,
-                // //         );
-                // //     }
-                // //     else {
-                // //         console.log("Resulton LogedIN:" + res);
-                // //         AsyncStorage.setItem(USER_TOKEN_KEY,  Meteor.getData()._tokenIdSaved );
-                // //         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
-                // //         this.setState({
-                // //             isLogged: true
-                // //         })
-                // //         this.props.navigation.navigate('App')
-                // //     }
-                // }.bind(this));
-                Meteor.call('login',{data: {email: email, password:hashPassword(password), type:'meteor'}}, (err, result) => {
-                    if (!err) {//save user id and token
-                        console.log('result', result)
-                        AsyncStorage.setItem(USER_TOKEN_KEY, result.token);
+               Meteor.loginWithPassword(email, password, function (err, res) {
+                    if (err) {
+                        console.log("err::" + err.message);
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Invalid login details!',
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            50,
+                        );
+                    }
+                    else {
+                        console.log("Resulton LogedIN:" + Meteor.getData()._tokenIdSaved);
+                        AsyncStorage.setItem(USER_TOKEN_KEY,  Meteor.getData()._tokenIdSaved );
                         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
-                        Data._tokenIdSaved = result.token;
-                        Meteor._userIdSaved = result.id;
-                       // Meteor._loginWithToken(result.token)
+                        this.setState({
+                            isLogged: true
+                        })
                         this.props.navigation.navigate('App')
                     }
-                    else{
-                        ToastAndroid.showWithGravityAndOffset(
-                                    err.reason,
-                                    ToastAndroid.LONG,
-                                    ToastAndroid.TOP,
-                                    0,
-                                    50,
-                                );
-                    }
-                });
+                }.bind(this));
+                // Meteor.call('login',{data: {email: email, password:hashPassword(password), type:'meteor'}}, (err, result) => {
+                //     if (!err) {//save user id and token
+                //         console.log('result', result)
+                //         AsyncStorage.setItem(USER_TOKEN_KEY, result.token);
+                //         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
+                //         Data._tokenIdSaved = result.token;
+                //         Meteor._userIdSaved = result.id;
+                //        // Meteor._loginWithToken(result.token)
+                //         this.props.navigation.navigate('App')
+                //     }
+                //     else{
+                //         ToastAndroid.showWithGravityAndOffset(
+                //                     err.reason,
+                //                     ToastAndroid.LONG,
+                //                     ToastAndroid.TOP,
+                //                     0,
+                //                     50,
+                //                 );
+                //     }
+                // });
             }
             catch (e) {
                 console.log(e.message)                
@@ -188,17 +188,19 @@ class SignIn extends Component {
                             <Text style={styles.buttonText}>Login</Text>
                         </TouchableOpacity>
 
+
+                        <View>
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
+                            <Text style={styles.forgotPwdButton}>Forgot password?</Text>
+                            </TouchableOpacity>
+                        </View>
+
                         <TouchableOpacity style={[styles.button,{backgroundColor:'#3b5998'}]} onPress={this._loginFacabook}>
                             <Text style={styles.buttonText}>
                                 <Icon name='facebook' size={20}
                                       style={{alignSelf: 'flex-start', color: 'white'}}/> Facebook Login</Text>
 
                         </TouchableOpacity>
-                        <View>
-                            <TouchableOpacity onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
-                            <Text style={styles.forgotPwdButton}>Forgot password?</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
 
                     <View style={styles.signupCont}>
