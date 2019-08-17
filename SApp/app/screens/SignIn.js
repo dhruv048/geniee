@@ -101,11 +101,11 @@ class SignIn extends Component {
             const { email, password } = this.state;            
 
             try {
-               Meteor.loginWithPassword(email, password, function (err, res) {
+               Meteor.loginWithPassword(email.toLowerCase(), password, function (err, res) {
                     if (err) {
                         console.log("err::" + err.message);
                         ToastAndroid.showWithGravityAndOffset(
-                            'Invalid login details!',
+                           err.reason,
                             ToastAndroid.LONG,
                             ToastAndroid.TOP,
                             0,
@@ -165,12 +165,13 @@ class SignIn extends Component {
                     <View style={styles.containerForm}>
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Username'
+                                   placeholder='Email/Mobile No'
                                    placeholderTextColor='#ffffff'
                                    selectionColor='#ffffff'
                                    keyboardType='email-address'
                                    onSubmitEditing={() => this.password.focus()}
                                    onChangeText={(email) => this.setState({email})}
+                                   textContentType={'emailAddress'}
                         />
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'

@@ -1,5 +1,4 @@
-import {ChatChannels} from '../../lib/collections/chat';
-import {ChatItems} from '../../lib/collections/chat';
+import {ChatChannels, TypingList, ChatItems} from '../../lib/collections/chat';
 import {ReactiveAggregate} from 'meteor/tunguska:reactive-aggregate';
 
 Meteor.publish('chatChannels', () => {
@@ -7,7 +6,9 @@ Meteor.publish('chatChannels', () => {
 })
 
 Meteor.publish('aggChatChannels', function () {
+    let userId= Meteor.userId();
     ReactiveAggregate(this, ChatChannels, [
+        {$match:{users: userId}},
         {"$unwind": "$users"},
         {
             $lookup: {
@@ -24,10 +25,10 @@ Meteor.publish('aggChatChannels', function () {
                 pipeline: [
                     {$match: {$expr: {$eq: ["$channelId", "$$channelId"]}}},
                     {"$sort": {messageOn: -1}},
-                    {"$limit": 1},
-                    {"$project": {_id: 0, messageData: 1, messageOn: 1, seen: 1}}
+                    // {"$limit": 1},
+                    {"$project": {_id: 0, messageData: 1, messageOn: 1, seen: 1,from:1,to:1}}
                 ],
-                "as": "latest"
+                "as": "allMessage"
             }
         },
         {"$unwind": "$Users"},
@@ -37,18 +38,30 @@ Meteor.publish('aggChatChannels', function () {
                 _id: "$_id",
                 users: {$push: "$users"},
                 Users: {$push: "$Users"},
-                lastMessage: {$first: "$lastMessage"},
+                service: {$first: "$service"},
                 creator: {$first: "$creator"},
                 createDate: {$first: "$createDate"},
-                latest: {$first: "$latest"},
-                service:{$first: "$service"}
+                latest: {$first: "$allMessage"},
+                allMessage: {$first: "$allMessage"},
             }
         },
         {
-            "$addFields": {
-                "latestMessage": {
-                    $arrayElemAt: ["$latest", 0]
-                }
+            $addFields: {
+                latestMessage: {
+                    $arrayElemAt: ["$allMessage", 0]
+                },
+                unreadMessages:{  "$filter" : {
+                        "input" : "$allMessage",
+                        "as" : "allMessage",
+                        "cond" : {
+                            "$and" : [
+                                { $in :[userId,"$$allMessage.to"]},
+                                { $eq : [ "$$allMessage.seen",false ] }
+                            ]
+                        }
+                    }
+                },
+
             }
         },
         {"$sort": {"latestMessage.messageOn": -1}},
@@ -57,20 +70,23 @@ Meteor.publish('aggChatChannels', function () {
             "$project": {
                 "_id": 1,
                 "users": 1,
+                "service":1,
                 "creator": 1,
                 "createDate": 1,
                 "Users._id": 1,
                 "Users.profile.name": 1,
                 "Users.profile.profileImage": 1,
                 latestMessage: 1,
-                service:1
+                unreadMessagesCount:{$size: "$unreadMessages"},
+                unreadMessages:1
+
             }
         }], {
-        noAutomaticObserver: true,
         debounceCount: 100,
         debounceDelay: 100,
         observers: [
-            ChatChannels.find({users: Meteor.userId()})
+            ChatChannels.find({users: Meteor.userId()}),
+            ChatItems.find({$or:[{from: Meteor.userId()},{to:Meteor.userId()}]})
         ]
     });
 });
@@ -121,11 +137,21 @@ Meteor.publish('chatItemsGroupByDate', function (channelId) {
                     messages: 1,
                 }
             }
-        ]);
+        ], {clientCollection: 'chatMessages'});
     }
 });
 
 Meteor.publish('chatUsers', (channelId) => {
      let Channel = ChatChannels.findOne({_id:channelId});
      return Meteor.users.find({_id:{$in:Channel.users}});
+});
+
+Meteor.publish('typerList', (channelId)=>{
+    let Channel = ChatChannels.findOne({_id:channelId});
+    let users= Channel.users
+    users=users.filter(item=>{return (item!= Meteor.userId())});
+    return TypingList.find({channelId:channelId, typer:{$in:users}})
+});
+Meteor.publish('unreadMessageCount',function () {
+    return ChatItems.find({$and:[{to: Meteor.userId()},{seen:false}]}, {fields:{_id:1, from:1,to:1,seen:1}})
 });

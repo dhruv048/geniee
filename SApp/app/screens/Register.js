@@ -107,7 +107,7 @@ class Register extends Component {
                     //createdBy: new Date(),
                     profile: {
                         role: selectedItem,
-                        name: name,
+                        name: capitalzeFirstLetter(name),
                         contactNo: contact,
                         profileImage: null,
                         location:location
@@ -219,10 +219,11 @@ class Register extends Component {
                                    ref={(input) => this.email = input}
                                    onSubmitEditing={() => this.contact.focus()}
                                    onChangeText={(email) => this.setState({email})}
+                                   textContentType={'emailAddress'}
                         />
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Contact Number'
+                                   placeholder='Mobile No'
                                    placeholderTextColor='#ffffff'
                                    selectionColor='#ffffff'
                                    keyboardType='phone-pad'
@@ -436,3 +437,13 @@ const styles = StyleSheet.create({
 });
 
 export default Register;
+const capitalzeFirstLetter=(str)=> {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+        // You do not need to check if i is larger than splitStr length, as your for does that for you
+        // Assign it back to the array
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    // Directly return the joined string
+    return splitStr.join(' ');
+}

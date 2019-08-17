@@ -2,6 +2,9 @@ import {Meteor} from "meteor/meteor";
 import {Accounts} from "meteor/accounts-base";
 import FacebookOAuthInit from "./oauth-facebook";
 const path = require('path')
+process.env.MAIL_URL = "smtps://roshanshah.011:roshanshah.110@smtp.gmail.com:465";
+
+
 Meteor.startup(function () {
     FacebookOAuthInit();
     Future = Npm.require('fibers/future');

@@ -5,7 +5,7 @@ import {
     createStackNavigator,
     createSwitchNavigator
 } from 'react-navigation';
-import {StyleSheet, Text, Image, Alert, TouchableOpacity} from 'react-native'
+import {StyleSheet, View, Image, Alert, TouchableOpacity} from 'react-native'
 import Home from '../screens/Home';
 import Settings, {userType} from '../screens/Settings';
 import ServiceDetail from '../screens/ServiceDetail';
@@ -26,7 +26,7 @@ import Dashboard from "./Dashboard";
 import UploadProfilePic from '../components/UploadProfilePic/UploadProfilePic';
 import ForgotPassword from './ForgotPassword';
 import ContactUs from "./ContactUs";
-
+import MessageCount from "../components/MessageCount/MessageCount";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -150,7 +150,10 @@ export const MainNavigation = createDrawerNavigator({
         navigationOptions: {
             drawerLabel: 'MESSAGE',
             drawerIcon: (
+                <View>
                 <Icon name='comment' size={24}/>
+                <MessageCount />
+                </View>
             )
         }
     },
