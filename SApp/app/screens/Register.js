@@ -214,7 +214,9 @@ class Register extends Component {
                                    onChangeText={(contact) => this.setState({contact})}
                         />
                         {/*<View style={{width:300,minHeight:40,  marginVertical: 5}}>*/}
-                                <Item style={{width:300,minHeight:40,  marginVertical: 5}}>
+                                <View 
+                                    underlineColorAndroid='rgba(0,0,0,0)'
+                                    style={{width:300,minHeight:40,  marginVertical: 5}}>
                         <GooglePlaceSearchBox
                             underlineColorAndroid='rgba(0,0,0,0)'
                             placeholderTextColor='#ffffff'
@@ -226,7 +228,7 @@ class Register extends Component {
                             ref={(input) => this.password = input}
                             placeholder='Enter Address (*)'
                         ></GooglePlaceSearchBox>
-                    </Item>
+                    </View>
                     <TextInput style={styles.inputBox}
                                underlineColorAndroid='rgba(0,0,0,0)'
                                placeholder='Password'

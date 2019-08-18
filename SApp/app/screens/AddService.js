@@ -1,18 +1,64 @@
 import React, {Fragment} from "react";
-import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal, StatusBar} from "react-native";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal, StatusBar, TextInput} from "react-native";
+{/*import Icon from 'react-native-vector-icons/FontAwesome';*/}
 import {SafeAreaView} from "react-navigation";
 import Autocomplete from 'native-base-autocomplete';
 import {colors} from "../config/styles";
-import {Container, Content, Text, Item, Input, ListItem, Textarea, CheckBox, Button, Picker} from 'native-base';
+import {Container, Content, Text, Item, Icon, Input, ListItem, Textarea, CheckBox, Button, Picker, Header, Left, Body, Right} from 'native-base';
 import Meteor, {createContainer} from "react-native-meteor";
 import GooglePlaceSearchBox from '../components/GooglePlaceSearch';
 import GoogleSearch from '../components/GooglePlaceSearch/GoogleSearch'
 
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
+import { ScrollView } from "react-native-gesture-handler";
+
+const GooglePlaceSerachStyle={
+    textInputContainer: {
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0)',
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        padding:0
+    },
+    //container:{
+        //padding:0,
+        //borderRadius: 25,
+    //},
+    description: {
+        fontWeight: 'bold',
+        color: colors.appLayout
+    },
+    predefinedPlacesDescription: {
+        color: colors.appLayout
+    },
+    textInput: {
+        width: 300,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        // marginVertical: 5,
+        height:40,
+        margin:0 ,
+        marginTop:0,
+        marginLeft:0,
+        marginRight:0,
+        paddingTop:0,
+        paddingBottom:0
+    },
+
+}
 
 const styles = StyleSheet.create({
+    screenHeader: {
+        fontSize: 20,
+        fontFamily: `Source Sans Pro`,
+        color: '#ffffff',
+        
+    },
+    
     s1f0fdd20: {
         color: `rgba(0, 0, 0, 1)`,
         fontFamily: `Source Sans Pro`,
@@ -24,18 +70,19 @@ const styles = StyleSheet.create({
     },
     imageView: {
         alignItems: `center`,
-        borderColor: `rgba(87, 150, 252, 1)`,
-        borderRadius: 75,
+        borderColor: colors.inputBackground,
+        borderRadius: 10,
         borderWidth: 3,
         height: 150,
         justifyContent: `center`,
-        marginTop: 30,
-        width: 150
+        marginTop: 0,
+        width: '100%',
     },
     sbc83915f: {
         alignItems: `center`,
-        flex: 1,
-        padding: 20
+        width: '100%',
+        //flex: 1,
+        //padding: 10
     },
     sad8176a7: {
         color: `rgba(51, 51, 51, 1)`,
@@ -84,17 +131,57 @@ const styles = StyleSheet.create({
         marginTop: 13,
         width: `100%`
     },
-    inputText: {
+    inputBoxAC: {
+        width: '100%',
+        height: 40,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
+    },
+    inputBox: {
+        width: '100%',
+        height: 40,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
+    },
+    inputTextarea: {
+        width: '100%',
+        backgroundColor: colors.inputBackground,
+        borderRadius: 10,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
+    },
+    autocompleteOptions: {
         backgroundColor: `rgba(243, 247, 255, 1)`,
         borderRadius: 5,
         color: `rgba(0, 0, 0, 1)`,
         fontFamily: `Source Sans Pro`,
-        fontSize: 18,
+        fontSize: 16,
         padding: 10,
-        paddingLeft: 40,
-        width: `100%`,
-        marginBottom: 4,
-        marginTop: 4,
+        //paddingLeft: 0,
+        width: '100%',
+        //marginBottom: 4,
+        //marginTop: 4,
+        height:50,
+        maxHeight: 100
+    },
+    autosuggestionView: {
+        maxHeight: 100,
+        backgroundColor: `rgba(243, 247, 255, 1)`,
+        fontSize: 16,
+        padding: 10,
+        //paddingLeft: 0,
+        width: '100%',
+        backgroundColor: '#ececec',flexGrow:1
     },
     s50325ddf: {
         backgroundColor: `rgba(0, 0, 0, 0.11)`,
@@ -114,9 +201,11 @@ const styles = StyleSheet.create({
         // flex: 1.5
     },
     sb85086c9: {
-        //  alignItems: 'center',
-        padding: 20,
-        //  flex: 1
+        alignItems: 'center',
+        justifyContent: `center`,
+        padding: 10,
+        flexGrow: 1,
+        width: '100%',
     },
     sbf9e8383: {
         flex: 1,
@@ -124,7 +213,10 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: colors.appBackground,
-        // flex: 1,
+        width: '100%',
+        //flex: 1,
+        //alignItems: 'center',
+        //justifyContent: 'center'
 
     },
     descriptionContainer: {
@@ -159,8 +251,8 @@ const styles = StyleSheet.create({
     centerButton: {margin: 10, alignSelf: 'center'},
 
     checkBokView: {
-        backgroundColor: `rgba(243, 247, 255, 1)`,
-        borderRadius: 5,
+        //sbackgroundColor: `rgba(243, 247, 255, 1)`,
+        //borderRadius: 5,
         color: `rgba(0, 0, 0, 0.44)`,
         fontFamily: `Source Sans Pro`,
         fontSize: 18,
@@ -172,7 +264,7 @@ const styles = StyleSheet.create({
     },
     textInputContainer: {
         width: '100%',
-        backgroundColor: 'rgba(0,0,0,0)',
+        //backgroundColor: 'rgba(0,0,0,0)',
         borderTopWidth: 0,
         borderBottomWidth:0,
         margin:0,
@@ -182,10 +274,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     predefinedPlacesDescription: {
-        color: '#1faadb'
+        //color: '#1faadb'
     },
     textInput: {
-        backgroundColor: `rgba(243, 247, 255, 1)`,
+        //backgroundColor: `rgba(243, 247, 255, 1)`,
         borderRadius: 5,
         color: `rgba(0, 0, 0, 1)`,
         fontFamily: `Source Sans Pro`,
@@ -196,6 +288,66 @@ const styles = StyleSheet.create({
         marginBottom: 4,
         marginTop: 4,
         height:50
+    },
+    autosuggestCont: {
+        //padding: 10,
+        backgroundColor: '#ececec',
+    },
+    autosuggesText: {
+        marginBottom: 1,
+        padding: 10,
+        borderBottomColor: colors.inputBackground,
+        borderBottomWidth: 1,
+    },
+    multiField: {
+        flexDirection: 'row',
+        flexGrow: 1,
+        alignItems: 'flex-end',
+        justifyContent: 'center'
+    },
+    inputBoxMultiField: {
+        width: '48%',
+        height: 40,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
+        marginHorizontal: '1%',
+    },
+
+    chkView: {
+        flexDirection: `row`, 
+        flex: 1,       
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '48%',
+        height: 40,
+        marginHorizontal: '1%',
+    },
+    
+    buttonView: {
+        width: '100%',
+        //minHeight:40,  
+        marginBottom: 0,
+        marginTop: 45,
+    },
+    button: {
+        width: '100%',
+        backgroundColor: colors.buttonPrimaryBackground,
+        borderRadius: 25,
+        //marginVertical: 10,
+        paddingVertical: 13,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: colors.whiteText,
+        textAlign: 'center'
     },
 
 });
@@ -389,13 +541,37 @@ class AddService extends React.PureComponent {
         const {query, selectedCategory} = this.state;
         const categories = this._findCategory(query);
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
+        const {navigate} = this.props.navigation;
         return (
             <Container style={styles.container}>
                 <StatusBar
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'
                 />
+                <Header style={{backgroundColor: '#094c6b'}}>
+                    <Left>
+                        <Button transparent onPress={() => {
+                    this.props.navigation.openDrawer()
+                }}>
+                            <Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>
+                        </Button>                        
+                    </Left>
+
+                    <Body>
+                        <Text style={styles.screenHeader}>Add Service</Text>
+                    </Body>
+                    {/*<Right>
+                        <Button transparent onPress={() => navigate('Home')}>
+                            <Icon name='home' style={{fontWeight:'500', fontSize: 30}}/>
+                        </Button> 
+                        <Button transparent onPress={() => navigate('Chat')}>
+                            <Icon name='md-chatboxes' style={{fontWeight:'500', fontSize: 30}}/>
+                        </Button>                    
+                    </Right>*/}
+                </Header>
                 <Content>
+                
+
                     <Fragment>
                         {/*<ImageBackground*/}
                         {/*style={styles.sbf9e8383}*/}
@@ -406,16 +582,17 @@ class AddService extends React.PureComponent {
                         {/*resizeMode={`stretch`}*/}
                         {/*>*/}
                         <SafeAreaView style={styles.sb85086c9} keyboardShouldPersistTaps='always'>
+                            {/*<Item style={styles.sbc83915f}>*/}
                             <View style={styles.sbc83915f}>
-                                <Text style={styles.s1f0fdd20}>{`Add Service`}</Text>
+                                {/*<Text style={styles.s1f0fdd20}>{`Add Service`}</Text>*/}
                                 <TouchableOpacity style={styles.imageView} onPress={() => {
                                     this.setModalVisible(true)
                                 }}>
                                     {this.state.avatarSource !== null ?
                                         <Image style={{
-                                            width: 147,
+                                            width: 300,
                                             height: 147,
-                                            borderRadius: 75,
+                                            borderRadius: 10,
                                             borderWidth: 3,
                                             height: 150,
                                             justifyContent: `center`,
@@ -427,120 +604,127 @@ class AddService extends React.PureComponent {
                                         />}
                                 </TouchableOpacity>
                             </View>
-                            <View style={styles.form}>
+                            <View underlineColorAndroid='rgba(0,0,0,0)'
+                                    style={{width:'100%',minHeight:40,  marginVertical: 5, justifyContent: `center`}}>
                                 <Autocomplete
                                     autoCapitalize="none"
-                                    style={styles.inputText}
+                                    style={styles.inputBoxAC}
                                     autoCorrect={false}
                                     data={categories.length === 1 && comp(query, categories[0].subCategory)
                                         ? [] : categories}
                                     defaultValue={query}
                                     hideResults={selectedCategory && selectedCategory.subCategory === query}
                                     onChangeText={text => this.setState({query: text})}
+                                    underlineColorAndroid='rgba(0,0,0,0)'
                                     placeholder="Enter Category's name (*)"
                                     placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    renderItem={cat => <ListItem style={{backgroundColor: colors.bgBrightGreen,flex:1}}
-                                                                 onPress={() => (
+                                    renderItem={cat => <View style={{maxHeight:200}}><ScrollView style={{flexGrow: 0}}><TouchableOpacity
+                                        style={styles.autosuggestCont}
+                                        onPress={() => (
                                                                      this.setState({
                                                                          query: cat.subCategory,
                                                                          selectedCategory: cat
                                                                      })
                                                                  )}
-
-                                                                 style={styles.inputText}
                                     >
-                                        <Text>{cat.subCategory}</Text>
-                                    </ListItem>}
+                                        <Text style={styles.autosuggesText}>{cat.subCategory}</Text>
+                                    </TouchableOpacity></ScrollView></View>}
                                 />
-                                <Item>
-                                    <Input placeholder='Title (*)'
-                                           style={styles.inputText}
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           underlineColorAndroid='rgba(0,0,0,0)'
-                                           onSubmitEditing={() => this.title.focus()}
-                                           onChangeText={(title) => this.setState({title})}
-                                    />
-                                </Item>
-                                <Textarea rowSpan={4} placeholder="Description (*)"
-                                          style={styles.inputText}
-                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                          underlineColorAndroid='rgba(0,0,0,0)'
-                                    //onSubmitEditing={() => this.contactNumber.focus()}
-                                          onChangeText={(description) => this.setState({description})}
-                                />
-                                <View style={styles.s50325ddf}/>
-                                <Item>
-                                    {/*<Input disabled*/}
-                                    {/*style={styles.inputText}*/}
-                                    {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
-                                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                    {/*placeholder='Location'*/}
-                                    {/*keyboardType='phone-pad'*/}
-                                    {/*onChangeText={(location) => this.setState({location})}*/}
-                                    {/*/>*/}
-                                    <GooglePlaceSearchBox
-                                        onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                            console.log(data, details);
-                                            this.handleLocation(details)
-                                        }}
-                                        placeholder='Enter Address (*)'
-                                        styles={[styles.textInputContainer,styles.description,styles.predefinedPlacesDescription,styles.textInput]}
-                                    ></GooglePlaceSearchBox>
-
-                                </Item>
-
-                                <Item>
-                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputText}
-                                           placeholder='Radius for Service Area in KiloMeter (*)'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(radius) => this.setState({radius})}
-                                    />
-                                </Item>
-                                <View style={styles.checkBokView}>
-                                    <CheckBox style={{marginRight: 15}} checked={this.state.homeDelivery}
-                                              onPress={this._updateHomeDelivery}/>
-                                    <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text>
-                                </View>
-                                <View style={styles.s50325ddf}/>
-                                <Item>
-                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputText}
-                                           placeholder='Unit'
-                                           onChangeText={(unit) => this.setState({unit})}
-                                    />
-                                </Item>
-                                <Item>
-                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputText}
-                                           placeholder='Price per Unit'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(price) => this.setState({price})}
-                                    />
-                                </Item>
-                                <Item>
-                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputText}
-                                           placeholder='Contact No (*)'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(contact) => this.setState({contact})}
-                                    />
-                                </Item>
-                                <Item>
-                                    <Input underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputText}
-                                           placeholder='Website'
-                                           onChangeText={(webLink) => this.setState({webLink})}
-                                    />
-                                </Item>
-                                <Button block success onPress={this._saveService}><Text> Save </Text></Button>
-
                             </View>
+                            
+                            <TextInput placeholder='Title (*)'
+                                    style={styles.inputBox}
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    underlineColorAndroid='rgba(0,0,0,0)'
+                                    onSubmitEditing={() => this.title.focus()}
+                                    onChangeText={(title) => this.setState({title})}
+                                />
+                                <Textarea rowSpan={3} placeholder="Description (*)"
+                                    style={styles.inputTextarea}
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    underlineColorAndroid='red'
+                                    //onSubmitEditing={() => this.contactNumber.focus()}
+                                    onChangeText={(description) => this.setState({description})}
+                                />                              
+                                {/*<Input disabled*/}
+                                {/*style={styles.inputText}*/}
+                                {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                {/*placeholder='Location'*/}
+                                {/*keyboardType='phone-pad'*/}
+                                {/*onChangeText={(location) => this.setState({location})}*/}
+                                {/*/>*/}
+                                <View underlineColorAndroid='rgba(0,0,0,0)'
+                                    style={{width:'100%',minHeight:40,  marginVertical: 5}}>
+                                <GooglePlaceSearchBox
+                                    onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                                        console.log(data, details);
+                                        this.handleLocation(details)
+                                    }}
+                                    placeholder='Enter Address (*)'
+                                    underlineColorAndroid='rgba(0,0,0,0)'
+                            placeholderTextColor='#ffffff'
+                            styles={GooglePlaceSerachStyle}
+                                    ></GooglePlaceSearchBox>
+                            </View>                                
+
+                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    style={styles.inputBox}
+                                    placeholder='Radius for Service Area in KiloMeter (*)'
+                                    keyboardType='phone-pad'
+                                    onChangeText={(radius) => this.setState({radius})}
+                                />
+                            
+                                
+                            
+                                    <View style={styles.multiField}>
+                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    style={styles.inputBoxMultiField}
+                                    placeholder='Unit'
+                                    onChangeText={(unit) => this.setState({unit})}
+                                />
+                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    style={styles.inputBoxMultiField}
+                                    placeholder='Price per Unit'
+                                    keyboardType='phone-pad'
+                                    onChangeText={(price) => this.setState({price})}
+                                />
+                                </View>
+                                
+                                <View style={styles.multiField}>
+                                    
+                                    
+                                    <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    style={styles.inputBoxMultiField}
+                                    placeholder='Contact No (*)'
+                                    keyboardType='phone-pad'
+                                    onChangeText={(contact) => this.setState({contact})}
+                                />
+
+                                    <View style={styles.chkView}><CheckBox style={{marginEnd:20}} checked={this.state.homeDelivery}
+                                    onPress={this._updateHomeDelivery}/>
+                                    <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text></View>
+
+                                    </View>
+                                
+                                
+                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                    style={styles.inputBox}
+                                    placeholder='Website'
+                                    onChangeText={(webLink) => this.setState({webLink})}
+                                />
+                            <View style={styles.buttonView}>
+                            <Button  
+                                style={styles.button} 
+                                onPress={this._saveService}>
+                                <Text style={styles.buttonText}> Save </Text>
+                            </Button></View>
+                            
                             <View style={{marginTop: 22}}>
                                 <Modal
                                     animationType="slide"

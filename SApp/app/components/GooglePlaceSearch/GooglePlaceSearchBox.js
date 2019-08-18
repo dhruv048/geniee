@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
     const {  onPress } = props;
 return (
     <GooglePlacesAutocomplete
+        underlineColorAndroid='rgba(0,0,0,0)'
+        placeholderTextColor='#ffffff'
         placeholder='Search'
         minLength={2} // minimum length of text to search
         autoFocus={false}

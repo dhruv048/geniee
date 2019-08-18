@@ -18,7 +18,8 @@ import {
     Text,
     Item,
     Input,
-    Picker
+    Picker,
+    Fab
 } from 'native-base';
 
 import {
@@ -196,7 +197,8 @@ class Home extends Component {
             data: [],
             error: null,
             searchText: '',
-            selected: 'all'
+            selected: 'all',
+            active: false
         }
         this.arrayholder = [];
         this.currentSearch = '';
@@ -423,6 +425,8 @@ class Home extends Component {
                             </Button>                        
                         </Left>*/}
 
+                    {/*<Body style={{flexDirection: 'row'}}>
+                    <Item style={{height: 40, flex: 4, paddingVertical: 5}}>*/}
                     <Body style={{flexDirection: 'row'}}>
                     <Item style={{height: 40, flex: 4, paddingVertical: 5}}>
                         {/*<Button transparent onPress={()=>{}}>*/}
@@ -457,7 +461,7 @@ class Home extends Component {
                             <Picker.Item label="Starred" value="starred"/>
                             <Picker.Item label="My Location" value="myLocation"/>
                         </Picker>
-                    </Item>
+                            </Item>
                     </Body>
                     {/*<Right>*/}
                     {/*/!*<Button transparent onPress={()=>this.openDrawer()}>*!/*/}

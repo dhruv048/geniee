@@ -10,7 +10,7 @@ import {
     StatusBar,
     Modal, ToastAndroid,Linking
 } from 'react-native';
-import {Button, Container, Content, Textarea, Left, Icon,Body} from 'native-base'
+import {Button, Container, Content, Textarea, Icon, Header, Left, Body, Right} from 'native-base'
 import Meteor, {createContainer} from "react-native-meteor";
 import settings ,{userType} from "../config/settings";
 import userImage from '../images/Image.png';
@@ -193,6 +193,27 @@ class ServiceDetail extends Component {
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'
                 />
+                <Header style={{backgroundColor: '#094c6b'}}>
+                    <Left>
+                        <Button transparent onPress={() => {
+                    this.props.navigation.openDrawer()
+                }}>
+                            <Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>
+                        </Button>                        
+                    </Left>
+
+                    <Body>
+                        <Text style={styles.screenHeader}>Service Details</Text>
+                    </Body>
+                    {/*<Right>
+                        <Button transparent onPress={() => navigate('Home')}>
+                            <Icon name='home' style={{fontWeight:'500', fontSize: 30}}/>
+                        </Button> 
+                        <Button transparent onPress={() => navigate('Chat')}>
+                            <Icon name='md-chatboxes' style={{fontWeight:'500', fontSize: 30}}/>
+                        </Button>                    
+                    </Right>*/}
+                </Header>
                 {/*<Header  style={{backgroundColor:'#094c6b', height:40}}>*/}
                 {/*<Left>*/}
                 {/*<Button transparent onPress={()=>{this.props.navigation.goBack()}}>*/}
@@ -201,7 +222,7 @@ class ServiceDetail extends Component {
                 {/*</Left>*/}
                     {/*<Body></Body>*/}
                 {/*</Header>*/}
-                <Content style={{marginTop:10}}>
+                <Content>
                     {this.state.isLoading === true ? <Loading/> : <Text/>}
                     <ScrollView>
                         <View style={{alignItems: 'center', marginHorizontal: 30}}>
@@ -336,14 +357,25 @@ const styles = StyleSheet.create({
       //  marginTop: 20,
         backgroundColor:'#05a5d10d',
     },
+    screenHeader: {
+        fontSize: 18,
+        fontFamily: `Source Sans Pro`,
+        color: '#ffffff',
+        
+    },
     productImg: {
-        width: 300,
+        width: '100%',
         height: 150,
     },
     name: {
-        fontSize: 28,
+        fontSize: 22,
         color: "#696969",
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        width: '100%',
+        backgroundColor: '#094c6b',
+        paddingHorizontal: 10,
+        padding: 5,
+        color: '#ffffff',
     },
     availableText: {
         marginTop: 10,
