@@ -90,7 +90,7 @@ class Map extends Component {
 }
 
     onRegionChange(region) {
-       // this.setState({ region:region });
+        // this.setState({ region:region });
     }
     render(){
    //     console.log(height,width,this.props.markers[0])

@@ -1,7 +1,7 @@
 import Meteor , { Accounts } from 'react-native-meteor';
 import React, {Component} from 'react';
 import {Container, Content, Button, Input, Item, Text, Label, Header, Left, Body, Title, Icon, StyleProvider} from "native-base";
-import {ToastAndroid, TouchableOpacity, KeyboardAvoidingView, View, StyleSheet} from "react-native";
+import {ToastAndroid, TouchableOpacity, KeyboardAvoidingView, View, StyleSheet, StatusBar} from "react-native";
 import { hashPassword } from '../../node_modules/react-native-meteor/lib/utils';
 import {colors} from "../config/styles";
 //import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -116,6 +116,10 @@ class ForgotPassword extends Component {
     render() {
         return (
             <Container style={{backgroundColor:colors.appBackground}}>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
                 {this.state.setPassWord===false?
                 
                 <Content>

@@ -590,8 +590,8 @@ class AddService extends React.PureComponent {
                                 }}>
                                     {this.state.avatarSource !== null ?
                                         <Image style={{
-                                            width: 300,
-                                            height: 147,
+                                            width: '100%',
+                                            height: 150,
                                             borderRadius: 10,
                                             borderWidth: 3,
                                             height: 150,

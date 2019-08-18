@@ -158,15 +158,15 @@ export const MainNavigation = createDrawerNavigator({
         }
     },
 
-    ForgotPass: {
-        screen: ForgotPassword,
-        navigationOptions: {
-            drawerLabel: 'FORGOT PASSWORD',
-            drawerIcon: (
-                <Icon name='key' size={24}/>
-            )
-        }
-    },
+    // ForgotPass: {
+    //     screen: ForgotPassword,
+    //     navigationOptions: {
+    //         drawerLabel: 'FORGOT PASSWORD',
+    //         drawerIcon: (
+    //             <Icon name='key' size={24}/>
+    //         )
+    //     }
+    // },
     ContactUs:{
         screen: ContactUs,
         navigationOptions: {
