@@ -20,12 +20,6 @@ import SplashScreen from "react-native-splash-screen";
 const window = Dimensions.get('window');
 
 class Dashboard extends Component {
-    static navigationOptions = {
-        drawerIcon: (
-            <Image source={require('../images/settings.png')}
-                   style={{height: 25, width: 25}}/>
-        )
-    }
 
     constructor(props) {
         super(props)
@@ -42,18 +36,18 @@ class Dashboard extends Component {
         this.granted;
     }
 
-    async componentDidMount  () {
+     componentDidMount  () {
         Meteor.subscribe('categories-list');
         Meteor.subscribe('aggChatChannels')
-        this.granted = await PermissionsAndroid.request(
-           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-                'title': 'Location Permission',
-                'message': 'This App needs access to your location ' +
-                'so we can know where you are.'
-            }
-        )
-        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // this.granted = await PermissionsAndroid.request(
+        //    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        //     {
+        //         'title': 'Location Permission',
+        //         'message': 'This App needs access to your location ' +
+        //         'so we can know where you are.'
+        //     }
+        // )
+        // if (PermissionsAndroid.RESULTS.GRANTED) {
 
             console.log("You can use locations ")
             Geolocation.getCurrentPosition(
@@ -71,12 +65,12 @@ class Dashboard extends Component {
                 },
                 {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
             );
-        } else {
-            console.log("Location permission denied")
-        }
+        // } else {
+        //     console.log("Location permission denied")
+        // }
 
-        this.setState({categories: Meteor.collection('MainCategories').find(), loading: false})
-        this.arrayholder = Meteor.collection('MainCategories').find()
+        this.setState({categories: this.props.categories?this.props.categories:[], loading: false})
+        this.arrayholder =  this.props.categories?this.props.categories:[]
     }
     componentWillReceiveProps(newProps) {
         const oldProps = this.props
@@ -222,6 +216,7 @@ const styles = StyleSheet.create({
     }
 })
 export default withTracker(() => {
+
     return {
         categories: Meteor.collection('MainCategories').find()
     }

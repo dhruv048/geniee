@@ -6,8 +6,8 @@ let API_URL='http://192.168.1.228:3000/api/';
 let IMAGE_URL='http://192.168.1.228:3000/api/';
 if (process.env.NODE_ENV === 'production') {
     METEOR_URL = 'ws://139.59.81.51/websocket';
-    API_URL = 'ws://139.59.81.51/api/';
-    IMAGE_URL='https://krishisansaar.com/api/'
+    API_URL = "http://139.59.81.51/api/";
+    IMAGE_URL='https://api.krishisansaar.com/'
 }
 export const settings = {
     env: process.env.NODE_ENV,

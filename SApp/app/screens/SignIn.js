@@ -8,15 +8,22 @@ import {
     TextInput,
     TouchableWithoutFeedback,
     Keyboard,
-    ToastAndroid
+    ToastAndroid,
+    AsyncStorage
  } from 'react-native';
-
+import {Button} from 'native-base';
+import Icon from 'react-native-vector-icons/Feather';
 import Meteor from 'react-native-meteor';
-
-import Sapp from "../screens/Sapp";
 import Logo from '../components/Logo/Logo';
 import { colors } from '../config/styles';
-import settings, {userType} from '../config/settings';
+import {LoginManager} from "react-native-fbsdk";
+import {onLoginFinished} from "../lib/FBlogin";
+import Data from "react-native-meteor/src/Data";
+import {MyFunctions} from "../lib/MyFunctions";
+import {hashPassword} from "react-native-meteor/lib/utils";
+
+const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
+const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
 
 
 
@@ -60,6 +67,33 @@ class SignIn extends Component {
             valid = false;
         }
         return valid;
+    };
+
+    _loginFacabook = () => {
+        console.log('loginFB')
+        // try {
+            const navi = this.props.navigation;
+            LoginManager.logInWithReadPermissions(["email", "user_location", "user_birthday"]).then(function (result) {
+                console.log('resulttt',result)
+                if (result.isCancelled) {
+                    console.log("Login cancelled");
+                } else {
+                    console.log(
+                        "Login success with permissions: " +
+                        result.grantedPermissions.toString()
+                    );
+                    onLoginFinished(result, navi);
+                }
+            }).catch(function (error) {
+                console.log('There has been a problem with your fetch operation: ' + error.message);
+                // ADD THIS THROW error
+                throw error;
+            });
+        // }
+        // catch (e) {
+        //     console.log(e,e.message)
+        // }
+
     }
 
     handleSignIn = () => {
@@ -67,11 +101,11 @@ class SignIn extends Component {
             const { email, password } = this.state;            
 
             try {
-                Meteor.loginWithPassword({username: email}, password, function (err, res) {
+               Meteor.loginWithPassword(email.toLowerCase(), password, function (err, res) {
                     if (err) {
                         console.log("err::" + err.message);
                         ToastAndroid.showWithGravityAndOffset(
-                            'Invalid login details!',
+                           err.reason,
                             ToastAndroid.LONG,
                             ToastAndroid.TOP,
                             0,
@@ -79,13 +113,35 @@ class SignIn extends Component {
                         );
                     }
                     else {
-                        console.log("Resulton LogedIN:" + res);
+                        console.log("Resulton LogedIN:" + Meteor.getData()._tokenIdSaved);
+                        AsyncStorage.setItem(USER_TOKEN_KEY,  Meteor.getData()._tokenIdSaved );
+                        AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
                         this.setState({
                             isLogged: true
                         })
                         this.props.navigation.navigate('App')
                     }
                 }.bind(this));
+                // Meteor.call('login',{data: {email: email, password:hashPassword(password), type:'meteor'}}, (err, result) => {
+                //     if (!err) {//save user id and token
+                //         console.log('result', result)
+                //         AsyncStorage.setItem(USER_TOKEN_KEY, result.token);
+                //         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
+                //         Data._tokenIdSaved = result.token;
+                //         Meteor._userIdSaved = result.id;
+                //        // Meteor._loginWithToken(result.token)
+                //         this.props.navigation.navigate('App')
+                //     }
+                //     else{
+                //         ToastAndroid.showWithGravityAndOffset(
+                //                     err.reason,
+                //                     ToastAndroid.LONG,
+                //                     ToastAndroid.TOP,
+                //                     0,
+                //                     50,
+                //                 );
+                //     }
+                // });
             }
             catch (e) {
                 console.log(e.message)                
@@ -109,12 +165,13 @@ class SignIn extends Component {
                     <View style={styles.containerForm}>
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Username'
+                                   placeholder='Email/Mobile No'
                                    placeholderTextColor='#ffffff'
                                    selectionColor='#ffffff'
                                    keyboardType='email-address'
                                    onSubmitEditing={() => this.password.focus()}
                                    onChangeText={(email) => this.setState({email})}
+                                   textContentType={'emailAddress'}
                         />
                         <TextInput style={styles.inputBox}
                                    underlineColorAndroid='rgba(0,0,0,0)'
@@ -125,12 +182,26 @@ class SignIn extends Component {
                                    ref={(input) => this.password = input}
                                    onChangeText={(password) => this.setState({password})}
                         />
+
+
+
                         <TouchableOpacity style={styles.button} onPress={this.handleSignIn}>
                             <Text style={styles.buttonText}>Login</Text>
                         </TouchableOpacity>
+
+
                         <View>
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
                             <Text style={styles.forgotPwdButton}>Forgot password?</Text>
+                            </TouchableOpacity>
                         </View>
+
+                        <TouchableOpacity style={[styles.button,{backgroundColor:'#3b5998'}]} onPress={this._loginFacabook}>
+                            <Text style={styles.buttonText}>
+                                <Icon name='facebook' size={20}
+                                      style={{alignSelf: 'flex-start', color: 'white'}}/> Facebook Login</Text>
+
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.signupCont}>

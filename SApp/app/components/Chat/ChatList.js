@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, ListView, StatusBar ,Text,Image,Alert} from 'react-native';
-import {  FlatListItem } from '../components/FlatListItem';
+import {  FlatListItem } from '../FlatListItem';
 import Meteor, { createContainer } from 'react-native-meteor';
-import CustomHeader from "../components/Header"
-import HeaderMenu from "../components/Header/HeaderMenu";
+import CustomHeader from "../Header/index"
+import HeaderMenu from "../Header/HeaderMenu";
 import Icon  from 'react-native-vector-icons/FontAwesome';
-import {colors} from "../config/styles";
+import {colors} from "../../config/styles";
 class ChatList extends Component {
 
     constructor(props) {

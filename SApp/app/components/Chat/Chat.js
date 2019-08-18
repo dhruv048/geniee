@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { View, ListView ,Alert,StatusBar} from 'react-native';
 import Meteor, { createContainer } from 'react-native-meteor';
-import Message from "../components/Chat/Message";
-import {ChatInput} from "../components/Chat/ChatInput";
-import {MessageItem }from "../components/Chat/MessageItem";
+import Message from "./Message";
+import {ChatInput} from "./ChatInput";
+import {MessageItem }from "./MessageItem";
 import Icon  from 'react-native-vector-icons/FontAwesome';
 import Moment from 'moment';
-import CustomHeader from "../components/Header";
+import CustomHeader from "../Header/index";
 import {Container,Content,Item,Input} from 'native-base';
-import {colors} from "../config/styles";
+import {colors} from "../../config/styles";
 
 class Chat extends Component {
 
@@ -72,7 +72,7 @@ class Chat extends Component {
                     key={rowData._id }
                     isShow={true}
                     isUser={rowData.From===this.props.user._id? true: false}
-                    profileUrl={require('../images/rn-logo.png')}
+                    profileUrl={require('../../images/rn-logo.png')}
                     nickname={this.props.nickname}
                     time={Moment(rowData.createdAt).fromNow()}
                     message={(

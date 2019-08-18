@@ -87,9 +87,61 @@ Meteor.methods({
             console.log(e.message)
             throw new Meteor.Error(403, e.message);
         }
-    }
-});
+    },
 
+    'forgotPasswordCustom': (email) => {
+        console.log(email)
+        let user = Accounts.findUserByEmail(email);
+        // try {
+        if (!user) {
+            throw new Meteor.Error("User not found");
+        }
+
+        const emails = pluckAddresses(user.emails);
+        const caseSensitiveEmail = emails.find(
+            email => email.toLowerCase() === email.toLowerCase()
+        );
+        // const {email: realEmail, userr, token} =
+        //  Accounts.generateResetToken(user._id, email, 'resetPassword');
+        const token = randomNum().toString();
+        const tokenRecord = {
+            token,
+            email,
+            when: new Date()
+        };
+        tokenRecord.reason = 'reset';
+        Meteor.users.update({_id: user._id}, {
+            $set: {
+                'services.password.reset': tokenRecord
+            }
+        });
+
+        // before passing to template, update user object with new token
+        Meteor._ensure(user, 'services', 'password').reset = tokenRecord;
+
+        return Email.send({
+            to: email,
+            from: "contact_us@gennie.com",
+            cc: "roshanshah.011@gmail.com",
+            subject: "Code to set your new Password",
+            html: "Pleas use code to Set New Password : " + token,
+        }, function (err) {
+            if (err != null) {
+                console.log(err.messsage);
+            }
+        });
+        // }
+        // catch (e) {
+        //     console.log(e.message)
+        //     throw new Meteor.Error(401,e.message);
+        // }
+
+    },
+});
+const pluckAddresses = (emails = []) => emails.map(email => email.address);
+const randomNum=()=>{
+    return   Math.floor(100000 + Math.random() * 900000)
+}
 
 
 

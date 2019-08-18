@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Meteor from 'react-native-meteor';
 import Loading from "../components/Loading/Loading";
-import {Alert} from "react-native";
-
-
+const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
+import { AsyncStorage} from 'react-native';
 
 
 class LogOut extends Component {
@@ -35,8 +34,11 @@ class LogOut extends Component {
         // )
 
         Meteor.logout((err) => {
-            if (!err)
-                this.props.navigation.navigate('UnAuthorized')
+            if (!err){
+                console.log('logout')
+                AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                this.props.navigation.navigate('UnAuthorized');
+            }
             else
                 this.props.navigation.goBack()
         })

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-    Header, Text, Container, Content, Item, Right, Left, Body, Button, ListItem, Card, CardItem, Thumbnail
+    Header, Text, Container, Content, Badge, Right, Left, Body, Button, ListItem, Card, CardItem, Thumbnail
 } from 'native-base';
 
 import {
@@ -59,11 +59,26 @@ class ChatList extends Component {
                                 source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL+'images/' + item.user.profile.profileImage} : require('../../images/duser.png')}/>
                         </View>
                         <View style={{marginHorizontal: 10}}>
-                            <Text>{item.user.profile.name}</Text>
+                            <View style={{flexDirection: 'row'}}>
+                                <Text>{item.user.profile.name}</Text>
+                                {item.unreadMessagesCount > 0 ?
+                                    <View style={{alignSelf: 'flex-end'}}>
+                                        <Badge style={{backgroundColor: colors.appLayout, height: 20}}>
+                                            <Text style={{
+                                                fontSize: 12,
+                                                fontWeight: '200',
+                                                color: 'white',
+                                                lineHeight: 20
+                                            }}>{item.unreadMessagesCount}</Text>
+                                        </Badge>
+                                    </View>
+                                    : null
+                                }
+                            </View>
                             {item.Message ?
                                 <View style={{flexDirection: 'row'}}>
                                     {item.Message.type == 'text' ?
-                                        <Text note>{item.Message.message}</Text> : <Icon name={'file'} size={20}/>}
+                                        <Text note numberOfLines={2}>{item.Message.message}</Text> : <Icon name={'file'} size={20}/>}
                                     {item.latestMessage.from !== logged ?
                                         <Text style={{alignSelf: 'flex-end'}}
                                               note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text> :

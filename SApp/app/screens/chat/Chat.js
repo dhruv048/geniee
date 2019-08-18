@@ -222,7 +222,8 @@ class Chat extends Component {
             files: [],
             modalItem: '',
             customModalVisible: false,
-            allowDelete: false
+            allowDelete: false,
+            height:45
         }
         this._sendMessage = this._sendMessage.bind(this);
         this.viewabilityConfig = {
@@ -232,7 +233,30 @@ class Chat extends Component {
         this._onViewChange = this._onViewChange.bind(this);
         this._showFile = this._showFile.bind(this);
     }
+    updateSize = (height) => {
+        console.log(height)
+        this.setState({
+            height
+        });
+    }
 
+    _handleNotTyping=()=>{
+        console.log('removeTyping');
+        Meteor.call('addRemoveTyper',  this.props.navigation.getParam('Channel').channelId, 'remove',(err)=>{
+            if(err){
+                console.log(err.reason)
+            }
+        })
+    }
+
+    _handleTyping=()=>{
+        console.log('typing');
+        Meteor.call('addRemoveTyper',  this.props.navigation.getParam('Channel').channelId, 'add',(err)=>{
+            if(err){
+                console.log(err.reason)
+            }
+        })
+    }
     _saveMessageToServer(Message) {
            Meteor.call('addChatMessage', Message, (err) => {
                if (err) {
@@ -276,8 +300,12 @@ class Chat extends Component {
     }
 
     render() {
+        const {height} = this.state;
+
+        let newStyle = {
+            height
+        }
         const channel = this.props.navigation.getParam('Channel');
-        console.log(channel)
         return (
             <Container>
                 <StatusBar
@@ -309,6 +337,7 @@ class Chat extends Component {
                 </Header>
                 <View style={styles.content}>
                     <FlatList
+                        style={{flex:1}}
                         inverted
                         ref={ref => this.flatList = ref}
                         // onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})}
@@ -322,7 +351,10 @@ class Chat extends Component {
                         onEndReached={(info) => {
                         }}
                     />
-                    <ScrollView style={{marginHorizontal: 10, maxHeight: 400}}>
+                    {this.props.typerList.length>0?
+                    <Text note style={{alignSelf:'center'}}>{channel.user.name||''} is <Icon name={'edit-3'} /> message...</Text>:null}
+                    <View style={{maxHeight:"40%"}}>
+                    <ScrollView style={{marginHorizontal: 10,flexGrow:0}}>
                         {this.state.files.map((file, index) => (
                             <TouchableOpacity onPress={() => this._showFile(file, true)} key={index}>
                                 <View style={{
@@ -357,52 +389,22 @@ class Chat extends Component {
                             </TouchableOpacity>
                         ))}
                     </ScrollView>
-                    {/*<View style={{flex:1}} >*/}
-                    {/*<Modal*/}
-                    {/*animationType="slide"*/}
-                    {/*transparent={false}*/}
-                    {/*visible={this.state.customModalVisible}*/}
-                    {/*onRequestClose={() => {this.setState({customModalVisible:false})*/}
-                    {/*}} >*/}
-                    {/*{this.state.modalItem?*/}
-                    {/*<View style={{flex:1}}>*/}
-                    {/*{this.state.modalItem.type.includes('application/')?*/}
-
-                    {/*<Icon name={'file'} size={100}/>:*/}
-                    {/*<Image style={{flex: 1, alignSelf: 'stretch', width: undefined, height: undefined,resizeMode:'contain'}}*/}
-                    {/*source={{uri: settings.IMAGE_URL + this.state.modalItem.src}}/>*/}
-                    {/*}*/}
-                    {/*<Button transparent style={{*/}
-                    {/*...StyleSheet.absoluteFillObject,*/}
-                    {/*alignSelf: 'flex-start',*/}
-                    {/*left: 10,*/}
-                    {/*marginTop: -5,*/}
-                    {/*position: 'absolute',*/}
-                    {/*}}*/}
-                    {/*onPress={() => this.setState({customModalVisible:false})}*/}
-                    {/*>*/}
-                    {/*<Icon name='arrow-left' size={30} color={'blue'}/></Button>*/}
-                    {/*<View style={{*/}
-                    {/*...StyleSheet.absoluteFillObject,*/}
-                    {/*left:10,*/}
-                    {/*bottom: 10,*/}
-                    {/*marginVertical:20,*/}
-                    {/*position: 'absolute',*/}
-                    {/*}}>*/}
-                    {/*<Text style={{color:colors.appLayout,fontWeight:'500'}}>{this.state.modalItem.fileName||''}</Text>*/}
-                    {/*</View>*/}
-                    {/*</View>:null}*/}
-                    {/*</Modal>*/}
-                    {/*</View>*/}
+                    </View>
                 </View>
-                <Footer style={{backgroundColor: 'white', flexDirection: 'column'}}>
-                    <Item style={{width: '90%',}}>
+                <Footer style={{backgroundColor: 'white', flexDirection: 'column',height: this.state.height + 10}}>
+                    <Item style={{width: '100%',}}>
                         <Input
                             placeholder={'Write Message'}
                             value={this.state.message}
+                            multiline={true}
+                            onContentSizeChange={(e) => this.updateSize(e.nativeEvent.contentSize.height)}
+                            style={[{backgroundColor: 'white', borderWidth: 1, borderRadius: 5}, newStyle]}
                             onChangeText={(message) => {
                                 this.setState({message})
-                            }}/>
+                            }}
+                            onFocus={this._handleTyping.bind(this)}
+                            onBlur={this._handleNotTyping}
+                        />
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center',}}>
                             <Button transparent onPress={this._senFile}>
                                 <Icon name='paperclip' size={25}/></Button>
@@ -432,9 +434,11 @@ export default withTracker((props) => {
     let channel = props.navigation.getParam('Channel');
     Meteor.subscribe('chatItemsGroupByDate',channel.channelId)
     Meteor.subscribe('chatUsers',channel.channelId);
+    Meteor.subscribe('typerList',channel.channelId);
     console.log(Meteor.collection('users').find())
     return {
-        messages: Meteor.collection('chatItems').find({}, {$sort: {_id: -1}}),
-        user:Meteor.collection('users').findOne({_id:channel.user.userId})
+        messages: Meteor.collection('chatMessages').find({}, {$sort: {_id: -1}}),
+        user:Meteor.collection('users').findOne({_id:channel.user.userId}),
+        typerList:Meteor.collection('typingList').find()
     }
 })(Chat);

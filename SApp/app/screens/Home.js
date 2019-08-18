@@ -234,6 +234,11 @@ class Home extends Component {
                         longitude: position.coords.longitude
                     }
                     this.region = region;
+                    Meteor.subscribe('nearByService', {
+                        limit: this.limit,
+                        coords: [region.longitude, region.latitude],
+                        subCatIds: this.props.navigation.getParam('Id')
+                    })
                 },
                 (error) => {
                     // See error code charts below.
@@ -243,6 +248,11 @@ class Home extends Component {
             );
         } else {
             console.log("Location permission denied")
+            Meteor.subscribe('nearByService', {
+                limit: this.limit,
+                coords: [this.region.longitude, this.region.latitude],
+                subCatIds: this.props.navigation.getParam('Id')
+            })
         }
         this.watchID = Geolocation.watchPosition(
             (position) => {
@@ -252,11 +262,6 @@ class Home extends Component {
                     longitude: position.coords.longitude
                 }
                 this.region = region;
-                Meteor.subscribe('nearByService', {
-                    limit: this.limit+20,
-                    coords: [this.region.longitude, this.region.latitude],
-                    subCatIds: this.props.navigation.getParam('Id')
-                })
             },
             (error) => {
                 // See error code charts below.
@@ -265,12 +270,6 @@ class Home extends Component {
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
         );
 
-
-        Meteor.subscribe('nearByService', {
-            limit: this.limit,
-            coords: [this.region.longitude, this.region.latitude],
-            subCatIds: this.props.navigation.getParam('Id')
-        })
         this.setState({
             data: this.props.categories, loading: false
         })

@@ -1,5 +1,4 @@
-import {ChatChannels} from "../../lib/collections/chat";
-import {ChatItems} from "../../lib/collections/chat";
+import {ChatChannels,TypingList,ChatItems} from "../../lib/collections/chat";
 
 
 
@@ -37,7 +36,8 @@ Meteor.methods({
                 messageOn: new Date(new Date().toUTCString()),
                 messageData: Message.data,
                 channelId: Message.channelId,
-                seen: false
+                seen: false,
+                to:chatChanel.users.filter(item=>{return item!=Meteor.userId()})
             }
             return ChatItems.insert(ChatItem);
         }
@@ -86,6 +86,22 @@ Meteor.methods({
                 }
             }, proceedAfterUpload = true)
     },
-
-
+    'addRemoveTyper':(channelId,type)=>{
+        try {
+            let item = {
+                channelId: channelId,
+                typer: Meteor.userId()
+            }
+            let itemInCollection = TypingList.findOne({channelId: channelId, typer: Meteor.userId()});
+            if (itemInCollection && type === 'remove') {
+                TypingList.remove(itemInCollection._id);
+            }
+            else if (!itemInCollection && type === 'add') {
+                TypingList.insert(item);
+            }
+        }
+        catch (e) {
+            throw new Meteor.Error('500', e.message)
+        }
+    }
 })
