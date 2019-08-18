@@ -1,7 +1,7 @@
 import Meteor , { Accounts } from 'react-native-meteor';
 import React, {Component} from 'react';
 import {Container, Content, Button, Input, Item, Text, Label, Header, Left, Body, Title, Icon, StyleProvider} from "native-base";
-import {ToastAndroid, TouchableOpacity, KeyboardAvoidingView, View, StyleSheet} from "react-native";
+import {ToastAndroid, TouchableOpacity, KeyboardAvoidingView, View, StyleSheet, StatusBar} from "react-native";
 import { hashPassword } from '../../node_modules/react-native-meteor/lib/utils';
 import {colors} from "../config/styles";
 //import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -115,22 +115,26 @@ class ForgotPassword extends Component {
 
     render() {
         return (
-            <Container style={{backgroundColor:colors.appBackground}}>
-                {this.state.setPassWord===false?
+            <Container style={styles.container}>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
+                <Header style={{backgroundColor: '#094c6b'}}>
+                    <Left>
+                        <Button transparent onPress={()=>{this.props.navigation.goBack()}}>
+                            <Icon style={{color: '#ffffff'}} name="arrow-back" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>Forgot Password</Title>
+                    </Body>
+                </Header>
                 
-                <Content>
-                        <Header transparent>
-                            <Left>
-                                <Button transparent onPress={()=>{this.props.navigation.goBack()}}>
-                                    <Icon style={{color: '#000'}} name="arrow-back" />
-                                </Button>
-                            </Left>
-                                <Body>
-                                    <Title></Title>
-                                </Body>
-                        </Header>
-                        <KeyboardAvoidingView style={{padding: 30}}>
-                            <Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText}}>Forgot password</Text>
+                { this.state.setPassWord === false ?                
+                    <View style={styles.contentContainer}>                        
+                        <KeyboardAvoidingView style={{padding: 20}}>
+                            {/*<Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText}}>Forgot password</Text>*/}
                             <Text style={{marginBottom: 14, color: colors.primaryText,}}>Please enter your email address. You will receive a 6-digit code to Reset Password</Text>
                             <Item floatingLabel style={{marginBottom: 30}}>
                                 <Label>Email address</Label>
@@ -146,65 +150,78 @@ class ForgotPassword extends Component {
                             </View>
                             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 20, paddingBottom: 20}}>
                                 <Button transparent onPress={()=>{this.setState({setPassWord:true})}}>
-                                    <Text>Token has been already recieved!!!</Text>
+                                    <Text style={styles.priText}>Already have code, please click here</Text>
                                 </Button>
                             </View>
-                    </KeyboardAvoidingView>
-                </Content>
-               :
-                <Content>
-                    <Header transparent>
-                        <Left>
-                            <Button transparent onPress={()=>{this.props.navigation.goBack()}}>
-                                <Icon style={{color: '#000'}} name="arrow-back" />
-                            </Button>
-                        </Left>
-                            <Body>
-                                <Title></Title>
-                            </Body>
-                    </Header>
-                    <KeyboardAvoidingView style={{padding: 30}}>
-                        <Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText,}}>Password reset</Text>
-                        <Text style={{marginBottom: 14, color: colors.primaryText}}>Please Enter the Password Reset code sent to your email.</Text>
-                        <Item floatingLabel style={{marginBottom: 30}}>
-                            <Label>Token(6-digit Code)</Label>
-                            <Input onChangeText={(token) => this.setState({token})}
-                                   keyboardType='phone-pad'
-                            />
-                        </Item>
-                        <Item floatingLabel style={{marginBottom: 30}}>
-                        <Label>Password</Label>
-                            <Input onChangeText={(password) => this.setState({password})}
-                            />
-                        </Item>
-                        <Item floatingLabel style={{marginBottom: 30}}>
-                            <Label>Confirm Password</Label>
-                            <Input onChangeText={(confirmPassword) => this.setState({confirmPassword})}
-                            />
-                        </Item>
-                        <View>
-                            <TouchableOpacity  style={styles.button}  onPress={() => {
-                                this._setNewPassword()
-                            }}>
-                                <Text style={styles.buttonText}>Set New Password</Text>
-                            </TouchableOpacity>
-                        </View>
-                        
-                        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 20, paddingBottom: 20}}>
-                            <Button transparent onPress={()=>{this.setState({setPassWord:false})}}>
-                                <Text>Get new password reset token</Text>
-                            </Button>
-                        </View>
-                    </KeyboardAvoidingView>
-                </Content> }
+                        </KeyboardAvoidingView>
+                    </View>
+                :
+                    <View style={styles.contentContainer}>                    
+                        <KeyboardAvoidingView style={{padding: 20}}>
+                            {/*<Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText,}}>Password reset</Text>*/}
+                            <Text style={{marginBottom: 14, color: colors.primaryText}}>Please Enter the Password Reset code sent to your email.</Text>
+                            <Item floatingLabel style={{marginBottom: 30}}>
+                                <Label>Token(6-digit Code)</Label>
+                                <Input onChangeText={(token) => this.setState({token})}
+                                    keyboardType='phone-pad'
+                                />
+                            </Item>
+                            <Item floatingLabel style={{marginBottom: 30}}>
+                            <Label>Password</Label>
+                                <Input onChangeText={(password) => this.setState({password})}
+                                />
+                            </Item>
+                            <Item floatingLabel style={{marginBottom: 30}}>
+                                <Label>Confirm Password</Label>
+                                <Input onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+                                />
+                            </Item>
+                            <View>
+                                <TouchableOpacity  style={styles.button}  onPress={() => {
+                                    this._setNewPassword()
+                                }}>
+                                    <Text style={styles.buttonText}>Set New Password</Text>
+                                </TouchableOpacity>
+                            </View>
+                            
+                            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 20, paddingBottom: 20}}>
+                                <Button transparent onPress={()=>{this.setState({setPassWord:false})}}>
+                                    <Text style={styles.priText}>Resend code, click here</Text>
+                                </Button>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </View>
+                }
             </Container>
         )
     }
 }
 
 const styles=StyleSheet.create({
+    container: {
+        backgroundColor: colors.appBackground,
+        width: '100%',
+    },
+    contentContainer: {
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
+    },
+    screenHeader: {
+        fontSize: 20,
+        fontFamily: `Source Sans Pro`,
+        color: '#ffffff',
+        
+    },
+    priText: {
+        color: colors.primaryText,
+        fontSize: 16,
+        fontWeight: '700',
+        paddingVertical: 2
+    },
     button: {
-        width: 300,
+        width: '100%',
         backgroundColor: colors.buttonPrimaryBackground,
         borderRadius: 25,
         marginVertical: 10,
