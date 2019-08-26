@@ -1,54 +1,104 @@
 import React, {Component} from 'react';
-import {StyleSheet, Dimensions, View, Image, Alert} from 'react-native';
+import {StyleSheet, Dimensions, View, Image, Alert, TextInput, StatusBar, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import Meteor from 'react-native-meteor';
 import {colors} from '../config/styles';
 import GenericTextInput, {InputWrapper} from '../components/GenericTextInput';
-import {Header,Left,Body,Text,Item,Content,Container,Button,Label,Input,Textarea} from 'native-base';
-import Icon from 'react-native-vector-icons/Feather'
+import {Header,Left,Body,Text,Item,Content,Container,Button,Label,Input,Textarea, Title, Icon} from 'native-base';
+//import Icon from 'react-native-vector-icons/Feather'
 
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
+        //flex: 1,
+        //justifyContent: 'center',
+        //alignItems: 'center',
+        width: '100%',
         backgroundColor: colors.appBackground,
+        fontFamily: `Source Sans Pro`,
     },
-    buttons: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop:10
+    screenHeader: {
+        fontSize: 20,
+        color: '#ffffff',        
     },
-    error: {
-        height: 28,
-        justifyContent: 'center',
-        width: window.width,
+    contentContainer: {
+        flexGrow: 1,
         alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
     },
+    inputBox: {
+        flexDirection: 'row',
+        width: '100%',
+        height: 40,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
+    },
+    inputTextarea: {
+        flexDirection: 'row',
+        width: '100%',
+        backgroundColor: colors.inputBackground,
+        borderRadius: 10,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
+    },
+    button: {
+        width: '100%',
+        backgroundColor: colors.buttonPrimaryBackground,
+        borderRadius: 25,
+        marginVertical: 10,
+        paddingVertical: 13
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: colors.whiteText,
+        textAlign: 'center'
+    },
+    //buttons: {
+        //flexDirection: 'row',
+        //justifyContent: 'center',
+       // marginTop:10
+    //},
+    //error: {
+        //flexDirection: 'row',
+        //height: 28,
+        //justifyContent: 'center',
+        //width: '100%',
+        //alignItems: 'center',
+    //},
     errorText: {
         color: colors.errorText,
         fontSize: 14,
+        marginBottom: 14,
     },
-    header: {
-        marginBottom: 25,
-        alignItems: 'center',
+    //header: {
+        //marginBottom: 25,
+        //alignItems: 'center',
      //   backgroundColor:'#80ccff',
-        padding:5
-    },
-    headerText: {
-        fontSize: 30,
-        color: colors.headerText,
-        fontWeight: '600',
-        fontStyle: 'italic',
-    },
+        //padding:5
+    //},
+    //headerText: {
+        //fontSize: 30,
+        //color: colors.headerText,
+        //fontWeight: '600',
+        //fontStyle: 'italic',
+    //},
     subHeaderText: {
         fontSize: 20,
        // color: colors.headerText,
         fontWeight: '400',
         fontStyle: 'italic',
         textAlign:'center',
-        color:'#006bb3'
+        //color:'#006bb3',
+        marginBottom: 14,
+        color: colors.primaryText,
     },
     subContainer: {
        marginHorizontal:20
@@ -122,26 +172,68 @@ class ContactUs extends Component {
     render() {
 
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <Container style={styles.container}>
-                <Header style={{backgroundColor:colors.appLayout}}>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
+                <Header style={{backgroundColor: '#094c6b'}}>
                     <Left>
-                        <Icon name={'arrow-left'} size={25} color={'white'} onPress={()=>this.props.navigation.goBack()}/>
+                        <Button transparent onPress={()=>{this.props.navigation.goBack()}}>
+                            <Icon style={{color: '#ffffff'}} name="arrow-back" />
+                        </Button>
                     </Left>
                     <Body>
-                    <Text style={{color:'white'}} >Contact Us</Text>
+                        <Title style={styles.screenHeader}>Contact Us</Title>
                     </Body>
                 </Header>
-                <Content>
-                <View style={styles.subContainer}>
-                    <View style={styles.header}>
+                <View style={styles.contentContainer}>
+                    <KeyboardAvoidingView style={{padding: 20}}>
+                    {/*<View style={styles.header}>*/}
                         <Text style={styles.subHeaderText}>
                             Want to get in touch with us? Fill out the form below to send us a message and we will try
                             to get back to you within 24 hours!
                         </Text>
-                    </View>
+                    {/*</View>*/}
 
+                    <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Full name'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   onChangeText={(name) => this.setState({name})}
+                    /></View>
 
-                        <Item floatingLabel>
+                    <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Email address'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='email-address'
+                                   onChangeText={(email) => this.setState({email})}
+                                   textContentType={'emailAddress'}
+                    /></View>
+
+                    <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Phone No.'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='phone-pad'
+                                   onChangeText={(contact) => this.setState({contact})}
+                    /></View>
+
+                    <View><Textarea rowSpan={3} placeholder="Description (*)"
+                                    style={styles.inputTextarea}
+                                    placeholderTextColor='#ffffff'
+                                    selectionColor='#ffffff'
+                                    underlineColorAndroid='rgba(0,0,0,0)'
+                                    //onSubmitEditing={() => this.contactNumber.focus()}
+                                    onChangeText={(description) => this.setState({description})}
+                    /></View>
+
+                        {/*<Item floatingLabel>
                             <Label>Full name</Label>
                         <Input
                             onChangeText={(name) => this.setState({name})}
@@ -157,31 +249,41 @@ class ContactUs extends Component {
                             <Input
                             onChangeText={(contact) => this.setState({contact})}
                         />
-                        </Item>
+                        </Item>*/}
                         {/*<Item floatingLabel>*/}
                             {/*<Label>Message</Label>*/}
-                            <Textarea underline placeholder="Message"
+                            {/*<Textarea underline placeholder="Message"
                             onChangeText={(message) => this.setState({message})}
                             rowSpan={5}
-                            />
+                    />*/}
                         {/*</Item>*/}
                         <View style={styles.error}>
                             <Text style={styles.errorText}>{this.state.error}</Text>
                         </View>
-                    <View style={styles.buttons}>
+                    
+                        <View>
+                                <TouchableOpacity  style={styles.button}  onPress={this.handleContactUS}>
+                                    <Text style={styles.buttonText}>SEND</Text>
+                                </TouchableOpacity>
+                            </View>
+                    
+                    {/*<View style={styles.buttons}>
                         <Button block  onPress={this.handleContactUS}>
                             <Text>SEND</Text>
-                        </Button>
+                </Button>*/}
                         {/*<Button text="Cancel" onPress={() => {*/}
                             {/*this.setState({*/}
                                 {/*error: null*/}
                             {/*}), this.props.navigation.navigate('Home')*/}
                         {/*}}/>*/}
-                    </View>
+                    {/*</View>*/}
                     {/*<KeyboardSpacer/>*/}
+                    </KeyboardAvoidingView>
+                    
                 </View>
-                </Content>
+                
             </Container>
+            </TouchableWithoutFeedback>
         );
     }
 }

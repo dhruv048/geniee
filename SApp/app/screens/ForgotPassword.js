@@ -1,7 +1,7 @@
 import Meteor , { Accounts } from 'react-native-meteor';
 import React, {Component} from 'react';
 import {Container, Content, Button, Input, Item, Text, Label, Header, Left, Body, Title, Icon, StyleProvider} from "native-base";
-import {ToastAndroid, TouchableOpacity, KeyboardAvoidingView, View, StyleSheet, StatusBar} from "react-native";
+import {ToastAndroid, TouchableOpacity, KeyboardAvoidingView, View, StyleSheet, StatusBar, TextInput, TouchableWithoutFeedback, Keyboard} from "react-native";
 import { hashPassword } from '../../node_modules/react-native-meteor/lib/utils';
 import {colors} from "../config/styles";
 //import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -115,6 +115,7 @@ class ForgotPassword extends Component {
 
     render() {
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <Container style={styles.container}>
                 <StatusBar
                     backgroundColor={colors.statusBar}
@@ -127,7 +128,7 @@ class ForgotPassword extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Forgot Password</Title>
+                        <Title style={styles.screenHeader}>Forgot Password</Title>
                     </Body>
                 </Header>
                 
@@ -136,10 +137,20 @@ class ForgotPassword extends Component {
                         <KeyboardAvoidingView style={{padding: 20}}>
                             {/*<Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText}}>Forgot password</Text>*/}
                             <Text style={{marginBottom: 14, color: colors.primaryText,}}>Please enter your email address. You will receive a 6-digit code to Reset Password</Text>
-                            <Item floatingLabel style={{marginBottom: 30}}>
+                            {/*<Item floatingLabel style={{marginBottom: 30}}>
                                 <Label>Email address</Label>
                                 <Input onChangeText={(email) => this.setState({email})}/>
-                            </Item>
+                            </Item>*/}
+
+                            <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Email address'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='email-address'
+                                   onChangeText={(email) => this.setState({email})}
+                                   textContentType={'emailAddress'}
+                            /></View>
 
                             <View>
                                 <TouchableOpacity  style={styles.button}  onPress={() => {
@@ -160,13 +171,41 @@ class ForgotPassword extends Component {
                         <KeyboardAvoidingView style={{padding: 20}}>
                             {/*<Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText,}}>Password reset</Text>*/}
                             <Text style={{marginBottom: 14, color: colors.primaryText}}>Please Enter the Password Reset code sent to your email.</Text>
-                            <Item floatingLabel style={{marginBottom: 30}}>
+                            {/*<Item floatingLabel style={{marginBottom: 30}}>
                                 <Label>Token(6-digit Code)</Label>
                                 <Input onChangeText={(token) => this.setState({token})}
                                     keyboardType='phone-pad'
                                 />
-                            </Item>
-                            <Item floatingLabel style={{marginBottom: 30}}>
+                            </Item>*/}
+
+                            <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Token(6-digit Code)'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   keyboardType='phone-pad'
+                                   onChangeText={(token) => this.setState({token})}
+                            /></View>
+
+                            <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Password'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   secureTextEntry
+                                   onChangeText={(password) => this.setState({password})}
+                            /></View>
+
+                            <View><TextInput style={styles.inputBox}
+                                   underlineColorAndroid='rgba(0,0,0,0)'
+                                   placeholder='Confirm Password'
+                                   placeholderTextColor='#ffffff'
+                                   selectionColor='#ffffff'
+                                   secureTextEntry
+                                   onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+                            /></View>
+
+                            {/*<Item floatingLabel style={{marginBottom: 30}}>
                             <Label>Password</Label>
                                 <Input onChangeText={(password) => this.setState({password})}
                                 />
@@ -175,7 +214,7 @@ class ForgotPassword extends Component {
                                 <Label>Confirm Password</Label>
                                 <Input onChangeText={(confirmPassword) => this.setState({confirmPassword})}
                                 />
-                            </Item>
+                            </Item>*/}
                             <View>
                                 <TouchableOpacity  style={styles.button}  onPress={() => {
                                     this._setNewPassword()
@@ -193,6 +232,7 @@ class ForgotPassword extends Component {
                     </View>
                 }
             </Container>
+            </TouchableWithoutFeedback>
         )
     }
 }
@@ -201,6 +241,7 @@ const styles=StyleSheet.create({
     container: {
         backgroundColor: colors.appBackground,
         width: '100%',
+        fontFamily: `Source Sans Pro`,
     },
     contentContainer: {
         flexGrow: 1,
@@ -210,9 +251,18 @@ const styles=StyleSheet.create({
     },
     screenHeader: {
         fontSize: 20,
-        fontFamily: `Source Sans Pro`,
-        color: '#ffffff',
-        
+        color: '#ffffff',        
+    },
+    inputBox: {
+        flexDirection: 'row',
+        width: '100%',
+        height: 40,
+        backgroundColor: colors.inputBackground,
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: colors.whiteText,
+        marginVertical: 5,
     },
     priText: {
         color: colors.primaryText,
