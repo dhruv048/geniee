@@ -10,7 +10,7 @@ import {
     StatusBar,
     Modal, ToastAndroid,Linking
 } from 'react-native';
-import {Button, Container, Content, Textarea, Icon, Header, Left, Body, Right} from 'native-base'
+import {Button, Container, Content, Textarea, Icon, Header, Left, Body, Right, Footer, FooterTab} from 'native-base'
 import Meteor, {createContainer} from "react-native-meteor";
 import settings ,{userType} from "../config/settings";
 import userImage from '../images/Image.png';
@@ -225,23 +225,51 @@ class ServiceDetail extends Component {
                 <Content>
                     {this.state.isLoading === true ? <Loading/> : <Text/>}
                     <ScrollView>
-                        <View style={{alignItems: 'center', marginHorizontal: 30}}>
+                        <View style={{alignItems: 'center', marginHorizontal: 0, marginVertical: 0}}>
                             {Service.coverImage === null ?
                                 <Image style={styles.productImg} source={userImage}/> :
                                 <Image style={styles.productImg}
-                                       source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>}
+                                    source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>}
                             <Text style={styles.name}>{Service.title}</Text>
-                            {Service.location.hasOwnProperty('formatted_address') ?
+                            <View style={styles.serviceInfo}>
+                                {Service.location.hasOwnProperty('formatted_address') ?
+                                    <Text style={styles.availableText}>                             {Service.location.formatted_address}
+                                    </Text> :
+                                    <Text style={styles.unavailableText}>
+                                        {'Address Unavailable!'}
+                                    </Text>
+                                }
+                                {(Service.hasOwnProperty('radius') && Service.radius>0) ?
+                                    <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
+                                        Address.</Text> : <Text/>}
+                                <Text >
+                                    Contact: {Service.contact1} {Service.contact}
+                                </Text>
+                                <Text >
+                                    {Service.contact}
+                                </Text>
+                                <Text >
+                                    {Service.email||''}
+                                </Text>
+                                <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
+                                    <Text style={{color:colors.statusBar}} >
+                                        {Service.website||''}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{alignItems: 'center', marginHorizontal: 30}}>
+                            {/*{Service.location.hasOwnProperty('formatted_address') ?
                                 <Text style={styles.availableText}>{Service.location.formatted_address}</Text> :
                                 <Text style={styles.unavailableText}>{'Address Unavailable!'}</Text>}
                             {(Service.hasOwnProperty('radius') && Service.radius>0) ?
                                 <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
-                                    Address.</Text> : <Text/>}
+                            Address.</Text> : <Text/>}*/}
                             <Text style={styles.description}>
                                 {Service.description}
                             </Text>
 
-                            <Text >
+                            {/*<Text >
                                Contact: {Service.contact1} {Service.contact}
                             </Text>
                             <Text >
@@ -254,7 +282,7 @@ class ServiceDetail extends Component {
                             <Text style={{color:colors.statusBar}} >
                                 {Service.website||''}
                             </Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity>*/}
                         </View>
                         <View style={styles.starContainer}>
                             <Rating
@@ -266,7 +294,7 @@ class ServiceDetail extends Component {
                         </View>
                         {/*</View>*/}
                         <View style={styles.separator}></View>
-                        <View style={styles.addToCarContainer}>
+                        {/*<View style={styles.addToCarContainer}>
                             <Button block info rounded onPress={() => {
                                 this._callPhone(Service.contact? Service.contact : Service.contact1)
                             }}><Text> Call </Text></Button>
@@ -284,10 +312,34 @@ class ServiceDetail extends Component {
                             }}><Text> Rate </Text></Button>
                                 : null}
                         </View>
-                            </View> : <View/>}
+                        </View> : <View/>}*/}
                     </ScrollView>
                 </Content>
-                <View style={{marginTop: 22}}>
+                <Footer>
+                    <FooterTab style={{backgroundColor: '#094c6b'}}>
+                        <Button onPress={() => {
+                                this._callPhone(Service.contact? Service.contact : Service.contact1)
+                            }}>
+                            <Icon name="md-call"/>
+                            <Text style={{color: '#ffffff'}}>Call</Text>
+                        </Button>
+                        {this.props.user &&
+                        Service.createdBy!= null && this.props.user._id != Service.createdBy ?
+                        <Button onPress={() => {this.handleChat(Service)}}>
+                            <Icon name="md-chatboxes"/>
+                            <Text style={{color: '#ffffff'}}>Chat</Text>
+                        </Button>: null}
+                        {this.props.user && this.props.user._id != Service.createdBy ?
+                        <Button onPress={() => {
+                            this.setState({showModal:true})
+                        }}>
+                            <Icon name="md-star"/>
+                            <Text style={{color: '#ffffff'}}>Rate</Text>
+                        </Button>
+                        : null}
+                    </FooterTab>
+                </Footer>
+                <View style={{marginTop: 0}}>
                     <Modal
                         animationType="slide"
                         transparent={true}
@@ -354,7 +406,7 @@ const styles = StyleSheet.create({
     container: {
 
         flex: 1,
-      //  marginTop: 20,
+        marginVertical: 0,
         backgroundColor:'#05a5d10d',
     },
     screenHeader: {
@@ -367,36 +419,42 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 150,
     },
+    serviceInfo: {
+        width: '100%',
+        //backgroundColor: colors.inputBackground,
+        paddingHorizontal: 10,
+        padding: 5,
+    },
     name: {
         fontSize: 22,
         color: "#696969",
-        fontWeight: 'bold',
+        fontWeight: 'bold',        
+        color: '#ffffff',
         width: '100%',
-        backgroundColor: '#094c6b',
+        backgroundColor: colors.inputBackground,
         paddingHorizontal: 10,
         padding: 5,
-        color: '#ffffff',
     },
     availableText: {
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 15,
-        color: "green",
+        //color: "green",
         fontWeight: 'bold',
-        textAlign: 'center'
+        //textAlign: 'center'
     },
     serviceText: {
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 13,
         color: "#696969",
         fontWeight: 'bold',
-        textAlign: 'center'
+        //stextAlign: 'center'
     },
     unavailableText: {
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 15,
         color: "red",
         fontWeight: 'bold',
-        textAlign: 'center'
+        //textAlign: 'center'
     },
     description: {
         textAlign: 'center',
