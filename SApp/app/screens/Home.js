@@ -301,7 +301,7 @@ class Home extends Component {
     _getListItem = (data) => {
         rowData = data.item;
         return (
-            <View key={data.item._id}>
+            <View key={data.item._id} style={styles.serviceList}>
                 <TouchableWithoutFeedback onPress={() => {
                     this._handlItemPress(data.item)
                 }}>
@@ -314,22 +314,30 @@ class Home extends Component {
                                            source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
                         </Left>
                         <Body>
-                        <Text numberOfLines={1}>{rowData.title}</Text>
+                        <Text numberOfLines={1} style={styles.serviceTitle}>{rowData.title}</Text>
                         {rowData.location.formatted_address ?
-                            <Text note numberOfLines={1}>{rowData.location.formatted_address}</Text> : null}
+                            <Text note numberOfLines={1} style={styles.serviceAddress}>{rowData.location.formatted_address}</Text> : null}
 
                         {rowData.dist?
-                        <Text note>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
+                        <Text note style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
+                        <View style={styles.serviceAction}>
+                            {this.averageRating(rowData.ratings) > 0 ?
+                                <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
+                                    <Icon name={'star'}
+                                        style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
+                                </Text> : null}
+                        </View>
                         </Body>
                         <Right>
-                            {this.averageRating(rowData.ratings) > 0 ?
-                                <Text style={{fontSize: 20, fontWeight: '400'}}><Icon name={'star'}
-                                                                                      style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-                                </Text> : null}
-                            <Button transparent onPress={() => {
+                            <View style={{flexWrap: 'nowrap'}}>
+                            <Button transparent style={styles.serviceIconBtn} onPress={() => {
                                 this._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
-                            }}><Icon name={'call'} color={'green'}/></Button>
+                            }}>
+                                {/*<Icon name={'call'} color={'green'}/>*/}
+                                <Icon name={'call'} size={32} style={styles.catIcon}/>
+                            </Button>
+                            </View>
                         </Right>
 
                     </ListItem>
@@ -507,6 +515,39 @@ const styles = StyleSheet.create({
         backgroundColor: colors.appBackground,
         flex: 1
 
+    },
+    serviceList: {
+        backgroundColor: colors.inputBackground,
+        marginVertical: 5,
+        marginHorizontal: '2%',
+        borderRadius: 5,
+    },
+    serviceTitle: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+    },
+    serviceAddress: {
+        color: '#ffffff',
+    },
+    serviceDist: {
+        color: '#ffffff',
+    },
+    serviceAction: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    serviceIconBtn: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    catIcon: {
+        padding: 5,
+        borderRadius: 100,
+        backgroundColor: '#fff',
+        color: '#094c6b',
+        width: 36,
+        height: 36
     },
     contentList: {
         //marginVertical: 3,
