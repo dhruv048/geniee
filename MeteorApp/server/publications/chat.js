@@ -82,12 +82,12 @@ Meteor.publish('aggChatChannels', function () {
 
             }
         }], {
-        debounceCount: 100,
-        debounceDelay: 100,
-        observers: [
-            ChatChannels.find({users: Meteor.userId()}),
-            ChatItems.find({$or:[{from: Meteor.userId()},{to:Meteor.userId()}]})
-        ]
+        // debounceCount: 100,
+        // debounceDelay: 100,
+        // observers: [
+        //     ChatChannels.find({users: Meteor.userId()}),
+        //     ChatItems.find({$or:[{from: Meteor.userId()},{to:Meteor.userId()}]})
+        // ]
     });
 });
 

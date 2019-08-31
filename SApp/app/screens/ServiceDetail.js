@@ -23,7 +23,7 @@ import Loading from "../components/Loading/Loading";
 import { DeviceEventEmitter } from 'react-native';
 
 import { NativeModules } from 'react-native';
-//const { RNEsewaSdk } = NativeModules;
+const { RNEsewaSdk } = NativeModules;
 
 
 class ServiceDetail extends Component {
@@ -34,9 +34,9 @@ class ServiceDetail extends Component {
         });
     }
     _callPhone = (number) => {
-      // let res=  this.onEsewaComplete();
-      // alert(res);
-      // console.log(res)
+      let res=  this.onEsewaComplete();
+      alert(res);
+      console.log(res)
      if(!number){
          Alert.alert('Contact No. Unavailable for the Service')
      }

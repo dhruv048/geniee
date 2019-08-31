@@ -36,8 +36,8 @@ allprojects {
         // ADD THIS
         maven { url "https://jitpack.io" }
 
-//        flatDir {
-//            dirs "../../node_modules/react-native-esewa-sdk/android/libs"
-//        }
+        flatDir {
+            dirs "../../node_modules/react-native-esewa-sdk/android/libs"
+        }
     }
 }

@@ -108,7 +108,8 @@ android {
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
-
+        // Enabling multidex support.
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -153,6 +154,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-esewa-sdk')
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     implementation project(':react-native-fbsdk')
     implementation project(':react-native-fs')
@@ -173,6 +175,9 @@ dependencies {
     implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.google.android.gms:play-services-maps:${rootProject.ext.googlePlayServicesVersion}"
+    implementation 'com.android.support:multidex:1.0.0'
+
+
 }
 
 // Run this once to be able to run the application with BUCK
