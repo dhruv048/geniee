@@ -6,6 +6,7 @@ import {
     StatusBar,
     View,
     Image,
+    ImageBackground,
     TouchableOpacity,
     ActivityIndicator,
     FlatList
@@ -115,14 +116,27 @@ class Dashboard extends Component {
         var item = data.item;
         return (
             <View key={item._id} style={styles.containerStyle}>
+                
                 <TouchableOpacity  onPress={() => this._itemClick(item)}>
-                    <Body>
-                    <Icon name={item.icon} size={40}/>
-                    </Body>
-
-                    <Text>
-                        <Text>{item.mainCategory}</Text>
-                    </Text>
+                    {/*<ImageBackground source={require('../images/bgLogo.png')}
+                        style={{justifyContent: 'center', alignItems: 'center', alignSelf: 'stretch'}}
+        >
+                        <View style={{justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'stretch',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            padding: 10
+                        }}>*/}
+                            <Body>
+                                <Icon name={item.icon} size={20} style={styles.catIcon}/>
+                            </Body>
+                    
+                            <Text style={{textAlign:'center',
+                                fontWeight: 'bold',
+                                color: '#ffffff'
+                            }}>{item.mainCategory}</Text>
+                        {/*</View>
+                    </ImageBackground>*/}
                 </TouchableOpacity>
             </View>
         )
@@ -182,18 +196,27 @@ const styles = StyleSheet.create({
 
     },
     containerStyle: {
-        padding: 10,
-        backgroundColor: 'white',
+        paddingHorizontal: 5,
+        paddingVertical: 10,
+        backgroundColor: colors.inputBackground,
         borderWidth: 0,
         marginVertical: 8,
         borderColor: '#808080',
-        elevation: 10,
+        //elevation: 5,
         width: '42%',
         marginHorizontal: '4%',
         height: 100,
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    catIcon: {
+        padding: 10,
+        borderRadius: 100,
+        backgroundColor: '#fff',
+        color: '#094c6b',
+        width: 40,
+        height: 40
     },
     activeTabIcon: {
         color: '#ffffff'
