@@ -86,7 +86,7 @@ class ServiceDetail extends Component {
         // if (response.resultCode !== RNEsewaSdk.OK) {
         //     throw new Error('Invalid result from child activity.');
         // }
-        console.log(response.data);
+        console.log(response);
 
 
         return response.data;
@@ -240,22 +240,22 @@ class ServiceDetail extends Component {
                                     </Text>
                                 }
                                 {(Service.hasOwnProperty('radius') && Service.radius>0) ?
-                                    <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
-                                        Address.</Text> : <Text/>}
-                                <Text >
-                                    Contact: {Service.contact1} {Service.contact}
-                                </Text>
+                                    <Text style={styles.serviceText}> Servie within {Service.radius} KM radius.</Text> : null}
+                                {/*<Text >*/}
+                                    {/*Contact: {Service.contact1} {Service.contact}*/}
+                                {/*</Text>*/}
                                 <Text >
                                     {Service.contact}
                                 </Text>
-                                <Text >
-                                    {Service.email||''}
-                                </Text>
+                                    {Service.email?  <Text >{Service.email}</Text>:null}
                                 <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
                                     <Text style={{color:colors.statusBar}} >
                                         {Service.website||''}
                                     </Text>
                                 </TouchableOpacity>
+                                <Text >
+                                   Home Delivery: {Service.homeDelivery ? "YES" : "NO"}
+                                </Text>
                             </View>
                         </View>
                         <View style={{alignItems: 'center', marginHorizontal: 30}}>
