@@ -41,6 +41,7 @@ import {colors} from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
 import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
+import StarRating from "../components/StarRating/StarRating";
 
 class Home extends Component {
     _callPhone = (number) => {
@@ -322,22 +323,22 @@ class Home extends Component {
                         <Text note style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                         <View style={styles.serviceAction}>
-                            {this.averageRating(rowData.ratings) > 0 ?
+                            <StarRating starRate={3}/>
+                            {/*{this.averageRating(rowData.ratings) > 0 ?
                                 <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
                                     <Icon name={'star'}
                                         style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-                                </Text> : null}
+                            </Text> : null}*/}
                         </View>
                         </Body>
                         <Right>
-                            <View style={{flexWrap: 'nowrap'}}>
                             <Button transparent style={styles.serviceIconBtn} onPress={() => {
                                 this._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
                             }}>
                                 {/*<Icon name={'call'} color={'green'}/>*/}
-                                <Icon name={'call'} size={32} style={styles.catIcon}/>
+                                <Icon name={'call'} size={20} style={styles.catIcon}/>
                             </Button>
-                            </View>
+                            
                         </Right>
 
                     </ListItem>
@@ -546,8 +547,9 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         backgroundColor: '#fff',
         color: '#094c6b',
-        width: 36,
-        height: 36
+        width: 30,
+        height: 30,
+        marginRight: 0
     },
     contentList: {
         //marginVertical: 3,

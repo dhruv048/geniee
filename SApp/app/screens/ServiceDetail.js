@@ -18,12 +18,13 @@ import {Rating, AirbnbRating} from 'react-native-elements';
 import {colors} from "../config/styles";
 import call from "react-native-phone-call";
 import Loading from "../components/Loading/Loading";
+import StarRating from "../components/StarRating/StarRating";
 // import RNEsewaSdk from "react-native-esewa-sdk";
 
 import { DeviceEventEmitter } from 'react-native';
 
 import { NativeModules } from 'react-native';
-const { RNEsewaSdk } = NativeModules;
+//const { RNEsewaSdk } = NativeModules;
 
 
 class ServiceDetail extends Component {
@@ -34,9 +35,9 @@ class ServiceDetail extends Component {
         });
     }
     _callPhone = (number) => {
-      let res=  this.onEsewaComplete();
-      alert(res);
-      console.log(res)
+      // let res=  this.onEsewaComplete();
+      // alert(res);
+      // console.log(res)
      if(!number){
          Alert.alert('Contact No. Unavailable for the Service')
      }
@@ -86,7 +87,7 @@ class ServiceDetail extends Component {
         // if (response.resultCode !== RNEsewaSdk.OK) {
         //     throw new Error('Invalid result from child activity.');
         // }
-        console.log(response);
+        console.log(response.data);
 
 
         return response.data;
@@ -196,8 +197,8 @@ class ServiceDetail extends Component {
                 <Header style={{backgroundColor: '#094c6b'}}>
                     <Left>
                         <Button transparent onPress={() => {
-                    this.props.navigation.openDrawer()
-                }}>
+                            this.props.navigation.openDrawer()
+                        }}>
                             <Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>
                         </Button>                        
                     </Left>
@@ -205,116 +206,74 @@ class ServiceDetail extends Component {
                     <Body>
                         <Text style={styles.screenHeader}>Service Details</Text>
                     </Body>
-                    {/*<Right>
-                        <Button transparent onPress={() => navigate('Home')}>
-                            <Icon name='home' style={{fontWeight:'500', fontSize: 30}}/>
-                        </Button> 
-                        <Button transparent onPress={() => navigate('Chat')}>
-                            <Icon name='md-chatboxes' style={{fontWeight:'500', fontSize: 30}}/>
-                        </Button>                    
-                    </Right>*/}
                 </Header>
-                {/*<Header  style={{backgroundColor:'#094c6b', height:40}}>*/}
-                {/*<Left>*/}
-                {/*<Button transparent onPress={()=>{this.props.navigation.goBack()}}>*/}
-                {/*<Icon name='arrow-back' />*/}
-                {/*</Button>*/}
-                {/*</Left>*/}
-                    {/*<Body></Body>*/}
-                {/*</Header>*/}
-                <Content>
-                    {this.state.isLoading === true ? <Loading/> : <Text/>}
-                    <ScrollView>
-                        <View style={{alignItems: 'center', marginHorizontal: 0, marginVertical: 0}}>
-                            {Service.coverImage === null ?
-                                <Image style={styles.productImg} source={userImage}/> :
-                                <Image style={styles.productImg}
-                                    source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>}
-                            <Text style={styles.name}>{Service.title}</Text>
-                            <View style={styles.serviceInfo}>
-                                {Service.location.hasOwnProperty('formatted_address') ?
-                                    <Text style={styles.availableText}>                             {Service.location.formatted_address}
-                                    </Text> :
-                                    <Text style={styles.unavailableText}>
-                                        {'Address Unavailable!'}
-                                    </Text>
-                                }
-                                {(Service.hasOwnProperty('radius') && Service.radius>0) ?
-                                    <Text style={styles.serviceText}> Servie within {Service.radius} KM radius.</Text> : null}
-                                {/*<Text >*/}
-                                    {/*Contact: {Service.contact1} {Service.contact}*/}
-                                {/*</Text>*/}
-                                <Text >
-                                    {Service.contact}
-                                </Text>
-                                    {Service.email?  <Text >{Service.email}</Text>:null}
-                                <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
-                                    <Text style={{color:colors.statusBar}} >
-                                        {Service.website||''}
-                                    </Text>
-                                </TouchableOpacity>
-                                <Text >
-                                   Home Delivery: {Service.homeDelivery ? "YES" : "NO"}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={{alignItems: 'center', marginHorizontal: 30}}>
-                            {/*{Service.location.hasOwnProperty('formatted_address') ?
-                                <Text style={styles.availableText}>{Service.location.formatted_address}</Text> :
-                                <Text style={styles.unavailableText}>{'Address Unavailable!'}</Text>}
-                            {(Service.hasOwnProperty('radius') && Service.radius>0) ?
-                                <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
-                            Address.</Text> : <Text/>}*/}
-                            <Text style={styles.description}>
-                                {Service.description}
-                            </Text>
 
-                            {/*<Text >
-                               Contact: {Service.contact1} {Service.contact}
-                            </Text>
-                            <Text >
-                                {Service.contact}
-                            </Text>
-                            <Text >
-                                {Service.email||''}
-                            </Text>
-                            <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
-                            <Text style={{color:colors.statusBar}} >
-                                {Service.website||''}
-                            </Text>
-                            </TouchableOpacity>*/}
-                        </View>
-                        <View style={styles.starContainer}>
-                            <Rating
-                                imageSize={20}
-                                readonly
-                                startingValue={Service.avgRate}
+                <Content style={{marginVertical: 0, paddingVertical: 0, flexGrow: 1}}>
+                    {this.state.isLoading === true ? <Loading/> : null}
+                    
+                    {Service.coverImage === null ?
+                        <Image style={styles.productImg} source={userImage}/> :
+                        <Image style={styles.productImg}
+                            source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>
+                    }
+                        
+                    <Text style={styles.name}>{Service.title}</Text>
+                            
+                    <View style={ styles.starView }><StarRating starRate={3}/></View>
+                    
+                    {(Service.location.hasOwnProperty('formatted_address')) ?
+                        <Text style={styles.availableText}>                                              {Service.location.formatted_address}
+                        </Text> :
+                        <Text style={styles.unavailableText}>
+                            {'Address Unavailable!'}
+                        </Text>
+                    }
+                    
+                            
+                    {/*<View style={styles.starDisplay}>
+                        <Rating
+                            imageSize={20}
+                            readonly
+                            startingValue={Service.avgRate}
+                            style={{color: '#094c6b'}}
+                        />
+                    </View>
+                    <View style={styles.serviceInfo}>*/}
+                    
+                                
+                    {(Service.hasOwnProperty('radius') && Service.radius>0) ?
+                        <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from Address.</Text> : null
+                    }
+                    
+                    <Text style={ styles.infoText }>
+                        Contact: {Service.contact1} {Service.contact}
+                    </Text>
+                    {/*<Text style={ styles.infoText }>
+                        {Service.contact}
+                    </Text>*/}
+                                
+                    {Service.hasOwnProperty('email') ?
+                        <Text style={ styles.infoText }>{ Service.email }</Text> : null
+                    }
 
-                            />
-                        </View>
-                        {/*</View>*/}
-                        <View style={styles.separator}></View>
-                        {/*<View style={styles.addToCarContainer}>
-                            <Button block info rounded onPress={() => {
-                                this._callPhone(Service.contact? Service.contact : Service.contact1)
-                            }}><Text> Call </Text></Button>
-                        </View>
-                        {this.props.user ?
-                            <View>
-                        <View style={styles.addToCarContainer}>
-                            {Service.createdBy!= null && this.props.user._id != Service.createdBy ?
-                            <Button block success rounded onPress={() => {this.handleChat(Service)}} ><Text> Message </Text></Button> : null}
-                        </View>
-                        <View style={styles.addToCarContainer}>
-                            {this.props.user._id != Service.createdBy ?
-                            <Button style={{marginBottom: 5}} block warning rounded onPress={() => {
-                                this.setState({showModal:true})
-                            }}><Text> Rate </Text></Button>
-                                : null}
-                        </View>
-                        </View> : <View/>}*/}
-                    </ScrollView>
+                    {Service.hasOwnProperty('website') ?    
+                        <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
+                            <Text style={ styles.websiteLink } >
+                                {Service.website}
+                            </Text>
+                        </TouchableOpacity> : null
+                    }
+                    {/*</View>*/}
+                        
+                    <View style={styles.separator}></View>
+                        
+                    <View style={{alignItems: 'center', marginHorizontal: 30}}>
+                        <Text style={styles.description}>
+                            {Service.description}
+                        </Text>
+                    </View>
                 </Content>
+
                 <Footer>
                     <FooterTab style={{backgroundColor: '#094c6b'}}>
                         <Button onPress={() => {
@@ -339,6 +298,7 @@ class ServiceDetail extends Component {
                         : null}
                     </FooterTab>
                 </Footer>
+
                 <View style={{marginTop: 0}}>
                     <Modal
                         animationType="slide"
@@ -434,24 +394,46 @@ const styles = StyleSheet.create({
         backgroundColor: colors.inputBackground,
         paddingHorizontal: 10,
         padding: 5,
+        textAlign: 'center'
+    },
+    starView: {
+        backgroundColor: colors.inputBackground,
+        textAlign: 'center',
+        paddingHorizontal: 10,
+        padding: 5,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     availableText: {
         marginTop: 5,
-        fontSize: 15,
-        //color: "green",
+        fontSize: 16,
         fontWeight: 'bold',
-        //textAlign: 'center'
+        alignItems: 'flex-start'
+    },
+    infoText : {
+        marginTop: 5,
+        fontSize: 16,
+        fontWeight: 'bold',
+        paddingHorizontal: 10,
+    },
+    websiteLink : {
+        marginTop: 5,
+        fontSize: 16,
+        fontWeight: 'bold',
+        paddingHorizontal: 10,
+        color:colors.statusBar
     },
     serviceText: {
         marginTop: 5,
-        fontSize: 13,
+        fontSize: 14,
         color: "#696969",
         fontWeight: 'bold',
         //stextAlign: 'center'
     },
     unavailableText: {
         marginTop: 5,
-        fontSize: 15,
+        fontSize: 14,
         color: "red",
         fontWeight: 'bold',
         //textAlign: 'center'
@@ -464,6 +446,7 @@ const styles = StyleSheet.create({
     star: {
         width: 40,
         height: 40,
+        color: '#094c6b'
     },
     btnColor: {
         height: 30,
@@ -483,6 +466,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    starDisplay: {
+        //justifyContent: 'center',
+        marginHorizontal: 10,
+        flexDirection: 'row',
+        marginTop: 5
     },
     starContainer: {
         justifyContent: 'center',
@@ -504,9 +493,9 @@ const styles = StyleSheet.create({
     },
     separator: {
         height: 2,
-        backgroundColor: "#eeeeee",
-        marginTop: 20,
-        marginHorizontal: 30
+        backgroundColor: "#094c6b",
+        marginTop: 10,
+        marginHorizontal: 10
     },
 
     addToCarContainer: {
