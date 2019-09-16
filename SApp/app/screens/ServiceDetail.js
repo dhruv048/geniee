@@ -222,7 +222,7 @@ class ServiceDetail extends Component {
                     <View style={ styles.starView }><StarRating starRate={3}/></View>
                     
                     {(Service.location.hasOwnProperty('formatted_address')) ?
-                        <Text style={styles.availableText}>                                              {Service.location.formatted_address}
+                        <Text style={styles.availableText}>{Service.location.formatted_address}
                         </Text> :
                         <Text style={styles.unavailableText}>
                             {'Address Unavailable!'}
