@@ -78,7 +78,16 @@ Meteor.publish('nearByService',function(obj){
         },{$limit:obj.limit}
     ], { clientCollection: 'serviceReact' },{allowDiskUse: true}
     )
+});
+
+Meteor.publish('myServices', function () {
+    const logged=Meteor.userId();
+  return  Service.find({createdBy:logged});
 })
+
+Meteor.publish('products',(Id)=>{
+    return Product.find({service:Id});
+});
 
 // }
 

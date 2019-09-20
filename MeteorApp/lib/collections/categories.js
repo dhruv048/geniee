@@ -12,6 +12,7 @@ var service = {
 };
 
 Service = new Mongo.Collection('service');
+Product = new Mongo.Collection('product');
 
  // Service = new Mongo.Collection('service', {
  //  transform: function (doc) {

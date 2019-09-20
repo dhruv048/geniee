@@ -27,6 +27,9 @@ import UploadProfilePic from '../components/UploadProfilePic/UploadProfilePic';
 import ForgotPassword from './ForgotPassword';
 import ContactUs from "./ContactUs";
 import MessageCount from "../components/MessageCount/MessageCount";
+import AddProduct from "./store/AddProduct";
+import ProductDetail from "./store/ProductDetail";
+import ImageGallery from "./store/ImageGallery";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -64,13 +67,29 @@ export const ChatStack = createStackNavigator({
     headerMode: 'none'
 });
 
-
+export const ServiceStack = createStackNavigator({
+    Home: {
+        screen: Home,
+    },
+    Service: {
+        screen: ServiceDetail,
+    },
+    ProductDetail:{
+        screen:ProductDetail,
+    },
+    ImageGallery: {
+        screen: ImageGallery
+    },
+}, {
+    headerMode: 'none',
+    initialRouteName:'Home'
+});
 export const HomeStack = createStackNavigator({
     Dashboard: {
         screen: Dashboard,
     },
     Home: {
-        screen: Home,
+        screen: ServiceStack,
     },
     Details: {
         screen: Details,
@@ -79,9 +98,7 @@ export const HomeStack = createStackNavigator({
     Chat: {
         screen: Chat,
     },
-    Service: {
-        screen: ServiceDetail,
-    },
+
 
     // signIn:{
     //     screen:AuthStack,
@@ -139,6 +156,16 @@ export const MainNavigation = createDrawerNavigator({
         screen: AddService,
         navigationOptions: {
             drawerLabel: "ADD SERVICE",
+            drawerIcon: (
+                <Icon name='plus' size={24}/>
+            )
+        }
+    },
+
+    AddProduct: {
+        screen: AddProduct,
+        navigationOptions: {
+            drawerLabel: "ADD PRODUCT",
             drawerIcon: (
                 <Icon name='plus' size={24}/>
             )
