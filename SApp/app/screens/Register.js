@@ -199,16 +199,6 @@ class Register extends Component {
                 />
 
                 <Content  >
-                    {/*<GooglePlaceSearchBox*/}
-                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                    {/*placeholderTextColor='#ffffff'*/}
-                    {/*styles={GooglePlaceSerachStyle}*/}
-                    {/*onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true*/}
-                    {/*console.log(data, details);*/}
-                    {/*this.handleLocation(details)*/}
-                    {/*}}*/}
-                    {/*placeholder='Enter Address (*)'*/}
-                    {/*/>*/}
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                         <View>
 
@@ -216,7 +206,7 @@ class Register extends Component {
 
                             <View style={styles.containerRegister}>
                                 <TextInput style={styles.inputBox}
-                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                         //  underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholder='Full Name'
                                            placeholderTextColor='#ffffff'
                                            selectionColor='#ffffff'

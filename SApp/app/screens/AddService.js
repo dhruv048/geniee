@@ -678,9 +678,9 @@ class AddService extends React.PureComponent {
                                     console.log(data, details);
                                     this.handleLocation(details)
                                 }}
-                                placeholder='Enter Address (*)'
+                                placeholder={'Enter Address'}
+                                placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                 underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholderTextColor='#ffffff'
                                 styles={GooglePlaceSerachStyle}
                             />
 

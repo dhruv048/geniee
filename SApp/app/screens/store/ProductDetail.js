@@ -296,13 +296,6 @@ class ProductDetail extends Component {
                                         </TouchableOpacity>
                                     </Col>
                                 </Grid> : null}
-                            <TouchableOpacity onPress={() => {
-                                this._browse(Service.website)
-                            }}>
-                                <Text style={styles.websiteLink}>
-                                    {Service.website}
-                                </Text>
-                            </TouchableOpacity> : null
                             {/*<Grid>*/}
                             {/*<Col size={2}>*/}
                             {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}

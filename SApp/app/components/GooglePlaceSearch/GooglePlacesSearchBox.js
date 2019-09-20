@@ -7,7 +7,7 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import PropTypes from 'prop-types';
 
 const GooglePlaceSearchBox=(props)=>{
-    const {  onPress ,listDisplay,placeholder,styles} = props;
+    const {  onPress ,listDisplay,placeholder,styles,placeholderTextColor} = props;
     return (
         <GooglePlacesAutocomplete
             placeholder={placeholder}
@@ -16,6 +16,7 @@ const GooglePlaceSearchBox=(props)=>{
             returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
             listViewDisplayed={false}    // true/false/undefined
             fetchDetails={true}
+            placeholderTextColor={placeholderTextColor}
             //renderDescription={row => row.description} // custom description render
             onPress={onPress}
             //getDefaultValue={() => ''}
