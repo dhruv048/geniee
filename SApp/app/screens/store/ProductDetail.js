@@ -4,7 +4,16 @@
 
 // React native and others libraries imports
 import React, {Component} from 'react';
-import {Image, Dimensions, TouchableWithoutFeedback, AsyncStorage, FlatList, TouchableOpacity,StyleSheet} from 'react-native';
+import {
+    Image,
+    Dimensions,
+    TouchableWithoutFeedback,
+    AsyncStorage,
+    FlatList,
+    TouchableOpacity,
+    StyleSheet,
+    Linking
+} from 'react-native';
 import {
     View,
     Container,
@@ -30,6 +39,7 @@ import {colors} from "../../config/styles";
 import {createContainer} from "react-native-meteor";
 import Meteor from "react-native-meteor";
 import settings from "../../config/settings";
+
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
 
@@ -62,12 +72,16 @@ class ProductDetail extends Component {
         // });
     }
 
-    componentWillReceiveProps(newProps){
-        if(this.props.Product!=newProps.Product) {
+    componentWillReceiveProps(newProps) {
+        if (this.props.Product != newProps.Product) {
             this.setState({product: newProps.Product});
         }
 
-}
+    }
+
+    _browse = (url) => {
+        Linking.openURL(url).catch((err) => console.error('An error occurred', err));
+    }
 
     render() {
 
@@ -114,198 +128,246 @@ class ProductDetail extends Component {
                     {/*</TouchableOpacity>*/}
 
                 </View>
-                {this.state.product?
-                <Content>
-                    <Carousel
-                        data={this.state.product.images}
-                        renderItem={this._renderItem}
-                        ref={(carousel) => {
-                            this._carousel = carousel;
-                        }}
-                        sliderWidth={Dimensions.get('window').width}
-                        itemWidth={Dimensions.get('window').width}
-                        onSnapToItem={(index) => this.setState({activeSlide: index})}
-                        enableSnap={true}
-                    />
-                    <Pagination
-                        dotsLength={this.state.product.images.length}
-                        activeDotIndex={this.state.activeSlide}
-                        containerStyle={{
-                            backgroundColor: 'transparent',
-                            paddingTop: 0,
-                            paddingBottom: 0,
-                            marginTop: -15
-                        }}
-                        dotStyle={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: 5,
-                            marginHorizontal: 2,
-                            backgroundColor: 'rgba(255, 255, 255, 0.92)'
-                        }}
-                        inactiveDotOpacity={0.4}
-                        inactiveDotScale={0.6}
-                    />
-                    <View style={{
-                        backgroundColor: '#fdfdfd',
-                        paddingTop: 10,
-                        paddingBottom: 10,
-                        paddingLeft: 12,
-                        paddingRight: 12,
-                        alignItems: 'center'
-                    }}>
-                        <Grid>
-                            <Col size={3}>
-                                <Text style={{fontSize: 18, color:colors.appLayout}}>{this.state.product.title}</Text>
-                            </Col>
-                            {this.state.product.price?
-                            <Col size={2}>
-                                <Text style={{fontSize: 17, fontWeight: 'bold', color:colors.appLayout}}>Rs. {this.state.product.price}{this.state.product.unit? <Text>/{this.state.product.unit}</Text>:null}</Text>
-                            </Col>
-                                :null}
-                        </Grid>
-                        {/*<Grid style={{marginTop: 15}}>*/}
+                {this.state.product ?
+                    <Content>
+                        <Carousel
+                            data={this.state.product.images}
+                            renderItem={this._renderItem}
+                            ref={(carousel) => {
+                                this._carousel = carousel;
+                            }}
+                            sliderWidth={Dimensions.get('window').width}
+                            itemWidth={Dimensions.get('window').width}
+                            onSnapToItem={(index) => this.setState({activeSlide: index})}
+                            enableSnap={true}
+                        />
+                        <Pagination
+                            dotsLength={this.state.product.images.length}
+                            activeDotIndex={this.state.activeSlide}
+                            containerStyle={{
+                                backgroundColor: 'transparent',
+                                paddingTop: 0,
+                                paddingBottom: 0,
+                                marginTop: -15
+                            }}
+                            dotStyle={{
+                                width: 10,
+                                height: 10,
+                                borderRadius: 5,
+                                marginHorizontal: 2,
+                                backgroundColor: 'rgba(255, 255, 255, 0.92)'
+                            }}
+                            inactiveDotOpacity={0.4}
+                            inactiveDotScale={0.6}
+                        />
+                        <View style={{
+                            backgroundColor: '#fdfdfd',
+                            paddingTop: 10,
+                            paddingBottom: 10,
+                            paddingLeft: 12,
+                            paddingRight: 12,
+                            alignItems: 'center'
+                        }}>
+                            <Grid>
+                                <Col size={3}>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        color: colors.appLayout
+                                    }}>{this.state.product.title}</Text>
+                                </Col>
+                                {this.state.product.price ?
+                                    <Col size={2}>
+                                        <Text style={{
+                                            fontSize: 17,
+                                            fontWeight: 'bold',
+                                            color: colors.appLayout
+                                        }}>Rs. {this.state.product.price}{this.state.product.unit ?
+                                            <Text>/{this.state.product.unit}</Text> : null}</Text>
+                                    </Col>
+                                    : null}
+                            </Grid>
+                            {/*<Grid style={{marginTop: 15}}>*/}
                             {/*<Col>*/}
-                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                                    {/*<Text>Color:</Text>*/}
-                                {/*</View>*/}
+                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                            {/*<Text>Color:</Text>*/}
+                            {/*</View>*/}
                             {/*</Col>*/}
                             {/*{this.state.product.colors?*/}
                             {/*<Col size={3}>*/}
-                                {/*<Picker*/}
-                                    {/*mode="dropdown"*/}
-                                    {/*placeholder="Select a color"*/}
-                                    {/*note={true}*/}
-                                    {/*selectedValue={this.state.selectedColor}*/}
-                                    {/*onValueChange={(color) => this.setState({selectedColor: color})}*/}
-                                {/*>*/}
-                                    {/*{this.renderColors(this.state.product.colors)}*/}
-                                {/*</Picker>*/}
+                            {/*<Picker*/}
+                            {/*mode="dropdown"*/}
+                            {/*placeholder="Select a color"*/}
+                            {/*note={true}*/}
+                            {/*selectedValue={this.state.selectedColor}*/}
+                            {/*onValueChange={(color) => this.setState({selectedColor: color})}*/}
+                            {/*>*/}
+                            {/*{this.renderColors(this.state.product.colors)}*/}
+                            {/*</Picker>*/}
                             {/*</Col>:null}*/}
-                        {/*</Grid>*/}
-                        {/*<Grid>*/}
+                            {/*</Grid>*/}
+                            {/*<Grid>*/}
                             {/*<Col>*/}
-                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                                    {/*<Text>Size:</Text>*/}
-                                {/*</View>*/}
+                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                            {/*<Text>Size:</Text>*/}
+                            {/*</View>*/}
                             {/*</Col>*/}
                             {/*{this.state.product.sizes?*/}
                             {/*<Col size={3}>*/}
-                                {/*<Picker*/}
-                                    {/*mode="dropdown"*/}
-                                    {/*placeholder="Select a size"*/}
-                                    {/*note={true}*/}
-                                    {/*selectedValue={this.state.selectedSize}*/}
-                                    {/*onValueChange={(size) => this.setState({selectedSize: size})}*/}
-                                {/*>*/}
-                                    {/*{this.renderSize(this.state.product.sizes)}*/}
-                                {/*</Picker>*/}
+                            {/*<Picker*/}
+                            {/*mode="dropdown"*/}
+                            {/*placeholder="Select a size"*/}
+                            {/*note={true}*/}
+                            {/*selectedValue={this.state.selectedSize}*/}
+                            {/*onValueChange={(size) => this.setState({selectedSize: size})}*/}
+                            {/*>*/}
+                            {/*{this.renderSize(this.state.product.sizes)}*/}
+                            {/*</Picker>*/}
                             {/*</Col>:null}*/}
-                        {/*</Grid>*/}
-                        <Grid>
-                            <Col size={2}>
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <Text>Available Quantity:</Text>
-                                </View>
-                            </Col>
-                            <Col size={2}><Text  style={{fontSize: 16}}>{this.state.product.qty}</Text></Col>
-                        </Grid>
-                        {this.state.product.colors?
-                        <Grid>
-                            <Col size={2}>
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <Text>Available Colors:</Text>
-                                </View>
-                            </Col>
-                            <Col size={2}><Text  style={{fontSize: 16}}>{this.state.product.colors}</Text></Col>
-                        </Grid>:null}
-                        {this.state.product.sizes?
-                        <Grid>
-                            <Col size={2}>
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <Text>Available Size:</Text>
-                                </View>
-                            </Col>
-                            <Col size={2}><Text  style={{fontSize: 16}}>{this.state.product.sizes}</Text></Col>
-                        </Grid>:null}
-                        {this.state.product.contact?
+                            {/*</Grid>*/}
                             <Grid>
                                 <Col size={2}>
                                     <View style={{flex: 1, justifyContent: 'center'}}>
-                                        <Text>Cntact No:</Text>
+                                        <Text>Available Quantity:</Text>
                                     </View>
                                 </Col>
-                                <Col size={2}><Text  style={{fontSize: 16}}>{this.state.product.contact}</Text></Col>
-                            </Grid>:null}
-                        <Grid>
-                            <Col size={2}>
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <Text>Home Delivery ?</Text>
-                                </View>
-                            </Col>
-                            <Col size={2}><Text  style={{fontSize: 16}}>{this.state.product.homeDelivery?"YES":"NO"}</Text></Col>
-                        </Grid>
-                        {(this.state.product.hasOwnProperty('radius') && this.state.product.radius > 0) ?
-                            <Grid>
-                                <Col size={2}>
-                                    <View style={{flex: 1, justifyContent: 'center'}}>
-                                        <Text>Servie Area :</Text>
-                                    </View>
-                                </Col>
-                                <Col size={2}><Text  style={{fontSize: 16}}>Within {this.state.product.radius} KM Radius</Text></Col>
+                                <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.qty}</Text></Col>
                             </Grid>
-                           : null}
-                        {/*<Grid>*/}
+                            {this.state.product.colors ?
+                                <Grid>
+                                    <Col size={2}>
+                                        <View style={{flex: 1, justifyContent: 'center'}}>
+                                            <Text>Available Colors:</Text>
+                                        </View>
+                                    </Col>
+                                    <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.colors}</Text></Col>
+                                </Grid> : null}
+                            {this.state.product.sizes ?
+                                <Grid>
+                                    <Col size={2}>
+                                        <View style={{flex: 1, justifyContent: 'center'}}>
+                                            <Text>Available Size:</Text>
+                                        </View>
+                                    </Col>
+                                    <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.sizes}</Text></Col>
+                                </Grid> : null}
+                            {this.state.product.contact ?
+                                <Grid>
+                                    <Col size={2}>
+                                        <View style={{flex: 1, justifyContent: 'center'}}>
+                                            <Text>Cntact No:</Text>
+                                        </View>
+                                    </Col>
+                                    <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.contact}</Text></Col>
+                                </Grid> : null}
+                            <Grid>
+                                <Col size={2}>
+                                    <View style={{flex: 1, justifyContent: 'center'}}>
+                                        <Text>Home Delivery ?</Text>
+                                    </View>
+                                </Col>
+                                <Col size={2}><Text
+                                    style={{fontSize: 16}}>{this.state.product.homeDelivery ? "YES" : "NO"}</Text></Col>
+                            </Grid>
+                            {(this.state.product.hasOwnProperty('radius') && this.state.product.radius > 0) ?
+                                <Grid>
+                                    <Col size={2}>
+                                        <View style={{flex: 1, justifyContent: 'center'}}>
+                                            <Text>Servie Area :</Text>
+                                        </View>
+                                    </Col>
+                                    <Col size={2}><Text style={{fontSize: 16}}>Within {this.state.product.radius} KM
+                                        Radius</Text></Col>
+                                </Grid>
+                                : null}
+                            {this.state.product.website ?
+                                <Grid>
+                                    <Col size={2}>
+                                        <View style={{flex: 1, justifyContent: 'center'}}>
+                                            <Text>WebLink</Text>
+                                        </View>
+                                    </Col>
+                                    <Col size={2}>
+                                        <TouchableOpacity onPress={() => {
+                                            this._browse(this.state.product.website)
+                                        }}>
+                                            <Text style={{fontSize: 16, color: colors.statusBar}}>
+                                                {this.state.product.website}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </Col>
+                                </Grid> : null}
+                            <TouchableOpacity onPress={() => {
+                                this._browse(Service.website)
+                            }}>
+                                <Text style={styles.websiteLink}>
+                                    {Service.website}
+                                </Text>
+                            </TouchableOpacity> : null
+                            {/*<Grid>*/}
                             {/*<Col size={2}>*/}
-                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                                    {/*<Text>Select Quantity:</Text>*/}
-                                {/*</View>*/}
+                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                            {/*<Text>Select Quantity:</Text>*/}
+                            {/*</View>*/}
                             {/*</Col>*/}
 
                             {/*<Col size={2}>*/}
-                                {/*<View style={{flex: 1, flexDirection: 'row'}}>*/}
-                                    {/*<Button block icon transparent*/}
-                                            {/*onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>*/}
-                                        {/*<Icon name='ios-remove' style={{color: colors.appLayout}}/>*/}
-                                    {/*</Button>*/}
-                                    {/*<View style={{*/}
-                                        {/*flex: 4,*/}
-                                        {/*justifyContent: 'center',*/}
-                                        {/*alignItems: 'center',*/}
-                                        {/*paddingLeft: 30,*/}
-                                        {/*paddingRight: 30*/}
-                                    {/*}}>*/}
-                                        {/*<Text style={{fontSize: 18}}>{this.state.quantity}</Text>*/}
-                                    {/*</View>*/}
-                                    {/*<Button block icon transparent*/}
-                                            {/*onPress={() => this.setState({quantity: this.state.quantity + 1})}>*/}
-                                        {/*<Icon style={{color: colors.appLayout}} name='ios-add'/>*/}
-                                    {/*</Button>*/}
-                                {/*</View>*/}
+                            {/*<View style={{flex: 1, flexDirection: 'row'}}>*/}
+                            {/*<Button block icon transparent*/}
+                            {/*onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>*/}
+                            {/*<Icon name='ios-remove' style={{color: colors.appLayout}}/>*/}
+                            {/*</Button>*/}
+                            {/*<View style={{*/}
+                            {/*flex: 4,*/}
+                            {/*justifyContent: 'center',*/}
+                            {/*alignItems: 'center',*/}
+                            {/*paddingLeft: 30,*/}
+                            {/*paddingRight: 30*/}
+                            {/*}}>*/}
+                            {/*<Text style={{fontSize: 18}}>{this.state.quantity}</Text>*/}
+                            {/*</View>*/}
+                            {/*<Button block icon transparent*/}
+                            {/*onPress={() => this.setState({quantity: this.state.quantity + 1})}>*/}
+                            {/*<Icon style={{color: colors.appLayout}} name='ios-add'/>*/}
+                            {/*</Button>*/}
+                            {/*</View>*/}
                             {/*</Col>*/}
-                        {/*</Grid>*/}
-                        {/*<Grid style={{marginTop: 15}}>*/}
+                            {/*</Grid>*/}
+                            {/*<Grid style={{marginTop: 15}}>*/}
                             {/*<Col size={3}>*/}
-                                {/*<Button block onPress={this.addToCart.bind(this)}*/}
-                                        {/*style={{backgroundColor: colors.appLayout}}>*/}
-                                    {/*<Text style={{color: "#fdfdfd", marginLeft: 5}}>Add to cart</Text>*/}
-                                {/*</Button>*/}
+                            {/*<Button block onPress={this.addToCart.bind(this)}*/}
+                            {/*style={{backgroundColor: colors.appLayout}}>*/}
+                            {/*<Text style={{color: "#fdfdfd", marginLeft: 5}}>Add to cart</Text>*/}
+                            {/*</Button>*/}
                             {/*</Col>*/}
                             {/*<Col>*/}
-                                {/*<Button block onPress={this.addToWishlist.bind(this)} icon transparent*/}
-                                        {/*style={{backgroundColor: '#fdfdfd'}}>*/}
-                                    {/*<Icon style={{color: colors.appLayout}} name='ios-heart'/>*/}
-                                {/*</Button>*/}
+                            {/*<Button block onPress={this.addToWishlist.bind(this)} icon transparent*/}
+                            {/*style={{backgroundColor: '#fdfdfd'}}>*/}
+                            {/*<Icon style={{color: colors.appLayout}} name='ios-heart'/>*/}
+                            {/*</Button>*/}
                             {/*</Col>*/}
-                        {/*</Grid>*/}
-                        <View style={{
-                            marginTop: 15,
-                            padding: 10,
-                            borderWidth: 1,
-                            borderRadius: 3,
-                            borderColor: 'rgba(149, 165, 166, 0.3)'
-                        }}>
-                            <Text style={{marginBottom: 5}}>Description</Text>
+                            {/*</Grid>*/}
+                            <View style={{
+                                marginTop: 15,
+                                padding: 10,
+                                borderWidth: 1,
+                                borderRadius: 3,
+                                borderColor: 'rgba(149, 165, 166, 0.3)'
+                            }}>
+                                <Text style={{marginBottom: 5}}>Description</Text>
+                                <View style={{
+                                    width: 50,
+                                    height: 1,
+                                    backgroundColor: 'rgba(44, 62, 80, 0.5)',
+                                    marginLeft: 7,
+                                    marginBottom: 10
+                                }}/>
+                                <NBText note>
+                                    {this.state.product.description}
+                                </NBText>
+                            </View>
+                        </View>
+                        <View style={{marginTop: 15, paddingLeft: 12, paddingRight: 12}}>
+                            <Text style={{marginBottom: 5}}>Similar items</Text>
                             <View style={{
                                 width: 50,
                                 height: 1,
@@ -313,30 +375,16 @@ class ProductDetail extends Component {
                                 marginLeft: 7,
                                 marginBottom: 10
                             }}/>
-                            <NBText note>
-                                {this.state.product.description}
-                            </NBText>
+                            <FlatList style={styles.mainContainer}
+                                      data={this.props.Products}
+                                      keyExtracter={(item, index) => item._id}
+                                      horizontal={false}
+                                      numColumns={2}
+                                      renderItem={(item, index) => this._renderProduct(item, index)}
+                            />
                         </View>
-                    </View>
-                    <View style={{marginTop: 15, paddingLeft: 12, paddingRight: 12}}>
-                        <Text style={{marginBottom: 5}}>Similar items</Text>
-                        <View style={{
-                            width: 50,
-                            height: 1,
-                            backgroundColor: 'rgba(44, 62, 80, 0.5)',
-                            marginLeft: 7,
-                            marginBottom: 10
-                        }}/>
-                        <FlatList style={styles.mainContainer}
-                                  data={this.props.Products}
-                                  keyExtracter={(item, index) => item._id}
-                                  horizontal={false}
-                                  numColumns={2}
-                                  renderItem={(item, index) => this._renderProduct(item, index)}
-                        />
-                    </View>
-                </Content>
-                    :<Spinner/>}
+                    </Content>
+                    : <Spinner/>}
             </Container>
         );
     }
@@ -345,11 +393,14 @@ class ProductDetail extends Component {
         return (
             <TouchableWithoutFeedback
                 key={index}
-                onPress={() => this.props.navigation.navigate('ImageGallery',{images:this.state.product.images,position: parseInt(index)})}
+                onPress={() => this.props.navigation.navigate('ImageGallery', {
+                    images: this.state.product.images,
+                    position: parseInt(index)
+                })}
             >
                 <Image
-                    source={{uri:settings.API_URL + 'images/'+ item}}
-                    style={{width: Dimensions.get('window').width, height: 300, resizeMode:'contain'}}
+                    source={{uri: settings.API_URL + 'images/' + item}}
+                    style={{width: Dimensions.get('window').width, height: 300, resizeMode: 'contain'}}
                     resizeMode="cover"
                 />
             </TouchableWithoutFeedback>
@@ -359,7 +410,7 @@ class ProductDetail extends Component {
     _renderProduct = (data, index) => {
         let item = data.item;
         return (
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate("ProductDetail", {'Id': item._id})}
+            <TouchableOpacity onPress={() => this.props.navigation.navigate("ProductDetail", {'Id': item._id})}
                               style={styles.containerStyle}>
                 <ProductComponent key={item._id} product={item}/>
             </TouchableOpacity>
@@ -368,8 +419,8 @@ class ProductDetail extends Component {
 
     renderColors(colorsss) {
         let colors = [];
-         colorsss=colors.includes(',') ?colorsss.split(','):[colorsss];
-            colorsss.map((color, i) => {
+        colorsss = colors.includes(',') ? colorsss.split(',') : [colorsss];
+        colorsss.map((color, i) => {
             colors.push(
                 <Item key={i} label={color} value={color}/>
             );
@@ -379,7 +430,7 @@ class ProductDetail extends Component {
 
     renderSize(sizess) {
         let size = [];
-        sizess=sizess.includes(',')? sizess.split(','): [sizess];
+        sizess = sizess.includes(',') ? sizess.split(',') : [sizess];
         sizess.map((s, i) => {
             size.push(
                 <Item key={i} label={s} value={s}/>
@@ -482,6 +533,7 @@ class ProductDetail extends Component {
     }
 
 }
+
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
@@ -505,11 +557,11 @@ const styles = StyleSheet.create({
 export default createContainer((props) => {
     let param = props.navigation.getParam('Id');
     let Id = typeof (param) === "string" ? param : param._id;
-    Meteor.subscribe('products',Id);
+    Meteor.subscribe('products', Id);
     return {
         user: Meteor.user(),
-        Products: Meteor.collection('product').find({_id:{$ne: Id}}),
-        Product:Meteor.collection('product').findOne({_id:Id})
+        Products: Meteor.collection('product').find({_id: {$ne: Id}}),
+        Product: Meteor.collection('product').findOne({_id: Id})
     };
 }, ProductDetail);
 const dummyProduct = {

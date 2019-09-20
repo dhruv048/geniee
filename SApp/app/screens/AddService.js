@@ -1,30 +1,45 @@
 import React, {Fragment} from "react";
 import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal, StatusBar, TextInput} from "react-native";
-{/*import Icon from 'react-native-vector-icons/FontAwesome';*/}
+
+{/*import Icon from 'react-native-vector-icons/FontAwesome';*/
+}
 import {SafeAreaView} from "react-navigation";
 import Autocomplete from 'native-base-autocomplete';
 import {colors} from "../config/styles";
-import {Container, Content, Text, Item, Icon, Input, ListItem, Textarea, CheckBox, Button, Picker, Header, Left, Body, Right} from 'native-base';
+import {
+    Container,
+    Content,
+    Text,
+    Item,
+    Icon,
+    Input,
+    ListItem,
+    Textarea,
+    CheckBox,
+    Button,
+    Picker,
+    Header,
+    Left,
+    Body,
+    Right
+} from 'native-base';
 import Meteor, {createContainer} from "react-native-meteor";
 import GooglePlaceSearchBox from '../components/GooglePlaceSearch';
 import GoogleSearch from '../components/GooglePlaceSearch/GoogleSearch'
 
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
-import { ScrollView } from "react-native-gesture-handler";
+import {ScrollView} from "react-native-gesture-handler";
 
-const GooglePlaceSerachStyle={
+const GooglePlaceSerachStyle = {
     textInputContainer: {
-        width: '100%',
+        width: "100%",
         backgroundColor: 'rgba(0,0,0,0)',
         borderTopWidth: 0,
         borderBottomWidth: 0,
-        padding:0
+        padding: 0,
+
     },
-    //container:{
-        //padding:0,
-        //borderRadius: 25,
-    //},
     description: {
         fontWeight: 'bold',
         color: colors.appLayout
@@ -40,15 +55,17 @@ const GooglePlaceSerachStyle={
         fontSize: 16,
         color: colors.whiteText,
         // marginVertical: 5,
-        height:40,
-        margin:0 ,
-        marginTop:0,
-        marginLeft:0,
-        marginRight:0,
-        paddingTop:0,
-        paddingBottom:0
+        height: 40,
+        margin: 0,
+        marginTop: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        paddingTop: 0,
+        paddingBottom: 0
     },
-
+    listView: {
+        flex: 1,
+    }
 }
 
 const styles = StyleSheet.create({
@@ -56,9 +73,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: `Source Sans Pro`,
         color: '#ffffff',
-        
+
     },
-    
+
     s1f0fdd20: {
         color: `rgba(0, 0, 0, 1)`,
         fontFamily: `Source Sans Pro`,
@@ -171,7 +188,7 @@ const styles = StyleSheet.create({
         width: '100%',
         //marginBottom: 4,
         //marginTop: 4,
-        height:50,
+        height: 50,
         maxHeight: 100
     },
     autosuggestionView: {
@@ -181,7 +198,7 @@ const styles = StyleSheet.create({
         padding: 10,
         //paddingLeft: 0,
         width: '100%',
-        backgroundColor: '#ececec',flexGrow:1
+        backgroundColor: '#ececec', flexGrow: 1
     },
     s50325ddf: {
         backgroundColor: `rgba(0, 0, 0, 0.11)`,
@@ -266,9 +283,9 @@ const styles = StyleSheet.create({
         width: '100%',
         //backgroundColor: 'rgba(0,0,0,0)',
         borderTopWidth: 0,
-        borderBottomWidth:0,
-        margin:0,
-        height:60
+        borderBottomWidth: 0,
+        margin: 0,
+        height: 60
     },
     description: {
         fontWeight: 'bold'
@@ -287,7 +304,7 @@ const styles = StyleSheet.create({
         width: `100%`,
         marginBottom: 4,
         marginTop: 4,
-        height:50
+        height: 50
     },
     autosuggestCont: {
         //padding: 10,
@@ -318,15 +335,15 @@ const styles = StyleSheet.create({
     },
 
     chkView: {
-        flexDirection: `row`, 
-        flex: 1,       
+        flexDirection: `row`,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         width: '48%',
         height: 40,
         marginHorizontal: '1%',
     },
-    
+
     buttonView: {
         width: '100%',
         //minHeight:40,  
@@ -371,7 +388,7 @@ class AddService extends React.PureComponent {
             Image: null,
             price: null,
             unit: null,
-            webLink:''
+            webLink: ''
         };
 
         this.categories = []
@@ -380,9 +397,9 @@ class AddService extends React.PureComponent {
 
     componentDidMount() {
         Meteor.subscribe('categories-list', () => {
-           let MaiCategories= Meteor.collection('MainCategories').find();
-           MaiCategories.forEach(item => {
-               this.categories= this.categories.concat(item.subCategories);
+            let MaiCategories = Meteor.collection('MainCategories').find();
+            MaiCategories.forEach(item => {
+                this.categories = this.categories.concat(item.subCategories);
             })
         })
     }
@@ -458,7 +475,7 @@ class AddService extends React.PureComponent {
                     contact: '',
                     price: null,
                     unit: null,
-                    webLink:''
+                    webLink: ''
                 });
                 this.props.navigation.navigate('Home');
             }
@@ -477,7 +494,7 @@ class AddService extends React.PureComponent {
             homeDelivery: homeDelivery,
             price: price,
             unit: unit,
-            website:webLink,
+            website: webLink,
         };
         if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !location) {
             ToastAndroid.showWithGravityAndOffset(
@@ -552,14 +569,14 @@ class AddService extends React.PureComponent {
                 <Header style={{backgroundColor: '#094c6b'}}>
                     <Left>
                         <Button transparent onPress={() => {
-                    this.props.navigation.openDrawer()
-                }}>
-                            <Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>
-                        </Button>                        
+                            this.props.navigation.openDrawer()
+                        }}>
+                            <Icon name="md-more" style={{fontWeight: '500', fontSize: 35}}/>
+                        </Button>
                     </Left>
 
                     <Body>
-                        <Text style={styles.screenHeader}>Add Service</Text>
+                    <Text style={styles.screenHeader}>Add Service</Text>
                     </Body>
                     {/*<Right>
                         <Button transparent onPress={() => navigate('Home')}>
@@ -571,7 +588,7 @@ class AddService extends React.PureComponent {
                     </Right>*/}
                 </Header>
                 <Content>
-                
+
 
                     <Fragment>
                         {/*<ImageBackground*/}
@@ -606,7 +623,7 @@ class AddService extends React.PureComponent {
                                 </TouchableOpacity>
                             </View>
                             <View underlineColorAndroid='rgba(0,0,0,0)'
-                                    style={{width:'100%',minHeight:40,  marginVertical: 5, justifyContent: `center`}}>
+                                  style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>
                                 <Autocomplete
                                     autoCapitalize="none"
                                     style={styles.inputBoxAC}
@@ -619,113 +636,112 @@ class AddService extends React.PureComponent {
                                     underlineColorAndroid='rgba(0,0,0,0)'
                                     placeholder="Enter Category's name (*)"
                                     placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    renderItem={cat => <View style={{maxHeight:200}}><ScrollView style={{flexGrow: 0}}><TouchableOpacity
+                                    renderItem={cat => <View style={{maxHeight: 200}}><ScrollView style={{flexGrow: 0}}><TouchableOpacity
                                         style={styles.autosuggestCont}
                                         onPress={() => (
-                                                                     this.setState({
-                                                                         query: cat.subCategory,
-                                                                         selectedCategory: cat
-                                                                     })
-                                                                 )}
+                                            this.setState({
+                                                query: cat.subCategory,
+                                                selectedCategory: cat
+                                            })
+                                        )}
                                     >
                                         <Text style={styles.autosuggesText}>{cat.subCategory}</Text>
                                     </TouchableOpacity></ScrollView></View>}
                                 />
                             </View>
-                            
+
                             <TextInput placeholder='Title (*)'
-                                    style={styles.inputBox}
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    onSubmitEditing={() => this.title.focus()}
-                                    onChangeText={(title) => this.setState({title})}
-                                />
-                                <Textarea rowSpan={3} placeholder="Description (*)"
-                                    style={styles.inputTextarea}
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    underlineColorAndroid='red'
-                                    //onSubmitEditing={() => this.contactNumber.focus()}
-                                    onChangeText={(description) => this.setState({description})}
-                                />                              
-                                {/*<Input disabled*/}
-                                {/*style={styles.inputText}*/}
-                                {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
-                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                {/*placeholder='Location'*/}
-                                {/*keyboardType='phone-pad'*/}
-                                {/*onChangeText={(location) => this.setState({location})}*/}
-                                {/*/>*/}
-                                <View underlineColorAndroid='rgba(0,0,0,0)'
-                                    style={{width:'100%',minHeight:40,  marginVertical: 5}}>
-                                <GooglePlaceSearchBox
-                                    onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                        console.log(data, details);
-                                        this.handleLocation(details)
-                                    }}
-                                    placeholder='Enter Address (*)'
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                            placeholderTextColor='#ffffff'
-                            styles={GooglePlaceSerachStyle}
-                                    ></GooglePlaceSearchBox>
-                            </View>                                
+                                       style={styles.inputBox}
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       underlineColorAndroid='rgba(0,0,0,0)'
+                                       onSubmitEditing={() => this.title.focus()}
+                                       onChangeText={(title) => this.setState({title})}
+                            />
+                            <Textarea rowSpan={3} placeholder="Description (*)"
+                                      style={styles.inputTextarea}
+                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                      underlineColorAndroid='red'
+                                //onSubmitEditing={() => this.contactNumber.focus()}
+                                      onChangeText={(description) => this.setState({description})}
+                            />
+                            {/*<Input disabled*/}
+                            {/*style={styles.inputText}*/}
+                            {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                            {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                            {/*placeholder='Location'*/}
+                            {/*keyboardType='phone-pad'*/}
+                            {/*onChangeText={(location) => this.setState({location})}*/}
+                            {/*/>*/}
+
+                            <GooglePlaceSearchBox
+                                onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                                    console.log(data, details);
+                                    this.handleLocation(details)
+                                }}
+                                placeholder='Enter Address (*)'
+                                underlineColorAndroid='rgba(0,0,0,0)'
+                                placeholderTextColor='#ffffff'
+                                styles={GooglePlaceSerachStyle}
+                            />
+
 
                             <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    style={styles.inputBox}
-                                    placeholder='Radius for Service Area in KiloMeter (*)'
-                                    keyboardType='phone-pad'
-                                    onChangeText={(radius) => this.setState({radius})}
-                                />
-                            
-                                
-                            
-                                    <View style={styles.multiField}>
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       style={styles.inputBox}
+                                       placeholder='Radius for Service Area in KiloMeter (*)'
+                                       keyboardType='phone-pad'
+                                       onChangeText={(radius) => this.setState({radius})}
+                            />
+
+
+                            <View style={styles.multiField}>
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    style={styles.inputBoxMultiField}
-                                    placeholder='Unit'
-                                    onChangeText={(unit) => this.setState({unit})}
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputBoxMultiField}
+                                           placeholder='Unit'
+                                           onChangeText={(unit) => this.setState({unit})}
                                 />
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    style={styles.inputBoxMultiField}
-                                    placeholder='Price per Unit'
-                                    keyboardType='phone-pad'
-                                    onChangeText={(price) => this.setState({price})}
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputBoxMultiField}
+                                           placeholder='Price per Unit'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(price) => this.setState({price})}
                                 />
-                                </View>
-                                
-                                <View style={styles.multiField}>
-                                    
-                                    
-                                    <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    style={styles.inputBoxMultiField}
-                                    placeholder='Contact No (*)'
-                                    keyboardType='phone-pad'
-                                    onChangeText={(contact) => this.setState({contact})}
+                            </View>
+
+                            <View style={styles.multiField}>
+
+
+                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputBoxMultiField}
+                                           placeholder='Contact No (*)'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(contact) => this.setState({contact})}
                                 />
 
-                                    <View style={styles.chkView}><CheckBox style={{marginEnd:20}} checked={this.state.homeDelivery}
-                                    onPress={this._updateHomeDelivery}/>
+                                <View style={styles.chkView}><CheckBox style={{marginEnd: 20}}
+                                                                       checked={this.state.homeDelivery}
+                                                                       onPress={this._updateHomeDelivery}/>
                                     <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text></View>
 
-                                    </View>
-                                
-                                
-                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    style={styles.inputBox}
-                                    placeholder='Website'
-                                    onChangeText={(webLink) => this.setState({webLink})}
-                                />
+                            </View>
+
+
+                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       style={styles.inputBox}
+                                       placeholder='Website'
+                                       onChangeText={(webLink) => this.setState({webLink})}
+                            />
                             <View style={styles.buttonView}>
-                            <Button  
-                                style={styles.button} 
-                                onPress={this._saveService}>
-                                <Text style={styles.buttonText}> Save </Text>
-                            </Button></View>
-                            
+                                <Button
+                                    style={styles.button}
+                                    onPress={this._saveService}>
+                                    <Text style={styles.buttonText}> Save </Text>
+                                </Button></View>
+
                             <View style={{marginTop: 22}}>
                                 <Modal
                                     animationType="slide"
