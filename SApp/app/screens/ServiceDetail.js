@@ -219,7 +219,7 @@ class ServiceDetail extends Component {
                         
                     <Text style={styles.name}>{Service.title}</Text>
                             
-                    <View style={ styles.starView }><StarRating starRate={3}/></View>
+                    <View style={ styles.starView }><StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(Service.ratings) : 0}/></View>
                     
                     {(Service.location.hasOwnProperty('formatted_address')) ?
                         <Text style={styles.availableText}>                                              {Service.location.formatted_address}
@@ -387,14 +387,15 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 22,
-        color: "#696969",
+        //color: "#696969",
         fontWeight: 'bold',        
-        color: '#ffffff',
+        color: '#000',
         width: '100%',
         backgroundColor: colors.inputBackground,
+        //backgroundColor: '#094c6b0a',
         paddingHorizontal: 10,
         padding: 5,
-        textAlign: 'center'
+        textAlign: 'center',        
     },
     starView: {
         backgroundColor: colors.inputBackground,
@@ -404,12 +405,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        //borderRadius: 5,
+        borderBottomColor: '#094c6b',
+        borderBottomWidth: 2
     },
     availableText: {
         marginTop: 5,
         fontSize: 16,
         fontWeight: 'bold',
-        alignItems: 'flex-start'
+        //justifyContent: 'center',
+        //alignItems: 'center',
+        paddingHorizontal: 10,
     },
     infoText : {
         marginTop: 5,
@@ -426,20 +432,21 @@ const styles = StyleSheet.create({
     },
     serviceText: {
         marginTop: 5,
-        fontSize: 14,
+        fontSize: 16,
         color: "#696969",
         fontWeight: 'bold',
+        paddingHorizontal: 10,
         //stextAlign: 'center'
     },
     unavailableText: {
         marginTop: 5,
-        fontSize: 14,
+        fontSize: 16,
         color: "red",
         fontWeight: 'bold',
         //textAlign: 'center'
     },
     description: {
-        textAlign: 'center',
+        //textAlign: 'center',
         marginTop: 10,
         color: "#696969",
     },

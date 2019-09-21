@@ -37,7 +37,8 @@ StarRating.propTypes = {
 
 const styles = StyleSheet.create({
     rateCont: {
-        backgroundColor: '#05a5d10d',
+        //backgroundColor: '#05a5d10d',
+        backgroundColor: 'transparent',
         flexDirection: 'row',
         alignItems: 'center',
     },

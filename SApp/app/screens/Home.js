@@ -323,7 +323,7 @@ class Home extends Component {
                         <Text note style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                         <View style={styles.serviceAction}>
-                            <StarRating starRate={3}/>
+                            <StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>
                             {/*{this.averageRating(rowData.ratings) > 0 ?
                                 <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
                                     <Icon name={'star'}
@@ -479,7 +479,7 @@ class Home extends Component {
                     {/*</Right>*/}
                 </Header>
 
-                <Content style={styles.content} contentContainerStyle={{flex: 1}}>
+                <Content style={styles.content}>
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {this.renderSelectedTab()}
                     {/*<List style={styles.contentList}*/}
@@ -518,25 +518,28 @@ const styles = StyleSheet.create({
 
     },
     serviceList: {
-        backgroundColor: colors.inputBackground,
-        marginVertical: 5,
-        marginHorizontal: '2%',
+        //backgroundColor: colors.inputBackground,
+        backgroundColor: '#094c6b0a',
+        //marginVertical: 5,
+        //marginHorizontal: '2%',
         borderRadius: 5,
+        borderBottomColor: '#094c6b',
+        borderBottomWidth: 10
     },
     serviceTitle: {
-        color: '#ffffff',
+        color: '#000000',
         fontWeight: 'bold',
     },
     serviceAddress: {
-        color: '#ffffff',
+        color: '#000000',
     },
     serviceDist: {
-        color: '#ffffff',
+        color: '#000000',
     },
     serviceAction: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        //flexDirection: 'row',
+        //justifyContent: 'center',
+        //alignItems: 'center',
     },
     serviceIconBtn: {
         justifyContent: 'center',
@@ -545,8 +548,8 @@ const styles = StyleSheet.create({
     catIcon: {
         padding: 5,
         borderRadius: 100,
-        backgroundColor: '#fff',
-        color: '#094c6b',
+        backgroundColor: '#094c6b',
+        color: '#fff',
         width: 30,
         height: 30,
         marginRight: 0
