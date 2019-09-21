@@ -14,8 +14,8 @@ class Map extends Component {
             region: {
                 latitude:27.712020,
                 longitude:85.312950,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
             },
             markers:[]
         }
@@ -65,8 +65,8 @@ class Map extends Component {
               let region= {
                   latitude: position.coords.latitude,
                   longitude: position.coords.longitude,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05,
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.1,
               };
               this.setState({ region:region });
           },

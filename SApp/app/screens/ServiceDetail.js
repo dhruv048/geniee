@@ -6,24 +6,30 @@ import {
     TouchableOpacity,
     Image,
     Alert,
-    ScrollView,
+    FlatList,
     StatusBar,
-    Modal, ToastAndroid,Linking
+    Modal, ToastAndroid, Linking, Dimensions
 } from 'react-native';
 import {Button, Container, Content, Textarea, Icon, Header, Left, Body, Right, Footer, FooterTab} from 'native-base'
 import Meteor, {createContainer} from "react-native-meteor";
-import settings ,{userType} from "../config/settings";
+import settings, {userType} from "../config/settings";
 import userImage from '../images/Image.png';
 import {Rating, AirbnbRating} from 'react-native-elements';
 import {colors} from "../config/styles";
 import call from "react-native-phone-call";
 import Loading from "../components/Loading/Loading";
 import StarRating from "../components/StarRating/StarRating";
+const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+
+
 // import RNEsewaSdk from "react-native-esewa-sdk";
 
-import { DeviceEventEmitter } from 'react-native';
+import {DeviceEventEmitter} from 'react-native';
 
-import { NativeModules } from 'react-native';
+import {NativeModules} from 'react-native';
+import {FlatListItem} from "../components/FlatListItem";
+import Product from "../components/Store/Product";
+
 //const { RNEsewaSdk } = NativeModules;
 
 
@@ -35,12 +41,12 @@ class ServiceDetail extends Component {
         });
     }
     _callPhone = (number) => {
-      // let res=  this.onEsewaComplete();
-      // alert(res);
-      // console.log(res)
-     if(!number){
-         Alert.alert('Contact No. Unavailable for the Service')
-     }
+        // let res=  this.onEsewaComplete();
+        // alert(res);
+        // console.log(res)
+        if (!number) {
+            Alert.alert('Contact No. Unavailable for the Service')
+        }
 
         const args = {
             number: number, // String value with the number to call
@@ -50,39 +56,39 @@ class ServiceDetail extends Component {
     }
 
 
-
     constructor(props) {
         super(props);
         this.state = {
             starCount: 2,
-            isLoading:false,
-            showModal:false,
-            comment:'',
+            isLoading: false,
+            showModal: false,
+            comment: '',
         }
 
     }
 
-    componentDidMount(){
+    componentDidMount() {
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
     }
 
-    componentWillUnmount(){
-       // this.handler.unsubscribe()
+    componentWillUnmount() {
+        // this.handler.unsubscribe()
     }
-    onEsewaComplete =async() => {
+
+    onEsewaComplete = async () => {
         const componentName = await RNEsewaSdk.resolveActivity();
         if (!componentName) {
             // You could also display a dialog with the link to the app store.
             throw new Error(`Cannot resolve activity for intent . Did you install the app?`);
         }
 
-        const response = await RNEsewaSdk.makePayment('1').then(function(response){
+        const response = await RNEsewaSdk.makePayment('1').then(function (response) {
             return response
-        }).catch(function(error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
-                // ADD THIS THROW error
-                throw error;
-            });
+        }).catch(function (error) {
+            console.log('There has been a problem with your fetch operation: ' + error.message);
+            // ADD THIS THROW error
+            throw error;
+        });
 
         // if (response.resultCode !== RNEsewaSdk.OK) {
         //     throw new Error('Invalid result from child activity.');
@@ -94,7 +100,7 @@ class ServiceDetail extends Component {
     };
 
     handleChat = (Service) => {
-        console.log('service'+Service._id);
+        console.log('service' + Service._id);
         this._getChatChannel(Service._id).then(channelId => {
             console.log(channelId);
             let Channel = {
@@ -102,9 +108,9 @@ class ServiceDetail extends Component {
                 user: {
                     userId: Service.createdBy,
                     name: "",
-                    profileImage:null,
+                    profileImage: null,
                 },
-                service:Service
+                service: Service
             }
             this.props.navigation.navigate('Message', {Channel: Channel});
         }).catch(error => {
@@ -125,15 +131,15 @@ class ServiceDetail extends Component {
         });
         return channelId;
     }
-    _saveRatting=(id)=>{
-      //  alert(this.state.comment);
-        console.log(this.state.comment +this.state.starCount);
-        let rating={
-            count:this.state.starCount,
-            comment:this.state.comment
+    _saveRatting = (id) => {
+        //  alert(this.state.comment);
+        console.log(this.state.comment + this.state.starCount);
+        let rating = {
+            count: this.state.starCount,
+            comment: this.state.comment
         }
 
-        Meteor.call('updateRating',id,rating,(err,res)=>{
+        Meteor.call('updateRating', id, rating, (err, res) => {
             if (err) {
                 console.log('err:' + err);
                 ToastAndroid.showWithGravityAndOffset(
@@ -146,7 +152,7 @@ class ServiceDetail extends Component {
             }
             else {
                 console.log('resss' + res);
-                this.setState({showModal:false});
+                this.setState({showModal: false});
                 ToastAndroid.showWithGravityAndOffset(
                     "Rating Updated Successfully!",
                     ToastAndroid.LONG,
@@ -158,9 +164,10 @@ class ServiceDetail extends Component {
         })
     }
 
-    clickEventListener(){
+    clickEventListener() {
         Alert.alert("Success", "Product has beed added to cart")
     }
+
     averageRating = (arr) => {
         let sum = 0;
         arr.forEach(item => {
@@ -170,26 +177,34 @@ class ServiceDetail extends Component {
         return Math.round(avg);
     }
 
-    _browse=(url)=>{
+    _browse = (url) => {
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
-
+    _renderProduct=(data,index)=>{
+        let item=data.item;
+        return(
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate("ProductDetail", {'Id':item._id})} style={styles.containerStyle}>
+            <Product key={item._id} product={item}   />
+            </TouchableOpacity>
+        )
+    }
     render() {
-        const Id=this.props.navigation.getParam('Id');
+        const Id = this.props.navigation.getParam('Id');
         console.log(Id)
-        let Service={};
-        if(typeof (Id)==="string" ){
-            Service=Meteor.collection('serviceReact').findOne({_id:Id});
+        let Service = {};
+        if (typeof (Id) === "string") {
+            Service = Meteor.collection('serviceReact').findOne({_id: Id});
             Service.avgRate = this.averageRating(Service.ratings)
         }
-        else{
+        else {
             console.log(Id)
-            Service=Id;
+            Service = Id;
         }
 
         const {navigate} = this.props.navigation;
         return (
             <Container style={styles.container}>
+
                 <StatusBar
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'
@@ -199,37 +214,43 @@ class ServiceDetail extends Component {
                         <Button transparent onPress={() => {
                             this.props.navigation.openDrawer()
                         }}>
-                            <Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>
-                        </Button>                        
+                            <Icon name="md-more" style={{fontWeight: '500', fontSize: 35}}/>
+                        </Button>
                     </Left>
 
                     <Body>
-                        <Text style={styles.screenHeader}>Service Details</Text>
+                    <Text style={styles.screenHeader}>Service Details</Text>
                     </Body>
                 </Header>
 
-                <Content style={{marginVertical: 0, paddingVertical: 0, flexGrow: 1}}>
+                <Content padder style={{marginVertical: 0, paddingVertical: 0}}>
                     {this.state.isLoading === true ? <Loading/> : null}
-                    
+
                     {Service.coverImage === null ?
                         <Image style={styles.productImg} source={userImage}/> :
                         <Image style={styles.productImg}
-                            source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>
+                               source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>
                     }
-                        
+
                     <Text style={styles.name}>{Service.title}</Text>
+<<<<<<< HEAD
                             
                     <View style={ styles.starView }><StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(Service.ratings) : 0}/></View>
                     
+=======
+
+                    <View style={styles.starView}><StarRating starRate={3}/></View>
+
+>>>>>>> 36d84d0ca4bc3c136a48ca70225c259f860c276b
                     {(Service.location.hasOwnProperty('formatted_address')) ?
-                        <Text style={styles.availableText}>                                              {Service.location.formatted_address}
+                        <Text style={styles.availableText}>{Service.location.formatted_address}
                         </Text> :
                         <Text style={styles.unavailableText}>
                             {'Address Unavailable!'}
                         </Text>
                     }
-                    
-                            
+
+
                     {/*<View style={styles.starDisplay}>
                         <Rating
                             imageSize={20}
@@ -239,63 +260,83 @@ class ServiceDetail extends Component {
                         />
                     </View>
                     <View style={styles.serviceInfo}>*/}
-                    
-                                
-                    {(Service.hasOwnProperty('radius') && Service.radius>0) ?
-                        <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from Address.</Text> : null
+
+
+                    {(Service.hasOwnProperty('radius') && Service.radius > 0) ?
+                        <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
+                            Address.</Text> : null
                     }
-                    
-                    <Text style={ styles.infoText }>
+
+                    <Text style={styles.infoText}>
                         Contact: {Service.contact1} {Service.contact}
                     </Text>
                     {/*<Text style={ styles.infoText }>
                         {Service.contact}
                     </Text>*/}
-                                
+
                     {Service.hasOwnProperty('email') ?
-                        <Text style={ styles.infoText }>{ Service.email }</Text> : null
+                        <Text style={styles.infoText}>{Service.email}</Text> : null
                     }
 
-                    {Service.hasOwnProperty('website') ?    
-                        <TouchableOpacity onPress={()=>{this._browse(Service.website)}}>
-                            <Text style={ styles.websiteLink } >
+                    {Service.hasOwnProperty('website') ?
+                        <TouchableOpacity onPress={() => {
+                            this._browse(Service.website)
+                        }}>
+                            <Text style={styles.websiteLink}>
                                 {Service.website}
                             </Text>
                         </TouchableOpacity> : null
                     }
                     {/*</View>*/}
-                        
+
                     <View style={styles.separator}></View>
-                        
+
                     <View style={{alignItems: 'center', marginHorizontal: 30}}>
                         <Text style={styles.description}>
                             {Service.description}
                         </Text>
                     </View>
-                </Content>
 
+                    <View style={styles.separator}></View>
+                    {this.props.Products.length>0?
+                    <View style={{alignItems: 'center', marginHorizontal: 30}}>
+                        <Text style={[styles.screenHeader,{color:colors.appLayout}]}>
+                            Products
+                        </Text>
+
+                    </View>:null}
+                    <FlatList style={styles.mainContainer}
+                              data={this.props.Products}
+                              keyExtracter={(item, index) => item._id}
+                              horizontal={false}
+                              numColumns={2}
+                              renderItem={(item,index)=>this._renderProduct(item,index)}
+                    />
+                </Content>
                 <Footer>
                     <FooterTab style={{backgroundColor: '#094c6b'}}>
                         <Button onPress={() => {
-                                this._callPhone(Service.contact? Service.contact : Service.contact1)
-                            }}>
+                            this._callPhone(Service.contact ? Service.contact : Service.contact1)
+                        }}>
                             <Icon name="md-call"/>
                             <Text style={{color: '#ffffff'}}>Call</Text>
                         </Button>
                         {this.props.user &&
-                        Service.createdBy!= null && this.props.user._id != Service.createdBy ?
-                        <Button onPress={() => {this.handleChat(Service)}}>
-                            <Icon name="md-chatboxes"/>
-                            <Text style={{color: '#ffffff'}}>Chat</Text>
-                        </Button>: null}
+                        Service.createdBy != null && this.props.user._id != Service.createdBy ?
+                            <Button onPress={() => {
+                                this.handleChat(Service)
+                            }}>
+                                <Icon name="md-chatboxes"/>
+                                <Text style={{color: '#ffffff'}}>Chat</Text>
+                            </Button> : null}
                         {this.props.user && this.props.user._id != Service.createdBy ?
-                        <Button onPress={() => {
-                            this.setState({showModal:true})
-                        }}>
-                            <Icon name="md-star"/>
-                            <Text style={{color: '#ffffff'}}>Rate</Text>
-                        </Button>
-                        : null}
+                            <Button onPress={() => {
+                                this.setState({showModal: true})
+                            }}>
+                                <Icon name="md-star"/>
+                                <Text style={{color: '#ffffff'}}>Rate</Text>
+                            </Button>
+                            : null}
                     </FooterTab>
                 </Footer>
 
@@ -305,7 +346,7 @@ class ServiceDetail extends Component {
                         transparent={true}
                         visible={this.state.showModal}
                         onRequestClose={() => {
-                            this.setState({showModal:false})
+                            this.setState({showModal: false})
                         }}>
                         <View style={{
                             flex: 1,
@@ -315,16 +356,16 @@ class ServiceDetail extends Component {
                         }}>
 
                             <View style={{
-                                backgroundColor:'white',
+                                backgroundColor: 'white',
                                 width: 350,
                                 height: 400,
-                                padding:30,
+                                padding: 30,
                                 borderWidth: 2,
                                 borderColor: colors.buttonPrimaryBackground,
 
                             }}>
                                 <Text style={styles.signupText}>
-                                   Rate Service
+                                    Rate Service
                                 </Text>
                                 <View style={styles.starContainer}>
                                     <AirbnbRating
@@ -337,21 +378,23 @@ class ServiceDetail extends Component {
                                     />
                                 </View>
                                 <Textarea bordered rowSpan={4} placeholder="Comment"
-                                        //  style={styles.inputText}
+                                    //  style={styles.inputText}
                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                           underlineColorAndroid='rgba(0,0,0,0)'
                                     //onSubmitEditing={() => this.contactNumber.focus()}
                                           onChangeText={(comment) => this.setState({comment})}
                                 />
                                 <View style={styles.addToCarContainer}>
-                                    <Button block success  onPress={() => {
+                                    <Button block success onPress={() => {
                                         this._saveRatting(Service._id)
                                     }}><Text> Save </Text></Button>
                                 </View>
                                 <View style={styles.addToCarContainer}>
-                                <Button block  danger onPress={()=>{this.setState({showModal:false})}}>
-                                    <Text>Cancel</Text>
-                                </Button>
+                                    <Button block danger onPress={() => {
+                                        this.setState({showModal: false})
+                                    }}>
+                                        <Text>Cancel</Text>
+                                    </Button>
                                 </View>
                             </View>
                         </View>
@@ -367,13 +410,13 @@ const styles = StyleSheet.create({
 
         flex: 1,
         marginVertical: 0,
-        backgroundColor:'#05a5d10d',
+        backgroundColor: '#05a5d10d',
     },
     screenHeader: {
         fontSize: 18,
         fontFamily: `Source Sans Pro`,
         color: '#ffffff',
-        
+
     },
     productImg: {
         width: '100%',
@@ -387,9 +430,15 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 22,
+<<<<<<< HEAD
         //color: "#696969",
         fontWeight: 'bold',        
         color: '#000',
+=======
+        color: "#696969",
+        fontWeight: 'bold',
+        color: '#ffffff',
+>>>>>>> 36d84d0ca4bc3c136a48ca70225c259f860c276b
         width: '100%',
         backgroundColor: colors.inputBackground,
         //backgroundColor: '#094c6b0a',
@@ -417,18 +466,18 @@ const styles = StyleSheet.create({
         //alignItems: 'center',
         paddingHorizontal: 10,
     },
-    infoText : {
+    infoText: {
         marginTop: 5,
         fontSize: 16,
         fontWeight: 'bold',
         paddingHorizontal: 10,
     },
-    websiteLink : {
+    websiteLink: {
         marginTop: 5,
         fontSize: 16,
         fontWeight: 'bold',
         paddingHorizontal: 10,
-        color:colors.statusBar
+        color: colors.statusBar
     },
     serviceText: {
         marginTop: 5,
@@ -570,17 +619,38 @@ const styles = StyleSheet.create({
         color: colors.whiteText,
         textAlign: 'center'
     },
+    mainContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+
+    },
+    containerStyle: {
+        flex: 1,
+        borderWidth: 0,
+        marginHorizontal:5,
+        marginVertical:5,
+        borderColor: '#808080',
+        elevation: 2,
+        width: (viewportWidth / 2) - 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
 
 });
 
-export default createContainer(() => {
-    Meteor.subscribe('get-channel');
+export default createContainer((props) => {
+    let param = props.navigation.getParam('Id');
+    let Id = typeof (param) === "string" ? param : param._id;
+    Meteor.subscribe('products',Id);
+  //  Meteor.subscribe('get-channel');
     return {
         detailsReady: true,
-        getChannel:(id)=>{
+        getChannel: (id) => {
             // return Meteor.collection('chatChannels').findOne({users: { "$in" : [id]}});
-            return Meteor.collection('chatChannels').findOne({$and:[{'otherUser.serviceId':id},{createdBy:Meteor.userId()}]});
+            return Meteor.collection('chatChannels').findOne({$and: [{'otherUser.serviceId': id}, {createdBy: Meteor.userId()}]});
         },
-        user: Meteor.user()
+        user: Meteor.user(),
+        Products: Meteor.collection('product').find({service: Id})
     };
 }, ServiceDetail);

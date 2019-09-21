@@ -29,18 +29,26 @@ class AuthLoadingScreen extends React.Component {
             coords:{latitude:27.712020,longitude:85.312950}
         }
         this._bootstrapAsync();
-        Meteor.ddp.on('connected', connected => {
-            console.log('alert' + connected);
-            this.setState({connected: true})
-            this._bootstrapAsync()
-        })
+        // Meteor.ddp.on('connected', connected => {
+        //     console.log('alert' + connected);
+        //     this.setState({connected: true})
+        //     this._bootstrapAsync()
+        // })
     }
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
         const userToken = await AsyncStorage.getItem(USER_TOKEN_KEY);
         console.log(userToken)
-        this.props.navigation.navigate(userToken ? 'App' : 'UnAuthorized');
+        if (userToken) {
+            if (userToken != Meteor.getData()._tokenIdSaved)
+                Meteor._loginWithToken(userToken)
+            this.props.navigation.navigate('App');
+        }
+        else
+            this.props.navigation.navigate('UnAuthorized');
+
+        // this.props.navigation.navigate(userToken ? 'App' : 'UnAuthorized');
 
 
 

@@ -7,13 +7,14 @@ Meteor.methods({
         try {
             console.log('addNewCategory:::=>>>');
             var currentUserId = Meteor.userId();
-            let Id=Moment().format('DDMMYYx');
+            let Id = Moment().format('DDMMYYx');
             let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
-                MainCategories.update(
+            MainCategories.update(
                 {catId: "0"},
-                {$addToSet:
+                {
+                    $addToSet:
                         {
-                            subCategories: {subCatId:Id, subCategory: serviceInfo.Category.subCategory}
+                            subCategories: {subCatId: Id, subCategory: serviceInfo.Category.subCategory}
                         }
                 }
             )
@@ -42,11 +43,11 @@ Meteor.methods({
                         }
                         else {
                             console.log(res._id)
-                            serviceInfo.createdAt=new Date(new Date().toUTCString());
-                            serviceInfo.createdBy= currentUserId;
-                            serviceInfo.coverImage=res._id;
-                            serviceInfo.categoryId=CategoryId;
-                            serviceInfo.ratings= [{count: 0}];
+                            serviceInfo.createdAt = new Date(new Date().toUTCString());
+                            serviceInfo.createdBy = currentUserId;
+                            serviceInfo.coverImage = res._id;
+                            serviceInfo.categoryId = CategoryId;
+                            serviceInfo.ratings = [{count: 0}];
                             var res = Service.insert(serviceInfo);
                             return res;
                         }
@@ -196,5 +197,49 @@ Meteor.methods({
             console.log(err.message);
             throw new Meteor.Error(403, err.message)
         }
-    }
+    },
+    'addNewProduct': (productInfo) => {
+        try {
+            console.log('addNewProducr:::=>>>');
+            var currentUserId = Meteor.userId();
+            productInfo.createdBy = currentUserId,
+                productInfo.createDate = new Date(new Date().toUTCString())
+            let imageIds = [];
+            if (productInfo.images) {
+                productInfo.images.forEach(image => {
+                    let Id = Moment().format('DDMMYYx');
+                    ServiceImage.write(new Buffer(image.data, 'base64'),
+                        {
+                            fileName: Id + '.jpg',
+                            type: image.mime
+                        },
+                        (err, res) => {
+                            if (err) {
+                                console.log('error',err)
+                            }
+                            else {
+                                console.log('res:',res._id);
+                                imageIds.push(res._id);
+                                if(productInfo.images.length===imageIds.length){
+                                    productInfo.images = imageIds;
+                                    console.log('insert')
+                                    return Product.insert(productInfo);
+                                }
+                            }
+                        }, proceedAfterUpload = true)
+                })
+            }
+            else {
+                productInfo.images = [];
+                console.log('insert')
+                return Product.insert(productInfo);
+            }
+
+        }
+        catch (e) {
+            console.log(e.message);
+            throw new Meteor.Error(403, e.message)
+
+        }
+    },
 })

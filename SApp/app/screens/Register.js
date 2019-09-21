@@ -19,7 +19,7 @@ import GooglePlaceSearchBox from '../components/GooglePlaceSearch';
 import Logo from '../components/Logo/Logo';
 import {colors} from '../config/styles';
 import {userType} from '../config/settings';
-import {Item} from 'native-base';
+import {Container, Content, Item} from 'native-base';
 
 class Register extends Component {
     validInput = (overrideConfirm) => {
@@ -60,7 +60,7 @@ class Register extends Component {
                     if (err) {
                         console.log("err::" + err.message);
                         ToastAndroid.showWithGravityAndOffset(
-                           err.reason,
+                            err.reason,
                             ToastAndroid.LONG,
                             ToastAndroid.TOP,
                             0,
@@ -110,7 +110,7 @@ class Register extends Component {
                         name: capitalzeFirstLetter(name),
                         contactNo: contact,
                         profileImage: null,
-                        location:location
+                        location: location
                     }
                 };
                 Meteor.call('signUpUser', user, (err, res) => {
@@ -133,7 +133,7 @@ class Register extends Component {
                             0,
                             50,
                         );
-                      //  this.handleSignIn();
+                        //  this.handleSignIn();
                         this.props.navigation.navigate('SignIn');
                     }
                 });
@@ -192,80 +192,82 @@ class Register extends Component {
         const {navigate} = this.props.navigation;
 
         return (
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={styles.container}>
-                    <StatusBar
-                        backgroundColor={colors.statusBar}
-                        barStyle='light-content'
-                    />
+            <Container>
+                <StatusBar
+                    backgroundColor={colors.statusBar}
+                    barStyle='light-content'
+                />
 
-                    <Logo/>
+                <Content  >
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                        <View>
 
-                    <View style={styles.containerRegister}>
-                        <TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Full Name'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
-                                   onSubmitEditing={() => this.email.focus()}
-                                   onChangeText={(name) => this.setState({name})}
-                        />
-                        <TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Email'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
-                                   keyboardType='email-address'
-                                   ref={(input) => this.email = input}
-                                   onSubmitEditing={() => this.contact.focus()}
-                                   onChangeText={(email) => this.setState({email})}
-                                   textContentType={'emailAddress'}
-                        />
-                        <TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
-                                   placeholder='Mobile No'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
-                                   keyboardType='phone-pad'
-                                   onChangeText={(contact) => this.setState({contact})}
-                        />
-                        {/*<View style={{width:300,minHeight:40,  marginVertical: 5}}>*/}
-                                <View 
+                            <Logo/>
+
+                            <View style={styles.containerRegister}>
+                                <TextInput style={styles.inputBox}
+                                         //  underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Full Name'
+                                           placeholderTextColor='#ffffff'
+                                           selectionColor='#ffffff'
+                                           onSubmitEditing={() => this.email.focus()}
+                                           onChangeText={(name) => this.setState({name})}
+                                />
+                                <TextInput style={styles.inputBox}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Email'
+                                           placeholderTextColor='#ffffff'
+                                           selectionColor='#ffffff'
+                                           keyboardType='email-address'
+                                           ref={(input) => this.email = input}
+                                           onSubmitEditing={() => this.contact.focus()}
+                                           onChangeText={(email) => this.setState({email})}
+                                           textContentType={'emailAddress'}
+                                />
+                                <TextInput style={styles.inputBox}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Mobile No'
+                                           placeholderTextColor='#ffffff'
+                                           selectionColor='#ffffff'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(contact) => this.setState({contact})}
+                                />
+                                {/*<View style={{width:300,minHeight:40,  marginVertical: 5}}>*/}
+                                {/*<View */}
+                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                {/*style={{width:300,minHeight:40,  marginVertical: 5}}>*/}
+                                <GooglePlaceSearchBox
                                     underlineColorAndroid='rgba(0,0,0,0)'
-                                    style={{width:300,minHeight:40,  marginVertical: 5}}>
-                        <GooglePlaceSearchBox
-                            underlineColorAndroid='rgba(0,0,0,0)'
-                            placeholderTextColor='#ffffff'
-                            styles={GooglePlaceSerachStyle}
-                            onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                console.log(data, details);
-                                this.handleLocation(details)
-                            }}
-                            ref={(input) => this.password = input}
-                            placeholder='Enter Address (*)'
-                        ></GooglePlaceSearchBox>
-                    </View>
-                    <TextInput style={styles.inputBox}
-                               underlineColorAndroid='rgba(0,0,0,0)'
-                               placeholder='Password'
-                               placeholderTextColor='#ffffff'
-                               selectionColor='#ffffff'
-                               secureTextEntry
-                               ref={(input) => this.password = input}
-                               onSubmitEditing={() => this.confirmPassword.focus()}
-                               onChangeText={(password) => this.setState({password})}
-                    />
-                    <TextInput style={styles.inputBox}
-                               underlineColorAndroid='rgba(0,0,0,0)'
-                               placeholder='Confirm Password'
-                               placeholderTextColor='#ffffff'
-                               selectionColor='#ffffff'
-                               secureTextEntry
-                               ref={(input) => this.confirmPassword = input}
-                               onChangeText={(confirmPassword) => this.setState({confirmPassword})}
-                    />
+                                    placeholderTextColor='#ffffff'
+                                    styles={GooglePlaceSerachStyle}
+                                    onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                                        console.log(data, details);
+                                        this.handleLocation(details)
+                                    }}
+                                    placeholder='Enter Address (*)'
+                                />
+                                {/*</View>*/}
+                                <TextInput style={styles.inputBox}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Password'
+                                           placeholderTextColor='#ffffff'
+                                           selectionColor='#ffffff'
+                                           secureTextEntry
+                                           ref={(input) => this.password = input}
+                                           onSubmitEditing={() => this.confirmPassword.focus()}
+                                           onChangeText={(password) => this.setState({password})}
+                                />
+                                <TextInput style={styles.inputBox}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Confirm Password'
+                                           placeholderTextColor='#ffffff'
+                                           selectionColor='#ffffff'
+                                           secureTextEntry
+                                           ref={(input) => this.confirmPassword = input}
+                                           onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+                                />
 
-                    {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
+                                {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
                             selectedValue={this.state.userType}
                             onValueChange={(itemValue, itemIndex) =>
                                 this.setState({userType:itemValue})
@@ -275,48 +277,47 @@ class Register extends Component {
                             <Picker.Item label="User" value="0"/>
                             <Picker.Item label="Service Provider" value="1"/>
                         </Picker></View>*/}
-                    {/*<View style={styles.radioView}>*/}
-                        {/*<Text style={styles.radioTypeText}>Register As</Text>*/}
-                        {/*<RadioGroup style={styles.radioGrp}*/}
-                                    {/*color='#094c6b'*/}
-                            {/*//flexDirection='row'*/}
-                                    {/*labelStyle={{fontSize: 16, color: '#094c6b'}}*/}
-                                    {/*radioButtons={this.state.radioButtons}*/}
-                                    {/*onPress={radioButtons => this.setState({radioButtons})}*/}
-                        {/*/>*/}
-                    {/*</View>*/}
+                                {/*<View style={styles.radioView}>*/}
+                                {/*<Text style={styles.radioTypeText}>Register As</Text>*/}
+                                {/*<RadioGroup style={styles.radioGrp}*/}
+                                {/*color='#094c6b'*/}
+                                {/*//flexDirection='row'*/}
+                                {/*labelStyle={{fontSize: 16, color: '#094c6b'}}*/}
+                                {/*radioButtons={this.state.radioButtons}*/}
+                                {/*onPress={radioButtons => this.setState({radioButtons})}*/}
+                                {/*/>*/}
+                                {/*</View>*/}
 
-                    <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
-                        <Text style={styles.buttonText}>Register</Text>
-                    </TouchableOpacity>
-                </View>
+                                <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
+                                    <Text style={styles.buttonText}>Register</Text>
+                                </TouchableOpacity>
+                            </View>
 
-                <View style={styles.signupCont}>
-                    <Text style={styles.signupText}>Already have an account?</Text>
-                    <TouchableOpacity style={styles.navButton} onPress={() => navigate('SignIn')}>
-                        <Text style={styles.navButtonText}>Login</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-    </TouchableWithoutFeedback>
-    )
-        ;
+                            <View style={styles.signupCont}>
+                                <Text style={styles.signupText}>Already have an account?</Text>
+                                <TouchableOpacity style={styles.navButton} onPress={() => navigate('SignIn')}>
+                                    <Text style={styles.navButtonText}>Login</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </Content>
+            </Container>
+        )
+            ;
 
     }
 }
 
-const GooglePlaceSerachStyle={
+const GooglePlaceSerachStyle = {
     textInputContainer: {
-        width: 300,
+        width: "100%",
         backgroundColor: 'rgba(0,0,0,0)',
         borderTopWidth: 0,
         borderBottomWidth: 0,
-        padding:0
+        padding: 0,
+
     },
-    //container:{
-        //padding:0,
-        //borderRadius: 25,
-    //},
     description: {
         fontWeight: 'bold',
         color: colors.appLayout
@@ -332,19 +333,22 @@ const GooglePlaceSerachStyle={
         fontSize: 16,
         color: colors.whiteText,
         // marginVertical: 5,
-        height:40,
-        margin:0 ,
-        marginTop:0,
-        marginLeft:0,
-        marginRight:0,
-        paddingTop:0,
-        paddingButtom:0
+        height: 40,
+        margin: 0,
+        marginTop: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        paddingTop: 0,
+        paddingBottom: 0
     },
+    listView: {
+        flex: 1,
+    }
 
 }
 
 const styles = StyleSheet.create({
-    container: {
+    content: {
         backgroundColor: colors.appBackground,
         flex: 1,
         alignItems: 'center',
@@ -352,14 +356,14 @@ const styles = StyleSheet.create({
     },
 
     containerRegister: {
-        flexGrow: 1,
+        //  flexGrow: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%'
+        marginHorizontal:30
     },
 
     inputBox: {
-        width: 300,
+        width: '100%',
         height: 40,
         backgroundColor: colors.inputBackground,
         borderRadius: 25,
@@ -390,7 +394,7 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        width: 300,
+        width: '100%',
         backgroundColor: colors.buttonPrimaryBackground,
         borderRadius: 25,
         marginVertical: 10,
@@ -439,7 +443,7 @@ const styles = StyleSheet.create({
 });
 
 export default Register;
-const capitalzeFirstLetter=(str)=> {
+const capitalzeFirstLetter = (str) => {
     var splitStr = str.toLowerCase().split(' ');
     for (var i = 0; i < splitStr.length; i++) {
         // You do not need to check if i is larger than splitStr length, as your for does that for you
