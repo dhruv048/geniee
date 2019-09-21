@@ -27,7 +27,7 @@ class Chat extends Component {
         let Message = message.messageData;
         if (message.from != loggedUser)
             return (
-                <View key={message._id} style={{marginRight: '20%', marginLeft: '1%',marginTop:5, width:'79%'}}>
+                <View key={message._id} style={{marginRight: '20%', marginLeft: '1%',marginTop:5, width:'79%', flexDirection: 'row'}}>
                     <View style={{  backgroundColor: '#e6e6e6',padding: 5, borderRadius: 8}}>
                     {Message.type === 'text' ?
                         <Text style={{
@@ -50,15 +50,17 @@ class Chat extends Component {
                                     color: colors.appLayout
                                 }}>{Message.fileName || ''}</Text>
                             </View>
+                            
                         </TouchableOpacity>
                     }
-                    </View>
-                    <Text style={{alignSelf: 'flex-start'}}
+                    <Text style={{alignSelf: 'flex-end'}}
                           note>{Moment(message.messageOn).local().format('hh:mm A')}</Text>
+                    </View>
+                    
                 </View>
             )
         else return (
-            <View key={message._id} style={{marginRight: '1%', marginLeft: '20%',marginTop:5, width:'79%'}}>
+            <View key={message._id} style={{marginRight: '1%', marginLeft: '20%',marginTop:5, width:'79%', flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
                 <View style={{  backgroundColor: '#acd1e3',padding: 5, borderRadius: 8}}>
                 {Message.type === 'text' ?
                     <Text style={{alignSelf: 'flex-end'}}>{Message.message}</Text>
@@ -75,7 +77,6 @@ class Chat extends Component {
                         </View>
                     </TouchableOpacity>
                 }
-                </View>
                 <View style={{
                     flexDirection: 'row',
                     justifyContent: 'center',
@@ -88,6 +89,8 @@ class Chat extends Component {
                         <Icon name={'eye-off'} size={13} style={{color: 'black', marginHorizontal: 5}}/>
                     }
                 </View>
+                </View>
+                
             </View>
 
         )
@@ -391,31 +394,34 @@ class Chat extends Component {
                     </ScrollView>
                     </View>
                 </View>
-                <Footer style={{backgroundColor: 'white', flexDirection: 'column',height: this.state.height + 10}}>
-                    <Item style={{width: '100%',}}>
-                        <Input
+                <Footer style={{backgroundColor:  '#094c6b', paddingTop: 5, height: this.state.height + 10, flexDirection: 'row', width: '100%'}}>
+                    <Input
                             placeholder={'Write Message'}
                             value={this.state.message}
                             multiline={true}
                             onContentSizeChange={(e) => this.updateSize(e.nativeEvent.contentSize.height)}
-                            style={[{backgroundColor: 'white', borderWidth: 1, borderRadius: 5}, newStyle]}
+                            style={[{backgroundColor: '#f2f2f2', borderWidth: 1, borderRadius: 5, borderColor: '#c6c6c6', width: '66%', marginHorizontal: '2%'}, newStyle]}
                             onChangeText={(message) => {
                                 this.setState({message})
                             }}
                             onFocus={this._handleTyping.bind(this)}
                             onBlur={this._handleNotTyping}
                         />
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center',}}>
-                            <Button transparent onPress={this._senFile}>
-                                <Icon name='paperclip' size={25}/></Button>
-                            <Button transparent style={{marginHorizontal: 5}} onPress={this._sendImageCamera}>
-                                <Icon name='camera' size={25}/></Button>
-                            <Button transparent onPress={this._sendMessage}>
-                                <Icon
+
+                    <View style={{flexDirection: 'row', width: '30%', alignSelf: 'flex-end'}}>
+                    <Button transparent onPress={this._senFile} style={{marginHorizontal: 8}}>
+                                <Icon name='paperclip' size={20} color='white'/></Button>
+                            <Button transparent style={{marginHorizontal: 8}} onPress={this._sendImageCamera}>
+                                <Icon name='camera' size={20} color='white'/></Button>
+                            <Button transparent onPress={this._sendMessage} style={{marginHorizontal: 8}}>
+                                {/*<Icon                                     
                                     style={{color: this.state.message.length > 1 || this.state.files.length > 0 ? colors.appLayout : undefined}}
-                                    name='send' size={25}/></Button>
-                        </View>
-                    </Item>
+                                name='send' size={20} color='white'/>*/}
+                                <Icon name='send' size={20} color='white'/>
+                            </Button>
+                    </View>
+                    
+                    
                 </Footer>
             </Container>
         );

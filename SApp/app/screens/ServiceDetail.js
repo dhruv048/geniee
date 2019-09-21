@@ -223,7 +223,7 @@ class ServiceDetail extends Component {
                     </Body>
                 </Header>
 
-                <Content padder style={{marginVertical: 0, paddingVertical: 0}}>
+                <Content style={{marginVertical: 0, paddingVertical: 0}}>
                     {this.state.isLoading === true ? <Loading/> : null}
 
                     {Service.coverImage === null ?
@@ -233,15 +233,9 @@ class ServiceDetail extends Component {
                     }
 
                     <Text style={styles.name}>{Service.title}</Text>
-<<<<<<< HEAD
                             
-                    <View style={ styles.starView }><StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(Service.ratings) : 0}/></View>
+                    <View style={ styles.starView }><StarRating starRate={Service.avgRate}/></View>
                     
-=======
-
-                    <View style={styles.starView}><StarRating starRate={3}/></View>
-
->>>>>>> 36d84d0ca4bc3c136a48ca70225c259f860c276b
                     {(Service.location.hasOwnProperty('formatted_address')) ?
                         <Text style={styles.availableText}>{Service.location.formatted_address}
                         </Text> :
@@ -263,8 +257,7 @@ class ServiceDetail extends Component {
 
 
                     {(Service.hasOwnProperty('radius') && Service.radius > 0) ?
-                        <Text style={styles.serviceText}> Servie Area : Within {Service.radius} KM Radius from
-                            Address.</Text> : null
+                        <Text style={styles.serviceText}>Servie Area : Within {Service.radius} KM Radius from Address</Text> : null
                     }
 
                     <Text style={styles.infoText}>
@@ -430,15 +423,9 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 22,
-<<<<<<< HEAD
         //color: "#696969",
         fontWeight: 'bold',        
         color: '#000',
-=======
-        color: "#696969",
-        fontWeight: 'bold',
-        color: '#ffffff',
->>>>>>> 36d84d0ca4bc3c136a48ca70225c259f860c276b
         width: '100%',
         backgroundColor: colors.inputBackground,
         //backgroundColor: '#094c6b0a',

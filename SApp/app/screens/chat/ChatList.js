@@ -4,8 +4,7 @@ import {
 } from 'native-base';
 
 import {
-    StyleSheet, StatusBar, View, FlatList, TouchableOpacity
-
+    StyleSheet, StatusBar, View, FlatList, TouchableOpacity,TouchableWithoutFeedback
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {colors} from "../../config/styles";
@@ -49,16 +48,16 @@ class ChatList extends Component {
         item.user = item.Users.find(item => item._id !== logged);
 
         return (
-            <ListItem style={{width: '100%'}} key={data.item._id}>
-                <TouchableOpacity onPress={() => {
+            <View key={data.item._id} style={styles.serviceList}>
+                <TouchableWithoutFeedback onPress={() => {
                     this._handlePress(item)
                 }}>
-                    <View style={{flexDirection: 'row', width: '100%'}}>
-                        <View>
+                    <ListItem thumbnail>
+                        <Left>
                             <Thumbnail
                                 source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL+'images/' + item.user.profile.profileImage} : require('../../images/duser.png')}/>
-                        </View>
-                        <View style={{marginHorizontal: 10}}>
+                        </Left>
+                        <Body>
                             <View style={{flexDirection: 'row'}}>
                                 <Text>{item.user.profile.name}</Text>
                                 {item.unreadMessagesCount > 0 ?
@@ -79,7 +78,14 @@ class ChatList extends Component {
                                 <View style={{flexDirection: 'row'}}>
                                     {item.Message.type == 'text' ?
                                         <Text note numberOfLines={2}>{item.Message.message}</Text> : <Icon name={'file'} size={20}/>}
-                                    {item.latestMessage.from !== logged ?
+                                    
+                                </View>
+                                : null
+                            }
+                        </Body>
+                        {item.Message ?
+                        <Right>
+                        {item.latestMessage.from !== logged ?
                                         <Text style={{alignSelf: 'flex-end'}}
                                               note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text> :
                                         <View style={{
@@ -95,13 +101,12 @@ class ChatList extends Component {
                                                       style={{color: 'black', marginHorizontal: 5}}/>
                                             }
                                         </View>}
-                                </View>
-                                : null
-                            }
-                        </View>
-                    </View>
-                </TouchableOpacity>
-            </ListItem>
+                        </Right>
+                        : null
+                    }
+                    </ListItem>
+                </TouchableWithoutFeedback>
+            </View>
         )
     }
 
@@ -150,7 +155,18 @@ class ChatList extends Component {
 const styles = StyleSheet.create({
     content: {
         backgroundColor: colors.appBackground,
-    }
+        flex: 1
+    },
+    serviceList: {
+        //backgroundColor: colors.inputBackground,
+        backgroundColor: '#094c6b0a',
+        //marginVertical: 5,
+        //marginHorizontal: '2%',
+        borderRadius: 0,
+        borderBottomColor: '#094c6b',
+        borderBottomWidth: 5,
+        paddingVertical: 10
+    },
 });
 
 export default withTracker(() => {
