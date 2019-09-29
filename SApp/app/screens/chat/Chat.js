@@ -9,6 +9,7 @@ import {
 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from "../../config/styles";
 import Meteor, {withTracker} from 'react-native-meteor';
 import settings from "../../config/settings";
@@ -85,8 +86,9 @@ class Chat extends Component {
                 }}>
                     <Text note>{Moment(message.messageOn).local().format('hh:mm A')}</Text>
                     {message.seen ?
-                        <Icon name={'eye'} size={13} style={{color: colors.appLayout, marginHorizontal: 5}}/> :
-                        <Icon name={'eye-off'} size={13} style={{color: 'black', marginHorizontal: 5}}/>
+                        <MaterialIcon name={'done-all'} size={13}
+                                      style={{color: colors.appLayout, marginHorizontal: 5}}/> :
+                        <MaterialIcon name={'done'} size={13} style={{color: '#8E8E8E', marginHorizontal: 5}}/>
                     }
                 </View>
                 </View>

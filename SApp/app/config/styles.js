@@ -1,3 +1,5 @@
+import {StyleSheet} from 'react-native';
+
 export const colors = {
   appBackground: '#05a5d10d',
   statusBar: '#094c6b',
@@ -8,3 +10,18 @@ export const colors = {
   whiteText: '#ffffff',
     appLayout:'#094c6b'
 };
+
+export const customStyle = StyleSheet.create({
+
+    noList: {
+        padding: 20,
+        //flex: 1,
+       flexDirection: 'column',
+       alignItems: 'center',
+       justifyContent: 'center',
+    },
+    noListTextColor: {
+        color: '#8E8E8E'
+    },
+})
+

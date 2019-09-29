@@ -10,7 +10,7 @@ import Home from '../screens/Home';
 import Settings, {userType} from '../screens/Settings';
 import ServiceDetail from '../screens/ServiceDetail';
 import Details from '../screens/Details';
-import AddService from '../screens/AddService';
+import AddService from './services/AddService';
 import ChatList from './chat/ChatList';
 import {Container, Content, Header, Body} from 'native-base';
 import React from 'react';
@@ -30,6 +30,7 @@ import MessageCount from "../components/MessageCount/MessageCount";
 import AddProduct from "./store/AddProduct";
 import ProductDetail from "./store/ProductDetail";
 import ImageGallery from "./store/ImageGallery";
+import MyServices from "./services/MyServices";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -71,7 +72,18 @@ export const ServiceStack = createStackNavigator({
     Home: {
         screen: Home,
     },
-    Service: {
+
+}, {
+    headerMode: 'none',
+    initialRouteName:'Home'
+});
+
+
+export const MyServiceStack = createStackNavigator({
+    MyServices: {
+        screen: MyServices,
+    },
+    MyService: {
         screen: ServiceDetail,
     },
     ProductDetail:{
@@ -82,7 +94,7 @@ export const ServiceStack = createStackNavigator({
     },
 }, {
     headerMode: 'none',
-    initialRouteName:'Home'
+    initialRouteName:'MyServices'
 });
 export const HomeStack = createStackNavigator({
     Dashboard: {
@@ -98,8 +110,15 @@ export const HomeStack = createStackNavigator({
     Chat: {
         screen: Chat,
     },
-
-
+    Service: {
+        screen: ServiceDetail,
+    },
+    ProductDetail:{
+        screen:ProductDetail,
+    },
+    ImageGallery: {
+        screen: ImageGallery
+    },
     // signIn:{
     //     screen:AuthStack,
     // },
@@ -168,6 +187,16 @@ export const MainNavigation = createDrawerNavigator({
             drawerLabel: "ADD PRODUCT",
             drawerIcon: (
                 <Icon name='plus' size={24}/>
+            )
+        }
+    },
+
+    MyServices: {
+        screen: MyServiceStack,
+        navigationOptions: {
+            drawerLabel: "MY SERVICES",
+            drawerIcon: (
+                <Icon name='tasks' size={24}/>
             )
         }
     },

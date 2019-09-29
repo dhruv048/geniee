@@ -5,7 +5,7 @@ import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal, StatusBa
 }
 import {SafeAreaView} from "react-navigation";
 import Autocomplete from 'native-base-autocomplete';
-import {colors} from "../config/styles";
+import {colors} from "../../config/styles";
 import {
     Container,
     Content,
@@ -24,8 +24,8 @@ import {
     Right
 } from 'native-base';
 import Meteor, {createContainer} from "react-native-meteor";
-import GooglePlaceSearchBox from '../components/GooglePlaceSearch';
-import GoogleSearch from '../components/GooglePlaceSearch/GoogleSearch'
+import GooglePlaceSearchBox from '../../components/GooglePlaceSearch/index';
+import GoogleSearch from '../../components/GooglePlaceSearch/GoogleSearch'
 
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
