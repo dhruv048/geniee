@@ -85,9 +85,7 @@ Meteor.publish('myServices', function () {
   return  Service.find({createdBy:logged});
 })
 
-Meteor.publish('products',(Id)=>{
-    return Product.find({service:Id});
-});
+
 
 // }
 

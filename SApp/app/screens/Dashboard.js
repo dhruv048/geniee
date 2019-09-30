@@ -28,15 +28,11 @@ import {
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle} from '../config/styles';
-import SplashScreen from "react-native-splash-screen";
+const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from "../config/settings";
 import TouchableWithoutFeedback from "react-native-gesture-handler/touchables/TouchableWithoutFeedback";
 import StarRating from "../components/StarRating/StarRating";
 import Product from "../components/Store/Product";
-// import { Header } from 'react-native-elements';
-
-const window = Dimensions.get('window');
-
 class Dashboard extends Component {
 
     constructor(props) {
@@ -254,12 +250,18 @@ class Dashboard extends Component {
 
     }
 
+    _handleProductPress=(pro)=>{
+        Meteor.subscribe('products', pro.service);
+        this.props.navigation.navigate("ProductDetail", {'Id': pro._id})
+    }
+
     _renderProduct = (data, index) => {
         let item = data.item;
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("ProductDetail", {'Id': item._id})}
-                              style={styles.containerStyle}>
+            <TouchableOpacity onPress={() =>this._handleProductPress(item) }
+                              style={styles.productContainerStyle}>
                 <Product key={item._id} product={item}/>
+
             </TouchableOpacity>
         )
     }
@@ -314,7 +316,7 @@ class Dashboard extends Component {
                                 </Text>
 
                             </View>
-                            {this.state.services.length>1 ?
+                            {this.state.services.length>0 ?
                             <FlatList style={styles.contentList}
                                       data={this.state.services}
                                       renderItem={this._getListItem}
@@ -333,7 +335,7 @@ class Dashboard extends Component {
                                 </Text>
 
                             </View>
-                            {this.state.products.length>1 ?
+                            {this.state.products.length>0 ?
                             <FlatList style={styles.mainContainer}
                                       data={this.state.products}
                                       keyExtracter={(item, index) => item._id}
@@ -388,19 +390,78 @@ const styles = StyleSheet.create({
     activeTabText: {
         color: '#ffffff'
     },
+    serviceList: {
+        //backgroundColor: colors.inputBackground,
+        backgroundColor: '#094c6b0a',
+        //marginVertical: 5,
+        //marginHorizontal: '2%',
+        borderRadius: 5,
+        borderBottomColor: '#094c6b',
+        borderBottomWidth: 10
+    },
+    serviceTitle: {
+        color: '#000000',
+        fontWeight: 'bold',
+    },
+    serviceAddress: {
+        color: '#000000',
+    },
+    serviceDist: {
+        color: '#000000',
+    },
+    serviceAction: {
+        //flexDirection: 'row',
+        //justifyContent: 'center',
+        //alignItems: 'center',
+    },
+    serviceIconBtn: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    contentList: {
+        //marginVertical: 3,
+        //paddingVertical: 3
+    },
+    image: {
+        width: 50,
+        height: 56,
+        borderRadius: 25,
+        backgroundColor: '#000000'
+    },
+    banner: {
+        width: 80,
+        height: 50,
+        borderRadius: 3,
+        backgroundColor: '#000000'
+    },
+    footerTab: {
+        backgroundColor: '#094c6b',
+        borderTopWidth: 3,
+        borderTopColor: '#000000',
+    },
+    activeTab: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#f2f2f2',
+
     searchInput: {
-        //borderBottomWidth: 3,
-        //borderBottomColor: '#000000',
         color: '#ffffff',
-        //backgroundColor: '#898e907a',
-        // height: 40,
-        // width: 300,
-        // paddingHorizontal: 16,
         borderTopWidth: 0,
         borderRightWidth: 0,
         borderLeftWidth: 0,
         borderBottomWidth: 0,
-    }
+    },
+
+    productContainerStyle: {
+        flex: 1,
+        borderWidth: 0,
+        marginHorizontal:5,
+        marginVertical:5,
+        borderColor: '#808080',
+        elevation: 2,
+        width: (viewportWidth / 2) - 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
 })
 export default withTracker(() => {
 

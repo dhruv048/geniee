@@ -194,7 +194,7 @@ if (Meteor.isServer) {
             //         }
             //     }
             // ];
-            let products = Product.find(
+            let products = Products.find(
                 {$text: {$search: searchValue}},
                 {
                     fields: {
@@ -216,6 +216,7 @@ if (Meteor.isServer) {
                     }
                 }, {limit: 50}
             ).fetch();
+            console.log(products);
             // let Service = MongoInternals.defaultRemoteCollectionDriver().mongo.db.collection('service');
             // Service.aggregate(
             //     pipeline, {cursor: {}}

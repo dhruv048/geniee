@@ -223,7 +223,7 @@ Meteor.methods({
                                 if(productInfo.images.length===imageIds.length){
                                     productInfo.images = imageIds;
                                     console.log('insert')
-                                    return Product.insert(productInfo);
+                                    return Products.insert(productInfo);
                                 }
                             }
                         }, proceedAfterUpload = true)
@@ -232,7 +232,7 @@ Meteor.methods({
             else {
                 productInfo.images = [];
                 console.log('insert')
-                return Product.insert(productInfo);
+                return Products.insert(productInfo);
             }
 
         }

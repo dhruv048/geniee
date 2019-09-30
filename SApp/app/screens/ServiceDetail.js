@@ -183,9 +183,11 @@ class ServiceDetail extends Component {
     _renderProduct=(data,index)=>{
         let item=data.item;
         return(
+            <View style={{width:'50%'}}>
             <TouchableOpacity onPress={()=>this.props.navigation.navigate("ProductDetail", {'Id':item._id})} style={styles.containerStyle}>
             <Product key={item._id} product={item}   />
             </TouchableOpacity>
+            </View>
         )
     }
     render() {

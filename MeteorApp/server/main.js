@@ -145,7 +145,7 @@ Meteor.startup(function () {
         "location.geometry" : "2dsphere"
     })
 
-    Product._ensureIndex({
+    Products._ensureIndex({
         "title": "text",
         "description": "text",
     })
