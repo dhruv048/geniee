@@ -445,7 +445,7 @@ export default withTracker((props) => {
     Meteor.subscribe('typerList',channel.channelId);
     console.log(Meteor.collection('users').find())
     return {
-        messages: Meteor.collection('chatMessages').find({}, {$sort: {_id: -1}}),
+        messages: Meteor.collection('chatMessages').find({}, {$sort: {nepaliDate: -1}}),
         user:Meteor.collection('users').findOne({_id:channel.user.userId}),
         typerList:Meteor.collection('typingList').find()
     }

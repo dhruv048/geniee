@@ -82,8 +82,8 @@ Meteor.publish('aggChatChannels', function () {
 
             }
         }], {
-        debounceCount: 100,
-        debounceDelay: 100,
+        // debounceCount: 100,
+        // debounceDelay: 100,
         observers: [
             ChatChannels.find({users: Meteor.userId()}),
             ChatItems.find({$or:[{from: Meteor.userId()},{to:Meteor.userId()}]})
@@ -102,22 +102,6 @@ Meteor.publish('chatItemsGroupByDate', function (channelId) {
         ReactiveAggregate(this, ChatItems, [
             {$match: {channelId: channelId}},
             {
-                $project: {
-                    nepalDateTime: {
-                        $dateToString: {
-                            format: "%Y-%m-%d-%H:%M:%S",
-                            date: "$messageOn",
-                            timezone: "Asia/Kathmandu"
-                        }
-                    },
-                    _id: 1,
-                    from: 1,
-                    messageOn: 1,
-                    messageData: 1,
-                    seen: 1
-                }
-            },
-            {
                 $sort: {messageOn: 1}
             },
             {
@@ -128,13 +112,29 @@ Meteor.publish('chatItemsGroupByDate', function (channelId) {
                     messages: {$push: "$$ROOT"},
                 }
             },
-            {$sort: {_id: -1}},
+            {
+                $addFields: {
+                    nepaliDate: {
+                        $dateFromString: {
+                            dateString: {
+                                $dateToString: {
+                                    format: "%Y-%m-%d",
+                                    date: "$messageOn",
+                                    timezone: "Asia/Kathmandu"
+                                }
+                            }
+                        }
+                    },
+                }
+            },
+            {$sort: {nepaliDate: -1}},
             {
                 $project: {
                     // an id can be added here, but when omitted,
                     // it is created automatically on the fly for you
                     _id: 1,
                     messages: 1,
+                    nepaliDate:1,
                 }
             }
         ], {clientCollection: 'chatMessages'});

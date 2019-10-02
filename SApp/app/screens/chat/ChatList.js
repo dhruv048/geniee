@@ -16,18 +16,37 @@ import Moment from "moment/moment";
 class ChatList extends Component {
     constructor(props) {
         super(props);
-        this._handlePress = this._handlePress.bind(this)
+        this._handlePress = this._handlePress.bind(this);
+        this.state = {
+            chatList: [],
+        }
     }
 
     componentDidMount() {
-
+        this.setState({chatList: this.props.chatChannels})
     }
 
-
-    componentWillUnmount() {
-
+    componentWillReceiveProps(newProps) {
+        //    this.setState({chatList:[]})
+        let sorteData = newProps.chatChannels.sort((a, b) => {
+            if (!b.latestMessage.hasOwnProperty('messageOn')) {
+                return -1;
+            }
+            else if (!b.latestMessage.hasOwnProperty('messageOn')) {
+                return -1;
+            }
+            else if (
+                a.latestMessage.messageOn.getTime() < b.latestMessage.messageOn.getTime()) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+        // console.log('received new props..', newProps.chatChannels)
+        // console.log('sortedData', sorteData);
+        this.setState({chatList: sorteData})
     }
-
     _handlePress = (channel) => {
         let Channel = {
             channelId: channel._id,
@@ -87,14 +106,15 @@ class ChatList extends Component {
                         {item.Message ?
                         <Right>
                         {item.latestMessage.from !== logged ?
-                                        <Text style={{alignSelf: 'flex-end'}}
-                                              note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text> :
+                                        <Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().fromNow()}</Text>
+                                        // <Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text>
+                            :
                                         <View style={{
                                             flexDirection: 'row',
                                             alignSelf: 'flex-end',
                                         }}>
-                                            <Text style={{alignSelf: 'flex-end'}}
-                                                  note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text>
+                                            {/*<Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text>*/}
+                                            <Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().fromNow()}</Text>
                                             {item.latestMessage.seen ?
                                                 <MaterialIcon name={'done-all'} size={13}
                                                 style={{color: colors.appLayout, marginHorizontal: 5}}/> :
@@ -141,7 +161,7 @@ class ChatList extends Component {
                 </Header>
                 <Content style={styles.content}>
                     <FlatList
-                        data={this.props.chatChannels}
+                        data={this.state.chatList}
                         renderItem={this._renderList}
                         keyExtractor={item => item._id}
                     />
