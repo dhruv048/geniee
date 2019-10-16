@@ -233,7 +233,7 @@ class Chat extends Component {
         this._sendMessage = this._sendMessage.bind(this);
         this.viewabilityConfig = {
             minimumViewTime: 100,
-            viewAreaCoveragePercentThreshold: 50
+            viewAreaCoveragePercentThreshold: 20
         }
         this._onViewChange = this._onViewChange.bind(this);
         this._showFile = this._showFile.bind(this);

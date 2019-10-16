@@ -44,20 +44,7 @@ import Geolocation from 'react-native-geolocation-service';
 import StarRating from "../components/StarRating/StarRating";
 
 class Home extends Component {
-    _callPhone = (number) => {
-        // let res=  this.onEsewaComplete();
-        // alert(res);
-        console.log(number)
-        if (!number) {
-            Alert.alert('Contact No. Unavailable for the Service')
-        }
 
-        const args = {
-            number: number, // String value with the number to call
-            prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
-        }
-        call(args).catch(console.error)
-    }
     _handlItemPress = (service) => {
         service.avgRate = this.averageRating(service.ratings);
         this.props.navigation.navigate('Service', {Id: service});
@@ -332,12 +319,14 @@ class Home extends Component {
                         </View>
                         </Body>
                         <Right>
+                            {(data.item.contact ||data.item.contact1)?
                             <Button transparent style={styles.serviceIconBtn} onPress={() => {
-                                this._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
+                                MyFunctions._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
                             }}>
                                 {/*<Icon name={'call'} color={'green'}/>*/}
                                 <Icon name={'call'} size={20} style={styles.catIcon}/>
                             </Button>
+                                :null}
                             
                         </Right>
 

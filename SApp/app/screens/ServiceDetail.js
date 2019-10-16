@@ -29,6 +29,7 @@ import {DeviceEventEmitter} from 'react-native';
 import {NativeModules} from 'react-native';
 import {FlatListItem} from "../components/FlatListItem";
 import Product from "../components/Store/Product";
+import MyFunctions from "../lib/MyFunctions";
 
 //const { RNEsewaSdk } = NativeModules;
 
@@ -39,20 +40,6 @@ class ServiceDetail extends Component {
         this.setState({
             starCount: rating,
         });
-    }
-    _callPhone = (number) => {
-        // let res=  this.onEsewaComplete();
-        // alert(res);
-        // console.log(res)
-        if (!number) {
-            Alert.alert('Contact No. Unavailable for the Service')
-        }
-
-        const args = {
-            number: number, // String value with the number to call
-            prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
-        }
-        call(args).catch(console.error)
     }
 
 
@@ -310,12 +297,14 @@ class ServiceDetail extends Component {
                 </Content>
                 <Footer>
                     <FooterTab style={{backgroundColor: '#094c6b'}}>
+                        {(Service.contact ||Service.contact1)?
                         <Button onPress={() => {
-                            this._callPhone(Service.contact ? Service.contact : Service.contact1)
+                            MyFunctions._callPhone(Service.contact ? Service.contact : Service.contact1)
                         }}>
                             <Icon name="md-call"/>
                             <Text style={{color: '#ffffff'}}>Call</Text>
                         </Button>
+                            :null}
                         {this.props.user &&
                         Service.createdBy != null && this.props.user._id != Service.createdBy ?
                             <Button onPress={() => {

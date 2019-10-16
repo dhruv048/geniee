@@ -4,6 +4,8 @@ import CryptoJS from "react-native-crypto-js";
 import settings from "../config/settings"
 
 import FileViewer from 'react-native-file-viewer';
+import {Alert} from "react-native";
+import call from "react-native-phone-call";
 
 var RNFS = require('react-native-fs');
 
@@ -35,6 +37,27 @@ export const MyFunctions = {
                 return true;
             else
                 return false
+        }
+    },
+    calculateDistance: (lat1,lon1,lat2,lon2)=>{
+console.log(lat1,lon1,lat2,lon2)
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return false;
+        }
+        else {
+            var radlat1 = Math.PI * lat1/180;
+            var radlat2 = Math.PI * lat2/180;
+            var theta = lon1-lon2;
+            var radtheta = Math.PI * theta/180;
+            var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180/Math.PI;
+            dist = dist * 60 * 1.1515;
+            dist = dist * 1.609344;
+            return dist.toFixed(2);
         }
     },
 
@@ -147,6 +170,23 @@ export const MyFunctions = {
             .catch(error => {
                 console.log(error)
             });
+    },
+
+    _callPhone:(number) => {
+        // let res=  this.onEsewaComplete();
+        // alert(res);
+        console.log(number)
+        if (!number) {
+            Alert.alert('Contact No. Unavailable for the Service')
+        }
+        if(number.includes(',')){
+            number=number.split(',')[0]
+        }
+        const args = {
+            number: number, // String value with the number to call
+            prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
+        }
+        call(args).catch(console.error)
     }
 };
 

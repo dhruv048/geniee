@@ -9,7 +9,7 @@ import {
     ImageBackground,
     TouchableOpacity,
     ActivityIndicator,
-    FlatList
+    FlatList, PermissionsAndroid
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {
@@ -33,6 +33,7 @@ import settings from "../config/settings";
 import TouchableWithoutFeedback from "react-native-gesture-handler/touchables/TouchableWithoutFeedback";
 import StarRating from "../components/StarRating/StarRating";
 import Product from "../components/Store/Product";
+import MyFunctions from "../lib/MyFunctions";
 class Dashboard extends Component {
 
     constructor(props) {
@@ -47,16 +48,25 @@ class Dashboard extends Component {
         this.arrayholder;
         this.currentSearch = '';
         this.region = {
-            latitude: 27.712020,
-            longitude: 85.312950,
+            latitude: '',
+            longitude: '',
         };
         this.granted;
+        this.watchID;
     }
 
-    componentDidMount() {
+    async componentDidMount()  {
         Meteor.subscribe('categories-list');
-        Meteor.subscribe('aggChatChannels')
-        console.log("You can use locations ")
+        Meteor.subscribe('aggChatChannels');
+        this.granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                'title': 'Location Permission',
+                'message': 'This App needs access to your location ' +
+                'so we can know where you are.'
+            }
+        )
+        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
         Geolocation.getCurrentPosition(
             (position) => {
                 console.log(position);
@@ -72,8 +82,26 @@ class Dashboard extends Component {
             },
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
         );
+        } else {
+            console.log("Location permission denied")
+        }
         this.setState({categories: this.props.categories ? this.props.categories : [], loading: false})
-        this.arrayholder = this.props.categories ? this.props.categories : []
+        this.arrayholder = this.props.categories ? this.props.categories : [];
+        this.watchID = Geolocation.watchPosition(
+            (position) => {
+                console.log(position);
+                let region = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                }
+                this.region = region;
+            },
+            (error) => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+            },
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+        );
     }
 
     componentWillReceiveProps(newProps) {
@@ -83,6 +111,10 @@ class Dashboard extends Component {
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch)
         }
+    }
+    componentWillUnmount() {
+        this.mounted = false;
+        this.watchID != null && Geolocation.clearWatch(this.watchID);
     }
 
     _search = (text) => {
@@ -156,7 +188,7 @@ class Dashboard extends Component {
         let sum = 0;
         arr.forEach(item => {
             sum = sum + item.count;
-        })
+        });
         var avg = sum / arr.length;
         return Math.round(avg);
     }
@@ -200,6 +232,8 @@ class Dashboard extends Component {
     }
     _getListItem = (data) => {
         let rowData = data.item;
+        let distance=MyFunctions.calculateDistance(this.region.latitude,this.region.longitude,rowData.location.geometry.location.lat,rowData.location.geometry.location.lng);
+        console.log(distance);
         return (
             <View key={data.item._id} style={styles.serviceList}>
                 <TouchableWithoutFeedback onPress={() => {
@@ -219,10 +253,9 @@ class Dashboard extends Component {
                             <Text note numberOfLines={1}
                                   style={styles.serviceAddress}>{rowData.location.formatted_address}</Text> : null}
 
-                        {rowData.dist ?
+                        {distance ?
                             <Text note
-                                  style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text> : null}
-                        {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
+                                  style={styles.serviceDist}>{distance} KM</Text> : null}
                         <View style={styles.serviceAction}>
                             <StarRating
                                 starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>
@@ -234,12 +267,14 @@ class Dashboard extends Component {
                         </View>
                         </Body>
                         <Right>
+                            {(data.item.contact ||data.item.contact1)?
                             <Button transparent style={styles.serviceIconBtn} onPress={() => {
-                                this._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
+                                MyFunctions._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
                             }}>
                                 {/*<Icon name={'call'} color={'green'}/>*/}
                                 <Icon name={'phone'} size={20} style={styles.catIcon}/>
                             </Button>
+                            :null}
 
                         </Right>
 
@@ -442,6 +477,7 @@ const styles = StyleSheet.create({
     activeTab: {
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
+    },
 
     searchInput: {
         color: '#ffffff',
