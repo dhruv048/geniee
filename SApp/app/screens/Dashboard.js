@@ -44,6 +44,7 @@ class Dashboard extends Component {
             services: [],
             products: [],
             searchMode: false,
+            showSearchBar: false,
         };
         this.arrayholder;
         this.currentSearch = '';
@@ -53,7 +54,17 @@ class Dashboard extends Component {
         };
         this.granted;
         this.watchID;
+        //this.onClick = this.onClick.bind(this);
     }
+
+    handleOnPress = () => this.setState({showSearchBar:true});
+    handleOnPressUnset = () => this.setState({showSearchBar:false});
+    //onClick() {
+        //let { showSearchBar } = this.state.showSearchBar;
+        //this.setState({
+            //showSearchBar: !showSearchBar,
+        //});
+    //}
 
     async componentDidMount()  {
         Meteor.subscribe('categories-list');
@@ -302,38 +313,68 @@ class Dashboard extends Component {
     }
 
     render() {
-        console.log(this.state.products,this.state.services)
+        console.log(this.state.products,this.state.services);
+        const { showSearchBar } = this.state.showSearchBar;
         return (
             <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
                 <StatusBar
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'
                 />
-                <Header style={{backgroundColor: '#094c6b'}}>
-                    <Left style={{flex: 1}}>
-                        <Button transparent onPress={() => {
-                            this.props.navigation.openDrawer()
-                        }}>
-                            <Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>
-                    </Left>
-                    <Body style={{flexDirection: 'row', flex: 6}}>
+                
+                    {this.state.showSearchBar==false ? (
+                        <Header style={{backgroundColor: '#094c6b'}}>
+                        <Left style={{flex: 1}}>
+                            <Button transparent onPress={() => {
+                                this.props.navigation.openDrawer()
+                            }}>
+                                <Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>
+                        </Left>
+                        <Body>
+                        <Text style={{color: 'white', fontSize: 18, fontWeight: '500'}}>
+                        Home
+                    </Text>
+                        </Body>
+                        <Right>
+                        <Button transparent onPress={this.handleOnPress}>
+                            <Icon name={'search'} size={25} color={'white'}/></Button>
+                        </Right>
+                        </Header>
+                        ) : (
+                            <Header style={{backgroundColor: '#094c6b'}}>
+                        <Left style={{flex: 1}}>
+                            <Button transparent onPress={() => {
+                                this.props.navigation.openDrawer()
+                            }}>
+                                <Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>
+                        </Left>
+                            <Body style={{flexDirection: 'row', flex: 6}}>
+                    
+                    
                     <Item style={{height: 40, width: '90%'}}>
-                        {/*<Button transparent onPress={()=>{}}>*/}
+                        
                         <Icon style={styles.activeTabIcon} name='search' size={15}/>
-                        {/*</Button>*/}
+                        
                         <Input placeholder="Search" style={styles.searchInput}
                                placeholderTextColor='#ffffff'
                                selectionColor='#ffffff'
-                            //  underlineColorAndroid="transparent"
+                            
                                onChangeText={(searchText) => {
                                    this._search(searchText)
                                }}
                                autoCorrect={false}
                         />
+                        <Right>
+                        <Button transparent onPress={this.handleOnPressUnset}>
+                            <Icon name={'close'} size={25} color={'white'}/></Button></Right>
                     </Item>
                     </Body>
+                    </Header>
+                        )}
+                    
+                    
 
-                </Header>
+                
                 {this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}
                 <Content style={{width: '100%', flex: 1,}}>
                     {/*<ScrollView style={{width: '100%', flex: 1}}>*/}
@@ -430,9 +471,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#094c6b0a',
         //marginVertical: 5,
         //marginHorizontal: '2%',
-        borderRadius: 5,
+        borderRadius: 0,
         borderBottomColor: '#094c6b',
-        borderBottomWidth: 10
+        borderBottomWidth: 5
     },
     serviceTitle: {
         color: '#000000',

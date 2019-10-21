@@ -511,9 +511,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#094c6b0a',
         //marginVertical: 5,
         //marginHorizontal: '2%',
-        borderRadius: 5,
+        borderRadius: 0,
         borderBottomColor: '#094c6b',
-        borderBottomWidth: 10
+        borderBottomWidth: 5
     },
     serviceTitle: {
         color: '#000000',
