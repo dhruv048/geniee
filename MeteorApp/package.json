@@ -11,8 +11,10 @@
     "fs-extra": "^7.0.1",
     "gm": "^1.23.1",
     "gridfs-stream": "^1.1.1",
+    "jquery": "^3.4.1",
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.5.5"
+    "mongoose": "^5.5.5",
+    "popper.js": "^1.16.0"
   }
 }

@@ -1,0 +1,76 @@
+<template name="Gallery">
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="font-weight-light text-center text-lg-left mt-4 mb-0">Thumbnail Gallery</h4>
+            <!--<h6 class="m-0 font-weight-bold text-primary">Banner Gallery</h6>-->
+            <button id="addNewGalleryItem" class="btn btn-primary btn-sm float-right">Add New</button>
+        </div>
+        <!--<hr class="mt-2 mb-5">-->
+        <div class="card-body">
+            <div class="row text-center text-lg-left">
+
+                {{#each Images}}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <label class="block-check">
+                        <a href="{{getImage src}}" class="d-block mb-4 h-100">
+                            <img class="img-fluid img-thumbnail" src="{{getImage src}}"
+                             alt="">
+                    </a>
+                        <input id="{{_id}}" type="checkbox" checked="{{isActive}}">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Image</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form role="form" id="uploadImageForm">
+                        <div class="form-group">
+                            <label>Upload Image</label>
+                            <img id='img-upload' style="max-width: 100%"
+                                 src="/img/duser.png"/>
+                            <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <span class="btn btn-default btn-file">Browse� <input type="file"
+                                                                                                  id="galleryImage"></span>
+                                        </span>
+                                <input type="text" class="form-control" id="imgName" readonly>
+                            </div>
+
+                            <!--<div>-->
+                            <!--Cropped Image-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                            <!--<img id="croppedImage" src=""/>
+                            </div>-->
+
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+
+                            <div class="checkbox-inline">
+                                <label>
+                                    <input type="checkbox" id="imageStatus"/>Active
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                        <button type="reset" class="btn btn-default">Reset</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

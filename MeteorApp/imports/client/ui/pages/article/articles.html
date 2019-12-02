@@ -1,0 +1,38 @@
+<template name="Articles">
+    <div class="container">
+
+        <!--<ol class="breadcrumb">-->
+        <!--<li class="breadcrumb-item">-->
+        <!--<a href="#">Articles</a>-->
+        <!--</li>-->
+        <!--</ol>-->
+        <div class="card-columns ">
+            {{#each articles}}
+            {{> Article}}
+            {{/each}}
+        </div>
+        <!--<div class="container">-->
+    </div>
+</template>
+
+
+<template name="Article">
+    <div class="card">
+        {{#if authenticateUser createBy}}
+        <div class="display-on-hover">
+            <!--            <a href="/admin/edit-article/{{_id}}"><i class="fas fa-edit fa-fw "></i></a>-->
+            <a href="#" class="removeArticle" id="{{_id}}"><i class=" fa fa-trash fa-lg"></i></a>
+        </div>
+        {{/if}}
+        <img class="card-img-top" src="{{getImage articleImage}}" alt="{{title}}">
+        <div class="card-body card-body-custom-color">
+            <h5 class="card-title">{{articleTitle}}</h5>
+            <p class="card-text">{{text articleDescription 150}}</p>
+            <p class="card-text">
+                <small class="text-muted">By <b> {{Owner.profile.name}}</b> {{fromNow articleCreatedDate}}</small>
+                <small><a class="float-right" href="{{getRouteByGroup  'article' _id}}">Read More</a></small>
+            </p>
+        </div>
+    </div>
+
+</template>

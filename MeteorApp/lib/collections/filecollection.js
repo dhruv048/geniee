@@ -76,6 +76,25 @@ ProfilePhoto = new FilesCollection({
     }
 });
 
+GalleryImages = new FilesCollection({
+    collectionName: 'galleryImages',
+    allowClientCode: false,
+    debug: Meteor.isServer && process.env.NODE_ENV === 'development',
+    onBeforeUpload(file) {
+        console.log('before upload',file)
+    },
+
+    onAfterUpload(image) {
+        onAfterUpload(image,this)
+    },
+
+    interceptDownload(http, image, versionName) {
+        interceptDownload(http, image, versionName)
+    },
+    onAfterRemove(images) {
+        onAfterRemove(images);
+    }
+});
 
 
 
@@ -141,4 +160,5 @@ if (Meteor.isServer) {
     ServiceImage.denyClient();
     ChatFiles.denyClient();
     ProfilePhoto.denyClient();
+    GalleryImages.denyClient();
 }

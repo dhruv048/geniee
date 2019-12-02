@@ -85,7 +85,19 @@ Meteor.publish('myServices', function () {
   return  Service.find({createdBy:logged});
 })
 
-
-
+Meteor.publish('allServices',function(){
+    return Service.find(
+        {},{$fields:{
+        _id:1,
+            title:1
+        }}
+        )
+});
+Meteor.publish('allProducts',function(){
+    return Products.find()
+});
+Meteor.publish('singleProduct',function(id){
+    return Products.find({_id:id})
+});
 // }
 

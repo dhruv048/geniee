@@ -1,0 +1,96 @@
+<template name="specilizations">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Specilizations</h1>
+    <p class="mb-4">Manage Specilizations Here </p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Available Specilizations</h6>
+            <button id="addNewSecilization" class="btn btn-primary btn-sm float-right">Add New</button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>For</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <!--<tfoot>-->
+                    <!--<tr>-->
+                    <!--<th>Title</th>-->
+                    <!--<th>Description</th>-->
+                    <!--</tr>-->
+                    <!--</tfoot>-->
+                    <tbody>
+                    {{#each specilizations}}
+                    <tr>
+                        <td>{{label}}</td>
+                        <td>{{getRole type}}</td>
+                        <td>{{description}}</td>
+                        <td><a class="removeSpecl" href="#" id={{_id}} role="button" aria-expanded="false">
+                            <i class="fas fa-trash fa-fw"></i>
+                            <!-- Counter - Messages -->
+                        </a></td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="speclModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-specl-form" role="form">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="text" placeholder="Title" id="spclTitle" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="text" placeholder="Description" id="spclDescription" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <select name="Type" id="spclType" class="custom-select-sm form-control">
+                                    <option value=1>Doctor</option>
+                                    <option value=2>Hospital</option>
+                                    <option value=3>Clinic</option>
+                                    <option value=4>LAB</option>
+                                </select>
+                            </div>
+                            <!--<div class="custom-control custom-radio">-->
+                            <!--<input type="radio" class="custom-control-input" id="spclTypee" name="type" value="Doctor">-->
+                            <!--<label class="custom-control-label" value="doctor" for="spclType">Doctor</label>-->
+                            <!--<label class="custom-control-label" value="hospital" for="spclType">Hospital</label>-->
+                            <!--</div>-->
+                        </div>
+                        <!--<div class="form-group">-->
+                        <!--<div class="form-label-group">-->
+                        <!--<input type="text" placeholder="Meta Tags" id="spclMeta" class="form-control"/>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <input class="btn btn-primary btn-block" type="submit" id="createNewSpclButton"
+                               value="Create New Specilization">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

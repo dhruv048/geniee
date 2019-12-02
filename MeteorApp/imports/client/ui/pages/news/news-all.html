@@ -1,0 +1,38 @@
+<template name="Newss">
+    <div class="container">
+
+        <!--<ol class="breadcrumb">-->
+        <!--<li class="breadcrumb-item">-->
+        <!--<a href="#">Newss</a>-->
+        <!--</li>-->
+        <!--</ol>-->
+        <div class="card-columns ">
+            {{#each newss}}
+            {{> News}}
+            {{/each}}
+        </div>
+        <!--<div class="container">-->
+    </div>
+</template>
+
+
+<template name="News">
+    <div class="card">
+        {{#if authenticateUser createBy}}
+        <div class="display-on-hover">
+            <!--            <a href="/admin/edit-news/{{_id}}"><i class="fas fa-edit fa-fw "></i></a>-->
+            <a href="#" class="removeNews" id="{{_id}}"><i class=" fa fa-trash fa-lg"></i></a>
+        </div>
+        {{/if}}
+        <img class="card-img-top" src="{{getImage newsImage}}" alt="{{title}}">
+        <div class="card-body card-body-custom-color">
+            <h5 class="card-title">{{newsTitle}}</h5>
+            <p class="card-text">{{text newsDescription 150}}</p>
+            <p class="card-text">
+                <small class="text-muted">By <b> {{Owner.profile.name}}</b> {{fromNow newsCreatedDate}}</small>
+                <small><a class="float-right" href="{{getRouteByGroup  'news' _id}}">Read More</a></small>
+            </p>
+        </div>
+    </div>
+
+</template>

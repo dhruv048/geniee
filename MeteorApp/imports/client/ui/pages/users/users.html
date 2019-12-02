@@ -1,0 +1,100 @@
+<template name="Users">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Users</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 navbar-search form-inline">
+            <div class="input-group w-50 p-3">
+                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                       id="userSearch" aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!--<div class="form-group w-25 float-right">-->
+                <!--<select class="form-control" name="articleOwner" id="userRole">-->
+                    <!--<option value="all">All</option>-->
+                    <!--<option value=1>Doctors</option>-->
+                    <!--<option value=2>Hospitals</option>-->
+                    <!--<option value=3>Clinics</option>-->
+                    <!--<option value=4>Labs</option>-->
+                    <!--<option value=0>Visitors</option>-->
+                <!--</select>-->
+            <!--</div>-->
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Create Date</th>
+                        <th>Contact Info</th>
+                        <!--<th>Role</th>-->
+                        <!--<th>Reg. or NMC No.</th>-->
+                        <!--<th>Certificate</th>-->
+                        <!--<th>Approved</th>-->
+                        <!--<th>Action</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ #if Template.subscriptionsReady }}
+                    {{#each users}}
+                    <tr>
+                        <td><img width="40" height="40" class="img-profile rounded-circle"
+                                 src="{{getImage profile.profileImage}}"></td>
+                        <td>{{profile.name}}</td>
+                        <td>{{profile.location.formatted_address}}</td>
+                        <td>{{articleDate createdAt}}</td>
+                        <td>{{profile.email}}<br>{{profile.contact}}</td>
+                        <!--<td>{{getRole profile.role}}</td>-->
+                        <!--<td>{{profile.nmc}}</td>-->
+                        <!--<td>-->
+                            <!--{{#if profile.nmcCert}}-->
+                            <!--<a class="removeSpecl" href="{{getImage profile.nmcCert.src}}" role="button"-->
+                               <!--aria-expanded="false">{{profile.nmcCert.fileName}}</a>-->
+                            <!--{{/if}}-->
+                        <!--</td>-->
+                        <!--{{#if notVisitor profile.role}}-->
+                        <!--<td>{{#if profile.isApproved}}-->
+                            <!--<a class="text-success" href="#" role="button" aria-expanded="false">-->
+                                <!--<i class="fas fa-check-circle fa-fw"></i></a>-->
+                            <!--{{else}}-->
+                            <!--<a class="text-danger" href="#" role="button" aria-expanded="false">-->
+                                <!--<i class=" fas fa-times-circle fa-fw"></i></a>-->
+                            <!--{{/if}}-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--{{#if profile.isApproved}}-->
+                            <!--<button class="cancelApprove btn-sm btn btn-danger btn-block" id={{_id}} href=""-->
+                                    <!--role="button"-->
+                                    <!--aria-expanded="false">-->
+                                <!--<i class="fas fa-times-circle fa-fw"></i> Cancel Approval-->
+                            <!--</button>-->
+                            <!--{{else}}-->
+                            <!--<button class="approveUser btn-sm btn btn-primary btn-block" id={{_id}} href=""-->
+                                    <!--role="button"-->
+                                    <!--aria-expanded="false">-->
+                                <!--<i class="fas fa-check-circle fa-fw"></i> Approve-->
+                            <!--</button>-->
+                            <!--{{/if}}-->
+                        <!--</td>-->
+                        <!--{{/if}}-->
+                        <!--<td><a class="removeSpecl" href="#" id={{_id}} role="button" aria-expanded="false">-->
+                        <!--<i class="fas fa-check-circle fa-fw"></i>-->
+                        <!--&lt;!&ndash; Counter - Messages &ndash;&gt;-->
+                        <!--</a></td>-->
+                    </tr>
+                    {{/each}}
+                    {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>
