@@ -43,6 +43,10 @@ import "../imports/client/ui/pages/eCommerce/products";
 import "../imports/client/ui/pages/gallery/gallery.html";
 import "../imports/client/ui/pages/gallery/gallery";
 
+//Gr Categories
+import "../imports/client/ui/pages/genieeRepair/category/category.html";
+import "../imports/client/ui/pages/genieeRepair/category/category";
+
 
 //
 // Template.hello.onCreated(function helloOnCreated() {
