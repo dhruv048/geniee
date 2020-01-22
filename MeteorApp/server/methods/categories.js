@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-import Moment from 'moment';
+
 
 Meteor.methods({
 
@@ -7,7 +7,7 @@ Meteor.methods({
         try {
             console.log('addNewCategory:::=>>>');
             var currentUserId = Meteor.userId();
-            let Id = Moment().format('DDMMYYx');
+            let Id = moment().format('DDMMYYx');
             let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
             MainCategories.update(
                 {catId: "0"},
@@ -207,7 +207,7 @@ Meteor.methods({
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
-                    let Id = Moment().format('DDMMYYx');
+                    let Id = moment().format('DDMMYYx');
                     ServiceImage.write(new Buffer(image.data, 'base64'),
                         {
                             fileName: Id + '.jpg',

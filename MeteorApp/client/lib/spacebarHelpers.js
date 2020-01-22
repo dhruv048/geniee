@@ -17,7 +17,7 @@ Template.registerHelper("isChecked", function (value) {
 Template.registerHelper("getImage", function (image) {
     try {
         if (image)
-            return 'http://192.168.1.245:3000/api/images/' + image;
+            return  Meteor.absoluteUrl.defaultOptions.rootUrl+'api/images/' + image;
         return "/img/duser.png"
     } catch (ex) {
     }
@@ -26,7 +26,7 @@ Template.registerHelper("getImage", function (image) {
 Template.registerHelper("getProductImage", function (images) {
     try {
         if (images)
-            return 'http://192.168.1.245:3000/api/images/' + images[0];
+            return  Meteor.absoluteUrl.defaultOptions.rootUrl+'api/images/' + images[0];
         return "/img/duser.png"
     } catch (ex) {
     }

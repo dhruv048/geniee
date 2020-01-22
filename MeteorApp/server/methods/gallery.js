@@ -1,12 +1,12 @@
 import {Gallery} from '../../lib/collections/gallery'
 import {Meteor} from 'meteor/meteor';
-import Moment from "moment/moment";
+
 
 Meteor.methods({
     'addImageToGallery': (image, isActive) => {
         GalleryImages.write(new Buffer(image.data, 'base64'),
             {
-                fileName:  Moment().format('DDMMYYx') + '.'+image.mime.indexOf('/') + 1,
+                fileName:  moment().format('DDMMYYx') + '.'+image.mime.indexOf('/') + 1,
                 type: image.mime
             },
             (err, res) => {

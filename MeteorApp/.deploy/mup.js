@@ -31,7 +31,7 @@ module.exports = {
     env: {
       // TODO: Change to your app's url
       // If you are using ssl, it needs to start with https://
-      ROOT_URL: 'https://139.59.81.51',
+      ROOT_URL: 'http://139.59.81.51/',
      // MONGO_URL: 'mongodb://roshan:roshan123@cluster0-shard-00-00-wi05u.gcp.mongodb.net:27017,cluster0-shard-00-01-wi05u.gcp.mongodb.net:27017,cluster0-shard-00-02-wi05u.gcp.mongodb.net:27017/sapp?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true',
         MONGO_URL: 'mongodb://localhost:27017/SApp',
       //  MONGO_OPLOG_URL: 'mongodb://mongodb/local',
@@ -41,7 +41,8 @@ module.exports = {
 
     docker: {
       // change to 'abernix/meteord:base' if your app is using Meteor 1.4 - 1.5
-      image: 'abernix/meteord:base',
+      //image: 'abernix/meteord:base',
+	    image: 'abernix/meteord:node-8.15.1-base',
     },
 
     // Show progress bar while uploading bundle to server
