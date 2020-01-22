@@ -1,0 +1,1 @@
+export const GRcategories = new Mongo.Collection('grcategories');

@@ -475,3 +475,16 @@ clientRoutes.route("/contact-us", {
 
 
 });
+
+/* ------
+Geniee Repair : Admin Categories
+*/
+adminRoutes.route('/GRcategories', {
+    name: 'GRCategories',
+    action: function (params, queryParams) {
+        BlazeLayout.render('adminMainLayout', {main: 'GRcategories'});
+    },
+    triggersEnter: [function () {
+        Meteor.subscribe('allgrcategories');
+    }]
+})
