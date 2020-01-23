@@ -1,1 +1,0 @@
-export const Gallery = new Mongo.Collection('gallery');

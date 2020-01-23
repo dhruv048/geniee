@@ -51,8 +51,17 @@ var adminRoutes = loggedIn.group({
 adminRoutes.route('/', {
     name: 'dashboard',
     action: function () {
-        BlazeLayout.render('adminMainLayout', {main: "dashboard"});
-        document.title = "Geniee-Admin Dashboard";
+        if(Meteor.user().profile.role==111){
+            BlazeLayout.render('adminMainLayoutGR', {main: "dashboard"});
+            document.title = "Geniee-Repair Dashboard";
+        }
+        else if (Meteor.user().profile.role==2){
+            BlazeLayout.render('adminMainLayout', {main: "dashboard"});
+            document.title = "Geniee-Admin Dashboard";
+        }
+        else {
+            FlowRouter.go('/');
+        }
     },
     triggersEnter: [function (context, redirect) {
         Meteor.subscribe('all_users');
@@ -68,11 +77,11 @@ adminRoutes.route('/login', {
         console.log("Yeah! We are on the Login Page");
     }
 })
-adminRoutes.route('/gallery', {
-    name: 'Gallery',
+adminRoutes.route('/advertisements', {
+    name: 'Advertisements',
     action: function () {
-        BlazeLayout.render('adminMainLayout', {main: "Gallery"});
-        document.title = "Geniee-Admin Gallery";
+        BlazeLayout.render('adminMainLayout', {main: "Advertisements"});
+        document.title = "Geniee-Admin Advertisements";
     },
     triggersEnter: [function (context, redirect) {
         Meteor.subscribe('adminGallery');
@@ -91,10 +100,16 @@ adminRoutes.route('/speciizations', {
 adminRoutes.route('/categories', {
     name: 'Categories',
     action: function (params, queryParams) {
-        BlazeLayout.render('adminMainLayout', {main: 'categories'});
+        if(Meteor.user().profile.role==111) {
+            BlazeLayout.render('adminMainLayoutGR', {main: 'GRcategories'});
+        }
+        else if(Meteor.user().profile.role==2){
+            BlazeLayout.render('adminMainLayout', {main: 'categories'});
+        }
     },
     triggersEnter: [function () {
         Meteor.subscribe('storeCategory');
+        Meteor.subscribe('allgrcategories');
     }]
 })
 

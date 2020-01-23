@@ -28,6 +28,24 @@ Meteor.startup(function () {
             console.log('No default user!  Please invoke meteor with a settings file.');
         }
     };
+    if(!Meteor.users.findOne({'profile.role':111})){
+        if (!!Meteor.settings.private.GRAccount) {
+        Accounts.createUser({
+            password: Meteor.settings.private.GRAccount.password,
+            username: Meteor.settings.private.GRAccount.username,
+            email: Meteor.settings.private.GRAccount.email,
+            createdAt: new Date(),
+            createdBy:"SuperAdmin",
+            profile: {
+                role: 111,
+                name: "Geniee Repair",
+                contactNo: "9858974585",
+            }
+        });
+        } else {
+            console.log('No GRAccount user!  Please invoke meteor with a settings file.');
+        }
+    }
 
     if(Notifications.find().count()===0){
         Notifications.insert({

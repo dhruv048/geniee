@@ -76,8 +76,8 @@ ProfilePhoto = new FilesCollection({
     }
 });
 
-GalleryImages = new FilesCollection({
-    collectionName: 'galleryImages',
+AdvertisementImages = new FilesCollection({
+    collectionName: 'advertisementImages',
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
@@ -160,5 +160,5 @@ if (Meteor.isServer) {
     ServiceImage.denyClient();
     ChatFiles.denyClient();
     ProfilePhoto.denyClient();
-    GalleryImages.denyClient();
+    AdvertisementImages.denyClient();
 }

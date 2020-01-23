@@ -1,15 +1,15 @@
-<template name="adminMainLayout">
+<template name="adminMainLayoutGR">
     <!-- Page Wrapper -->
     <body id="page-top">
     {{> sAlert}}
     <div id="wrapper">
-        {{> sideBar}}
+        {{> sideBarGR}}
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                {{> topBar}}
+                {{> topBarGR}}
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     {{>Template.dynamic template=main}}
@@ -23,7 +23,7 @@
     </div>
     </body>
 </template>
-<template name="topBar">
+<template name="topBarGR">
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
         <!-- Topbar Search -->
@@ -221,7 +221,7 @@
     </div>
 
 </template>
-<template name="sideBar">
+<template name="sideBarGR">
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -230,7 +230,7 @@
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-laugh-wink"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">Geniee<sup></sup></div>
+            <div class="sidebar-brand-text mx-3">Geniee Repair<sup></sup></div>
         </a>
 
         <!-- Divider -->
@@ -253,45 +253,45 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <!--<li class="nav-item">-->
-            <!--<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"-->
-               <!--aria-expanded="true" aria-controls="collapseTwo">-->
-                <!--<i class="fas fa-fw fa-blog"></i>-->
-                <!--<span>Article</span>-->
-            <!--</a>-->
-            <!--<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">-->
-                <!--<div class="bg-white py-2 collapse-inner rounded">-->
-                    <!--<h6 class="collapse-header">Manage Articles:</h6>-->
-                    <!--<a class="collapse-item" href="/admin/articles">Articles</a>-->
-                    <!--<a class="collapse-item" href="/admin/create-article">Create Article</a>-->
-                <!--</div>-->
-            <!--</div>-->
+        <!--<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"-->
+        <!--aria-expanded="true" aria-controls="collapseTwo">-->
+        <!--<i class="fas fa-fw fa-blog"></i>-->
+        <!--<span>Article</span>-->
+        <!--</a>-->
+        <!--<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">-->
+        <!--<div class="bg-white py-2 collapse-inner rounded">-->
+        <!--<h6 class="collapse-header">Manage Articles:</h6>-->
+        <!--<a class="collapse-item" href="/admin/articles">Articles</a>-->
+        <!--<a class="collapse-item" href="/admin/create-article">Create Article</a>-->
+        <!--</div>-->
+        <!--</div>-->
         <!--</li>-->
         <!--<li class="nav-item">-->
-            <!--<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"-->
-               <!--aria-expanded="true" aria-controls="collapseTwo">-->
-                <!--<i class="fas fa-fw fa-bell"></i>-->
-                <!--<span>News</span>-->
-            <!--</a>-->
-            <!--<div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">-->
-                <!--<div class="bg-white py-2 collapse-inner rounded">-->
-                    <!--<h6 class="collapse-header">Manage Articles:</h6>-->
-                    <!--<a class="collapse-item" href="/admin/news-all">All News</a>-->
-                    <!--<a class="collapse-item" href="/admin/create-news">Create News</a>-->
-                <!--</div>-->
-            <!--</div>-->
+        <!--<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"-->
+        <!--aria-expanded="true" aria-controls="collapseTwo">-->
+        <!--<i class="fas fa-fw fa-bell"></i>-->
+        <!--<span>News</span>-->
+        <!--</a>-->
+        <!--<div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">-->
+        <!--<div class="bg-white py-2 collapse-inner rounded">-->
+        <!--<h6 class="collapse-header">Manage Articles:</h6>-->
+        <!--<a class="collapse-item" href="/admin/news-all">All News</a>-->
+        <!--<a class="collapse-item" href="/admin/create-news">Create News</a>-->
+        <!--</div>-->
+        <!--</div>-->
         <!--</li>-->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
                aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-store"></i>
-                <span>Store</span>
+                <span>User Management</span>
             </a>
             <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Manage Store:</h6>
-                    <!--<a class="collapse-item" href="/admin/categories">Category</a>-->
-                    <a class="collapse-item" href="/admin/products">Products</a>
-                    <a class="collapse-item" href="/admin/create-product">Create Product</a>
+                    <a class="collapse-item" href="/admin/categories">Category</a>
+                    <!--<a class="collapse-item" href="/admin/products">Products</a>-->
+                    <!--<a class="collapse-item" href="/admin/create-product">Create Product</a>-->
                 </div>
             </div>
         </li>
@@ -324,26 +324,26 @@
         </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-               aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>Utils</span>
-            </a>
-            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Common Utilities:</h6>
-                    <!--<a class="collapse-item" href="/admin/speciizations">Specilizations</a>-->
-                    <a class="collapse-item" href="/admin/users">Users</a>
-                    <a class="collapse-item" href="/admin/advertisements">Sponsored Advertisements</a>
-                    <!--<a class="collapse-item" href="forgot-password.html">Forgot Password</a>-->
-                    <!--<div class="collapse-divider"></div>-->
-                    <!--<h6 class="collapse-header">Other Pages:</h6>-->
-                    <!--<a class="collapse-item" href="404.html">404 Page</a>-->
-                    <!--<a class="collapse-item" href="blank.html">Blank Page</a>-->
-                </div>
-            </div>
-        </li>
+        <!--<li class="nav-item">-->
+            <!--<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"-->
+               <!--aria-expanded="true" aria-controls="collapsePages">-->
+                <!--<i class="fas fa-fw fa-folder"></i>-->
+                <!--<span>Utils</span>-->
+            <!--</a>-->
+            <!--<div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">-->
+                <!--<div class="bg-white py-2 collapse-inner rounded">-->
+                    <!--<h6 class="collapse-header">Common Utilities:</h6>-->
+                    <!--&lt;!&ndash;<a class="collapse-item" href="/admin/speciizations">Specilizations</a>&ndash;&gt;-->
+                    <!--<a class="collapse-item" href="/admin/users">Users</a>-->
+                    <!--<a class="collapse-item" href="/admin/advertisements">Sponsored Advertisements</a>-->
+                    <!--&lt;!&ndash;<a class="collapse-item" href="forgot-password.html">Forgot Password</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="collapse-divider"></div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<h6 class="collapse-header">Other Pages:</h6>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a class="collapse-item" href="404.html">404 Page</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a class="collapse-item" href="blank.html">Blank Page</a>&ndash;&gt;-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</li>-->
 
         <!-- Nav Item - Charts -->
         <!--<li class="nav-item">-->
@@ -360,11 +360,11 @@
         <!--</li>-->
 
         <!-- Nav Item - GR Categories -->
-        <li class="nav-item active">
-            <a class="nav-link" href="/admin/GRcategories">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>GR Categories</span></a>
-        </li>
+        <!--<li class="nav-item active">-->
+            <!--<a class="nav-link" href="/admin/GRcategories">-->
+                <!--<i class="fas fa-fw fa-tachometer-alt"></i>-->
+                <!--<span>GR Categories</span></a>-->
+        <!--</li>-->
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">

@@ -1,14 +1,14 @@
-import {Gallery} from "../../../../../lib/collections/gallery";
+import {Advertisements} from "../../../../../lib/collections/advertisements";
 
 let ImageFile;
 
-Template.Gallery.helpers({
+Template.Advertisements.helpers({
     Images: () => {
-        return Gallery.find();
+        return Advertisements.find();
     }
 });
 
-Template.Gallery.rendered = () => {
+Template.Advertisements.rendered = () => {
     $(".image-checkbox").each(function () {
         if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
             $(this).addClass('image-checkbox-checked');
@@ -19,7 +19,7 @@ Template.Gallery.rendered = () => {
 };
 
 
-Template.Gallery.events({
+Template.Advertisements.events({
     'click #addNewGalleryItem': () => {
         return $("#imageModal").modal('show');
     },
@@ -34,7 +34,7 @@ Template.Gallery.events({
                 $('#img-upload').cropper('destroy');
                 $('#img-upload').attr('src', e.target.result);
                 $('#img-upload').cropper({
-                    aspectRatio: 7 / 4,
+                    aspectRatio: 7 / 3,
                     zoomable: true,
                 });
                 var canvas = $('#img-upload').cropper('getCroppedCanvas');
@@ -71,7 +71,7 @@ Template.Gallery.events({
         }
         console.log(file);
 
-        Meteor.call('uploadImage', file, 'Gallery', (err, res) => {
+        Meteor.call('addImageToGallery', file, status, (err, res) => {
             if (err) {
                 alert(err.reason)
             }
