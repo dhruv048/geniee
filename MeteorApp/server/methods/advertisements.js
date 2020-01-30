@@ -81,6 +81,9 @@ Meteor.methods({
                 isActive: Val
             }
         })
+    },
+    'getActiveAdvertises': () => {
+        return Advertisements.find({isActive: {$exists: true, $eq: true}}).fetch()
     }
 });
 

@@ -47,6 +47,25 @@ Meteor.startup(function () {
         }
     }
 
+    if(!Meteor.users.findOne({'profile.role':222})){
+        if (!!Meteor.settings.private.EFAccount) {
+            Accounts.createUser({
+                password: Meteor.settings.private.EFAccount.password,
+                username: Meteor.settings.private.EFAccount.username,
+                email: Meteor.settings.private.EFAccount.email,
+                createdAt: new Date(),
+                createdBy:"SuperAdmin",
+                profile: {
+                    role: 222,
+                    name: "Eat Fit",
+                    contactNo: "9858974585",
+                }
+            });
+        } else {
+            console.log('No EFAccount user!  Please invoke meteor with a settings file.');
+        }
+    }
+
     if(Notifications.find().count()===0){
         Notifications.insert({
             title:"Updates",

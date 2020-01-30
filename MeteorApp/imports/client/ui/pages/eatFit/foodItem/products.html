@@ -1,0 +1,38 @@
+<template name="ProductsEF">
+    <div class="container">
+
+        <!--<ol class="breadcrumb">-->
+        <!--<li class="breadcrumb-item">-->
+        <!--<a href="#">Products</a>-->
+        <!--</li>-->
+        <!--</ol>-->
+        <div class="card-columns ">
+            {{#each products}}
+            {{> ProductEF}}
+            {{/each}}
+        </div>
+        <!--<div class="container">-->
+    </div>
+</template>
+
+
+<template name="ProductEF">
+    <div class="card">
+        {{#if authenticateUser createBy}}
+        <div class="display-on-hover">
+            <!--            <a href="/admin/edit-product/{{_id}}"><i class="fas fa-edit fa-fw "></i></a>-->
+            <a href="#" class="removeProduct" id="{{_id}}"><i class=" fa fa-trash fa-lg"></i></a>
+        </div>
+        {{/if}}
+        <img class="card-img-top" src="{{getProductImage images}}" alt="{{title}}">
+        <div class="card-body card-body-custom-color">
+            <h5 class="card-title">{{title}}</h5>
+            <p class="card-text">{{text description 150}}</p>
+            <p class="card-text">
+                <small class="text-muted">By <b> {{Owner.profile.name}}</b> {{fromNow createDate}}</small>
+                <small><a class="float-right" href="{{getRouteByGroup  'product' _id}}">Read More</a></small>
+            </p>
+        </div>
+    </div>
+
+</template>

@@ -1,19 +1,18 @@
-import {GRcategories} from "../../../../../../lib/collections/genieeRepair/GRcategories";
+import {EFCategories} from "../../../../../../lib/collections/eatFit/efCategories";
 
 
-Template.categoriesGR.onRendered(function () {
+Template.categoriesEF.onRendered(function () {
 // $('#dataTable').DataTable();
 });
 
-Template.categoriesGR.helpers({
+Template.categoriesEF.helpers({
     categories: () => {
-        console.log(GRcategories.find().fetch())
-
-        return GRcategories.find().fetch();
+        console.log(EFCategories.find().fetch())
+        return EFCategories.find().fetch();
     }
 })
 
-Template.categoriesGR.events({
+Template.categoriesEF.events({
     'click #addNewCategory': () => {
         return $("#categoryModal").modal('show');
     },
@@ -28,14 +27,13 @@ Template.categoriesGR.events({
         }
         else if (description.length == 0) {
             sAlert.error('Please Enter Description');
-            label
         }
         else {
             let category = {
                 title: label,
                 description: description,
             }
-            Meteor.call("addNewGRCategory", category, function (err) {
+            Meteor.call("addNewEFCategory", category, function (err) {
                 if (err != null) {
                     sAlert.error(err.reason);
                 }
@@ -61,7 +59,7 @@ Template.categoriesGR.events({
 // // ok is true if the user clicked on "ok", false otherwise
         let id = e.currentTarget.id;
         console.log('_id:' + e.currentTarget.id);
-        Meteor.call('removeGRCategory', id, function (err) {
+        Meteor.call('removeEFCategory', id, function (err) {
             if (err != null) {
                 sAlert.error(err.message);
             }

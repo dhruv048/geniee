@@ -1,0 +1,1 @@
+export const EFCategories = new Mongo.Collection('efCategories');

@@ -14,6 +14,7 @@
 var loggedIn = FlowRouter.group({
     triggersEnter: [function () {
         if (!(Meteor.loggingIn() || Meteor.userId())) {
+            console.log('LoggedIn',Meteor.user());
             route = FlowRouter.current();
 
             if (!(route.route.name == 'login')) {
@@ -27,6 +28,8 @@ var loggedIn = FlowRouter.group({
 
 
 Accounts.onLogin(function () {
+    console.log('OnLogin',Meteor.user());
+    Session.set('loggedUserRole',Meteor.user().profile.role)
     redirect = Session.get("redirectAfterLogin");
     if (redirect != null) {
         if (redirect != '/admin/login')
@@ -51,16 +54,21 @@ var adminRoutes = loggedIn.group({
 adminRoutes.route('/', {
     name: 'dashboard',
     action: function () {
-        if(Meteor.user().profile.role==111){
-            BlazeLayout.render('adminMainLayoutGR', {main: "dashboard"});
+        if (Session.get('loggedUserRole') == 111) {
+            BlazeLayout.render('adminMainLayoutGR', {main: ""});
             document.title = "Geniee-Repair Dashboard";
         }
-        else if (Meteor.user().profile.role==2){
+        else if (Session.get('loggedUserRole')== 2) {
             BlazeLayout.render('adminMainLayout', {main: "dashboard"});
             document.title = "Geniee-Admin Dashboard";
         }
+        else if (Session.get('loggedUserRole')== 222) {
+            BlazeLayout.render('adminMainLayoutEF', {main: ""});
+            document.title = "Eat-Fit Dashboard";
+        }
         else {
-            FlowRouter.go('/');
+            Meteor.logout();
+            FlowRouter.go('/admin/login');
         }
     },
     triggersEnter: [function (context, redirect) {
@@ -100,16 +108,20 @@ adminRoutes.route('/speciizations', {
 adminRoutes.route('/categories', {
     name: 'Categories',
     action: function (params, queryParams) {
-        if(Meteor.user().profile.role==111) {
-            BlazeLayout.render('adminMainLayoutGR', {main: 'GRcategories'});
+        if(Session.get('loggedUserRole')==111) {
+            BlazeLayout.render('adminMainLayoutGR', {main: 'categoriesGR'});
         }
-        else if(Meteor.user().profile.role==2){
+        else if(Session.get('loggedUserRole')==2){
             BlazeLayout.render('adminMainLayout', {main: 'categories'});
+        }
+        else   if(Session.get('loggedUserRole')==222) {
+            BlazeLayout.render('adminMainLayoutEF', {main: 'categoriesEF'});
         }
     },
     triggersEnter: [function () {
         Meteor.subscribe('storeCategory');
         Meteor.subscribe('allgrcategories');
+        Meteor.subscribe('allgrcategoriesEF');
     }]
 })
 
@@ -137,11 +149,21 @@ adminRoutes.route('/articles', {
 adminRoutes.route('/products', {
     name: 'Products',
     action() {
-        BlazeLayout.render('adminMainLayout', {main: 'Products'});
-        document.title = "Geniee-Admin Products";
+        if(Session.get('loggedUserRole')==222) {
+            BlazeLayout.render('adminMainLayoutEF', {main: 'ProductsEF'});
+            document.title = "Eat-Fit Products";
+        }
+        else if (Session.get('loggedUserRole')==2) {
+            BlazeLayout.render('adminMainLayoutEF', {main: 'ProductsEF'});
+            document.title = "Geniee-Admin Products";
+        }
+        else
+            FlowRouter.go("/");
+
     },
     triggersEnter: [function (context, redirect) {
         Meteor.subscribe("allProducts");
+        Meteor.subscribe("allProductsEF");
     }]
 });
 
@@ -159,11 +181,20 @@ adminRoutes.route('/create-article', {
 adminRoutes.route('/create-product', {
     name: 'createProduct',
     action() {
-        BlazeLayout.render('adminMainLayout', {main: 'Create_Product'});
-        document.title = "Geniee-Admin Add product";
+        if(Session.get('loggedUserRole')==222) {
+            BlazeLayout.render('adminMainLayoutEF', {main: 'Create_ProductEF'});
+            document.title = "Eat-Fit Add product";
+        }
+        else if(Session.get('loggedUserRole')==2){
+            BlazeLayout.render('adminMainLayout', {main: 'Create_Product'});
+            document.title = "Geniee-Admin Add product";
+        }
+        else
+            FlowRouter.go("/");
     },
     triggersEnter: [function (context, redirect) {
         Meteor.subscribe('allServices');
+        Meteor.subscribe('allcategoriesEF');
     }]
 });
 
@@ -171,13 +202,23 @@ adminRoutes.route('/product/:productId', {
     triggersEnter: [function (context, redirect) {
         console.log("param:" + FlowRouter.getParam("productId"));
         Meteor.subscribe("singleProduct", context.params.productId);
+        Meteor.subscribe("singleProductEF", context.params.productId);
     }],
     name: 'Article',
     action: (params) => {
-        console.log("param:" + params.productId);
-        Meteor.subscribe("singleProduct", params.productId);
-        BlazeLayout.render('adminMainLayout', {main: 'Product_Detail'});
-        document.title = "Geniee-Admin Product";
+        if(Session.get('loggedUserRole')==222) {
+            console.log("param:" + params.productId);
+            Meteor.subscribe("singleProductEF", params.productId);
+            BlazeLayout.render('adminMainLayoutEF', {main: 'Product_DetailEF'});
+            document.title = "Eat-Fit Product";
+        }
+        else if(Session.get('loggedUserRole')==2){
+            console.log("param:" + params.productId);
+            Meteor.subscribe("singleProduct", params.productId);
+            BlazeLayout.render('adminMainLayout', {main: 'Product_Detail'});
+            document.title = "Geniee-Admin Product";
+        }
+
     }
 });
 adminRoutes.route('/edit-article/:articleId', {

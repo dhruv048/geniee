@@ -100,4 +100,7 @@ Meteor.publish('singleProduct',function(id){
     return Products.find({_id:id})
 });
 // }
-
+Meteor.publish('loggedUser',function () {
+    console.log('subscribed')
+    return Meteor.users.find({_id:this.userId});
+})

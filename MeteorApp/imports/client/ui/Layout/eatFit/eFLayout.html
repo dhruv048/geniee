@@ -1,15 +1,15 @@
-<template name="adminMainLayoutGR">
+<template name="adminMainLayoutEF">
     <!-- Page Wrapper -->
     <body id="page-top">
     {{> sAlert}}
     <div id="wrapper">
-        {{> sideBarGR}}
+        {{> sideBarEF}}
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                {{> topBarGR}}
+                {{> topBarEF}}
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     {{>Template.dynamic template=main}}
@@ -23,7 +23,7 @@
     </div>
     </body>
 </template>
-<template name="topBarGR">
+<template name="topBarEF">
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
         <!-- Topbar Search -->
@@ -221,17 +221,16 @@
     </div>
 
 </template>
-<template name="sideBarGR">
+<template name="sideBarEF">
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-            <!--<div class="sidebar-brand-icon rotate-n-15">-->
-                <!--<i class="fas fa-laugh-wink"></i>-->
-            <!--</div>-->
-            <!--<div class="sidebar-brand-text mx-3">Geniee Repair<sup></sup></div>-->
-            <img class="img-fluid" src="/img/gr_logo.jpg"/>
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-laugh-wink"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">Eat Fit<sup></sup></div>
         </a>
 
         <!-- Divider -->
@@ -285,14 +284,14 @@
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
                aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-store"></i>
-                <span>User Management</span>
+                <span>Food Management</span>
             </a>
             <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Manage Store:</h6>
+                    <h6 class="collapse-header">Manage Food Items:</h6>
                     <a class="collapse-item" href="/admin/categories">Category</a>
-                    <!--<a class="collapse-item" href="/admin/products">Products</a>-->
-                    <!--<a class="collapse-item" href="/admin/create-product">Create Product</a>-->
+                    <a class="collapse-item" href="/admin/products">Products</a>
+                    <a class="collapse-item" href="/admin/create-product">Create Product</a>
                 </div>
             </div>
         </li>

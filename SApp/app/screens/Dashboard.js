@@ -5,12 +5,11 @@ import {
     Dimensions,
     StatusBar,
     View,
-    Image,
-    ImageBackground,
     TouchableOpacity,
     ActivityIndicator,
     FlatList, PermissionsAndroid
 } from 'react-native';
+import Carousel from 'react-native-snap-carousel';
 import Geolocation from 'react-native-geolocation-service';
 import {
     Header,
@@ -24,7 +23,7 @@ import {
     Text,
     Input,
     ListItem,
-    Thumbnail, Label
+    Thumbnail,
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle} from '../config/styles';
@@ -45,6 +44,8 @@ class Dashboard extends Component {
             products: [],
             searchMode: false,
             showSearchBar: false,
+            Adds:[],
+            query:''
         };
         this.arrayholder;
         this.currentSearch = '';
@@ -58,7 +59,7 @@ class Dashboard extends Component {
     }
 
     handleOnPress = () => this.setState({showSearchBar:true});
-    handleOnPressUnset = () => this.setState({showSearchBar:false});
+    handleOnPressUnset = () => this.setState({showSearchBar:false,query:''});
     //onClick() {
         //let { showSearchBar } = this.state.showSearchBar;
         //this.setState({
@@ -69,6 +70,11 @@ class Dashboard extends Component {
     async componentDidMount()  {
         Meteor.subscribe('categories-list');
         Meteor.subscribe('aggChatChannels');
+        Meteor.call('getActiveAdvertises',(err,res)=>{
+            if(!err){
+                this.setState({Adds:res});
+            }
+        });
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
@@ -150,8 +156,7 @@ class Dashboard extends Component {
             this.setState({
                 searchMode: true,
             })
-        }
-        ;
+        };
 
          this.currentSearch = text;
         // const newData = this.arrayholder.filter(item => {
@@ -243,7 +248,9 @@ class Dashboard extends Component {
     }
     _getListItem = (data) => {
         let rowData = data.item;
-        let distance=MyFunctions.calculateDistance(this.region.latitude,this.region.longitude,rowData.location.geometry.location.lat,rowData.location.geometry.location.lng);
+        let distance;
+        if(rowData.location)
+        distance=MyFunctions.calculateDistance(this.region.latitude,this.region.longitude,rowData.location.geometry.location.lat,rowData.location.geometry.location.lng);
         console.log(distance);
         return (
             <View key={data.item._id} style={styles.serviceList}>
@@ -293,9 +300,16 @@ class Dashboard extends Component {
                 </TouchableWithoutFeedback>
             </View>
         )
-
     }
 
+    _renderItem({item, index}) {
+        return (
+            <View key={index} style={{}}>
+                <Thumbnail square style={{width: '100%', height: Math.round(viewportWidth * 0.43), resizeMode: 'cover'}}
+                           source={{uri: settings.IMAGE_URL +'images/'+ item.src}}/>
+            </View>
+        );
+    }
     _handleProductPress=(pro)=>{
         Meteor.subscribe('products', pro.service);
         this.props.navigation.navigate("ProductDetail", {'Id': pro._id})
@@ -314,7 +328,7 @@ class Dashboard extends Component {
 
     render() {
         console.log(this.state.products,this.state.services);
-        const { showSearchBar } = this.state.showSearchBar;
+        const { showSearchBar } = this.state;
         return (
             <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
                 <StatusBar
@@ -322,7 +336,7 @@ class Dashboard extends Component {
                     barStyle='light-content'
                 />
                 
-                    {this.state.showSearchBar==false ? (
+                    {showSearchBar==false ? (
                         <Header style={{backgroundColor: '#094c6b'}}>
                         <Left style={{flex: 1}}>
                             <Button transparent onPress={() => {
@@ -352,15 +366,15 @@ class Dashboard extends Component {
                     
                     
                     <Item style={{height: 40, width: '90%'}}>
-                        
-                        <Icon style={styles.activeTabIcon} name='search' size={15}/>
+                        {!this.state.query?
+                        <Icon style={styles.activeTabIcon} name='search' size={15}/>:null}
                         
                         <Input placeholder="Search" style={styles.searchInput}
                                placeholderTextColor='#ffffff'
                                selectionColor='#ffffff'
                             
                                onChangeText={(searchText) => {
-                                   this._search(searchText)
+                                   this._search(searchText),this.setState({query:searchText})
                                }}
                                autoCorrect={false}
                         />
@@ -377,14 +391,34 @@ class Dashboard extends Component {
                 
                 {this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}
                 <Content style={{width: '100%', flex: 1,}}>
-                    {/*<ScrollView style={{width: '100%', flex: 1}}>*/}
+                    {/*<ScrollView style={{viewportWidth: '100%', flex: 1}}>*/}
                     {this.state.searchMode==false ?
+                        <View>
+                            {this.state.Adds.length>0?
+                        <View style={{minHeight: Math.round(viewportWidth * 0.43), justifyContent: 'center', alignItems: 'center'}}>
+                            <Carousel
+                                ref={(c) => {
+                                    this._carousel = c;
+                                }}
+                                data={this.state.Adds}
+                                renderItem={this._renderItem}
+                                sliderWidth={viewportWidth}
+                                itemWidth={viewportWidth}
+                                //  slideStyle={{ viewportWidth: viewportWidth }}
+                                inactiveSlideOpacity={1}
+                                inactiveSlideScale={1}
+                                autoplay={true}
+                                loop={true}
+                            />
+
+                        </View>:null}
                         <FlatList style={styles.mainContainer}
                                   data={this.props.categories}
                                   numColumns={2}
                                   renderItem={this.renderItem}
                                   keyExtractor={item => item._id}
-                        /> :
+                        />
+                        </View>:
                         <View>
                             <View style={{alignItems: 'center', marginHorizontal: 30}}>
                                 <Text style={[styles.screenHeader, {color: colors.appLayout}]}>
