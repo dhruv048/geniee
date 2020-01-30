@@ -66,7 +66,7 @@ if (err != null) {
 sAlert.error(err.message);
 }
 else
-sAlert.success('News removed successfully!!!');
+sAlert.success('Category removed successfully!!!');
 })
 // });
 

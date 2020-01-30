@@ -100,3 +100,15 @@
 .btn-calendar:hover {
     background-color: #5a6268;
 }
+
+.sidebar-brand-icon {
+    background-color: #fff;
+    border-radius: 50%;
+}
+.bg-admin-logo{
+    background:url(/img/gr-icon.png);
+    background-position:center;
+    background-size:cover;
+    width: 48px;
+    height: 48px;
+}
