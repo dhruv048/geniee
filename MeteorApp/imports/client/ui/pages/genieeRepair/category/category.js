@@ -59,7 +59,6 @@ Template.categoriesGR.events({
 // focus: "cancel" // which button to autofocus, "cancel" (default) or "ok", or "none"
 // }, function (ok) {
 // // ok is true if the user clicked on "ok", false otherwise
-<<<<<<< HEAD
 let id = e.currentTarget.id;
 console.log('_id:' + e.currentTarget.id);
 Meteor.call('removeGRCategory', id, function (err) {
@@ -69,17 +68,6 @@ sAlert.error(err.message);
 else
 sAlert.success('Category removed successfully!!!');
 })
-=======
-        let id = e.currentTarget.id;
-        console.log('_id:' + e.currentTarget.id);
-        Meteor.call('removeGRCategory', id, function (err) {
-            if (err != null) {
-                sAlert.error(err.message);
-            }
-            else
-                sAlert.success('News removed successfully!!!');
-        })
->>>>>>> 4f5397974aa7ce03db0cb9bb3c4a0282e142b14a
 // });
 
     }
