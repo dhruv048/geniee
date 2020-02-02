@@ -5,7 +5,7 @@ import {
     createStackNavigator,
     createSwitchNavigator
 } from 'react-navigation';
-import {StyleSheet, View, Image, Alert, TouchableOpacity} from 'react-native'
+import {StyleSheet, View, Image, Alert, TouchableOpacity, StatusBar} from 'react-native'
 import Home from '../screens/Home';
 import Settings, {userType} from '../screens/Settings';
 import ServiceDetail from '../screens/ServiceDetail';
@@ -31,6 +31,9 @@ import AddProduct from "./store/AddProduct";
 import ProductDetail from "./store/ProductDetail";
 import ImageGallery from "./store/ImageGallery";
 import MyServices from "./services/MyServices";
+import LandingPageEF from "./EatFit/LandingPageEF";
+import ProductsEF from "./EatFit/ProductsEF";
+import ProductDetailEF from "./EatFit/ProductDetailEF";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -96,6 +99,20 @@ export const MyServiceStack = createStackNavigator({
     headerMode: 'none',
     initialRouteName:'MyServices'
 });
+export const EatFitStack = createStackNavigator({
+    CategoriesEF: {
+        screen: LandingPageEF,
+    },
+    ProductsEF:{
+        screen:ProductsEF,
+    },
+    ProductDetailEF:{
+        screen:ProductDetailEF
+    }
+}, {
+    headerMode: 'none',
+    initialRouteName:'CategoriesEF'
+});
 export const HomeStack = createStackNavigator({
     Dashboard: {
         screen: Dashboard,
@@ -119,6 +136,9 @@ export const HomeStack = createStackNavigator({
     ImageGallery: {
         screen: ImageGallery
     },
+    EateFit:{
+        screen:EatFitStack
+    }
     // signIn:{
     //     screen:AuthStack,
     // },
@@ -129,6 +149,10 @@ export const HomeStack = createStackNavigator({
 
 const CustomDrawerContentComponent = (props) => (
     <Container>
+        <StatusBar
+            backgroundColor={colors.statusBar}
+            barStyle='light-content'
+        />
         <Header style={{height: 220, backgroundColor: '#094c6b'}}>
             <Body style={{justifyContent: 'center', alignItems: 'center'}}>
             <UploadProfilePic/>

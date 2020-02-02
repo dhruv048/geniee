@@ -412,6 +412,9 @@ class Dashboard extends Component {
                             />
 
                         </View>:null}
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>
+                                <Text>Eat Fit</Text>
+                            </TouchableOpacity>
                         <FlatList style={styles.mainContainer}
                                   data={this.props.categories}
                                   numColumns={2}

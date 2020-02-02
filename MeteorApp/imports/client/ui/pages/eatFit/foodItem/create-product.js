@@ -1,17 +1,17 @@
 /**
  * Created by Roshan on 6/20/2017.
  */
-
+import {Meteor} from 'meteor/meteor';
+import {Random} from 'meteor/random';
  import {EFCategories} from "../../../../../../lib/collections/eatFit/efCategories";
  import {EFProducts} from "../../../../../../lib/collections/eatFit/efProducts";
-import {Meteor} from 'meteor/meteor';
 
 let productcoverImage = null;
 let filee = [];
 let productID = null;
 let productcoverImageToRemoveAfterEdit = null;
 let selectedCategory = null;
-let Nutritions=[{label:'',value:''}];
+let Nutritions=[{id:Random.id([5]), label:'',value:''}];
 
 
 Template.Create_ProductEF.helpers({
@@ -122,13 +122,12 @@ Template.Create_ProductEF.events({
             title: title,
             description: description,
             images: [],
-            service: category,
-            productContent: content,
+            category: category,
             createBy: Meteor.userId(),
             unit: unit,
             price: price,
             discount:discount,
-            // contact: contact,
+            content: content,
             // quantity: quantity,
             // sizes: sizes ? (sizes.includes(';') ? sizes.split(';') : [sizes]) : [],
             // colors: colors ? (colors.includes(';') ? colors.split(';') : [colors]) : [],
@@ -218,8 +217,26 @@ Template.Create_ProductEF.events({
 
     'click  #addMore':function(event,label){
         event.preventDefault();
-        Nutritions.push({label:'',value:''});
+        Nutritions.push({id:Random.id([5]),label:'',value:''});
         Session.set('nutritions',Nutritions)
+    },
+    'change .NutritionLabel':function (event,ele) {
+       let id=event.currentTarget.getAttribute('data-id');
+       console.log(event.currentTarget.value,id)
+       Nutritions.forEach(item=>{
+           if(item.id==id){
+               item.label=event.currentTarget.value;
+           }
+       })
+    },
+    'change .NutritionValue':function (event,ele) {
+        let id=event.currentTarget.getAttribute('data-id');
+        console.log(event.currentTarget.value,id)
+        Nutritions.forEach(item=>{
+            if(item.id==id){
+                item.value=event.currentTarget.value;
+            }
+        })
     }
 });
 
@@ -227,11 +244,11 @@ Template.Create_ProductEF.events({
 removeProductCoverImage = (productImage) => {
 
     if (productImage !== null) {
-        Meteor.call('removeAWSObject', productImage, (err, res) => {
-            if (err) {
-                sAlert.error(err.reason);
-            }
-        })
+        // Meteor.call('removeAWSObject', productImage, (err, res) => {
+        //     if (err) {
+        //         sAlert.error(err.reason);
+        //     }
+        // })
     }
 }
 
@@ -274,6 +291,7 @@ function handleFileSelect(event) {
                 // div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" + "title='" + file.name + "'/>";
                 // output.insertBefore(div, null);
                 file.uri = picFile.result;
+                console.log('file:',file);
                 filee.push({uri: picFile.result});
                 Session.set("files", filee);
                 //  console.log(picFile)

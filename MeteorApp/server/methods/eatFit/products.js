@@ -4,18 +4,19 @@ import {EFProducts} from "../../../lib/collections/eatFit/efProducts";
 Meteor.methods({
     'addNewProductEF': (productInfo) => {
         try {
-            console.log('addNewProducr:::=>>>',productInfo._id);
+            console.log('addNewProduEF:::=>>>',productInfo._id);
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId,
                 productInfo.createDate = new Date(new Date().toUTCString())
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
+                    console.log(image.name,image.type,image.data)
                     let Id = moment().format('DDMMYYx');
                     EFProductImages.write(new Buffer(image.data, 'base64'),
                         {
-                            fileName:  moment().format('DDMMYYx') + '.'+image.mime.substring(image.mime.indexOf('/') + 1),
-                            type: image.mime
+                            fileName:  image.name,
+                            type: image.type
                         },
                         (err, res) => {
                             if (err) {
@@ -47,5 +48,9 @@ Meteor.methods({
             throw new Meteor.Error(403, e.message)
 
         }
+    },
+
+    'EFProductsByCategory': (_categoryId) => {
+        return EFProducts.find({category: _categoryId}).fetch();
     },
 })

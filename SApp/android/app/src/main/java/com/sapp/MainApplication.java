@@ -3,6 +3,7 @@ package com.sapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.roshan.esewa.RNEsewaSdkPackage;
 import com.rnfs.RNFSPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
@@ -55,6 +56,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RNCWebViewPackage(),
             new RNEsewaSdkPackage(),
                     new FBSDKPackage(mCallbackManager),
             new RNFSPackage(),
