@@ -161,7 +161,7 @@ adminRoutes.route('/products', {
             document.title = "Eat-Fit Products";
         }
         else if (Session.get('loggedUserRole')==2) {
-            BlazeLayout.render('adminMainLayoutEF', {main: 'ProductsEF'});
+            BlazeLayout.render('adminMainLayout', {main: 'Products'});
             document.title = "Geniee-Admin Products";
         }
         else

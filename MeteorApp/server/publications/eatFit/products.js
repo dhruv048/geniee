@@ -20,3 +20,4 @@ Meteor.publish('allProductsEF', function (skip, Id) {
 Meteor.publish('singleProductEF', function (Id) {
     return EFProducts.find({_id: Id});
 });
+

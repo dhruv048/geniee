@@ -48,15 +48,16 @@
                                     <div class="form-group">
                                         <label>Nutritions</label>
                                         {{#each Nutritions}}
-                                        <div class="row">
+                                        <div  class="row">
                                             <div class="col">
-                                                <input type="text" placeholder="Label" id="NutritionLabel"
-                                                       value="" class="form-control"/>
+                                                <input type="text" placeholder="Label" data-id="{{id}}"
+                                                       value="" class="form-control NutritionLabel"/>
                                             </div>
                                             <div class="col">
-                                                <input type="text" placeholder="Value" id="NutritionValue"
-                                                       value="" class="form-control"/>
+                                                <input type="text" placeholder="Value"  data-id="{{id}}"
+                                                       value="" class="form-control NutritionValue"/>
                                             </div>
+                                            <button id="{{id}}" type="button" class="btn btn-outline-danger">Remove</button>
                                         </div>
                                         {{/each}}
                                         <button id="addMore" class="btn btn-sm btn-primary align-self-center">Add More</button>

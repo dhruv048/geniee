@@ -1,11 +1,6 @@
 
 import {Meteor} from "meteor/meteor"
-Template.verifyEmail.onCreated(function () {
-    console.log("token", FlowRouter.getParam('token'));
-    // Accounts.verifyEmail(FlowRouter.getParam('token'), function () {
-    //     Router.go('/verified');
-    // });
-});
+
 
 Template.topBarEF.helpers({
     loggedUser: () => {

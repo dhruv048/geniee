@@ -5,10 +5,10 @@
                 <div class="card-header">
                     <h4>{{Product.title}}
                         <small class="float-right text-muted" style="margin-left: 10px"><i class="fa fa-user"></i>
-                            Medidoc
+                            Eat Fit
                         </small>
                         <small class="float-right text-muted" style="margin-left: 10px"><i class="fa fa-clock"></i>
-                            {{articleDate Product.createdDate}}
+                            {{articleDate Product.createDate}}
                         </small>
                     </h4>
                 </div>
@@ -21,10 +21,10 @@
                     <blockquote>{{Product.description}}</blockquote>
                     </p>
                     <label>Price : </label> {{Product.price}}/{{Product.unit}} ({{Product.discount }}% discount)<br>
-                    <label>Contact : </label> {{Product.contact}}<br>
+                    <!--<label>Contact : </label> {{Product.contact}}<br>-->
                     <label>Veg : </label> {{Product.isVeg}} <br>
                     <label>Is Active: </label> {{Product.isActive}} <br>
-                    <label>Nutritions :</label>
+                    <label>Nutritions :</label><br>
                         {{#each Product.nutritions}}
                         <label>{{label}} : </label>{{value}}<br>
                         {{/each}}

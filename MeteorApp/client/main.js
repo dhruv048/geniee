@@ -6,6 +6,8 @@ import "./bootstrap/js/bootstrap.bundle.min";
 import "../imports/client/js/jquery.easing.min";
 import "../imports/client/js/sb-admin-2.min";
 import "../imports/client/ui/Layout/clientMainLayout.html";
+import "../imports/client/ui/Layout/eatFit/eFLayout.html";
+import "../imports/client/ui/Layout/eatFit/eFLayout";
 import "./lib/spacebarHelpers";
 import "./lib/summernote";
 import "../imports/client/ui/pages/VerifyEmail/emailVerifySuccess.html";
@@ -30,8 +32,7 @@ import "../imports/client/ui/pages/genieeRepair/GRusers/create-GRusers.html";
 import "../imports/client/ui/pages/genieeRepair/GRusers/create-GRusers";
 
 //Eat Fit
-import "../imports/client/ui/Layout/eatFit/eFLayout.html";
-import "../imports/client/ui/Layout/eatFit/eFLayout";
+
 import "../imports/client/ui/pages/eatFit/category/category.html";
 import "../imports/client/ui/pages/eatFit/category/category";
 import "../imports/client/ui/pages/eatFit/foodItem/create-product.html";
