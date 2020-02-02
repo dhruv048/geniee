@@ -4,10 +4,11 @@
 
 //import {Products, Category} from "../../../../../lib/collections/eCommerce";
 import {GRusers} from "../../../../../../lib/collections/genieeRepair/GRusers";
+import {GRcategories} from "../../../../../../lib/collections/genieeRepair/GRcategories";
 import {Meteor} from 'meteor/meteor';
 
 let usercoverImage = null;
-let filee = [];
+let filee ;
 let userID = null;
 let usercoverImageToRemoveAfterEdit = null;
 let selectedCategory = null;
@@ -29,9 +30,9 @@ Template.Create_GRuser.helpers({
             limit: 5,
             rules: [
                 {
-                    collection: Service,
+                    collection: GRcategories,
                     field: "title",
-                    template: Template.GRcategories,
+                    template: Template.GRcategoriesAutocomplete,
                     matchAll: true,
                 }
             ]
@@ -57,49 +58,30 @@ Template.Create_GRuser.rendered = () => {
     Session.set("files", []);
 };
 Template.Create_GRuser.events({
-    'change #userCoverImage': function (event, template) {
+    'change #userProfilePic': function (event, template) {
         if (usercoverImage != null) {
             usercoverImageToRemoveAfterEdit = usercoverImage;
         }
-        let FileList = event.currentTarget.files;
+       
         if (event.currentTarget.files && event.currentTarget.files[0]) {
-            console.log(event.currentTarget.files);
-            handleFileSelect(event)
-            // for (const [key, file] of Object.entries( event.currentTarget.files.FileList)) {
-            //     console.log(key, file);
-            //     let reader = new FileReader();
-            //     reader.onload = function (e) {
-            //         file.key=key;
-            //         file.uri = e.target.result;
-            //         filee.push(file);
-            //         Session.set("files", filee);
-            //         console.log(file)
-            //     }
-            //     reader.readAsArrayBuffer(file);
-            // }
-            // for( var i=0; i<FileList.length;i++)
-            // {
-            //     let reader = new FileReader();
-            //     reader.onload = function (e) {
-            //         var file=FileList[i];
-            //        // file.key=i;
-            //         file.uri = e.target.result;
-            //         filee.push(file);
-            //         Session.set("files", filee);
-            //         console.log(file)
-            //     }
-            //     reader.readAsArrayBuffer(FileList[i]);
-            // }
-            // event.currentTarget.files.FileList.forEach(file => {
-            //     let reader = new FileReader();
-            //     reader.onload = function (e) {
-            //         file.uri = e.target.result;
-            //         filee.push(file);
-            //         Session.set("files", filee);
-            //         console.log(file)
-            //     }
-            //     reader.readAsArrayBuffer(file);
-            // });
+            Session.set("file", event.currentTarget.files[0]);
+            filee = event.currentTarget.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#img-upload').cropper('destroy');
+                $('#img-upload').attr('src', e.target.result);
+                $('#img-upload').cropper({
+                    aspectRatio: 1 / 1,
+                    zoomable: true,
+                });
+                var canvas = $('#img-upload').cropper('getCroppedCanvas');
+                var canvaURL = canvas.toDataURL('image/jpeg');
+                $('#croppedImage').attr('src', canvaURL);
+            }
+
+            reader.readAsDataURL(event.currentTarget.files[0]);
+            // var cropper =  $('#img-upload').data('cropper');
         }
     },
     'submit #userCreateForm': function (event, t) {
@@ -110,7 +92,6 @@ Template.Create_GRuser.events({
         var description = $('#userDescription').val();
         var contact = $('#userContact').val();
         var category = selectedCategory._id;
-        var Category = selectedCategory.title;
         var content = $('#summernote').summernote('code');
 
         if (!selectedCategory) {
@@ -125,37 +106,36 @@ Template.Create_GRuser.events({
             sAlert.error("Please enter Description");
             return;
         }
-        if (!userID && !filee) {
+        if (!filee) {
             sAlert.error("Please Upload Image");
             return;
         }
 
         var user = {
-            _id: userID,
             fullname: fullname,
             description: description,
-            images: [],
-            service: category,
+            category: category,
             userContent: content,
             createBy: Meteor.userId(),
             contact: contact
         };
 
         if (filee) {
-            filee.forEach(item => {
-                let file = item.uri;
-                var mime = file.substr(file.indexOf('data:') + 5, file.indexOf(';bas') - 5);
-//                 console.log(file);
-                var data = file.substr(file.indexOf('base64,') + 7);
+            var img = $('#img-upload');
+            var canvas = img.cropper('getCroppedCanvas');
 
-
-                let Item = {
-                    data: data,
-                    mime: mime,
-                };
-                console.log(Item);
-                user.images.push(Item);
-            })
+            var canvaURL = canvas.toDataURL('image/jpeg');
+            var data = canvaURL.substr(canvaURL.indexOf('base64,') + 7);
+            filee.mime = filee.type;
+            let time = moment().format('DDMMYYx');
+            var name = time + "." + filee.mime.substr(filee.mime.indexOf('/') + 1);
+            var file = {
+                data: data,
+                mime: filee.type,
+                name: name,
+            }
+            console.log(file);
+            user.image = file
 
         }
 
@@ -173,11 +153,12 @@ Template.Create_GRuser.events({
                     $(".summernote").summernote("code", "");
                     $('#img-upload').attr('src', '');
                     filee = [];
-                    FlowRouter.go('/admin/GRusers/' + userID);
+                    FlowRouter.go('/admin/users/' + userID);
                 }
             });
         } else {
-            Meteor.call('addNewUser', user, function (err) {
+            console.log(user)
+            Meteor.call('addNewGRUser', user, function (err) {
                 if (err) {
                     sAlert.error(err.message);
                     removeUserCoverImage(user.userImage);
@@ -188,7 +169,7 @@ Template.Create_GRuser.events({
                     $(".summernote").summernote("code", "");
                     $('#img-upload').attr('src', '');
                     filee = [];
-                    FlowRouter.go('/admin/GRusers');
+                    FlowRouter.go('/admin/users');
 
                 }
             });
@@ -197,7 +178,7 @@ Template.Create_GRuser.events({
     },
     "autocompleteselect input": function (event, template, doc) {
         console.log("selected ", doc);
-        alert(doc._id);
+        //alert(doc._id);
         selectedCategory = doc;
     },
     'select .btn-file :file': function (event, label) {
@@ -207,12 +188,12 @@ Template.Create_GRuser.events({
         if (input.length) {
             input.val(log);
         } else {
-          //  if (log) alert(log);
+            if (log) alert(log);
         }
 
     },
     'change .btn-file :file': function (event, ele) {
-        var filename = ele.find('#userCoverImage').value.split('\\').pop();
+        var filename = ele.find('#userProfilePic').value.split('\\').pop();
         ele.$('#imgName').val(filename);
     }
 });
@@ -221,11 +202,11 @@ Template.Create_GRuser.events({
 removeUserCoverImage = (userImage) => {
 
     if (userImage !== null) {
-        Meteor.call('removeAWSObject', userImage, (err, res) => {
+       /* Meteor.call('removeAWSObject', userImage, (err, res) => {
             if (err) {
                 sAlert.error(err.reason);
             }
-        })
+        })*/
     }
 }
 

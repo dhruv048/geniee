@@ -43,17 +43,23 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Upload Image</label>
-                                        {{#each files}}
-                                        <img id="{{index}}" style="max-width: 200px"
-                                             src="{{uri}}"/>
-                                        {{/each}}
+                                        <img id='img-upload' style="max-width: 100%"
+                                             src="{{getImage GRuser.profilepic}}"/>
                                         <div class="input-group">
                                         <span class="input-group-btn">
-                                            <span class="btn btn-default btn-file">
-                                                Browse� <input type="file" id="userCoverImage" multiple>
-                                            </span>
-                                        </span>
+                <span class="btn btn-default btn-file">
+                    Browse� <input type="file" id="userProfilePic">
+                </span>
+            </span>
+                                            <input type="text" class="form-control" id="imgName" readonly>
                                         </div>
+
+                                        <div>
+                                            Cropped Image
+                                        </div>
+                                        <div class="form-group">
+                                            <img id="croppedImage" src=""/></div>
+
                                     </div>
 
                                     <div>
@@ -79,7 +85,7 @@
         </div>
     </div>
 </template>
-<template name="GRcategories">
+<template name="GRcategoriesAutocomplete">
     <li class="list-group-item d-flex justify-content-between align-items-center">
         <!--<div class="small">-->
         <!--<img width="30" height="30" src="{{getImage profile.profileImage}}" class="img-profile rounded-circle small"-->

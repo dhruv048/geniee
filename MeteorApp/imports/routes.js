@@ -109,7 +109,7 @@ adminRoutes.route('/categories', {
     name: 'Categories',
     action: function (params, queryParams) {
         if(Session.get('loggedUserRole')==111) {
-            BlazeLayout.render('adminMainLayoutGR', {main: 'categoriesGR'});
+            BlazeLayout.render('adminMainLayoutGR', {main: 'GRcategories'});
         }
         else if(Session.get('loggedUserRole')==2){
             BlazeLayout.render('adminMainLayout', {main: 'categories'});
@@ -128,10 +128,17 @@ adminRoutes.route('/categories', {
 adminRoutes.route('/users', {
     name: 'Users',
     action: function (params, queryParams) {
-        BlazeLayout.render('adminMainLayout', {main: 'Users'});
+        if(Session.get('loggedUserRole')==111) {
+            BlazeLayout.render('adminMainLayoutGR', {main: 'Create_GRuser'});
+        }
+        else {
+            BlazeLayout.render('adminMainLayout', {main: 'Users'});
+        }
+        
     },
     triggersEnter: [function () {
         Meteor.subscribe('allUsersforWeb');
+        Meteor.subscribe('allgrcategories');
     }]
 })
 

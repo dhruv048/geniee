@@ -25,6 +25,9 @@ import "../imports/client/ui/pages/users/users";
 //Gr Categories
 import "../imports/client/ui/pages/genieeRepair/category/category.html";
 import "../imports/client/ui/pages/genieeRepair/category/category";
+//Gr Users
+import "../imports/client/ui/pages/genieeRepair/GRusers/create-GRusers.html";
+import "../imports/client/ui/pages/genieeRepair/GRusers/create-GRusers";
 
 //Eat Fit
 import "../imports/client/ui/Layout/eatFit/eFLayout.html";

@@ -117,6 +117,27 @@ AdvertisementImages = new FilesCollection({
     }
 });
 
+//GR Users
+GRuserpic = new FilesCollection({
+    collectionName: 'gruserpic',
+    allowClientCode: false,
+    debug: Meteor.isServer && process.env.NODE_ENV === 'development',
+    onBeforeUpload(file) {
+        console.log('before upload',file)
+    },
+
+    onAfterUpload(image) {
+       onAfterUpload(image,this)
+    },
+
+    interceptDownload(http, image, versionName) {
+        interceptDownload(http, image, versionName)
+    },
+    onAfterRemove(images) {
+        onAfterRemove(images);
+    }
+});
+
 
 
 
