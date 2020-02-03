@@ -3,10 +3,10 @@
 //let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 let GOOGLE_MAP_API_KEY = 'AIzaSyCMar6aw6cYsJXNv8mHLIEaT9TCYGNefXU';
 
-let API_URL='http://192.168.1.228:3000/api/';
-let IMAGE_URL='http://192.168.1.228:3000/api/images/';
+let API_URL='http://192.168.1.245:3000/api/';
+let IMAGE_URL='http://192.168.1.245:3000/api/images/';
 
-let METEOR_URL = 'ws://192.168.1.228:3000/websocket';
+let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 
 // let API_URL = "https://api.krishisansaar.com/api/";
 // let IMAGE_URL='https://api.krishisansaar.com/api/'
@@ -28,7 +28,12 @@ export const settings = {
 export const userType = {
     NORMAL: 0,
     SERVICE_PROVIDER: 1
-}
+};
+
+export const PaymentType = {
+    CASH: 0,
+    ESEWA: 1
+};
 export default settings;
 
 

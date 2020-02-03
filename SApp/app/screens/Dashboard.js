@@ -305,8 +305,8 @@ class Dashboard extends Component {
     _renderItem({item, index}) {
         return (
             <View key={index} style={{}}>
-                <Thumbnail square style={{width: '100%', height: Math.round(viewportWidth * 0.43), resizeMode: 'cover'}}
-                           source={{uri: settings.IMAGE_URL +'images/'+ item.src}}/>
+                <Thumbnail square style={{width: '100%', height: Math.round(viewportWidth * 0.29), resizeMode: 'cover'}}
+                           source={{uri: settings.IMAGE_URL + item.src}}/>
             </View>
         );
     }
@@ -395,7 +395,7 @@ class Dashboard extends Component {
                     {this.state.searchMode==false ?
                         <View>
                             {this.state.Adds.length>0?
-                        <View style={{minHeight: Math.round(viewportWidth * 0.43), justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{minHeight: Math.round(viewportWidth * 0.29), justifyContent: 'center', alignItems: 'center'}}>
                             <Carousel
                                 ref={(c) => {
                                     this._carousel = c;
@@ -412,9 +412,23 @@ class Dashboard extends Component {
                             />
 
                         </View>:null}
-                            <TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>
-                                <Text>Eat Fit</Text>
-                            </TouchableOpacity>
+                            {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>*/}
+                                {/*<Text>Eat Fit</Text>*/}
+                            {/*</TouchableOpacity>*/}
+
+                            <View key="id" style={styles.containerStyle}>
+                                <TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>
+                                    <Body>
+                                    <Icon name={'apple'} size={20} style={styles.catIcon}/>
+                                    </Body>
+
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        fontWeight: 'bold',
+                                        color: '#ffffff'
+                                    }}>EAT FIT</Text>
+                                </TouchableOpacity>
+                            </View>
                         <FlatList style={styles.mainContainer}
                                   data={this.props.categories}
                                   numColumns={2}

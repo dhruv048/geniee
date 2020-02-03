@@ -77,7 +77,7 @@ class ProductDetailEF extends Component {
             })
         }
         else {
-            Meteor.call('getSingleProduct', productId, (err, res) => {
+            Meteor.call('getSingleProductEF', productId, (err, res) => {
                 if (err) {
                     console.log('this is due to error. ' + err);
                 }
@@ -92,7 +92,7 @@ class ProductDetailEF extends Component {
         }
         ;
         //Get Similar products
-        Meteor.call('getSimilarProduct', productId, (err, res) => {
+        Meteor.call('getSimilarProductEF', productId, (err, res) => {
             if (err) {
                 console.log('this is due to error. ' + err);
             }
@@ -124,11 +124,9 @@ class ProductDetailEF extends Component {
 
     OrderNow() {
         let product = this.state.product;
-        product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
-        product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
         product['orderQuantity'] = this.state.quantity;
         product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
-        this.props.navigation.navigate('Checkout', {'productOrder': product});
+        this.props.navigation.navigate('CheckoutEF', {'productOrder': product});
     }
 
     _browse = (url) => {
@@ -142,28 +140,29 @@ class ProductDetailEF extends Component {
         return (
 
             <Container style={customStyle.Container}>
-                <Header androidStatusBarColor={colors.statusBar}
-                        style={{backgroundColor: 'white', elevation: null}}>
-                    <Left>
-                        <Button transparent onPress={() => {
-                            this.props.navigation.pop()
-                        }}>
-                            <FIcon name="arrow-left" color={'#2E2E2E'} size={24}/>
-                        </Button>
-                    </Left>
+                {/*<Header androidStatusBarColor={colors.statusBar}*/}
+                        {/*style={{backgroundColor: 'white', elevation: null}}>*/}
+                    {/*<Left>*/}
+                        {/*<Button transparent onPress={() => {*/}
+                            {/*this.props.navigation.pop()*/}
+                        {/*}}>*/}
+                            {/*<FIcon name="arrow-left" color={'#2E2E2E'} size={24}/>*/}
+                        {/*</Button>*/}
+                    {/*</Left>*/}
 
-                    <Body>
-                    <Title>this.state.product.title</Title>
-                    </Body>
-                    <Right>
-                        <Button onPress={this.addToWishlist.bind(this)} transparent>
-                            {this.state.liked ?
-                                <NBIcon name='heart' style={{fontSize: 26, color: colors.appLayout}}/>
-                                : <FIcon name='heart' size={24} color={'#2E2E2E'}/>}
-                        </Button>
-                    </Right>
-                </Header>
-                {/* <View style={{
+                    {/*<Body>*/}
+                    {/*<Title>this.state.product.title</Title>*/}
+                    {/*</Body>*/}
+                    {/*<Right>*/}
+                        {/*<Button onPress={this.addToWishlist.bind(this)} transparent>*/}
+                            {/*{this.state.liked ?*/}
+                                {/*<NBIcon name='heart' style={{fontSize: 26, color: colors.appLayout}}/>*/}
+                                {/*: <FIcon name='heart' size={24} color={'#2E2E2E'}/>}*/}
+                        {/*</Button>*/}
+                    {/*</Right>*/}
+                {/*</Header>*/}
+
+                <View style={{
                     paddingHorizontal: 16,
                     position: 'absolute',
                     top: 0,
@@ -185,12 +184,27 @@ class ProductDetailEF extends Component {
                         borderRadius: 100,
                     }}
                                       onPress={() => {
-                                          this.props.navigation.pop()
+                                          this.props.navigation.goBack()
                                       }}>
                         <FIcon name='arrow-left' color='white' size={24}/>
                     </TouchableOpacity>
+                    {this.state.product?
+                    <Text numberOfLines={1} note style={{color:'white'}}>{this.state.product.title}</Text>:null}
+                    <TouchableOpacity style={{
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    }}
+                                      onPress={this.addToWishlist.bind(this)}>
+                        {this.state.liked ?
+                        <NBIcon name='heart' style={{fontSize: 26, color: colors.primary}}/>
+                        : <FIcon name='heart' size={24} color='white'/>}
+                    </TouchableOpacity>
 
-                </View> */}
+                </View>
                 {this.state.product ?
 
                     <Content style={styles.content}>
@@ -229,8 +243,8 @@ class ProductDetailEF extends Component {
 
                         <View style={{padding: 16, backgroundColor: '#fff'}}>
 
-                            <Text style={{fontSize: 20, marginBottom: 7}}>{this.state.product.title}
-                                {/*<Text style={{fontSize: 16}} note>({this.state.product.brand})</Text>*/}
+                            <Text style={{fontSize: 20, marginBottom: 7, color:colors.primaryText}}>{this.state.product.title}
+                                <Text style={{fontSize: 16}} note> ({this.state.product.isVeg? "Veg": "Non-Veg"})</Text>
                             </Text>
                             <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end', marginBottom: 7}}>
                                 {this.state.product.price ?
@@ -280,14 +294,14 @@ class ProductDetailEF extends Component {
 
                             {/*<Text*/}
                             {/*style={{fontSize: 16, marginBottom: 16}}>{this.state.product.availabeQuantity} {this.state.product.unit}{this.state.product.availabeQuantity > 1 ? 's' : ''} available</Text>*/}
-                            <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>
-                                <Col size={2}>
-                                    <View style={{flex: 1, justifyContent: 'center'}}>
-                                        <Text style={{fontSize: 15}}>Is Veg</Text>
-                                    </View>
-                                </Col>
-                                <Col size={1}><Text style={{fontSize: 16}}>{this.state.product.isVeg}</Text></Col>
-                            </Grid>
+                            {/*<Grid >*/}
+                                {/*<Col size={2}>*/}
+                                    {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                        {/*<Text style={{fontSize: 15}}>Is Veg</Text>*/}
+                                    {/*</View>*/}
+                                {/*</Col>*/}
+                                {/*<Col size={1}><Text style={{fontSize: 16}}>{this.state.product.isVeg}</Text></Col>*/}
+                            {/*</Grid>*/}
                             {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
                                 {/*<Col size={2}>*/}
                                     {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
@@ -297,10 +311,9 @@ class ProductDetailEF extends Component {
                                 {/*<Col size={1}><Text*/}
                                     {/*style={{fontSize: 16}}>{this.state.product.brand}</Text></Col>*/}
                             {/*</Grid>*/}
-
+                            <Label style={{borderBottomColor: '#ddd', borderBottomWidth: 1, color:colors.primaryText}}>Nutritions</Label>
                             {this.state.product.nutritions.map(item => (
                                 <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0}}>
-                                    <Label>Nutritions</Label>
                                     <Col size={2}>
                                         <View style={{flex: 1, justifyContent: 'center'}}>
                                             <Text style={{fontSize: 15}}>{item.label}</Text>
@@ -381,9 +394,10 @@ class ProductDetailEF extends Component {
                             </Grid>
                             <Grid style={{marginTop: 15}}>
                                 <Col>
-                                    <Button block onPress={this.addToCart.bind(this)}
+                                    <Button block
+                                            // onPress={this.addToCart.bind(this)}
                                             style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
-                                        <Text style={customStyle.buttonOutlineSecondaryText}>Add to cart</Text>
+                                        <Text style={customStyle.buttonOutlineSecondaryText}>Call</Text>
                                     </Button>
                                 </Col>
                                 <Col>

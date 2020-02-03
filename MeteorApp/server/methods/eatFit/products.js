@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-import {EFProducts} from "../../../lib/collections/eatFit/efProducts";
+import {EFProducts,EFOrder} from "../../../lib/collections/eatFit/efProducts";
 
 Meteor.methods({
     'addNewProductEF': (productInfo) => {
@@ -52,5 +52,59 @@ Meteor.methods({
 
     'EFProductsByCategory': (_categoryId) => {
         return EFProducts.find({category: _categoryId}).fetch();
+    },
+
+    'getSingleProductEF': (Id) => {
+        return EFProducts.findOne({_id: Id});
+    },
+    'getSimilarProductEF': (Id) => {
+        let cat = EFProducts.findOne({_id: Id}).category;
+        return EFProducts.find({category: cat,_id:{$ne:Id}}).fetch();
+    },
+
+    'addOrderEF': (order, isOrder) => {
+        order.orderDate = new Date(new Date().toUTCString());
+        order.owner = Meteor.userId();
+        order.status = 0;
+        let itemsUpdated = [];
+        return Async.runSync(function (done) {
+            order.items.forEach(async (item, index) => {
+                let product = await EFProducts.findOne({_id: item.productId});
+                // if (product.availabeQuantity >= item.quantity) {
+                //   //  await Products.update({_id: item.productId}, {$set: {'availabeQuantity': product.availabeQuantity - item.quantity}});
+                //     if (isOrder === 0) {
+                //         await Cart.remove({_id: item.cartItem});
+                //     }
+                //     itemsUpdated.push(item);
+                // }
+                // else {
+                //     console.log('No sufficient Available Quantity for product:' + item.title);
+                // }
+                console.log('this is index ' + index);
+                if (index === order.items.length - 1) {
+                    order.items = itemsUpdated;
+                    let loggedUser = Meteor.user();
+                    EFOrder.insert(order, (err, res) => {
+                        if (res) {
+                            // let notification = {
+                            //     title: 'Order is placed ',
+                            //     description: product.productTitle,
+                            //     owner: order.owner ? order.owner : loggedUser._id,
+                            //     navigateId: res,
+                            //     receiver: product.owner,
+                            //     type: NotificationTypes.ORDER_PRODUCT
+                            // }
+                            // Meteor.call('addNotification', notification);
+                            //return res;
+                            done(err, res);
+                        } else {
+                            return err;
+                        }
+                    })
+                }
+            });
+
+        });
+
     },
 })

@@ -34,6 +34,7 @@ import MyServices from "./services/MyServices";
 import LandingPageEF from "./EatFit/LandingPageEF";
 import ProductsEF from "./EatFit/ProductsEF";
 import ProductDetailEF from "./EatFit/ProductDetailEF";
+import CheckoutEF from "./EatFit/CheckoutEF";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -107,7 +108,10 @@ export const EatFitStack = createStackNavigator({
         screen:ProductsEF,
     },
     ProductDetailEF:{
-        screen:ProductDetailEF
+        screen:ProductDetailEF,
+    },
+    CheckoutEF:{
+        screen:CheckoutEF,
     }
 }, {
     headerMode: 'none',
