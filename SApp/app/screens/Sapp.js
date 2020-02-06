@@ -35,6 +35,8 @@ import LandingPageEF from "./EatFit/LandingPageEF";
 import ProductsEF from "./EatFit/ProductsEF";
 import ProductDetailEF from "./EatFit/ProductDetailEF";
 import CheckoutEF from "./EatFit/CheckoutEF";
+import WishListEF from "./EatFit/WishListEF";
+import CartEF from "./EatFit/CartEF";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -112,6 +114,12 @@ export const EatFitStack = createStackNavigator({
     },
     CheckoutEF:{
         screen:CheckoutEF,
+    },
+    WishListEF:{
+        screen:WishListEF,
+    },
+    CartEF:{
+        screen:CartEF,
     }
 }, {
     headerMode: 'none',

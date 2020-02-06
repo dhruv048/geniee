@@ -63,17 +63,23 @@ class ProductDetailEF extends Component {
 
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.setInitial
         /* Select the default color and size (first ones) */
         let productId = this.props.navigation.getParam('Id', null);
         let _product = this.props.navigation.getParam('data', null);
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        console.log('wishList', wishList)
+        if (wishList)
+            wishList = JSON.parse(wishList);
+        else
+            wishList = [];
         console.log(_product)
         if (_product) {
             this.setState({
                 product: _product,
-                //liked: Meteor.user().profile.hasOwnProperty('wishList') ? Meteor.user().profile.wishList.includes(_product._id) : false
-                liked: false
+                liked: wishList.includes(_product._id) ? true : false
+                // liked: false
             })
         }
         else {
@@ -84,8 +90,8 @@ class ProductDetailEF extends Component {
                 else {
                     this.setState({
                         product: res,
-                        //liked: Meteor.user().profile.hasOwnProperty('wishList') ? Meteor.user().profile.wishList.includes(res._id) : false
-                        liked: false
+                        liked: wishList.includes(res._id) ? true : false
+                        // liked: false
                     });
                 }
             });
@@ -141,25 +147,25 @@ class ProductDetailEF extends Component {
 
             <Container style={customStyle.Container}>
                 {/*<Header androidStatusBarColor={colors.statusBar}*/}
-                        {/*style={{backgroundColor: 'white', elevation: null}}>*/}
-                    {/*<Left>*/}
-                        {/*<Button transparent onPress={() => {*/}
-                            {/*this.props.navigation.pop()*/}
-                        {/*}}>*/}
-                            {/*<FIcon name="arrow-left" color={'#2E2E2E'} size={24}/>*/}
-                        {/*</Button>*/}
-                    {/*</Left>*/}
+                {/*style={{backgroundColor: 'white', elevation: null}}>*/}
+                {/*<Left>*/}
+                {/*<Button transparent onPress={() => {*/}
+                {/*this.props.navigation.pop()*/}
+                {/*}}>*/}
+                {/*<FIcon name="arrow-left" color={'#2E2E2E'} size={24}/>*/}
+                {/*</Button>*/}
+                {/*</Left>*/}
 
-                    {/*<Body>*/}
-                    {/*<Title>this.state.product.title</Title>*/}
-                    {/*</Body>*/}
-                    {/*<Right>*/}
-                        {/*<Button onPress={this.addToWishlist.bind(this)} transparent>*/}
-                            {/*{this.state.liked ?*/}
-                                {/*<NBIcon name='heart' style={{fontSize: 26, color: colors.appLayout}}/>*/}
-                                {/*: <FIcon name='heart' size={24} color={'#2E2E2E'}/>}*/}
-                        {/*</Button>*/}
-                    {/*</Right>*/}
+                {/*<Body>*/}
+                {/*<Title>this.state.product.title</Title>*/}
+                {/*</Body>*/}
+                {/*<Right>*/}
+                {/*<Button onPress={this.addToWishlist.bind(this)} transparent>*/}
+                {/*{this.state.liked ?*/}
+                {/*<NBIcon name='heart' style={{fontSize: 26, color: colors.appLayout}}/>*/}
+                {/*: <FIcon name='heart' size={24} color={'#2E2E2E'}/>}*/}
+                {/*</Button>*/}
+                {/*</Right>*/}
                 {/*</Header>*/}
 
                 <View style={{
@@ -188,20 +194,20 @@ class ProductDetailEF extends Component {
                                       }}>
                         <FIcon name='arrow-left' color='white' size={24}/>
                     </TouchableOpacity>
-                    {this.state.product?
-                    <Text numberOfLines={1} note style={{color:'white'}}>{this.state.product.title}</Text>:null}
+                    {this.state.product ?
+                        <Text numberOfLines={1} note style={{color: 'white'}}>{this.state.product.title}</Text> : null}
                     <TouchableOpacity style={{
-                    alignSelf: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: 40,
-                    height: 40,
-                    borderRadius: 100,
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: 40,
+                        height: 40,
+                        borderRadius: 100,
                     }}
                                       onPress={this.addToWishlist.bind(this)}>
                         {this.state.liked ?
-                        <NBIcon name='heart' style={{fontSize: 26, color: colors.primary}}/>
-                        : <FIcon name='heart' size={24} color='white'/>}
+                            <NBIcon name='heart' style={{fontSize: 26, color: colors.primary}}/>
+                            : <FIcon name='heart' size={24} color='white'/>}
                     </TouchableOpacity>
 
                 </View>
@@ -243,8 +249,13 @@ class ProductDetailEF extends Component {
 
                         <View style={{padding: 16, backgroundColor: '#fff'}}>
 
-                            <Text style={{fontSize: 20, marginBottom: 7, color:colors.primaryText}}>{this.state.product.title}
-                                <Text style={{fontSize: 16}} note> ({this.state.product.isVeg? "Veg": "Non-Veg"})</Text>
+                            <Text style={{
+                                fontSize: 20,
+                                marginBottom: 7,
+                                color: colors.primaryText
+                            }}>{this.state.product.title}
+                                <Text style={{fontSize: 16}}
+                                      note> ({this.state.product.isVeg ? "Veg" : "Non-Veg"})</Text>
                             </Text>
                             <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end', marginBottom: 7}}>
                                 {this.state.product.price ?
@@ -295,23 +306,27 @@ class ProductDetailEF extends Component {
                             {/*<Text*/}
                             {/*style={{fontSize: 16, marginBottom: 16}}>{this.state.product.availabeQuantity} {this.state.product.unit}{this.state.product.availabeQuantity > 1 ? 's' : ''} available</Text>*/}
                             {/*<Grid >*/}
-                                {/*<Col size={2}>*/}
-                                    {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                                        {/*<Text style={{fontSize: 15}}>Is Veg</Text>*/}
-                                    {/*</View>*/}
-                                {/*</Col>*/}
-                                {/*<Col size={1}><Text style={{fontSize: 16}}>{this.state.product.isVeg}</Text></Col>*/}
+                            {/*<Col size={2}>*/}
+                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                            {/*<Text style={{fontSize: 15}}>Is Veg</Text>*/}
+                            {/*</View>*/}
+                            {/*</Col>*/}
+                            {/*<Col size={1}><Text style={{fontSize: 16}}>{this.state.product.isVeg}</Text></Col>*/}
                             {/*</Grid>*/}
                             {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
-                                {/*<Col size={2}>*/}
-                                    {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                                        {/*<Text style={{fontSize: 15}}>Brand</Text>*/}
-                                    {/*</View>*/}
-                                {/*</Col>*/}
-                                {/*<Col size={1}><Text*/}
-                                    {/*style={{fontSize: 16}}>{this.state.product.brand}</Text></Col>*/}
+                            {/*<Col size={2}>*/}
+                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                            {/*<Text style={{fontSize: 15}}>Brand</Text>*/}
+                            {/*</View>*/}
+                            {/*</Col>*/}
+                            {/*<Col size={1}><Text*/}
+                            {/*style={{fontSize: 16}}>{this.state.product.brand}</Text></Col>*/}
                             {/*</Grid>*/}
-                            <Label style={{borderBottomColor: '#ddd', borderBottomWidth: 1, color:colors.primaryText}}>Nutritions</Label>
+                            <Label style={{
+                                borderBottomColor: '#ddd',
+                                borderBottomWidth: 1,
+                                color: colors.primaryText
+                            }}>Nutritions</Label>
                             {this.state.product.nutritions.map(item => (
                                 <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0}}>
                                     <Col size={2}>
@@ -393,25 +408,25 @@ class ProductDetailEF extends Component {
                                 </Col>
                             </Grid>
                             <Grid style={{marginTop: 15}}>
-                                <Col>
-                                    <Button block
-                                            // onPress={this.addToCart.bind(this)}
-                                            style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
-                                        <Text style={customStyle.buttonOutlineSecondaryText}>Call</Text>
+                                <Col size={2}>
+                                    <Button block onPress={this.addToCart}
+                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
+                                        <Text style={customStyle.buttonPrimaryText}>Add to Cart</Text>
                                     </Button>
                                 </Col>
-                                <Col>
+                                <Col size={2}>
                                     <Button block onPress={this.OrderNow.bind(this)}
                                             style={[customStyle.buttonPrimary, {marginRight: 5}]}>
                                         <Text style={customStyle.buttonPrimaryText}>Order Now</Text>
                                     </Button>
                                 </Col>
-                                {/* <Col>
-                                    <Button block onPress={this.addToWishlist.bind(this)} icon transparent
-                                            style={{backgroundColor: '#fdfdfd'}}>
-                                        <FIcon style={{color: colors.appLayout}} name='heart' size={30}/>
+                                <Col size={1}>
+                                    <Button block icon transparent
+                                        // onPress={this.addToCart.bind(this)}
+                                            style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
+                                       <FIcon name={'phone'} size={24} color={colors.primary}/>
                                     </Button>
-                                </Col> */}
+                                </Col>
                             </Grid>
                         </View>
                         <View style={{padding: 16, marginTop: 7, backgroundColor: '#fff'}}>
@@ -423,7 +438,7 @@ class ProductDetailEF extends Component {
                                 // default width is the width of screen
                                 // if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35
                                 style={{
-                                    width:viewportWidth - 33,
+                                    width: viewportWidth - 33,
                                     marginHorizontal: 15,
                                     marginVertical: 20
                                 }}
@@ -520,68 +535,75 @@ class ProductDetailEF extends Component {
         return size;
     }
 
-    addToCart() {
+     addToCart=async() =>{
         var product = this.state.product;
-        product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
-        product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
+        // product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
+        // product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
         product['orderQuantity'] = this.state.quantity;
-        product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
-        Meteor.call('AddProductToCart', product, (err, res) => {
-            if (err) {
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            }
-            else {
-                ToastAndroid.showWithGravityAndOffset(
-                    'Product added to your cart !',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            }
+       // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
+        let cartList = await AsyncStorage.getItem('myCart');
+        let cartItem={
+            id:product._id,
+            orderQuantity:product.orderQuantity
+        }
+        if (cartList) {
+            cartList = JSON.parse(cartList);
+        }
+        else {
+            cartList = [];
+        }
+        let index = cartList.findIndex(item => {
+            return item.id == product.id
         });
+        if (index > -1) {
+            cartList.splice(index, 1);
+            cartList.push(cartItem);
+        }
+        else {
+            cartList.push(cartItem);
+        }
+         ToastAndroid.showWithGravityAndOffset(
+             'Product added to your cart !',
+             ToastAndroid.LONG,
+             ToastAndroid.TOP,
+             0,
+             50,
+         );
+        AsyncStorage.setItem('myCart', JSON.stringify(cartList));
     }
 
-    addToWishlist() {
+    async addToWishlist() {
         var productId = this.state.product._id;
         const liked = this.state.liked;
         this.setState({liked: !liked});
-        Meteor.call("AddProductToWishList", productId, (err, res) => {
-            if (!err) {
-                ToastAndroid.showWithGravityAndOffset(
-                    liked ? 'Product removed from  Wishlist !' : 'Product added to  Wishlist !',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            }
-            else {
-                this.setState({liked: liked});
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            }
-        });
-    }
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        if (wishList) {
+            wishList = JSON.parse(wishList);
+        }
+        else {
+            wishList = [productId];
+        }
+        let index=wishList.findIndex(item=>{return item==productId});
+        if(index>-1)
+            wishList.splice(index,1);
+        else
+            wishList.push(productId);
 
+        AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
+        ToastAndroid.showWithGravityAndOffset(
+            liked ? 'Product removed from  Wishlist !' : 'Product added to  Wishlist !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
+    }
     search(array, object) {
         for (var i = 0; i < array.length; i++)
             if (JSON.stringify(array[i]) === JSON.stringify(object))
                 return true;
         return false;
     }
-
 }
 
 const styles = StyleSheet.create({

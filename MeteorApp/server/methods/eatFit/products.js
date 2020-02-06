@@ -107,4 +107,14 @@ Meteor.methods({
         });
 
     },
+
+    'WishListItemsEF': (wishList) => {
+        try {
+            return EFProducts.find({_id: {$in: wishList}}).fetch();
+        }
+        catch (e) {
+            console.log(e.message);
+        }
+    },
+
 })

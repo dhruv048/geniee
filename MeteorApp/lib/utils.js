@@ -11,12 +11,10 @@ export const NotificationTypes = {
 };
 
 export const userType = {
-    VISITOR: 0,
-    DOCTOR: 1,
-    HOSPITAL: 2,
-    CLINIC: 3,
-    LAB: 4,
-    SUPER_ADMIN: 5,
+    NORMAL: 0,
+    SERVICE_PROVIDER: 1,
+    EAT_FIT:222,
+    GENIEE_REPAIR:111
 };
 
 export const padZeros = (num, size) => {
@@ -177,7 +175,13 @@ export const Subscriptions = [
         }
     }
 ];
-
+export const OrderStatus = {
+    ORDER_REQUESTED: 0,
+    ORDER_DISPATCHED: 1,
+    ORDER_DELIVERED: 2,
+    ORDER_CONFIRMED: 3,
+    ORDER_CANCELLED: 4,
+}
 export const getTimeSlots = (start, end, duration, breakTime) => {
     console.log(start, end, duration, breakTime);
     var startTime = new moment(start, 'HH:mm');
