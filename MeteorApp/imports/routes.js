@@ -228,6 +228,17 @@ adminRoutes.route('/product/:productId', {
 
     }
 });
+
+adminRoutes.route('/orders', {
+    name: 'Product Orders',
+    action() {
+        BlazeLayout.render('adminMainLayoutEF', {main: 'OrdersEF'});
+        document.title = "Eat-Fit-Admin Product Orders";
+    },
+    triggersEnter: [function (context, redirect) {
+    }]
+});
+
 adminRoutes.route('/edit-article/:articleId', {
     name: 'Edit Article',
     action() {

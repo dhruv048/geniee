@@ -3,6 +3,7 @@ package com.sapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.roshan.esewa.RNEsewaSdkPackage;
 import com.rnfs.RNFSPackage;
@@ -56,6 +57,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RNDeviceInfo(),
             new RNCWebViewPackage(),
             new RNEsewaSdkPackage(),
                     new FBSDKPackage(mCallbackManager),

@@ -181,7 +181,12 @@ export const OrderStatus = {
     ORDER_DELIVERED: 2,
     ORDER_CONFIRMED: 3,
     ORDER_CANCELLED: 4,
-}
+};
+
+export const PaymentType = {
+    CASH: 0,
+    ESEWA: 1
+};
 export const getTimeSlots = (start, end, duration, breakTime) => {
     console.log(start, end, duration, breakTime);
     var startTime = new moment(start, 'HH:mm');

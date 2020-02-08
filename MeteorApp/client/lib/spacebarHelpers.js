@@ -2,7 +2,7 @@
  * Created by Roshan on 6/21/2017.
  */
 
-import {userType} from "../../lib/utils";
+import {userType, PaymentType, OrderStatus} from "../../lib/utils";
 
 Template.registerHelper("isChecked", function (value) {
     try {
@@ -34,6 +34,23 @@ Template.registerHelper("getProductImage", function (images) {
 Template.registerHelper("profileImage", function (Id) {
     try {
         return Images.findOne({_id: Id}).link();
+    } catch (ex) {
+    }
+});
+Template.registerHelper("getPaymentInfo", function (value) {
+    try {
+        if (value==0)
+            return "Cash on Delivery";
+        else
+            return 'Payed through E-Sewa';
+    } catch (ex) {
+    }
+});
+Template.registerHelper("isEsewaPayment", function (value) {
+    try {
+        if (value == PaymentType.ESEWA)
+
+            return true;
     } catch (ex) {
     }
 });
@@ -127,4 +144,18 @@ Template.registerHelper('getRole', (value) => {
 
 Template.registerHelper('notVisitor', (value) => {
     return (value != 0);
+});
+
+Template.registerHelper('isNewOrder', (value) => {
+    if (value === OrderStatus.ORDER_REQUESTED)
+        return true;
+});
+
+Template.registerHelper('isOrderDispatched', (value) => {
+    if (value === OrderStatus.ORDER_DISPATCHED)
+        return true;
+});
+Template.registerHelper('isOrderDelivered', (value) => {
+    if (value === OrderStatus.ORDER_DELIVERED)
+        return true;
 });

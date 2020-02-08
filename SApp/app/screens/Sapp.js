@@ -37,6 +37,8 @@ import ProductDetailEF from "./EatFit/ProductDetailEF";
 import CheckoutEF from "./EatFit/CheckoutEF";
 import WishListEF from "./EatFit/WishListEF";
 import CartEF from "./EatFit/CartEF";
+import OrderListEF from "./EatFit/OrderListEF";
+import OrderDetailEF from "./EatFit/OrderDetailEF";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -83,7 +85,17 @@ export const ServiceStack = createStackNavigator({
     headerMode: 'none',
     initialRouteName:'Home'
 });
-
+export const OrderStack = createStackNavigator({
+    OrderList: {
+        screen: OrderListEF,
+    },
+    OrderDetail:{
+        screen:OrderDetailEF,
+    }
+}, {
+    headerMode: 'none',
+    initialRouteName:'OrderList'
+});
 
 export const MyServiceStack = createStackNavigator({
     MyServices: {
@@ -206,7 +218,15 @@ export const MainNavigation = createDrawerNavigator({
             )
         }
     },
-
+    Orders:{
+        screen: OrderStack,
+        navigationOptions: {
+            drawerLabel: 'ORDERS',
+            drawerIcon: (
+                <Icon name='shopping-basket' size={24}/>
+            )
+        }
+    },
     AddService: {
         screen: AddService,
         navigationOptions: {
@@ -299,6 +319,15 @@ export const UnAuthorized = createDrawerNavigator({
                 drawerLabel: 'HOME',
                 drawerIcon: (
                     <Icon name='home' size={24}/>
+                )
+            }
+        },
+        Orders:{
+            screen: OrderStack,
+            navigationOptions: {
+                drawerLabel: 'ORDERS',
+                drawerIcon: (
+                    <Icon name='shopping-basket' size={24}/>
                 )
             }
         },

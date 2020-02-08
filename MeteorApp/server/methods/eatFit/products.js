@@ -82,8 +82,9 @@ Meteor.methods({
                 // }
                 console.log('this is index ' + index);
                 if (index === order.items.length - 1) {
-                    order.items = itemsUpdated;
+                    order.items = order.items;
                     let loggedUser = Meteor.user();
+                    order.owner=loggedUser? loggedUser:null;
                     EFOrder.insert(order, (err, res) => {
                         if (res) {
                             // let notification = {
@@ -117,4 +118,78 @@ Meteor.methods({
         }
     },
 
+    'getOrdersEF':(deviceId)=>{
+        let userId=Meteor.userId()? Meteor.userId():undefined;
+        return EFOrder.find({$or:[{owner:userId},{deviceId:deviceId}]}).fetch()
+    },
+
+
+    'getEFProductOrderForAdmin': () => {
+        const collection = EFOrder.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const pipeline = [
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "orderedBy"
+                }
+            },
+            {
+                $addFields: {
+                    OrderBy: {
+                        $arrayElemAt: ["$orderedBy", 0]
+                    },
+                },
+            },
+            {$sort: {"orderDate": -1}},
+            {
+                $project: {
+                    _id: 1,
+                    contact: 1,
+                    totalPrice: 1,
+                    items: 1,
+                    PaymentType: 1,
+                    orderDate: 1,
+                    owner: 1,
+                    status: 1,
+                    transactionId: 1,
+                    OrderBy: 1,
+                    esewaDetail: 1,
+                }
+            }
+
+        ];
+        return Async.runSync(function (done) {
+            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    // console.log(doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+    'updateOrderStatusEF': (Id, status) => {
+        let loggedUser = Meteor.user();
+        let order = EFOrder.findOne({_id: Id});
+        EFOrder.update({_id: Id},
+            {
+                $set: {status: status}
+            }, (err, res) => {
+                if (err) {
+                    return err
+                } else {
+                    // let notification = {
+                    //     title: 'Order Status Change By ' + loggedUser.profile.name,
+                    //     description: order._id,
+                    //     owner: loggedUser._id,
+                    //     navigateId: order._id,
+                    //     receiver: order.owner,
+                    //     type: status
+                    // }
+                    // Meteor.call('addNotification', notification);
+                }
+            })
+    },
 })

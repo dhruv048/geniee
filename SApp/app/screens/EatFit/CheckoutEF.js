@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList, TextInput, NativeModules, ToastAndroid,Alert} from 'react-native';
+import {FlatList, TextInput, NativeModules, ToastAndroid, Alert, AsyncStorage} from 'react-native';
 import {
     Container,
     Content,
@@ -27,7 +27,7 @@ import Meteor, {withTracker} from "react-native-meteor";
 import {colors} from "../../config/styles";
 import {variables, customStyle} from '../../config/styles';
 import {PaymentType, TransactionTypes} from "../../config/settings";
-
+import DeviceInfo from 'react-native-device-info';
 
 class CheckoutEF extends Component {
     constructor(props) {
@@ -53,7 +53,7 @@ class CheckoutEF extends Component {
        // console.log(cartItems);
         var total = 0;
         cartItems.map((item) => {
-            total += parseFloat(item.product.finalPrice) * parseInt(item.product.orderQuantity);
+            total += parseFloat(item.finalPrice) * parseInt(item.orderQuantity);
             this.setState({total: total});
         });
     }
@@ -66,20 +66,29 @@ class CheckoutEF extends Component {
         }
 
     }
+
+    getdeviceId = () => {
+        //Getting the Unique Id from here
+        var id = DeviceInfo.getUniqueID();
+        console.log('uniqueId',id)
+       return id;
+    };
     componentDidMount() {
         const singleProduct=this.props.navigation.getParam('productOrder', null);
         if(singleProduct) {
-            const cartItem={
-                product: singleProduct,
-                "_id": '',
-                "owner": "",
-                "type": 0,
-                "addDate": new Date(new Date().toUTCString()),
-            }
+            // const cartItem={
+            //     product: singleProduct,
+            //
+            //     "owner": "",
+            //     "type": 0,
+            //     "addDate": new Date(new Date().toUTCString()),
+            // }
+            singleProduct.addDate= new Date(new Date().toUTCString());
+            singleProduct.type= 0;
             this.setState({
-                cartItems: [cartItem]
+                cartItems: [singleProduct]
             });
-            this.updateTotal([cartItem]);
+            this.updateTotal([singleProduct]);
         }
         else{
             //var total = 0;
@@ -99,17 +108,46 @@ class CheckoutEF extends Component {
         })
     }
 
-    getCartItems =()=>{
-        Meteor.call('getCartItems', (err, res) => {
+    getCartItems = async () => {
+        let products=[];
+        let cartList = await AsyncStorage.getItem('myCart');
+        if (cartList) {
+            cartList = JSON.parse(cartList);
+            cartList.forEach(item => {
+                    products.push(item.id)
+                }
+            )
+        }
+        console.log(cartList);
+        if (products.length == 0) {
+            return true;
+        }
+        Meteor.call('WishListItemsEF', products, (err, res) => {
             console.log(err, res);
             if (err) {
-                console.log('this is due to error. '+err);
+                console.log('this is due to error. ' + err);
             }
-            else{
+            else {
+                res.forEach(product => {
+                    const cartItem = cartList.find(item => item.id == product._id);
+                    console.log(cartItem, product)
+                    product.orderQuantity = cartItem.orderQuantity;
+                    product.finalPrice = Math.round(product.price - (product.price * (product.discount / 100)));
+                });
                 this.setState({cartItems: res});
                 this.updateTotal(res);
             }
         });
+        // Meteor.call('getCartItems', (err, res) => {
+        //     console.log(err, res);
+        //     if (err) {
+        //         console.log('this is due to error. ' + err);
+        //     }
+        //     else {
+        //         this.setState({cartItems: res});
+        //         this.updateTotal(res);
+        //     }
+        // });
     }
 
     ChangePaymentType(_PaymentType) {
@@ -249,8 +287,8 @@ class CheckoutEF extends Component {
     }
 
     renderItem(data, i) {
-        let item = data.item.product;
-        console.log(item)
+        let item = data.item;
+        // console.log(item)
         return (
             <ListItem
                 key={data.item._id}
@@ -276,20 +314,24 @@ class CheckoutEF extends Component {
         // console.log(this.state);
         const {name, email, phone, address, city, postcode, note, total, paymentType} = this.state;
         let items = [];
+        if(!name || !phone || !address || !city){
+            Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
+            return true;
+        }
         let cartItems = this.state.cartItems;
         try {
             cartItems.forEach(item => {
                 let product = {
-                    cartItem: item._id,
-                    productId: item.product._id,
-                    title: item.product.title,
-                    price: item.product.price,
-                    finalPrice: item.product.finalPrice,
-                    discount: item.product.discount,
-                    unit: item.product.unit,
-                    quantity: item.product.orderQuantity,
-                    category: item.product.category || '',
-                    productImage: item.product.images[0],
+                    productId: item._id,
+                    title: item.title,
+                    price: item.price,
+                    isVeg:item.isVeg,
+                    finalPrice: item.finalPrice,
+                    discount: item.discount,
+                    unit: item.unit,
+                    quantity: item.orderQuantity,
+                    category: item.category || '',
+                    productImage: item.images[0],
                     // color: item.product.color,
                     // size: item.product.size,
                 };
@@ -311,12 +353,14 @@ class CheckoutEF extends Component {
             },
             totalPrice: total,
             items: items,
+            deviceId:this.getdeviceId(),
             PaymentType: paymentType
         };
         this._performOrder(Item);
     }
 
     _performOrder = async (Item) => {
+        console.log(Item);
         const {paymentType, total} = this.state;
         if (paymentType == PaymentType.ESEWA) {
             let response = await this._esewaPay(total.toString(), Item.items[0].title, Meteor.userId());

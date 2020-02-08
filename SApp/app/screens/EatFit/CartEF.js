@@ -189,7 +189,7 @@ class Cart extends Component {
 
     removeItemPressed(Item) {
         Alert.alert(
-            'Remove ' + Item.product.productTitle,
+            'Remove ' + Item.title,
             'Are you sure you want to remove this item from your cart?',
             [
                 {text: 'No', onPress: () => console.log('No Pressed'), style: 'cancel'},
@@ -239,11 +239,11 @@ class Cart extends Component {
 
 
     checkout() {
-        this.props.navigation.navigate('Checkout');
+        this.props.navigation.navigate('CheckoutEF');
     }
 
     itemClicked(item) {
-        this.props.navigation.navigate('ProductDetail', {Id: item._id, data: item})
+        this.props.navigation.navigate('ProductDetailEF', {Id: item._id, data: item})
     }
 
 }

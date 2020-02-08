@@ -96,7 +96,7 @@ class WishList extends Component {
     }
 
     itemClicked(item) {
-        this.props.navigation.navigate('ProductDetail', {Id: item._id, data: item})
+        this.props.navigation.navigate('ProductDetailEF', {Id: item._id, data: item})
     }
 
     removeItemPressed(Item) {
