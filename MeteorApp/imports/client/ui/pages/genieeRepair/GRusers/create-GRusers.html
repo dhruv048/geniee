@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Add User</h1>
+                <h1 class="h3 mb-2 text-gray-800">Add New User<a class="btn btn-primary btn-sm float-right" href="/admin/grusers"><i class="fas fa-fw fa-plus"></i> View Users List</a></h1>            
             </div>
             <!-- /.col-lg-12-->
         </div>
@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Enter User Details</div>
+                    <p class="mb-4">Enter User Details</p>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-8">
@@ -46,11 +46,11 @@
                                         <img id='img-upload' style="max-width: 100%"
                                              src="{{getImage GRuser.profilepic}}"/>
                                         <div class="input-group">
-                                        <span class="input-group-btn">
-                <span class="btn btn-default btn-file">
-                    Browse� <input type="file" id="userProfilePic">
-                </span>
-            </span>
+                                            <span class="input-group-btn">
+                                                <span class="btn btn-default btn-file">
+                                                    Browse� <input type="file" id="userProfilePic">
+                                                </span>
+                                            </span>
                                             <input type="text" class="form-control" id="imgName" readonly>
                                         </div>
 
@@ -58,14 +58,12 @@
                                             Cropped Image
                                         </div>
                                         <div class="form-group">
-                                            <img id="croppedImage" src=""/></div>
-
+                                            <img id="croppedImage" src=""/>
+                                        </div>
                                     </div>
-
-                                    <div>
-                                    </div>
-                                    <button type="submit" class="btn btn-default">Submit Button</button>
-                                    <button type="reset" class="btn btn-default">Reset Button</button>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-fw fa-plus"></i> Add User</button>
+                                    <button type="reset" class="btn btn-danger"><i class="fas fa-fw fa-times"></i> Cancel</button>
+                                    <div class="form-group"></div>
                                 </form>
                             </div>
                             <!-- /.col-lg-6 (nested)-->

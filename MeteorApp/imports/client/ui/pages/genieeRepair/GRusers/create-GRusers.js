@@ -164,7 +164,7 @@ Template.Create_GRuser.events({
                     removeUserCoverImage(user.userImage);
                 }
                 else {
-                    sAlert.success("User '" + user.title + "' Added Successfully!!!")
+                    sAlert.success("User '" + user.fullname + "' Added Successfully!!!")
                     t.find("form").reset();
                     $(".summernote").summernote("code", "");
                     $('#img-upload').attr('src', '');

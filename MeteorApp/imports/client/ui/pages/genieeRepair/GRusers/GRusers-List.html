@@ -1,0 +1,34 @@
+<template name="GRusers_List">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Users List</h1>
+    <p class="mb-4">Manage Users Here </p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Available Users
+            <a class="btn btn-primary btn-sm float-right" href="/admin/users"><i class="fas fa-fw fa-plus"></i> Add New User</a></h6>
+        </div>
+
+        <div class="container">
+            <div class="card-columns ">
+                {{#each grusers}}
+                {{> GRuser}}
+                {{/each}}
+            </div>
+            <!--<div class="container">-->
+        </div>        
+    </div>
+</template>
+
+<template name="GRuser">
+    <div class="card">
+        <div class="display-on-hover">
+            <a href="#" class="removeGRuser" id="{{_id}}"><i class=" fa fa-trash fa-lg"></i></a>
+        </div>
+        <div class="card-body card-body-custom-color">
+            <h5 class="card-title">{{fullname}}</h5>
+            <p class="card-text">{{contact}}</p>            
+        </div>
+    </div>
+</template>
