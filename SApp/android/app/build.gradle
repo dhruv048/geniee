@@ -154,6 +154,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-device-info')
     implementation project(':react-native-webview')
     implementation project(':react-native-esewa-sdk')
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'

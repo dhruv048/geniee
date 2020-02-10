@@ -1,0 +1,101 @@
+<template name="OrdersEF">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Orders</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 navbar-search form-inline">
+            <div class="input-group w-50 p-3">
+                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                       id="userSearch" aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!--<div class="form-group w-25 float-right">-->
+                <!--<select class="form-control" name="articleOwner" id="userRole">-->
+                    <!--<option value="all">All</option>-->
+                    <!--<option value=1>Doctors</option>-->
+                    <!--<option value=2>Hospitals</option>-->
+                    <!--<option value=3>Clinics</option>-->
+                    <!--<option value=4>Labs</option>-->
+                    <!--<option value=0>Visitors</option>-->
+                <!--</select>-->
+            <!--</div>-->
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Shipping Add:</th>
+                        <th>Order Date</th>
+                        <th>Order Id</th>
+                        <th>Total Amount</th>
+                        <th>Products</th>
+                        <th>Pay info</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each allOrders}}
+                    <tr>
+                        <td><img width="40" height="40" class="img-profile rounded-circle"
+                                 src="{{getImage OrderBy.profile.profileImage}}">
+                            {{OrderBy.profile.name}}
+                            <br>
+                            {{OrderBy.profile.email}}<br>{{OrderBy.profile.contact}} <br>{{OrderBy.profile.address.formatted_address}}
+                        </td>
+                        <td>
+                            {{contact.name}}
+                            {{contact.email}}
+                            {{contact.phone}}<br>
+                            {{contact.address}},{{contact.city}},{{contact.postcode}}
+                            {{contact.note}}
+                        </td>
+                        <td>{{articleDate orderDate}}</td>
+
+                        <td>{{ _id}}</td>
+                        <td>Rs. {{totalPrice}}</td>
+                        <td>
+                            {{#each items}}
+                            <label>{{title}} x {{quantity}} {{unit}}</label><br>
+                            {{#if isVeg}}
+                            <label>Veg</label>{{else}}
+                            <label>Non- Veg</label>{{/ if}}
+                            {{/ each}}
+                        </td>
+
+                        <td>
+                            <label>{{getPaymentInfo PaymentType}}</label>
+                            {{#if isEsewaPayment PaymentType}}
+                            <label>E-Sewa Refrence Id: {{esewaDetail.transactionDetails.referenceId}} </label>
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{#if isNewOrder status}}
+                            <button id={{_id}} class="cancelOrder btn-danger btn-sm">Cancel</button>
+                            <button id={{_id}} class="dispatchOrder btn-info btn-sm">Dispatch</button>
+                            {{/if}}
+                            {{#if isOrderDispatched status}}
+                            <button id={{_id}} class="deliverOrder btn-success btn-sm">Delivered</button>
+                            {{/if}}
+                            {{#if isOrderDelivered status}}
+                            <label class="btn-sm">Delivered</label>
+                            {{/if}}
+                        </td>
+                        <!--<td><a class="removeSpecl" href="#" id={{_id}} role="button" aria-expanded="false">-->
+                        <!--<i class="fas fa-check-circle fa-fw"></i>-->
+                        <!--&lt;!&ndash; Counter - Messages &ndash;&gt;-->
+                        <!--</a></td>-->
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

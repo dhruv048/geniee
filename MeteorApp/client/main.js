@@ -45,6 +45,8 @@ import "../imports/client/ui/pages/eatFit/foodItem/products.html";
 import "../imports/client/ui/pages/eatFit/foodItem/products";
 import "../imports/client/ui/pages/eatFit/foodItem/product.html";
 import "../imports/client/ui/pages/eatFit/foodItem/product";
+import "../imports/client/ui/pages/eatFit/order/orders.html";
+import "../imports/client/ui/pages/eatFit/order/orders";
 
 
 //

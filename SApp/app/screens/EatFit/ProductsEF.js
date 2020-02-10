@@ -7,7 +7,7 @@ import {
     Alert,
     FlatList,
     StatusBar,
-    Modal, ToastAndroid, Linking, Dimensions, TouchableNativeFeedback
+    Modal, ToastAndroid, Linking, Dimensions, TouchableNativeFeedback, AsyncStorage
 } from 'react-native';
 import {
     Button,
@@ -16,10 +16,10 @@ import {
     Header,
     Left,
     Body,
-    StyleProvider, Right, Badge, Title
+    Icon, Right, Badge, Title
 } from 'native-base'
 import Meteor, {withTracker} from "react-native-meteor";
-import Icon from 'react-native-vector-icons/Feather';
+import FIcon from 'react-native-vector-icons/Feather';
 import {colors} from "../../config/styles";
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
@@ -46,7 +46,8 @@ class ProductsEF extends Component {
             comment: '',
             totalCount:0,
             CategoryName:'',
-            Products:[]
+            Products:[],
+            wishList:[]
         }
 
     }
@@ -65,6 +66,22 @@ class ProductsEF extends Component {
        //     totalCount: this.props.Count.length > 0 ? this.props.Count[0].totalCount : 0,
             CategoryName:this.props.navigation.getParam('Category')
         });
+
+        this.focusListener = this.props.navigation.addListener('didFocus', async () => {
+            let wishList = await AsyncStorage.getItem('myWhishList');
+            if (wishList)
+                wishList = JSON.parse(wishList);
+            else
+                wishList = [];
+            let cartList = await AsyncStorage.getItem('myCart');
+            if (cartList) {
+                cartList = JSON.parse(cartList);
+            }
+            else {
+                cartList = [];
+            }
+            this.setState({wishList:wishList,totalCount:cartList.length});
+        });
     }
     componentWillReceiveProps(newProps) {
         if (this.props.Count != newProps.Count) {
@@ -74,9 +91,8 @@ class ProductsEF extends Component {
         }
     }
     componentWillUnmount() {
-        // this.handler.unsubscribe()
+        this.focusListener.remove();
     }
-
 
     clickEventListener() {
         Alert.alert("Success", "Product has been added to cart")
@@ -107,7 +123,7 @@ class ProductsEF extends Component {
                             <Button transparent onPress={() => {
                                 this.props.navigation.pop()
                             }}>
-                                <Icon name="arrow-left" color={'white'} size={24}/>
+                                <FIcon name="arrow-left" color={'white'} size={24}/>
                             </Button>
                         </Left>
 
@@ -115,21 +131,21 @@ class ProductsEF extends Component {
                             <Title style={styles.screenHeader}>{this.state.CategoryName}</Title>
                         </Body>
                         <Right>
-                            {/*<Button onPress={() => this.props.navigation.navigate('WishList')} transparent>*/}
-                                {/*<Icon name='heart' size={24} color={'white'}/>*/}
-                                {/*{this.props.user.profile.hasOwnProperty('wishList') && this.props.user.profile.wishList.length>0?*/}
-                                    {/*<Badge*/}
-                                        {/*style={{position: 'absolute', height: 18}}>*/}
-                                        {/*<Text style={{*/}
-                                            {/*fontSize: 10,*/}
-                                            {/*fontWeight: '100',*/}
-                                            {/*color: 'white',*/}
-                                            {/*lineHeight: 18*/}
-                                        {/*}}>{this.props.user.profile.wishList.length}</Text></Badge>*/}
-                                    {/*:null}*/}
-                            {/*</Button>*/}
-                            <Button onPress={() => this.props.navigation.navigate('Cart')} transparent>
-                                <Icon name='shopping-bag' size={24} color={'white'}/>
+                            <Button onPress={() => this.props.navigation.navigate('WishListEF')} transparent>
+                                <FIcon name='heart' style={{fontSize:24,color:'white'}} />
+                                {this.state.wishList.length > 0 ?
+                                    <Badge
+                                        style={{position: 'absolute', height: 18}}>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '100',
+                                            color: 'white',
+                                            lineHeight: 18
+                                        }}>{this.state.wishList.length}</Text></Badge>
+                                    : null}
+                            </Button>
+                            <Button onPress={() => this.props.navigation.navigate('CartEF')} transparent>
+                                <Icon name='ios-cart' style={{fontSize:27,color:'white'}} />
                                 {this.state.totalCount > 0 ?
                                     <Badge
                                         style={{position: 'absolute', height: 18}}>
