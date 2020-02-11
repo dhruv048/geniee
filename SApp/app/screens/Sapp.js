@@ -39,6 +39,7 @@ import WishListEF from "./EatFit/WishListEF";
 import CartEF from "./EatFit/CartEF";
 import OrderListEF from "./EatFit/OrderListEF";
 import OrderDetailEF from "./EatFit/OrderDetailEF";
+import LocationPicker from "./LocationPicker";
 //import Splash from '../screens/Splash';
 
 //export const SplashStack = createStackNavigator({
@@ -132,6 +133,9 @@ export const EatFitStack = createStackNavigator({
     },
     CartEF:{
         screen:CartEF,
+    },
+    PickLocation:{
+      screen:LocationPicker,
     }
 }, {
     headerMode: 'none',

@@ -395,6 +395,13 @@ class Dashboard extends Component {
 
                 {this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}
                 <Content style={{width: '100%', flex: 1,}}>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('PickLocation')}>
+                        <View>
+                        <Text>Pick Location</Text>
+                        </View>
+                    </TouchableOpacity>
+
+
                     {/*<ScrollView style={{viewportWidth: '100%', flex: 1}}>*/}
                     {this.state.searchMode == false ?
                         <View>
