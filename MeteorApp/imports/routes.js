@@ -141,6 +141,17 @@ adminRoutes.route('/users', {
         Meteor.subscribe('allgrcategories');
     }]
 })
+/* GR Users List */
+adminRoutes.route('/grusers', {
+    name: 'GR Users',
+    action() {
+        BlazeLayout.render('adminMainLayoutGR', {main: 'GRusers_List'});
+        document.title = "Geniee Repair - Users List";
+    },
+    triggersEnter: [function (context, redirect) {
+        Meteor.subscribe("allGRusers");
+    }]
+});
 
 adminRoutes.route('/articles', {
     name: 'Articles',

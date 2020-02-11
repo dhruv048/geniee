@@ -3,10 +3,17 @@
 //let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 let GOOGLE_MAP_API_KEY = 'AIzaSyCMar6aw6cYsJXNv8mHLIEaT9TCYGNefXU';
 
+<<<<<<< HEAD
+let API_URL='http://192.168.1.111:3000/api/';
+let IMAGE_URL='http://192.168.1.111:3000/api/images/';
+
+let METEOR_URL = 'ws://192.168.1.111:3000/websocket';
+=======
 let API_URL='http://192.168.1.245:3000/api/';
 let IMAGE_URL='http://192.168.1.245:3000/api/images/';
 
 let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
+>>>>>>> 3925f5508e49e3fc7a966799681662261c0c1c3f
 
 // let API_URL = "https://api.krishisansaar.com/api/";
 // let IMAGE_URL='https://api.krishisansaar.com/api/'

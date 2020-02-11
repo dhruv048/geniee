@@ -30,6 +30,10 @@ import "../imports/client/ui/pages/genieeRepair/category/category";
 //Gr Users
 import "../imports/client/ui/pages/genieeRepair/GRusers/create-GRusers.html";
 import "../imports/client/ui/pages/genieeRepair/GRusers/create-GRusers";
+//Gr Users List
+import "../imports/client/ui/pages/genieeRepair/GRusers/GRusers-List.html";
+import "../imports/client/ui/pages/genieeRepair/GRusers/GRusers-List";
+
 
 //Eat Fit
 
