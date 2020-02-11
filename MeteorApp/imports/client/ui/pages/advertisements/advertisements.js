@@ -34,7 +34,7 @@ Template.Advertisements.events({
                 $('#img-upload').cropper('destroy');
                 $('#img-upload').attr('src', e.target.result);
                 $('#img-upload').cropper({
-                    aspectRatio: 7 / 3,
+                    aspectRatio: 7 / 2,
                     zoomable: true,
                 });
                 var canvas = $('#img-upload').cropper('getCroppedCanvas');
