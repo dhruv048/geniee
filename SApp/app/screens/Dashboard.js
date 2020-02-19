@@ -34,6 +34,7 @@ import TouchableWithoutFeedback from "react-native-gesture-handler/touchables/To
 import StarRating from "../components/StarRating/StarRating";
 import Product from "../components/Store/Product";
 import MyFunctions from "../lib/MyFunctions";
+import LocationPicker from "../components/LocationPicker";
 
 class Dashboard extends Component {
 
@@ -47,7 +48,8 @@ class Dashboard extends Component {
             searchMode: false,
             showSearchBar: false,
             Adds: [],
-            query: ''
+            query: '',
+            pickLocation: false
         };
         this.arrayholder;
         this.currentSearch = '';
@@ -68,6 +70,11 @@ class Dashboard extends Component {
     //showSearchBar: !showSearchBar,
     //});
     //}
+
+    handleOnLocationSelect(location) {
+        console.log(location);
+        this.setState({pickLocation: false})
+    }
 
     async componentDidMount() {
         Meteor.subscribe('categories-list');
@@ -332,6 +339,11 @@ class Dashboard extends Component {
         )
     }
 
+    closePickLocation() {
+        console.log('method Called')
+        this.setState({pickLocation: false})
+    }
+
     render() {
         console.log(this.state.products, this.state.services);
         const {showSearchBar} = this.state;
@@ -395,12 +407,17 @@ class Dashboard extends Component {
 
                 {this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}
                 <Content style={{width: '100%', flex: 1,}}>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('PickLocation')}>
-                        <View>
-                        <Text>Pick Location</Text>
-                        </View>
-                    </TouchableOpacity>
+                    {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate('PickLocation')}>*/}
+                    {/*<TouchableOpacity onPress={()=>this.setState({pickLocation:true})}>*/}
+                    {/*<View>*/}
+                    {/*<Text>Pick Location</Text>*/}
+                    {/*</View>*/}
+                    {/*</TouchableOpacity>*/}
 
+                    {/*<LocationPicker*/}
+                    {/*close={this.closePickLocation.bind(this)}*/}
+                    {/*onLocationSelect={this.handleOnLocationSelect.bind(this)}*/}
+                    {/*modalVisible={this.state.pickLocation} />*/}
 
                     {/*<ScrollView style={{viewportWidth: '100%', flex: 1}}>*/}
                     {this.state.searchMode == false ?

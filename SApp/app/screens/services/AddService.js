@@ -30,7 +30,7 @@ import GoogleSearch from '../../components/GooglePlaceSearch/GoogleSearch'
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import {ScrollView} from "react-native-gesture-handler";
-
+import LocationPicker from "../../components/LocationPicker";
 const GooglePlaceSerachStyle = {
     textInputContainer: {
         width: "100%",
@@ -388,7 +388,8 @@ class AddService extends React.PureComponent {
             Image: null,
             price: null,
             unit: null,
-            webLink: ''
+            webLink: '',
+            pickLocation:false,
         };
 
         this.categories = []
@@ -488,7 +489,7 @@ class AddService extends React.PureComponent {
             title: title,
             description: description,
             contact: contact,
-            location: this.state.location,
+            location: location,
             radius: radius,
             coverImage: null,
             homeDelivery: homeDelivery,
@@ -540,6 +541,15 @@ class AddService extends React.PureComponent {
             location: data
         })
     }
+    handleOnLocationSelect(location){
+        console.log(location);
+        this.setState({location:location,pickLocation:false})
+    }
+
+    closePickLocation(){
+        console.log('method Called')
+        this.setState({pickLocation:false})
+    }
 
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
@@ -556,7 +566,7 @@ class AddService extends React.PureComponent {
     }
 
     render() {
-        const {query, selectedCategory} = this.state;
+        const {query, selectedCategory,location} = this.state;
         const categories = this._findCategory(query);
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         const {navigate} = this.props.navigation;
@@ -673,17 +683,27 @@ class AddService extends React.PureComponent {
                             {/*onChangeText={(location) => this.setState({location})}*/}
                             {/*/>*/}
 
-                            <GooglePlaceSearchBox
-                                onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                    console.log(data, details);
-                                    this.handleLocation(details)
-                                }}
-                                placeholder={'Enter Address'}
-                                placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                styles={GooglePlaceSerachStyle}
-                            />
+                            {/*<GooglePlaceSearchBox*/}
+                                {/*onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true*/}
+                                    {/*console.log(data, details);*/}
+                                    {/*this.handleLocation(details)*/}
+                                {/*}}*/}
+                                {/*placeholder={'Enter Address'}*/}
+                                {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                {/*styles={GooglePlaceSerachStyle}*/}
+                            {/*/>*/}
 
+
+                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       style={styles.inputBox}
+                                    //   onBlur={()=>this.setState({pickLocation:true})}
+                                       onFocus={()=>this.setState({pickLocation:true})}
+                                       placeholder='Location'
+                                       value={location?location.formatted_address:''}
+                                    //   onChangeText={(radius) => this.setState({radius})}
+                            />
 
                             <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                        placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
@@ -787,6 +807,10 @@ class AddService extends React.PureComponent {
                         </SafeAreaView>
                     </Fragment>
                 </Content>
+                <LocationPicker
+                    close={this.closePickLocation.bind(this)}
+                    onLocationSelect={this.handleOnLocationSelect.bind(this)}
+                    modalVisible={this.state.pickLocation} />
             </Container>
         );
     }

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Text, View, ActivityIndicator, Button,Dimensions,StyleSheet } from 'react-native';
 import MapView from "react-native-maps";
 import settings from "../config/settings";
-
+import {colors} from "../config/styles";
+import Icon from 'react-native-vector-icons/Feather';
 // Disable yellow box warning messages
 console.disableYellowBox = true;
 
@@ -30,8 +31,8 @@ export default class LocationPicker extends Component {
                 const region = {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01
                 };
                 this.setState({
                     region: region,
@@ -48,6 +49,8 @@ export default class LocationPicker extends Component {
             },
             { enableHighAccuracy: false, timeout: 200000, maximumAge: 5000 },
         );
+
+
     }
 
     onMapReady = () => {
@@ -111,7 +114,7 @@ export default class LocationPicker extends Component {
                         }
 
                         <View style={styles.mapMarkerContainer}>
-                            <Text style={{ fontFamily: 'fontawesome', fontSize: 42, color: "#ad1f1f" }}>&#xf041;</Text>
+                            <Icon name={'map-pin'} style={{fontSize: 42, color: colors.primary }}/>
                         </View>
                     </View>
                     <View style={styles.deatilSection}>

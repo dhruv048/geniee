@@ -20,6 +20,7 @@ import Logo from '../components/Logo/Logo';
 import {colors} from '../config/styles';
 import {userType} from '../config/settings';
 import {Container, Content, Item} from 'native-base';
+import LocationPicker from "../components/LocationPicker";
 
 class Register extends Component {
     validInput = (overrideConfirm) => {
@@ -155,6 +156,7 @@ class Register extends Component {
             confirmPasswordVisible: false,
             userType: null,
             isLogged: Meteor.user() ? true : null,
+            pickLocation:false,
             radioButtons: [
                 {
                     label: 'User',
@@ -187,10 +189,19 @@ class Register extends Component {
             location: data
         })
     }
+    handleOnLocationSelect(location){
+        console.log(location);
+        this.setState({location:location,pickLocation:false})
+    }
+
+    closePickLocation(){
+        console.log('method Called')
+        this.setState({pickLocation:false})
+    }
 
     render() {
         const {navigate} = this.props.navigation;
-
+        const {location}=this.state;
         return (
             <Container>
                 <StatusBar
@@ -236,15 +247,25 @@ class Register extends Component {
                                 {/*<View */}
                                 {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
                                 {/*style={{width:300,minHeight:40,  marginVertical: 5}}>*/}
-                                <GooglePlaceSearchBox
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholderTextColor='#ffffff'
-                                    styles={GooglePlaceSerachStyle}
-                                    onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                        console.log(data, details);
-                                        this.handleLocation(details)
-                                    }}
-                                    placeholder='Enter Address (*)'
+                                {/*<GooglePlaceSearchBox*/}
+                                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                    {/*placeholderTextColor='#ffffff'*/}
+                                    {/*styles={GooglePlaceSerachStyle}*/}
+                                    {/*onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true*/}
+                                        {/*console.log(data, details);*/}
+                                        {/*this.handleLocation(details)*/}
+                                    {/*}}*/}
+                                    {/*placeholder='Enter Address (*)'*/}
+                                {/*/>*/}
+
+                                <TextInput style={styles.inputBox}
+                                           underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholder='Location'
+                                           placeholderTextColor='#ffffff'
+                                           selectionColor='#ffffff'
+                                           value={location?location.formatted_address:''}
+                                           onFocus={()=>this.setState({pickLocation:true})}
+
                                 />
                                 {/*</View>*/}
                                 <TextInput style={styles.inputBox}
@@ -302,6 +323,10 @@ class Register extends Component {
                         </View>
                     </TouchableWithoutFeedback>
                 </Content>
+                <LocationPicker
+                    close={this.closePickLocation.bind(this)}
+                    onLocationSelect={this.handleOnLocationSelect.bind(this)}
+                    modalVisible={this.state.pickLocation} />
             </Container>
         )
             ;

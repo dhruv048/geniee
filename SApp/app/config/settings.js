@@ -1,7 +1,8 @@
 // If you're running on a device or in the Android simulator be sure to change
 //let METEOR_URL = 'ws://192.168.1.228:3000/websocket';
 //let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
-let GOOGLE_MAP_API_KEY = 'AIzaSyBJ0EFcgmndRnro9Kw7m8cXo-Tsa6kD9zk';
+//let GOOGLE_MAP_API_KEY = 'AIzaSyBJ0EFcgmndRnro9Kw7m8cXo-Tsa6kD9zk';
+let GOOGLE_MAP_API_KEY = 'AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY';
 
 
 let API_URL='http://192.168.1.245:3000/api/';
