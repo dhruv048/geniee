@@ -44,5 +44,10 @@ Meteor.methods({
             throw new Meteor.Error(403, e.message)
 
         }
+    },
+
+
+    'getUserbyCatId':(catId)=>{
+        return GRusers.find({category:catId}).fetch();
     }
 })
