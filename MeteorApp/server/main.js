@@ -1,12 +1,23 @@
 import {Meteor} from "meteor/meteor";
 import {Accounts} from "meteor/accounts-base";
 import FacebookOAuthInit from "./oauth-facebook";
+import {FIREBASE_MESSAGING} from './API/fire-base-admin';
 const path = require('path')
 
 process.env.MAIL_URL = "smtps://roshanshah.011:roshanshah.110@smtp.gmail.com:465";
+var admin = require("firebase-admin");
+var serviceAccount = process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json') : process.env.PWD + '/private/geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json';
 
 
 Meteor.startup(function () {
+    // Initialize firebase admin
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+     //   databaseURL: ""
+    });
+  //  FIREBASE_MESSAGING.sendTestMessage();
+
+
     FacebookOAuthInit();
     Future = Npm.require('fibers/future');
     // chck if there is Super Admin, If not create one.

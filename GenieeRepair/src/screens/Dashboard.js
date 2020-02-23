@@ -71,7 +71,7 @@ class Dashboard extends Component {
 
     renderItem = ({item}) => {
         return (
-            <TouchableOpacity style={{ flex: 1, margin: 5  }} onPress={()=>this.goToUserList(item._id)}>
+            <TouchableOpacity style={{ flex: 1, margin: 5,maxWidth:'50%'   }} onPress={()=>this.goToUserList(item._id)}>
             <Card key={item._id} >
                 <CardItem style={styles.imageThumbnail}>
                     <Badge info style={{height:80,alignItems:'center',width:80,borderRadius:40, justifyContent:'center'}}>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     MainContainer: {
      //   justifyContent: 'center',
         flex: 1,
-        paddingTop: 20,
+        paddingTop: 10,
     },
     imageThumbnail: {
         justifyContent: 'center',

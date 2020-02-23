@@ -137,6 +137,25 @@ Meteor.methods({
         // }
 
     },
+
+
+    'addDeviceUniqueId': (uniqueId) => {
+        Meteor.users.update({_id: Meteor.userId()}, {
+            $addToSet: {devices: uniqueId}
+        });
+    },
+
+    'removeToken': (token) => {
+        let loggedUser = Meteor.user();
+        let devices = loggedUser.hasOwnProperty('devices') ? loggedUser.devices : [];
+        let index = devices.indexOf(token);
+        if (index > -1) {
+            devices.splice(index, 1);
+            Meteor.users.update({_id: loggedUser._id}, {
+                $set: {devices: devices}
+            });
+        }
+    },
 });
 const pluckAddresses = (emails = []) => emails.map(email => email.address);
 const randomNum=()=>{

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Geniee</string>
     <string name="facebook_app_id">1158795330975784</string>
+    <string name="default_notification_channel_id">com.geniee</string>
 </resources>

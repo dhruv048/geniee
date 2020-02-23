@@ -9,9 +9,13 @@ import {UnAuthorized, MainNavigation} from "./Sapp";
 import {initializeMeteorOffline} from "../lib/groundMeteor";
 import Geolocation from 'react-native-geolocation-service';
 import SplashScreen from "react-native-splash-screen";
+import firebase from "react-native-firebase";
+import MyFunctions from "../lib/MyFunctions";
 Meteor.connect(settings.METEOR_URL);
 initializeMeteorOffline({log: false});
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
+
+
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -22,6 +26,7 @@ class AuthLoadingScreen extends React.Component {
             connected: Meteor.status(),
             initialPosition: 'unknown',
             lastPosition: 'unknown',
+            oldFCMToken:'',
         }
 
         this.watchID=  null;
@@ -90,8 +95,14 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidMount() {
-
+        this.checkPermission().catch(e => {
+            console.log(e)
+        });
         SplashScreen.hide();
+        this.messageListener()
+            .catch(e => {
+                console.log(e)
+            });
      //   Meteor.subscribe('srvicesByLimit', {limit:100,coordinates:[this.initialPosition.coords.longitude||85.312950,this.initialPosition.coords.latitude||27.712020]})
         Meteor.subscribe('categories-list');
         NetInfo.isConnected.addEventListener(
@@ -141,8 +152,140 @@ class AuthLoadingScreen extends React.Component {
         this.watchID != null && Geolocation.clearWatch(this.watchID);
     }
 
-    con
+    checkPermission = async () => {
+        const enabled = await firebase.messaging().hasPermission();
+        if (enabled) {
+            this.getFcmToken();
+        } else {
+            this.requestPermission();
+        }
+    };
 
+    getFcmToken = async () => {
+        const fcmToken = await firebase.messaging().getToken();
+        console.log(fcmToken);
+        if (fcmToken && Meteor.user()) {
+            // this.showAlert('Your Firebase Token is:', fcmToken);
+            let oldToken = await AsyncStorage.getItem("FCM_TOKEN");
+            if(oldToken!=fcmToken) {
+                MyFunctions._saveDeviceUniqueId(fcmToken);
+                if (oldToken) {
+                    Meteor.call('removeToken', oldToken)
+                }
+            }
+        } else {
+            console.log('Failed', 'No token received or User Not Logged In');
+        }
+    };
+
+    requestPermission = async () => {
+        try {
+            await firebase.messaging().requestPermission();
+            // User has authorised
+        } catch (error) {
+            // User has rejected permissions
+        }
+    }
+    messageListener = async () => {
+        this.notificationListener = firebase.notifications().onNotification((notification) => {
+            const {title, body} = notification;
+            // this.showAlert(title, body);
+            console.log('onNotification', notification)
+            // if (notification.data.title == "REMOVE_AUTH_TOKEN") {
+            //     try {
+            //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
+            //         Meteor.logout();
+            //         this.props.navigation.navigate('Auth');
+            //     }
+            //     catch (e) {
+            //         console.log(e.message)
+            //         this.props.navigation.navigate('Auth');
+            //     }
+            // }
+            const channelId = new firebase.notifications.Android.Channel("Default", "Default", firebase.notifications.Android.Importance.High);
+            firebase.notifications().android.createChannel(channelId);
+
+            let notification_to_be_displayed = new firebase.notifications.Notification({
+                data: notification.data,
+                sound: 'default',
+                show_in_foreground: true,
+                title: notification.title,
+                body: notification.body,
+            });
+
+            if (Platform.OS == "android") {
+                notification_to_be_displayed
+                    .android.setPriority(firebase.notifications.Android.Priority.High)
+                    .android.setChannelId("Default")
+                    .android.setBigText(notification.body)
+                    .android.setVibrate(1000);
+            }
+
+            firebase.notifications().displayNotification(notification_to_be_displayed);
+        });
+        this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+            const {title, body} = notificationOpen.notification;
+            // this.showAlert(title, body);
+            console.log('onNotificationOpened', notificationOpen)
+            // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
+            //     try {
+            //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
+            //         Meteor.logout();
+            //         this.props.navigation.navigate('Auth');
+            //     }
+            //     catch (e) {
+            //         console.log(e.message)
+            //         this.props.navigation.navigate('Auth');
+            //     }
+            // }
+            if (notificationOpen.notification.data.navigate) {
+                console.log("subscribe & Navigate");
+                // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
+                this.props.navigation.navigate(notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
+                // });
+            }
+        });
+
+        const notificationOpen = await firebase.notifications().getInitialNotification();
+        if (notificationOpen) {
+
+            const {title, body} = notificationOpen.notification;
+            //  this.showAlert(title, body);
+            console.log('notificationOpen', notificationOpen.notification);
+            if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
+                try {
+                    AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                    Meteor.logout();
+                    this.props.navigation.navigate('Auth');
+                }
+                catch (e) {
+                    console.log(e.message)
+                    this.props.navigation.navigate('Auth');
+                }
+            }
+            if (notificationOpen.notification.data.navigate && Meteor.user()) {
+                console.log("subscribe & Navigate");
+                this.props.navigation.navigate(notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
+            }
+
+        }
+
+        this.messageListener = firebase.messaging().onMessage((message) => {
+            console.log(JSON.stringify(message));
+            console.log('onMessage', message);
+            if (message.data.title == "REMOVE_AUTH_TOKEN") {
+                try {
+                    AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                    Meteor.logout();
+                    this.props.navigation.navigate('Auth');
+                }
+                catch (e) {
+                    console.log(e.message)
+                    this.props.navigation.navigate('Auth');
+                }
+            }
+        });
+    }
     // Render any loading content that you like here
     render() {
         // if (this.props.user !== null) {

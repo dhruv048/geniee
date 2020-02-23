@@ -1,8 +1,9 @@
-package com.sapp;
+package com.geniee;
 
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.roshan.esewa.RNEsewaSdkPackage;
@@ -30,10 +31,13 @@ import com.facebook.FacebookSdk;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.appevents.AppEventsLogger;
 
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
     private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
+
     protected static CallbackManager getCallbackManager() {
         return mCallbackManager;
     }
@@ -57,21 +61,24 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-            new RNDeviceInfo(),
-            new RNCWebViewPackage(),
-            new RNEsewaSdkPackage(),
+            new RNFirebasePackage(),
+                    new RNDeviceInfo(),
+                    new RNCWebViewPackage(),
+                    new RNEsewaSdkPackage(),
                     new FBSDKPackage(mCallbackManager),
-            new RNFSPackage(),
-            new DocumentPickerPackage(),
-            new RNFileViewerPackage(),
-            new RNFusedLocationPackage(),
+                    new RNFSPackage(),
+                    new DocumentPickerPackage(),
+                    new RNFileViewerPackage(),
+                    new RNFusedLocationPackage(),
                     new SplashScreenReactPackage(),
                     new MapsPackage(),
                     new NetInfoPackage(),
                     new PickerPackage(),
                     new RNGestureHandlerPackage(),
                     new VectorIconsPackage(),
-                    new ImagePickerPackage()
+                    new ImagePickerPackage(),
+                    new RNFirebaseMessagingPackage(),
+                    new RNFirebaseNotificationsPackage()
             );
         }
 

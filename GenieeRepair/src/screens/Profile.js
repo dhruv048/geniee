@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     },
     header:{
         backgroundColor: colors.appLayout,
-        height:200,
+        height:150,
     },
     avatar: {
         width: 130,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         marginBottom:10,
         alignSelf:'center',
         position: 'absolute',
-        marginTop:130
+        marginTop:80
     },
     name:{
         fontSize:22,

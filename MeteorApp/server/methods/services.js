@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-
+import {FIREBASE_MESSAGING} from '../API/fire-base-admin';
 
 Meteor.methods({
 
@@ -49,6 +49,16 @@ Meteor.methods({
                             serviceInfo.categoryId = CategoryId;
                             serviceInfo.ratings = [{count: 0}];
                             var res = Service.insert(serviceInfo);
+                            try {
+                                FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
+                                    Id: Id,
+                                    navigate: "true",
+                                    route: "Service",
+                                    image:serviceInfo.coverImage
+                                })
+                            } catch (e) {
+                                throw new Meteor.Error(403, e.message);
+                            }
                             return res;
                         }
                     }, proceedAfterUpload = true)
@@ -68,7 +78,15 @@ Meteor.methods({
                     createdBy: currentUserId,
                     ratings: [{count: 0}],
                 });
-
+                try {
+                    FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
+                        Id: Id,
+                        navigate: "true",
+                        route: "Service",
+                    })
+                } catch (e) {
+                    throw new Meteor.Error(403, e.message);
+                }
                 return res;
             }
 
@@ -223,6 +241,16 @@ Meteor.methods({
                                 if(productInfo.images.length===imageIds.length){
                                     productInfo.images = imageIds;
                                     console.log('insert')
+                                    try {
+                                        FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product Available - ${productInfo.title}`, productInfo.description, {
+                                            Id: Id,
+                                            navigate: "true",
+                                            route: "ProductDetail",
+                                            image:productInfo.images[0]
+                                        })
+                                    } catch (e) {
+                                        throw new Meteor.Error(403, e.message);
+                                    }
                                     return Products.insert(productInfo);
                                 }
                             }
@@ -231,7 +259,16 @@ Meteor.methods({
             }
             else {
                 productInfo.images = [];
-                console.log('insert')
+                console.log('insert');
+                try {
+                    FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product Available - ${productInfo.title}`, productInfo.description, {
+                        Id: Id,
+                        navigate: "true",
+                        route: "ProductDetail",
+                    })
+                } catch (e) {
+                    throw new Meteor.Error(403, e.message);
+                }
                 return Products.insert(productInfo);
             }
 

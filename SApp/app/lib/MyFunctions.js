@@ -187,7 +187,13 @@ console.log(lat1,lon1,lat2,lon2)
             prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
         }
         call(args).catch(console.error)
-    }
+    },
+    _saveDeviceUniqueId: (uniqueId) => {
+        Meteor.call('addDeviceUniqueId', uniqueId, (err) => {
+            if (err)
+                console.log(err.reason)
+        })
+    },
 };
 
 export default MyFunctions;

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "539202312377",
+    "firebase_url": "https://geniee-e9e27.firebaseio.com",
+    "project_id": "geniee-e9e27",
+    "storage_bucket": "geniee-e9e27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539202312377:android:29e14a019a3b65307b6368",
+        "android_client_info": {
+          "package_name": "com.geniee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539202312377-nlqcgspt78cv7n9lkr96sqke8orvu69g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDae62Cp1_WdKpi0yA2Fm6BXAFvYvfuzmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539202312377-nlqcgspt78cv7n9lkr96sqke8orvu69g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -102,7 +102,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.sapp"
+        applicationId "com.geniee"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
@@ -154,6 +154,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-firebase')
     implementation project(':react-native-device-info')
     implementation project(':react-native-webview')
     implementation project(':react-native-esewa-sdk')
@@ -177,7 +178,10 @@ dependencies {
     implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.google.android.gms:play-services-maps:${rootProject.ext.googlePlayServicesVersion}"
-    implementation 'com.android.support:multidex:1.0.0'
+
+    implementation "com.google.firebase:firebase-messaging:17.0.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar' //
+    implementation 'com.android.support:multidex:1.0.3'
 
 
 }
@@ -194,3 +198,4 @@ preBuild.doFirst {
         fileset(dir: '../../node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer', includes: '*.java')
     }
 }
+apply plugin: 'com.google.gms.google-services'
