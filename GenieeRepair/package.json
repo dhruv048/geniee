@@ -13,6 +13,7 @@
     "@react-native-community/async-storage": "^1.8.0",
     "@react-native-community/netinfo": "^5.5.0",
     "native-base": "^2.13.8",
+    "detox": "^14.5.0",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-autoheight-webview": "^1.4.2",

@@ -41,7 +41,7 @@ public class MainActivity extends NavigationActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-      SplashScreen.show(this);
+      SplashScreen.show(this,true);
       super.onCreate(savedInstanceState);
 //      setContentView(R.layout.launch_screen);
   }

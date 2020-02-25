@@ -50,12 +50,31 @@ class ServiceDetail extends Component {
             isLoading: false,
             showModal: false,
             comment: '',
+            Service:null,
         }
 
     }
 
     componentDidMount() {
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
+        const Id = this.props.navigation.getParam('Id');
+        console.log(Id)
+        let Service = {};
+        if (typeof (Id) === "string") {
+            Meteor.call('getSingleService',(err,res)=>{
+                if(!err) {
+                    Service = res;
+                    Service.avgRate = this.averageRating(Service.ratings)
+                }
+            });
+            // Service = Meteor.collection('serviceReact').findOne({_id: Id});
+            this.setState({Service});
+        }
+        else {
+            console.log(Id)
+            Service = Id;
+            this.setState({Service});
+        }
     }
 
     componentWillUnmount() {
@@ -211,22 +230,15 @@ class ServiceDetail extends Component {
                     <Text style={styles.screenHeader}>Service Details</Text>
                     </Body>
                 </Header>
-
+                {!this.state.Service ? <Loading/> :
                 <Content style={{marginVertical: 0, paddingVertical: 0}}>
-                    {this.state.isLoading === true ? <Loading/> : null}
-
-                    {Service.coverImage === null ?
-                        <Image style={styles.productImg} source={userImage}/> :
                         <Image style={styles.productImg}
-                               source={{uri: settings.API_URL + 'images/' + Service.coverImage}}/>
-                    }
-
-                    <Text style={styles.name}>{Service.title}</Text>
-                            
-                    <View style={ styles.starView }><StarRating starRate={Service.avgRate}/></View>
+                               source={this.state.Service.coverImage ? {uri: settings.API_URL + 'images/' + Service.coverImage}:userImage}/>
+                    <Text style={styles.name}>{this.state.Service.title}</Text>
+                    <View style={ styles.starView }><StarRating starRate={this.state.Service.avgRate}/></View>
                     
-                    {(Service.location.hasOwnProperty('formatted_address')) ?
-                        <Text style={styles.availableText}>{Service.location.formatted_address}
+                    {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
+                        <Text style={styles.availableText}>{this.state.Service.location.formatted_address}
                         </Text> :
                         <Text style={styles.unavailableText}>
                             {'Address Unavailable!'}
@@ -238,34 +250,34 @@ class ServiceDetail extends Component {
                         <Rating
                             imageSize={20}
                             readonly
-                            startingValue={Service.avgRate}
+                            startingValue={this.state.Service.avgRate}
                             style={{color: '#094c6b'}}
                         />
                     </View>
                     <View style={styles.serviceInfo}>*/}
 
 
-                    {(Service.hasOwnProperty('radius') && Service.radius > 0) ?
-                        <Text style={styles.serviceText}>Servie Area : Within {Service.radius} KM Radius from Address</Text> : null
+                    {(this.state.Service.hasOwnProperty('radius') && this.state.Service.radius > 0) ?
+                        <Text style={styles.serviceText}>Servie Area : Within {this.state.Service.radius} KM Radius from Address</Text> : null
                     }
 
                     <Text style={styles.infoText}>
-                        Contact: {Service.contact1} {Service.contact}
+                        Contact: {this.state.Service.contact1} {this.state.Service.contact}
                     </Text>
                     {/*<Text style={ styles.infoText }>
-                        {Service.contact}
+                        {this.state.Service.contact}
                     </Text>*/}
 
-                    {Service.hasOwnProperty('email') ?
-                        <Text style={styles.infoText}>{Service.email}</Text> : null
+                    {this.state.Service.hasOwnProperty('email') ?
+                        <Text style={styles.infoText}>{this.state.Service.email}</Text> : null
                     }
 
-                    {Service.hasOwnProperty('website') ?
+                    {this.state.Service.hasOwnProperty('website') ?
                         <TouchableOpacity onPress={() => {
-                            this._browse(Service.website)
+                            this._browse(this.state.Service.website)
                         }}>
                             <Text style={styles.websiteLink}>
-                                {Service.website}
+                                {this.state.Service.website}
                             </Text>
                         </TouchableOpacity> : null
                     }
@@ -275,7 +287,7 @@ class ServiceDetail extends Component {
 
                     <View style={{alignItems: 'center', marginHorizontal: 30}}>
                         <Text style={styles.description}>
-                            {Service.description}
+                            {this.state.Service.description}
                         </Text>
                     </View>
 
@@ -294,26 +306,27 @@ class ServiceDetail extends Component {
                               numColumns={2}
                               renderItem={(item,index)=>this._renderProduct(item,index)}
                     />
-                </Content>
+                </Content>}
+                {  this.state.Service?
                 <Footer>
                     <FooterTab style={{backgroundColor: '#094c6b'}}>
-                        {(Service.contact ||Service.contact1)?
+                        {(this.state.Service.contact ||this.state.Service.contact1)?
                         <Button onPress={() => {
-                            MyFunctions._callPhone(Service.contact ? Service.contact : Service.contact1)
+                            MyFunctions._callPhone(this.state.Service.contact ? this.state.Service.contact : this.state.Service.contact1)
                         }}>
                             <Icon name="md-call"/>
                             <Text style={{color: '#ffffff'}}>Call</Text>
                         </Button>
                             :null}
                         {this.props.user &&
-                        Service.createdBy != null && this.props.user._id != Service.createdBy ?
+                        this.state.Service.createdBy != null && this.props.user._id != this.state.Service.createdBy ?
                             <Button onPress={() => {
-                                this.handleChat(Service)
+                                this.handleChat(this.state.Service)
                             }}>
                                 <Icon name="md-chatboxes"/>
                                 <Text style={{color: '#ffffff'}}>Chat</Text>
                             </Button> : null}
-                        {this.props.user && this.props.user._id != Service.createdBy ?
+                        {this.props.user && this.props.user._id != this.state.Service.createdBy ?
                             <Button onPress={() => {
                                 this.setState({showModal: true})
                             }}>
@@ -322,7 +335,7 @@ class ServiceDetail extends Component {
                             </Button>
                             : null}
                     </FooterTab>
-                </Footer>
+                </Footer>:null}
 
                 <View style={{marginTop: 0}}>
                     <Modal
@@ -370,7 +383,7 @@ class ServiceDetail extends Component {
                                 />
                                 <View style={styles.addToCarContainer}>
                                     <Button block success onPress={() => {
-                                        this._saveRatting(Service._id)
+                                        this._saveRatting(this.state.Service._id)
                                     }}><Text> Save </Text></Button>
                                 </View>
                                 <View style={styles.addToCarContainer}>

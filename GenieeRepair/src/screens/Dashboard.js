@@ -78,7 +78,7 @@ class Dashboard extends Component {
                     <Text style={{fontSize:50,fontWeight:'500',lineHeight:55}}>{item.hasOwnProperty('users') ?item.users.count:'0' }</Text>
                     </Badge>
                 </CardItem>
-                <CardItem style={{alignItems:'center', justifyContent:'center', fontSize:25,fontWeight:'500'}}>
+                <CardItem style={{alignItems:'center', justifyContent:'center', fontSize:25, fontWeight:'600',}}>
                     <Text >{item.title}</Text>
                 </CardItem>
             </Card>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     MainContainer: {
      //   justifyContent: 'center',
         flex: 1,
-        paddingTop: 10,
+        paddingTop: 5,
     },
     imageThumbnail: {
         justifyContent: 'center',

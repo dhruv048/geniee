@@ -22,7 +22,12 @@ import "../imports/client/ui/pages/adminDashBoard/adminDashboard.html";
 import "../imports/client/ui/pages/adminDashBoard/adminDashboard";
 import "../imports/client/ui/pages/users/users.html";
 import "../imports/client/ui/pages/users/users";
-
+import "../imports/client/ui/pages/eCommerce/products.html";
+import "../imports/client/ui/pages/eCommerce/products";
+import "../imports/client/ui/pages/eCommerce/create-product.html";
+import "../imports/client/ui/pages/eCommerce/create-product";
+import "../imports/client/ui/pages/advertisements/advertisements.html";
+import "../imports/client/ui/pages/advertisements/advertisements";
 
 //Gr Categories
 import "../imports/client/ui/pages/genieeRepair/category/category.html";

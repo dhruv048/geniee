@@ -228,8 +228,8 @@ Meteor.methods({
                     let Id = moment().format('DDMMYYx');
                     ServiceImage.write(new Buffer(image.data, 'base64'),
                         {
-                            fileName: Id + '.jpg',
-                            type: image.mime
+                            fileName:  image.name,
+                            type: image.type
                         },
                         (err, res) => {
                             if (err) {
@@ -279,4 +279,8 @@ Meteor.methods({
 
         }
     },
+
+    'getSingleService':(Id)=>{
+        return Servie.findOne(Id);
+    }
 })

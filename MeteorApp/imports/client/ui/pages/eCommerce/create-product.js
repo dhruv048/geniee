@@ -142,7 +142,6 @@ Template.Create_Product.events({
         }
 
         var product = {
-            _id: productID,
             title: title,
             description: description,
             images: [],
@@ -157,6 +156,8 @@ Template.Create_Product.events({
             colors: colors ? (colors.includes(';') ? colors.split(';') : [colors]) : []
         };
 
+        if (productID)
+            product._id = prdouctId;
         if (filee) {
             filee.forEach(item => {
                 let file = item.uri;
@@ -213,7 +214,6 @@ Template.Create_Product.events({
     },
     "autocompleteselect input": function (event, template, doc) {
         console.log("selected ", doc);
-        alert(doc._id);
         selectedCategory = doc;
     },
     'select .btn-file :file': function (event, label) {
@@ -223,7 +223,7 @@ Template.Create_Product.events({
         if (input.length) {
             input.val(log);
         } else {
-          //  if (log) alert(log);
+            //  if (log) alert(log);
         }
 
     },

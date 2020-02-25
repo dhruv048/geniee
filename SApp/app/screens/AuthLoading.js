@@ -95,6 +95,9 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidMount() {
+        firebase.messaging().subscribeToTopic('newPoductStaging');
+        firebase.messaging().subscribeToTopic('newServiceStaging');
+        firebase.messaging().subscribeToTopic('allGenieeStaging');
         this.checkPermission().catch(e => {
             console.log(e)
         });

@@ -204,6 +204,7 @@ adminRoutes.route('/create-product', {
             document.title = "Eat-Fit Add product";
         }
         else if(Session.get('loggedUserRole')==2){
+            console.log('role:2')
             BlazeLayout.render('adminMainLayout', {main: 'Create_Product'});
             document.title = "Geniee-Admin Add product";
         }
