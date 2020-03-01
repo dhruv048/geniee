@@ -34,7 +34,7 @@ Meteor.methods({
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
-                        fileName: serviceInfo.Image.modificationDate + '.jpg',
+                        fileName: serviceInfo.Image.modificationDate + '.JPEG',
                         type: serviceInfo.Image.mime
                     },
                     (err, res) => {
@@ -53,7 +53,7 @@ Meteor.methods({
                                 FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
                                     Id: Id,
                                     navigate: "true",
-                                    route: "Service",
+                                    route: "ServiceDetail",
                                     image:serviceInfo.coverImage
                                 })
                             } catch (e) {
@@ -82,7 +82,7 @@ Meteor.methods({
                     FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
                         Id: Id,
                         navigate: "true",
-                        route: "Service",
+                        route: "ServiceDetail",
                     })
                 } catch (e) {
                     throw new Meteor.Error(403, e.message);
