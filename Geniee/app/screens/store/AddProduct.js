@@ -17,11 +17,12 @@ import {colors} from "../../config/styles";
 import {Container, Content, Text, Item, Icon, Input, ListItem, Textarea, CheckBox, Button, Picker, Header, Left, Body, Right} from 'native-base';
 import Meteor from "../../react-native-meteor";
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+import ActionSheet from 'react-native-actionsheet';
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import {CogMenu} from "../../components/CogMenu/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
-import {backToRoot, navigateToRoutefromSideMenu} from "../../Navigation";
+import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
 
 
 
@@ -70,7 +71,7 @@ class AddProduct extends React.PureComponent {
 
     _handleImageUpload = (selected) => {
         this.setModalVisible(false);
-        if (selected === 'key0') {
+        if (selected === 0) {
             ImagePicker.openCamera({
                 includeBase64: true,
                 compressImageMaxWidth:1440,
@@ -81,7 +82,7 @@ class AddProduct extends React.PureComponent {
                 this._onImageChange(image)
             });
         }
-        else if (selected === 'key1') {
+        else if (selected === 1) {
             ImagePicker.openPicker({
                 includeBase64: true,
                 compressImageMaxWidth:1440,
@@ -144,7 +145,7 @@ class AddProduct extends React.PureComponent {
                     qty:'',
                     images:[],
                 });
-                goToRoute(this.props.componentId,'Home');
+                goToRoute(this.props.componentId,'MyServices');
             }
         });
 
@@ -371,7 +372,7 @@ class AddProduct extends React.PureComponent {
                             />
                             <Button
                                 style={styles.button}
-                                onPress={()=>this.setState({modalVisible:true})}>
+                                onPress={()=>this.ActionSheet.show()}>
                                 <Text style={styles.buttonText}> Upload Image </Text>
                             </Button>
                             <View style={styles.buttonView}>
@@ -427,6 +428,17 @@ class AddProduct extends React.PureComponent {
                             </View>
                         </SafeAreaView>
                     </Fragment>
+                    <ActionSheet
+                        ref={o => this.ActionSheet = o}
+                        title={'Please select the option'}
+                        options={[<Text style={{color: colors.appLayout}}>Take Picture from Camera</Text>,
+                            <Text style={{color: colors.appLayout}}>Pick Image from Gallery</Text>, 'Cancel']}
+                        cancelButtonIndex={2}
+                        destructiveButtonIndex={2}
+                        onPress={(index) => {
+                            this._handleImageUpload(index)
+                        }}
+                    />
                 </Content>
             </Container>
         );

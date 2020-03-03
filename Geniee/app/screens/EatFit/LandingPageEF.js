@@ -16,7 +16,7 @@ import {
     Badge,
     Text,
     H1,
-   Icon
+    Icon
 } from 'native-base';
 import Navbar from '../../components/ecommerce/Navbar';
 
@@ -26,8 +26,8 @@ import FontIcon from "react-native-vector-icons/FontAwesome";
 import Meteor from "../../react-native-meteor";
 import SideMenuDrawer from "../../components/ecommerce/SideMenuDrawer";
 import {customStyle, colors} from '../../config/styles';
-import {AsyncStorage} from "react-native";
-import {goToRoute} from "../../Navigation";
+import {AsyncStorage,BackHandler} from "react-native";
+import {backToRoot, goToRoute} from "../../Navigation";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import CogMenu from "../../components/CogMenu";
 
@@ -40,10 +40,12 @@ class LandingPageEF extends Component {
             categories: [],
             wishList: []
         }
+        this.isDisplaying = false;
     }
 
     componentDidMount() {
         Navigation.events().bindComponent(this);
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         Meteor.call('GetEFCategories', (err, res) => {
             console.log(err, res)
             if (err) {
@@ -58,7 +60,22 @@ class LandingPageEF extends Component {
         //     totalCount: this.props.Count.length > 0 ? this.props.Count[0].totalCount : 0
         // });
     }
+
+
+    handleBackButton() {
+        // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
+        if (this.isDisplaying) {
+            backToRoot(this.props.componentId);
+            return true;
+        }
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress');
+    }
+
     async componentDidAppear() {
+        this.isDisplaying = true;
         let wishList = await AsyncStorage.getItem('myWhishList');
         if (wishList)
             wishList = JSON.parse(wishList);
@@ -72,8 +89,13 @@ class LandingPageEF extends Component {
         else {
             cartList = [];
         }
-        this.setState({wishList:wishList,totalCount:cartList.length});
+        this.setState({wishList: wishList, totalCount: cartList.length});
     }
+
+    componentDidDisappear() {
+        this.isDisplaying = false;
+    }
+
     componentWillReceiveProps(newProps) {
         if (this.props.Count != newProps.Count) {
             if (newProps.Count.length > 0) {
@@ -89,17 +111,17 @@ class LandingPageEF extends Component {
         var left = (
             <Left style={{flex: 1}}>
                 {/*<Button transparent onPress={() => {*/}
-                    {/*this.props.navigation.openDrawer()*/}
+                {/*this.props.navigation.openDrawer()*/}
                 {/*}}>*/}
-                    {/*<FontIcon name="ellipsis-v" color={'white'} size={24}/>*/}
+                {/*<FontIcon name="ellipsis-v" color={'white'} size={24}/>*/}
                 {/*</Button>*/}
-                <CogMenu componentId={this.props.componentId} />
+                <CogMenu componentId={this.props.componentId}/>
             </Left>
         );
         var right = (
             <Right style={{flex: 1}}>
-                <Button onPress={() => goToRoute(this.props.componentId,'WishListEF')} transparent>
-                    <FIcon name='heart' style={{fontSize:24,color:'white'}}/>
+                <Button onPress={() => goToRoute(this.props.componentId, 'WishListEF')} transparent>
+                    <FIcon name='heart' style={{fontSize: 24, color: 'white'}}/>
                     {this.state.wishList.length > 0 ?
                         <Badge
                             style={{position: 'absolute', height: 18}}>
@@ -111,8 +133,8 @@ class LandingPageEF extends Component {
                             }}>{this.state.wishList.length}</Text></Badge>
                         : null}
                 </Button>
-                <Button onPress={() => goToRoute(this.props.componentId,'CartEF')} transparent>
-                    <Icon name='ios-cart' style={{fontSize:27,color:'white'}} />
+                <Button onPress={() => goToRoute(this.props.componentId, 'CartEF')} transparent>
+                    <Icon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
                     {this.state.totalCount > 0 ?
                         <Badge
                             style={{position: 'absolute', height: 18}}>
@@ -140,7 +162,7 @@ class LandingPageEF extends Component {
                                 //image={'https://e-flyers.co.za/wp-content/uploads/2019/09/home_page_bg.jpg'}
                                            title={item.title}
                                            count={item.hasOwnProperty('products') ? item.products.count : 0}
-                                           onPress={() => goToRoute(this.props.componentId,'ProductsEF', {
+                                           onPress={() => goToRoute(this.props.componentId, 'ProductsEF', {
                                                Id: item._id,
                                                Category: item.title
                                            })}

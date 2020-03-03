@@ -6,6 +6,9 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Meteor from '../../react-native-meteor';
 import settings from '../../config/settings';
 import Moment from "moment/moment";
+import ActionSheet from 'react-native-actionsheet';
+import {colors} from "../../config/styles";
+
 class UploadProfilePic extends React.Component {
     constructor(props) {
         super(props)
@@ -28,7 +31,7 @@ class UploadProfilePic extends React.Component {
 
     componentWillReceiveProps(newProps){
         console.log('newProps.user',newProps.user)
-        if(this.props.user!==newProps.user){
+        if(newProps.user && this.props.user!==newProps.user){
             this.setState({
                 user:newProps.user,
                 avatarSource: newProps.user.profile.profileImage
@@ -43,7 +46,7 @@ class UploadProfilePic extends React.Component {
     }
     _handleImageUpload = (selected) => {
         this.setModalVisible(false);
-        if(selected ==='key0'){
+        if(selected == 0){
             ImagePicker.openCamera({
                 width: 200,
                 height: 200,
@@ -54,7 +57,7 @@ class UploadProfilePic extends React.Component {
                 this._onImageChange(image)
             });
         }
-        else if (selected ==='key1'){
+        else if (selected == 1){
             ImagePicker.openPicker({
                 width: 200,
                 height: 200,
@@ -102,7 +105,7 @@ class UploadProfilePic extends React.Component {
             <View style={{justifyContent:'center', alignItems:'center'}}>
                 {this.state.user?
                 <TouchableOpacity style={styles.imageView} onPress={() => {
-                    this.setModalVisible(true)
+                    this.ActionSheet.show()
                 }}>
                         <Image style={{
                             width: 147,
@@ -123,6 +126,19 @@ class UploadProfilePic extends React.Component {
                 <Text style={{fontSize:16,fontWeight:"400",color:'white'}}>WELLCOME</Text>
                 {this.state.user?
                     <Text style={{fontSize:14,fontWeight:"200",color:'white'}}>{this.state.user.profile.name}</Text>:null}
+
+                <ActionSheet
+                    ref={o => this.ActionSheet = o}
+                    title={'Please select the option'}
+                    options={[<Text style={{color: colors.appLayout}}>Take Picture from Camera</Text>,
+                        <Text style={{color: colors.appLayout}}>Pick Image from Gallery</Text>, 'Cancel']}
+                    cancelButtonIndex={2}
+                    destructiveButtonIndex={2}
+                    onPress={(index) => {
+                        this._handleImageUpload(index)
+                    }}
+                />
+
                 <View style={{marginTop: 22}}>
                     <Modal
                         animationType="slide"

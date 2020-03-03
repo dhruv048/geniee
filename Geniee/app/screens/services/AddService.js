@@ -16,9 +16,9 @@ import {
     Picker,
     Header,
     Left,
-    Body,
-    Right
+    Body
 } from 'native-base';
+import ActionSheet from 'react-native-actionsheet';
 import Meteor from "../../react-native-meteor";
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -401,7 +401,7 @@ class AddService extends React.PureComponent {
             MaiCategories.forEach(item => {
                 this.categories = this.categories.concat(item.subCategories);
             })
-        })
+        });
         Navigation.events().bindComponent(this);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
     }
@@ -418,7 +418,7 @@ class AddService extends React.PureComponent {
     }
     _handleImageUpload = (selected) => {
         this.setModalVisible(false);
-        if (selected === 'key0') {
+        if (selected === 0) {
             ImagePicker.openCamera({
                 width: 1440,
                 height: 720,
@@ -432,7 +432,7 @@ class AddService extends React.PureComponent {
                 this._onImageChange(image)
             });
         }
-        else if (selected === 'key1') {
+        else if (selected === 1) {
             ImagePicker.openPicker({
                 width: 1440,
                 height: 720,
@@ -571,7 +571,6 @@ class AddService extends React.PureComponent {
             }
         }
     }
-
     handleLocation = (data, Detail) => {
         console.log(data, 'Detail :' + Detail)
         this.setState({
@@ -651,7 +650,7 @@ class AddService extends React.PureComponent {
                             <View style={styles.sbc83915f}>
                                 {/*<Text style={styles.s1f0fdd20}>{`Add Service`}</Text>*/}
                                 <TouchableOpacity style={styles.imageView} onPress={() => {
-                                    this.setModalVisible(true)
+                                    this.ActionSheet.show()
                                 }}>
                                     {this.state.avatarSource !== null ?
                                         <Image style={{
@@ -843,6 +842,17 @@ class AddService extends React.PureComponent {
                             </View>
                         </SafeAreaView>
                     </Fragment>
+                    <ActionSheet
+                        ref={o => this.ActionSheet = o}
+                        title={'Please select the option'}
+                        options={[<Text style={{color: colors.appLayout}}>Take Picture from Camera</Text>,
+                            <Text style={{color: colors.appLayout}}>Pick Image from Gallery</Text>, 'Cancel']}
+                        cancelButtonIndex={2}
+                        destructiveButtonIndex={2}
+                        onPress={(index) => {
+                            this._handleImageUpload(index)
+                        }}
+                    />
                 </Content>
                 <LocationPicker
                     close={this.closePickLocation.bind(this)}

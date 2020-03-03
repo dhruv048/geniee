@@ -32,6 +32,8 @@ class ChatList extends Component {
 
     }
 
+
+
     handleBackButton(){
         console.log('handlebackpress')
         // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
@@ -43,22 +45,27 @@ class ChatList extends Component {
         BackHandler.removeEventListener('hardwareBackPress');
     }
     componentWillReceiveProps(newProps) {
-        //    this.setState({chatList:[]})
+        this.setState({chatList: []})
         let sorteData = newProps.chatChannels.sort((a, b) => {
-            if (!b.latestMessage.hasOwnProperty('messageOn')) {
-                return -1;
+            if (!a.hasOwnProperty('latestMessage') || !a.latestMessage.hasOwnProperty('messageOn')) {
+                if (!b.hasOwnProperty('latestMessage') || !b.latestMessage.hasOwnProperty('messageOn'))
+                    return 0;
+                else
+                    return 1
             }
-            else if (!b.latestMessage.hasOwnProperty('messageOn')) {
-                return -1;
+            else if (!b.hasOwnProperty('latestMessage') || !b.latestMessage.hasOwnProperty('messageOn')) {
+                return 0;
             }
-            else if (
-                a.latestMessage.messageOn.getTime() < b.latestMessage.messageOn.getTime()) {
+            else if (Moment(a.latestMessage.messageOn).isBefore(Moment(b.latestMessage.messageOn))) {
                 return 1;
             }
-            else {
-                return -1;
+            else if (Moment(a.latestMessage.messageOn).isAfter(Moment(b.latestMessage.messageOn))) {
+                return -1
             }
-        })
+            else {
+                return 0;
+            }
+        });
         // console.log('received new props..', newProps.chatChannels)
         // console.log('sortedData', sorteData);
         this.setState({chatList: sorteData})
@@ -90,13 +97,13 @@ class ChatList extends Component {
                 }}>
                     <ListItem thumbnail>
                         <Left>
-                            {item.user?
+
                             <Thumbnail
-                                source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL+'images/' + item.user.profile.profileImage} : require('../../images/duser.png')}/>:null}
+                                source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL+'images/' + item.user.profile.profileImage} : require('../../images/duser.png')}/>
                         </Left>
                         <Body>
                             <View style={{flexDirection: 'row'}}>
-                                {/*<Text>{item.user.profile.name}</Text>*/}
+                                <Text>{item.user.profile.name}</Text>
                                 {item.unreadMessagesCount > 0 ?
                                     <View style={{alignSelf: 'flex-end'}}>
                                         <Badge style={{backgroundColor: colors.appLayout, height: 20}}>

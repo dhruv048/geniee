@@ -282,13 +282,29 @@ class Chat extends Component {
 
     }
 
-    componentWillReceiveProps() {
-    }
-
-    componentWillUnmount() {
-
-    }
-
+    // componentWillReceiveProps(newProps) {
+    //     if (this.props.messages.length !== newProps.messages.length) {
+    //         let sorteData = newProps.messages.sort((a, b) => {
+    //             if (Moment(a._id).isBefore(Moment(b._id))) {
+    //                 return 1;
+    //             }
+    //             else {
+    //                 return -1;
+    //             }
+    //         })
+    //         this.setState({messages: sorteData})
+    //     }
+    //     else {
+    //         this.setState({messages: newProps.messages})
+    //     }
+    // }
+    //
+    // componentWillUnmount() {
+    //
+    // }
+    // componentDidAppear(){
+    //     this.setState({messages: []})
+    // }
 
     _showFile = (file, allowDelete) => {
         console.log(file)
