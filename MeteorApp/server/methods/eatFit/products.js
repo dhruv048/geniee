@@ -84,7 +84,7 @@ Meteor.methods({
                 if (index === order.items.length - 1) {
                     order.items = order.items;
                     let loggedUser = Meteor.user();
-                    order.owner=loggedUser? loggedUser:null;
+                    order.owner=loggedUser? loggedUser._id:null;
                     EFOrder.insert(order, (err, res) => {
                         if (res) {
                             // let notification = {

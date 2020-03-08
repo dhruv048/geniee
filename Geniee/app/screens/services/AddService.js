@@ -685,6 +685,7 @@ class AddService extends React.PureComponent {
                                     renderItem={cat => <View style={{maxHeight: 200}}><ScrollView style={{flexGrow: 0}}><TouchableOpacity
                                         style={styles.autosuggestCont}
                                         onPress={() => (
+                                            console.log(cat),
                                             this.setState({
                                                 query: cat.subCategory,
                                                 selectedCategory: cat

@@ -31,6 +31,7 @@ import {backToRoot, goToRoute} from "../../Navigation";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import CogMenu from "../../components/CogMenu";
 
+
 class LandingPageEF extends Component {
 
     constructor(props) {
@@ -45,7 +46,7 @@ class LandingPageEF extends Component {
 
     componentDidMount() {
         Navigation.events().bindComponent(this);
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+        BackHandler.addEventListener('hardwareBackPress', this.handleBack.bind(this));
         Meteor.call('GetEFCategories', (err, res) => {
             console.log(err, res)
             if (err) {
@@ -62,7 +63,8 @@ class LandingPageEF extends Component {
     }
 
 
-    handleBackButton() {
+    handleBack() {
+        console.log('backPress')
         // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
         if (this.isDisplaying) {
             backToRoot(this.props.componentId);
@@ -192,7 +194,7 @@ const styles = {
         backgroundColor: '#fff'
     },
     content: {
-        //padding: 30
+       flex:1
     },
     header: {
         paddingHorizontal: 30,

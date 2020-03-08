@@ -2,12 +2,8 @@ import React, {Component} from 'react';
 import {
     StyleSheet,
     Text,
-    View,
-    TouchableOpacity,
-    Image,
-    Alert,
-    FlatList,
-    StatusBar,
+    View,    TouchableOpacity, Image,
+    Alert,    FlatList, StatusBar,
     Modal, ToastAndroid, Linking, Dimensions
 } from 'react-native';
 import {Button, Container, Content, Textarea, Icon, Header, Left, Body, Right, Footer, FooterTab} from 'native-base'
@@ -67,8 +63,8 @@ class ServiceDetail extends Component {
         if (typeof (Id) === "string") {
             Meteor.call('getSingleService',(err,res)=>{
                 if(!err) {
-                    Service = res;
-                    Service.avgRate = this.averageRating(Service.ratings)
+                    Service = res.result[0];
+                 //   Service.avgRate = this.averageRating(Service.ratings)
                 }
             });
             // Service = Meteor.collection('serviceReact').findOne({_id: Id});
@@ -203,24 +199,33 @@ class ServiceDetail extends Component {
         let item=data.item;
         return(
             <View style={{width:'50%'}}>
-            <TouchableOpacity onPress={()=>this.navigateToRoute("ProductDetail", {'Id':item._id})} style={styles.containerStyle}>
+            <TouchableOpacity onPress={()=>this.navigateToRoute("ProductDetail", {'data':item})} style={styles.containerStyle}>
             <Product key={item._id} product={item}   />
             </TouchableOpacity>
             </View>
         )
+    };
+
+    _showImage=(image)=>{
+        if(image) {
+            goToRoute(this.props.componentId, 'ImageGallery', {
+                images: [image],
+                position: parseInt('0')
+            })
+        }
     }
     render() {
         const Id = this.props.Id;
         console.log(Id)
-        let Service = {};
-        if (typeof (Id) === "string") {
-            Service = Meteor.collection('serviceReact').findOne({_id: Id});
-            Service.avgRate = this.averageRating(Service.ratings)
-        }
-        else {
-            console.log(Id)
-            Service = Id;
-        }
+        // let Service = {};
+        // if (typeof (Id) === "string") {
+        //     Service = Meteor.collection('serviceReact').findOne({_id: Id});
+        //     Service.avgRate = this.averageRating(Service.ratings)
+        // }
+        // else {
+        //     console.log(Id)
+        //     Service = Id;
+        // }
 
 
         return (
@@ -246,8 +251,11 @@ class ServiceDetail extends Component {
                 </Header>
                 {!this.state.Service ? <Loading/> :
                 <Content style={{marginVertical: 0, paddingVertical: 0}}>
+                    <TouchableOpacity onPress={()=>this._showImage(Service.coverImage)}>
                         <Image style={styles.productImg}
-                               source={this.state.Service.coverImage ? {uri: settings.API_URL + 'images/' + Service.coverImage}:userImage}/>
+                               onPress={()=>this._showImage(Service.coverImage) }
+                               source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ Service.coverImage}:userImage}/>
+                    </TouchableOpacity>
                     <Text style={styles.name}>{this.state.Service.title}</Text>
                     <View style={ styles.starView }><StarRating starRate={this.state.Service.avgRate}/></View>
                     

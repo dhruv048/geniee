@@ -28,7 +28,7 @@ import {
     StatusBar,
     TouchableWithoutFeedback,
     ActivityIndicator,
-    Alert,
+    Alert,BackHandler,
     PermissionsAndroid,
     FlatList, View
 } from 'react-native';
@@ -43,11 +43,12 @@ import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
 import StarRating from "../components/StarRating/StarRating";
 import {Navigation} from "react-native-navigation";
+import {backToRoot} from "../Navigation";
 
 class Home extends Component {
 
     _handlItemPress = (service) => {
-        service.avgRate = this.averageRating(service.ratings);
+        // service.avgRate = this.averageRating(service.ratings);
         // goToRoute(this.props.componentId,'Service', {Id: service});
         Navigation.push(this.props.componentId, {
             component: {
@@ -89,16 +90,9 @@ class Home extends Component {
     };
     _onEndReached = (distance) => {
         console.log(distance);
-        if (!this.currentSearch) {
-            this.limit = this.limit + 20;
+        if (!this.currentSearch && this.skip>this.lastSkip && !this.state.loading) {
             this.setState({loading: true})
-            Meteor.subscribe('nearByService', {
-                limit: this.limit,
-                coords: [this.region.longitude, this.region.latitude],
-                subCatIds: this.props.Id
-            }, () => {
-                this.setState({loading: false})
-            });
+           this.fetchData();
         }
     }
     averageRating = (arr) => {
@@ -203,15 +197,18 @@ class Home extends Component {
             latitude: 27.712020,
             longitude: 85.312950,
         };
+        this.skip=0;
+        this.lastSkip;
         this.limit = 20;
         this.watchID;
         this.granted = false;
-
+        this.isDisplaying=false;
     }
 
 
     async componentDidMount() {
         Navigation.events().bindComponent(this);
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackfromHome.bind(this));
         this.region=this.props.Region;
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -246,11 +243,6 @@ class Home extends Component {
             );
         } else {
             console.log("Location permission denied")
-            Meteor.subscribe('nearByService', {
-                limit: this.limit,
-                coords: [this.region.longitude, this.region.latitude],
-                subCatIds: this.props.Id
-            })
         }
         this.watchID = Geolocation.watchPosition(
             (position) => {
@@ -267,25 +259,67 @@ class Home extends Component {
             },
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
         );
+        this.fetchData(0,this.limit);
 
-        this.setState({
-            data: this.props.categories, loading: false
-        })
-        this.arrayholder = this.props.categories;
+        // this.setState({
+        //     data: this.props.categories, loading: false
+        // })
+        // this.arrayholder = this.props.categories;
     }
 
     componentWillReceiveProps(newProps) {
-        const oldProps = this.props
-        if (oldProps.categories !== newProps.categories) {
-            this.setState({data: newProps.categories, loading: false})
-            this.arrayholder = newProps.categories;
-            this._search(this.currentSearch)
-        }
+        // const oldProps = this.props
+        // if (oldProps.categories !== newProps.categories) {
+        //     this.setState({data: newProps.categories, loading: false})
+        //     this.arrayholder = newProps.categories;
+        //     this._search(this.currentSearch)
+        // }
     }
 
     componentWillUnmount() {
         this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
+        BackHandler.removeEventListener('hardwareBackPress');
+    }
+
+    handleBackfromHome(){
+        if( this.isDisplaying) {
+            console.log('handlebackpress')
+            // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
+            backToRoot(this.props.componentId);
+            return true;
+        }
+
+    }
+
+
+    fetchData=()=>{
+        const data={
+            skip:this.skip,
+            limit: this.limit,
+            coords: [this.region.longitude, this.region.latitude],
+            subCatIds: this.props.Id
+        };
+        this.lastSkip=this.skip;
+        Meteor.call('getServicesNearBy',data,(err,res)=>{
+            console.log(err,res)
+            if(!err){
+                if(res.result.length>0) {
+                    this.skip = this.skip + this.limit;
+                    this.arrayholder = this.arrayholder.concat(res.result);
+                    this.setState({data: this.arrayholder});
+                }
+                this.setState({loading: false});
+            }
+        })
+    }
+
+    componentDidAppear(){
+        this.isDisplaying=true;
+    }
+
+    componentDidDisappear(){
+        this.isDisplaying=false
     }
 
     closeDrawer() {
@@ -297,7 +331,7 @@ class Home extends Component {
     }
 
     _getListItem = (data) => {
-        rowData = data.item;
+       let rowData = data.item;
         return (
             <View key={data.item._id} style={styles.serviceList}>
                 <TouchableWithoutFeedback onPress={() => {
@@ -309,7 +343,7 @@ class Home extends Component {
                                 //   <Thumbnail style={styles.banner} square source={dUser}/> :
                                 <Text></Text> :
                                 <Thumbnail style={styles.banner}
-                                           source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
+                                           source={{uri: settings.IMAGE_URL + rowData.coverImage}}/>}
                         </Left>
                         <Body>
                         <Text numberOfLines={1} style={styles.serviceTitle}>{rowData.title}</Text>
@@ -320,12 +354,8 @@ class Home extends Component {
                         <Text note style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                         <View style={styles.serviceAction}>
-                            <StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>
-                            {/*{this.averageRating(rowData.ratings) > 0 ?
-                                <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
-                                    <Icon name={'star'}
-                                        style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-                            </Text> : null}*/}
+                            {/*<StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>*/}
+                            <StarRating starRate={rowData.avgRate}/>
                         </View>
                         </Body>
                         <Right>
@@ -351,10 +381,10 @@ class Home extends Component {
         const home = (
             <FlatList style={styles.contentList}
                       data={this.state.data}
+                      onEndReachedThreshold={0.1}
                       renderItem={this._getListItem}
                       initialNumToRender={15}
                       onEndReached={(distance) => this._onEndReached(distance)}
-                      onEndReachedThreshold={0.1}
                       ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
                       keyExtractor={(item, index) => index.toString()}
             />
@@ -478,7 +508,8 @@ class Home extends Component {
                     {/*</Right>*/}
                 </Header>
 
-                <Content style={styles.content}>
+                <Content style={{flex: 1}}
+                         contentContainerStyle={{flex: 1}} >
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {this.renderSelectedTab()}
                     {/*<List style={styles.contentList}*/}
@@ -554,8 +585,7 @@ const styles = StyleSheet.create({
         marginRight: 0
     },
     contentList: {
-        //marginVertical: 3,
-        //paddingVertical: 3
+      flex:1
     },
     image: {
         width: 50,
@@ -596,6 +626,6 @@ const styles = StyleSheet.create({
 export default Meteor.withTracker((props) => {
     let Ids = props.Id
     return {
-        categories: Meteor.collection('serviceReact').find({categoryId: {$in: Ids}})
+       // categories: Meteor.collection('serviceReact').find({categoryId: {$in: Ids}})
     }
 })(Home);

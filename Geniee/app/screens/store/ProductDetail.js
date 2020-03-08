@@ -33,10 +33,8 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 
 import {Navigation} from 'react-native-navigation';
 import Text from "../../components/Store/Text";
-
-import {default as ProductComponent} from '../../components/Store/Product';
+import Product from "../../components/Store/Product";
 import {colors} from "../../config/styles";
-
 import Meteor from "../../react-native-meteor";
 import settings from "../../config/settings";
 import {goToRoute} from "../../Navigation";
@@ -49,20 +47,15 @@ class ProductDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            product: {},
+            product: '',
             activeSlide: 0,
             quantity: 1,
             selectedColor: '',
-            selectedSize: ''
+            selectedSize: '',
+            similarProducts:[]
         };
     }
 
-
-    componentWillMount() {
-        Navigation.events().bindComponent(this);
-        //get the product with id of this.props.product.id from your server
-        this.setState({product: this.props.Product});
-    }
 
     componentDidMount() {
         // /* Select the default color and size (first ones) */
@@ -72,21 +65,58 @@ class ProductDetail extends Component {
         //     selectedColor: defColor,
         //     selectedSize: defSize
         // });
-    }
 
-    componentWillReceiveProps(newProps) {
-        if (this.props.Product != newProps.Product) {
-            this.setState({product: newProps.Product});
+        Navigation.events().bindComponent(this);
+        //get the product with id of this.props.product.id from your server
+        let productId = this.props.Id;
+        let _product = this.props.data;
+
+        if (_product) {
+            productId=_product._id;
+            this.setState({
+                product: _product,
+                //   liked: wishList.includes(_product._id) ? true : false
+                // liked: false
+            })
         }
-
+        else {
+            Meteor.call('getSingleProduct', productId, (err, res) => {
+                if (err) {
+                    console.log('this is due to error. ' + err);
+                }
+                else {
+                    productId=res._id;
+                    this.setState({
+                        product: res,
+                        //  liked: wishList.includes(res._id) ? true : false
+                        // liked: false
+                    });
+                }
+            });
+        };
+        //Get Similar products
+        Meteor.call('getSimilarProduct', productId, (err, res) => {
+            if (err) {
+                console.log('this is due to error. ' + err);
+            }
+            else {
+                this.setState({similarProducts: res});
+            }
+        });
     }
+
+    // componentWillReceiveProps(newProps) {
+    //     if (this.props.Product != newProps.Product) {
+    //         this.setState({product: newProps.Product});
+    //     }
+    //
+    // }
 
     _browse = (url) => {
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
 
     render() {
-
         return (
 
             <Container style={{backgroundColor: colors.appBackground}}>
@@ -371,7 +401,7 @@ class ProductDetail extends Component {
                                 marginBottom: 10
                             }}/>
                             <FlatList style={styles.mainContainer}
-                                      data={this.props.Products}
+                                      data={this.state.similarProducts}
                                       keyExtracter={(item, index) => item._id}
                                       horizontal={false}
                                       numColumns={2}
@@ -404,11 +434,13 @@ class ProductDetail extends Component {
 
     _renderProduct = (data, index) => {
         let item = data.item;
+        console.log(item)
         return (
-            <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': item._id})}
-                              style={styles.containerStyle}>
-                <ProductComponent key={item._id} product={item}/>
-            </TouchableOpacity>
+            <View key={item._id} style={{width:'50%'}}>
+                <TouchableOpacity onPress={()=>goToRoute(this.props.componentId,"ProductDetail", {'Id':item._id,'data':item})} style={styles.containerStyle}>
+                    <Product  product={item}   />
+                </TouchableOpacity>
+            </View>
         )
     }
 
@@ -539,23 +571,23 @@ const styles = StyleSheet.create({
     containerStyle: {
         flex: 1,
         borderWidth: 0,
-        marginHorizontal: 5,
-        marginVertical: 5,
+        marginHorizontal:5,
+        marginVertical:5,
         borderColor: '#808080',
         elevation: 2,
-        width: (viewportWidth / 2) - 10,
+        width: (viewportWidth / 2) - 20,
         justifyContent: 'center',
         alignItems: 'center'
     },
 });
 
 export default Meteor.withTracker((props) => {
-    let param = props.Id;
-    let Id = typeof (param) === "string" ? param : param._id;
-    Meteor.subscribe('products', Id);
+    // let param = props.Id;
+    // let Id = typeof (param) === "string" ? param : param._id;
+    // Meteor.subscribe('products', Id);
     return {
         user: Meteor.user(),
-        Products: Meteor.collection('product').find({_id: {$ne: Id}}),
-        Product: Meteor.collection('product').findOne({_id: Id})
+        // Products: Meteor.collection('product').find({_id: {$ne: Id}}),
+        // Product: Meteor.collection('product').findOne({_id: Id})
     };
 })(ProductDetail);

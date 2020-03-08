@@ -133,22 +133,22 @@ export const navigateToRoutefromSideMenu = (componentId, route) => {
     }
 }
 
-export const goToChat = (props) => {
-    Navigation.setStackRoot('DASHBOARD_STACK', {
-        stack: {
-            id: 'CHAT_STACK',
-            options: {
-                topBar: {
-                    visible: false
-                }
-            },
-            children: [{
-                component: {name: 'Chat'},
-                component: {name: 'Message', passProps: props},
-            }]
-        }
-    });
-}
+// export const goToChat = (props) => {
+//     Navigation.setStackRoot('DASHBOARD_STACK', {
+//         stack: {
+//             id: 'CHAT_STACK',
+//             options: {
+//                 topBar: {
+//                     visible: false
+//                 }
+//             },
+//             children: [{
+//                 component: {name: 'Chat'},
+//                 component: {name: 'Message', passProps: props},
+//             }]
+//         }
+//     });
+// }
 
 export const goBack = (componentId) => {
     Navigation.pop(componentId);

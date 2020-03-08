@@ -110,23 +110,24 @@ Meteor.publish('chatItemsGroupByDate', function (channelId) {
                         $dateToString: {format: "%Y-%m-%d", date: "$messageOn", timezone: "Asia/Kathmandu"}
                     },
                     messages: {$push: "$$ROOT"},
+                    nepaliDate:{$first:"$messageOn"}
                 }
             },
-            {
-                $addFields: {
-                    nepaliDate: {
-                        $dateFromString: {
-                            dateString: {
-                                $dateToString: {
-                                    format: "%Y-%m-%d",
-                                    date: "$messageOn",
-                                    timezone: "Asia/Kathmandu"
-                                }
-                            }
-                        }
-                    },
-                }
-            },
+            // {
+            //     $addFields: {
+            //         nepaliDate: {
+            //             $dateFromString: {
+            //                 dateString: {
+            //                     $dateToString: {
+            //                         format: "%Y-%m-%d",
+            //                         date: "$messageOn",
+            //                         timezone: "Asia/Kathmandu"
+            //                     }
+            //                 }
+            //             }
+            //         },
+            //     }
+            // },
             {$sort: {nepaliDate: -1}},
             {
                 $project: {

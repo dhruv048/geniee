@@ -14,11 +14,12 @@ import settings from "../../config/settings";
 export default class Product extends Component {
     render() {
        const {product,isRight}=this.props;
+       console.log(product)
         return(
                 <Card transparent>
                     <CardItem cardBody style={{width:'100%'}}>
 
-                            <Image source={{uri: settings.API_URL + 'images/' + product.images[0]}} style={style.image}/>
+                            <Image source={{uri: settings.IMAGE_URL + product.images[0]}} style={style.image}/>
                             <View style={style.border} />
 
                     </CardItem>

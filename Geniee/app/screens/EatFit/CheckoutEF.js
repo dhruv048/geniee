@@ -70,7 +70,7 @@ class CheckoutEF extends Component {
 
     getdeviceId = () => {
         //Getting the Unique Id from here
-        var id = DeviceInfo.getUniqueID();
+        var id = DeviceInfo.getUniqueId();
         console.log('uniqueId',id)
        return id;
     };

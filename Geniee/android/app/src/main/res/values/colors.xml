@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="blue">#05a5d10d</color>
-    <color name="colorNoti">#094c6b</color>
+    <color name="notificationColor">#094c6b</color>
     <color name="primary_dark">#05a5d10d</color>
     <color name="splash_backGround">#ffffff</color>
 </resources>

@@ -2,14 +2,15 @@ import React,{Component} from 'react';
 import {Body, Container, Content, Header, Item, Text} from "native-base";
 import {colors} from "../config/styles";
 import UploadProfilePic from "../components/UploadProfilePic/UploadProfilePic";
-import {StatusBar,StyleSheet} from "react-native";
+import {StatusBar,StyleSheet,Alert} from "react-native";
 import {Navigation} from "react-native-navigation/lib/dist/index";
-import {navigateToRoutefromSideMenu} from "../Navigation";
+import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 import ContactUs from "./ContactUs";
 import ForgotPassword from "./ForgotPassword";
 import  Meteor from "../react-native-meteor";
 import { EventRegister } from 'react-native-event-listeners';
-
+import AsyncStorage from "@react-native-community/async-storage";
+const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 class SideMenu extends Component{
     constructor(props){
         super(props);
@@ -40,6 +41,37 @@ class SideMenu extends Component{
        navigateToRoutefromSideMenu(this.props.componentId,route)
     }
 
+    _signOut(){
+        Alert.alert(
+            'SignOut',
+            'Do you want to SignOut?',
+            [
+                {
+                    text: 'Yes SignOut', onPress: () =>  Meteor.logout((err) => {
+                        if (!err){
+                            console.log('logout')
+                            AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                            navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
+                        }
+                        else
+                            goBack(this.props.componentId)
+                    })
+                },
+                {text: 'Cancel', onPress: () => navigateToRoutefromSideMenu(this.props.componentId,'Dashboard')}
+            ],
+            {cancelable: false}
+        );
+
+        // Meteor.logout((err) => {
+        //     if (!err){
+        //         console.log('logout')
+        //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
+        //         this.props.navigation.navigate('UnAuthorized');
+        //     }
+        //     else
+        //         goBack(this.props.componentId)
+        // })
+    }
     render(){
         return(
             <Container>
@@ -79,8 +111,8 @@ class SideMenu extends Component{
 
 
                     {this.state.isLogged?
-                    <Item style={this.state.currentRoute=='SignOut'? style.activeRoute:style.normalRoute}>
-                    <Text style={this.state.currentRoute=='SignOut'? style.activeText:style.normalText} >SignOut</Text>
+                    <Item onPress={()=>this._signOut()} style={this.state.currentRoute=='SignOut'? style.activeRoute:style.normalRoute}>
+                        <Text style={this.state.currentRoute=='SignOut'? style.activeText:style.normalText} >SignOut</Text>
                     </Item>:
                         <Item style={this.state.currentRoute=='SignIn'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('SignIn')}>
                             <Text style={this.state.currentRoute=='SignIn'? style.activeText:style.normalText} >Sign In</Text>

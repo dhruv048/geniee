@@ -119,6 +119,7 @@ class Chat extends Component {
             this._saveMessageToServer(Message);
         }
         if (this.state.files.length > 0) {
+            this.setState({disable:true});
             this.state.files.map((file, index) => {
                 Meteor.call('uploadChatFile', file,chanelId, (err, result) => {
                     if (err) {
@@ -136,7 +137,10 @@ class Chat extends Component {
                         this._removeFile(index);
                     }
                 });
+                if(this.state.files.length==index+1)
+                    this.setState({disable:false});
             })
+
         }
     };
 
@@ -229,7 +233,9 @@ class Chat extends Component {
             modalItem: '',
             customModalVisible: false,
             allowDelete: false,
-            height:45
+            height:45,
+            messages:[],
+            disable:false,
         }
         this._sendMessage = this._sendMessage.bind(this);
         this.viewabilityConfig = {
@@ -264,13 +270,14 @@ class Chat extends Component {
         })
     }
     _saveMessageToServer(Message) {
+        this.setState({disable:true});
            Meteor.call('addChatMessage', Message, (err) => {
+               this.setState({disable:false});
                if (err) {
 
                }
                else {
                    this.setState({message: ""})
-
                    // this.flatList.scrollToOffset({offset: 0, animated: true});
                }
            })
@@ -282,29 +289,30 @@ class Chat extends Component {
 
     }
 
-    // componentWillReceiveProps(newProps) {
-    //     if (this.props.messages.length !== newProps.messages.length) {
-    //         let sorteData = newProps.messages.sort((a, b) => {
-    //             if (Moment(a._id).isBefore(Moment(b._id))) {
-    //                 return 1;
-    //             }
-    //             else {
-    //                 return -1;
-    //             }
-    //         })
-    //         this.setState({messages: sorteData})
-    //     }
-    //     else {
-    //         this.setState({messages: newProps.messages})
-    //     }
-    // }
-    //
-    // componentWillUnmount() {
-    //
-    // }
-    // componentDidAppear(){
-    //     this.setState({messages: []})
-    // }
+    componentWillReceiveProps(newProps) {
+        // if (this.props.messages.length !== newProps.messages.length) {
+        //     let sorteData = newProps.messages.sort((a, b) => {
+        //         if (Moment(a._id).isBefore(Moment(b._id))) {
+        //             return 1;
+        //         }
+        //         else {
+        //             return -1;
+        //         }
+        //     })
+        //     this.setState({messages: sorteData})
+        // }
+        // else {
+            this.setState({messages: newProps.messages})
+        // }
+    }
+
+    componentWillUnmount() {
+
+    }
+    componentDidAppear(){
+        this.setState({messages: []})
+        this.setState({messages:this.props.messages})
+    }
 
     _showFile = (file, allowDelete) => {
         console.log(file)
@@ -354,7 +362,7 @@ class Chat extends Component {
                     </Body>
                     <Right style={{margin: 7}}>
                         <Thumbnail
-                            source={channel.user.profileImage ? {uri: settings.IMAGE_URL +'images/'+ channel.user.profileImage} : require('../../images/duser.png')}/>
+                            source={channel.user.profileImage ? {uri: settings.IMAGE_URL+ channel.user.profileImage} : require('../../images/duser.png')}/>
                     </Right>
                 </Header>
                 <View style={styles.content}>
@@ -364,7 +372,8 @@ class Chat extends Component {
                         ref={ref => this.flatList = ref}
                         // onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})}
                         // onLayout={() => this.flatList.scrollToEnd({animated: false})}
-                        data={this.props.messages}
+                        data={this.state.messages.slice().sort(
+                            (a,b) => b.nepaliDate.getTime() - a.nepaliDate.getTime())}
                         renderItem={this._renderList}
                         keyExtractor={(item, index) => index.toString()}
                         onViewableItemsChanged={this._onViewChange}
@@ -432,7 +441,7 @@ class Chat extends Component {
                                 <Icon name='paperclip' size={20} color='white'/></Button>
                             <Button transparent style={{marginHorizontal: 8}} onPress={this._sendImageCamera}>
                                 <Icon name='camera' size={20} color='white'/></Button>
-                            <Button transparent onPress={this._sendMessage} style={{marginHorizontal: 8}}>
+                            <Button disabled={this.state.disable} transparent onPress={this._sendMessage} style={{marginHorizontal: 8}}>
                                 {/*<Icon                                     
                                     style={{color: this.state.message.length > 1 || this.state.files.length > 0 ? colors.appLayout : undefined}}
                                 name='send' size={20} color='white'/>*/}

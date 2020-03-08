@@ -1,5 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import {FIREBASE_MESSAGING} from '../API/fire-base-admin';
+import {EFCategories} from "../../lib/collections/eatFit/efCategories";
 
 Meteor.methods({
 
@@ -9,15 +10,17 @@ Meteor.methods({
             var currentUserId = Meteor.userId();
             let Id = moment().format('DDMMYYx');
             let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
-            MainCategories.update(
-                {catId: "0"},
-                {
-                    $addToSet:
-                        {
-                            subCategories: {subCatId: Id, subCategory: serviceInfo.Category.subCategory}
-                        }
-                }
-            )
+            if(!serviceInfo.Category.subCatId) {
+                MainCategories.update(
+                    {catId: "0"},
+                    {
+                        $addToSet:
+                            {
+                                subCategories: {subCatId: CategoryId, subCategory: serviceInfo.Category.subCategory}
+                            }
+                    }
+                )
+            }
             let location = {
                 geometry: {
                     coordinates: [serviceInfo.location.geometry.location.lng, serviceInfo.location.geometry.location.lat],
@@ -51,7 +54,7 @@ Meteor.methods({
                             var res = Service.insert(serviceInfo);
                             try {
                                 FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
-                                    Id: Id,
+                                    Id: res,
                                     navigate: "true",
                                     route: "ServiceDetail",
                                     image:serviceInfo.coverImage
@@ -80,7 +83,7 @@ Meteor.methods({
                 });
                 try {
                     FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
-                        Id: Id,
+                        Id: res,
                         navigate: "true",
                         route: "ServiceDetail",
                     })
@@ -281,6 +284,119 @@ Meteor.methods({
     },
 
     'getSingleService':(Id)=>{
-        return Servie.findOne(Id);
+    //   return Service.findOne(Id);
+
+        const collection = Service.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const addValues={
+            avgRate: {$avg: "$ratings.count"},
+            count: { $size: "$ratings"},
+            category:{$arrayElemAt:['$categories',0]}
+        };
+        const categoryLookup = {
+            from: "MainCategories",
+            let: {catId: "$categoryId"},
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+
+                            $eq: ["$subCategories.subCatId", "$$catId"]
+                        }
+                    }
+                },
+            ],
+            "as": "categories"
+        };
+        // const project = {
+        //     _id: 1,
+        //     "products": {$arrayElemAt: ["$products", 0]},
+        //     createDate: 1,
+        //     title: 1,
+        //     description: 1,
+        // };
+        //  return Category.find().fetch();
+        return Async.runSync(function (done) {
+            aggregate([
+                { $match: {_id:Id}},
+                {$lookup: categoryLookup},
+                {$addFields:addValues},
+                // {$project: project}
+            ], {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
+    'getSingleProduct': Id => {
+        return Products.findOne({
+            _id: Id
+        });
+    },
+    'getSimilarProduct': Id => {
+        let product = Products.findOne({_id: Id});
+        return Products.find({
+            service: product.service,
+            _id: {
+                $ne: Id
+            }
+        }).fetch();
+    },
+
+    'getServicesNearBy':(obj)=>{
+        const collection = Service.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const addValues={
+                avgRate: {$avg: "$ratings.count"},
+                count: { $size: "$ratings"},
+                category:{$arrayElemAt:['$categories',0]}
+        };
+        const categoryLookup = {
+            from: "MainCategories",
+            let: {catId: "$categoryId"},
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+
+                            $eq: ["$subCategories.subCatId", "$$catId"]
+                        }
+                    }
+                },
+            ],
+            "as": "categories"
+        };
+        // const project = {
+        //     _id: 1,
+        //     "products": {$arrayElemAt: ["$products", 0]},
+        //     createDate: 1,
+        //     title: 1,
+        //     description: 1,
+        // };
+        //  return Category.find().fetch();
+        return Async.runSync(function (done) {
+            aggregate([
+                { $geoNear: {
+                        near: { type: "Point", coordinates: obj.coords },
+                        distanceField: "dist.calculated",
+                        query:{categoryId:{$in: obj.subCatIds}},
+                        spherical: true,
+                        distanceMultiplier : 0.001
+                    }},
+                {$lookup: categoryLookup},
+                {$addFields:addValues},
+                {$limit: obj.skip + obj.limit},
+                {$skip: obj.skip},
+                // {$project: project}
+            ], {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                  //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
     }
 })

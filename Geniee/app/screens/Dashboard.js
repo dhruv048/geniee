@@ -70,7 +70,10 @@ class Dashboard extends Component {
     }
 
     handleOnPress = () => this.setState({showSearchBar: true});
-    handleOnPressUnset = () => this.setState({showSearchBar: false, query: ''});
+    handleOnPressUnset = () => {
+        this.setState({showSearchBar: false, query: ''});
+        this._search('')
+    };
     //onClick() {
     //let { showSearchBar } = this.state.showSearchBar;
     //this.setState({
@@ -91,7 +94,7 @@ class Dashboard extends Component {
     };
     _spring() {
         ToastAndroid.showWithGravityAndOffset(
-            "Tap twice to Exit App",
+            "Tap again to Exit.",
             ToastAndroid.SHORT,
             ToastAndroid.BOTTOM,
             0,
@@ -246,7 +249,7 @@ class Dashboard extends Component {
                 //     goToRoute(this.props.componentId,'Auth');
                 // }
             }
-            if (notificationOpen.notification.data.navigate && Meteor.user()) {
+            if (notificationOpen.notification.data.navigate) {
                 console.log("subscribe & Navigate");
                 goToRoute(this.props.componentId,notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
             }
@@ -517,7 +520,7 @@ class Dashboard extends Component {
                            <CogMenu componentId={this.props.componentId}/>
                         </Left>
                         <Body>
-                        <Text style={{color: 'white', fontSize: 18, fontWeight: '500'}}>
+                        <Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>
                             Home
                         </Text>
                         </Body>
@@ -529,10 +532,11 @@ class Dashboard extends Component {
                 ) : (
                     <Header androidStatusBarColor={colors.statusBar}  style={{backgroundColor: '#094c6b'}}>
                         <Left style={{flex: 1}}>
-                            <Button transparent onPress={() => {
-                                this.props.navigation.openDrawer()
-                            }}>
-                                <Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>
+                            {/*<Button transparent onPress={() => {*/}
+                                {/*this.props.navigation.openDrawer()*/}
+                            {/*}}>*/}
+                                {/*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*/}
+                            <CogMenu componentId={this.props.componentId}/>
                         </Left>
                         <Body style={{flexDirection: 'row', flex: 6}}>
 
@@ -544,7 +548,6 @@ class Dashboard extends Component {
                             <Input placeholder="Search" style={styles.searchInput}
                                    placeholderTextColor='#ffffff'
                                    selectionColor='#ffffff'
-
                                    onChangeText={(searchText) => {
                                        this._search(searchText), this.setState({query: searchText})
                                    }}

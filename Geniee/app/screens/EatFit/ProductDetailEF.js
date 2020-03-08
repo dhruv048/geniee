@@ -99,6 +99,7 @@ class ProductDetailEF extends Component {
         ;
         //Get Similar products
         Meteor.call('getSimilarProductEF', productId, (err, res) => {
+            console.log(err,res);
             if (err) {
                 console.log('this is due to error. ' + err);
             }
@@ -489,8 +490,8 @@ class ProductDetailEF extends Component {
         return (
             <TouchableWithoutFeedback
                 key={index}
-                onPress={() => goToRoute(this.props.componentId,'ProductImage', {
-                    images: this.state.product.productImages,
+                onPress={() => goToRoute(this.props.componentId,'ImageGallery', {
+                    images: this.state.product.images,
                     position: parseInt(index)
                 })}
             >
