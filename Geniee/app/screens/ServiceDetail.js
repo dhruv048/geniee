@@ -6,12 +6,24 @@ import {
     Alert,    FlatList, StatusBar,
     Modal, ToastAndroid, Linking, Dimensions
 } from 'react-native';
-import {Button, Container, Content, Textarea, Icon, Header, Left, Body, Right, Footer, FooterTab} from 'native-base'
+import {
+    Button,
+    Container,
+    Content,
+    Textarea,
+    Icon,
+    Header,
+    Left,
+    Body, Col,
+    Footer,
+    FooterTab,
+    Row, Grid
+} from 'native-base'
 import Meteor from "../react-native-meteor";
-import settings, {userType} from "../config/settings";
+import settings from "../config/settings";
 import userImage from '../images/Image.png';
-import {Rating, AirbnbRating} from 'react-native-elements';
-import {colors} from "../config/styles";
+import {AirbnbRating} from 'react-native-elements';
+import {colors,customStyle} from "../config/styles";
 import call from "react-native-phone-call";
 import Loading from "../components/Loading/Loading";
 import StarRating from "../components/StarRating/StarRating";
@@ -20,12 +32,6 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import CogMenu from "../components/CogMenu";
 import {Navigation} from 'react-native-navigation';
 
-// import RNEsewaSdk from "react-native-esewa-sdk";
-
-import {DeviceEventEmitter} from 'react-native';
-
-import {NativeModules} from 'react-native';
-import {FlatListItem} from "../components/FlatListItem";
 import Product from "../components/Store/Product";
 import MyFunctions from "../lib/MyFunctions";
 
@@ -49,7 +55,7 @@ class ServiceDetail extends Component {
             isLoading: false,
             showModal: false,
             comment: '',
-            Service:null,
+            Service:'',
         }
 
     }
@@ -72,8 +78,8 @@ class ServiceDetail extends Component {
         }
         else {
             console.log(Id)
-            Service = Id;
-            this.setState({Service});
+           // Service = Id;
+            this.setState({Service:Id});
         }
     }
 
@@ -143,7 +149,7 @@ class ServiceDetail extends Component {
         let rating = {
             count: this.state.starCount,
             comment: this.state.comment
-        }
+        };
 
         Meteor.call('updateRating', id, rating, (err, res) => {
             if (err) {
@@ -216,7 +222,7 @@ class ServiceDetail extends Component {
     }
     render() {
         const Id = this.props.Id;
-        console.log(Id)
+       // console.log(Id)
         // let Service = {};
         // if (typeof (Id) === "string") {
         //     Service = Meteor.collection('serviceReact').findOne({_id: Id});
@@ -251,10 +257,10 @@ class ServiceDetail extends Component {
                 </Header>
                 {!this.state.Service ? <Loading/> :
                 <Content style={{marginVertical: 0, paddingVertical: 0}}>
-                    <TouchableOpacity onPress={()=>this._showImage(Service.coverImage)}>
+                    <TouchableOpacity onPress={()=>this._showImage(this.state.Service.coverImage)}>
                         <Image style={styles.productImg}
                                onPress={()=>this._showImage(Service.coverImage) }
-                               source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ Service.coverImage}:userImage}/>
+                               source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ this.state.Service.coverImage}:userImage}/>
                     </TouchableOpacity>
                     <Text style={styles.name}>{this.state.Service.title}</Text>
                     <View style={ styles.starView }><StarRating starRate={this.state.Service.avgRate}/></View>
@@ -372,19 +378,25 @@ class ServiceDetail extends Component {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            backgroundColor: 'rgba(0,0,0,.5)'
                         }}>
 
                             <View style={{
                                 backgroundColor: 'white',
                                 width: 350,
-                                height: 400,
+                                height: 420,
                                 padding: 30,
-                                borderWidth: 2,
-                                borderColor: colors.buttonPrimaryBackground,
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.8,
+                                shadowRadius: 4,
+                                elevation: 1,
+                                borderRadius: 4
 
                             }}>
-                                <Text style={styles.signupText}>
-                                    Rate Service
+                                <Text style={{fontSize: 18, marginBottom: 5, textAlign: 'center'}}>
+                                    How was your experience
+                                    with "{this.state.Service.title}"?
                                 </Text>
                                 <View style={styles.starContainer}>
                                     <AirbnbRating
@@ -396,6 +408,7 @@ class ServiceDetail extends Component {
                                         onFinishRating={this.ratingCompleted}
                                     />
                                 </View>
+                                <View style={styles.formGroup}>
                                 <Textarea bordered rowSpan={4} placeholder="Comment"
                                     //  style={styles.inputText}
                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
@@ -403,18 +416,23 @@ class ServiceDetail extends Component {
                                     //onSubmitEditing={() => this.contactNumber.focus()}
                                           onChangeText={(comment) => this.setState({comment})}
                                 />
-                                <View style={styles.addToCarContainer}>
-                                    <Button block success onPress={() => {
-                                        this._saveRatting(this.state.Service._id)
-                                    }}><Text> Save </Text></Button>
                                 </View>
-                                <View style={styles.addToCarContainer}>
-                                    <Button block danger onPress={() => {
+                                <Grid>
+                                    <Row>
+                                        <Col style={{marginRight: 5}}>
+                                    <Button block style={customStyle.buttonPrimary} onPress={() => {
+                                        this._saveRatting(this.state.Service._id)
+                                    }}><Text style={customStyle.buttonPrimaryText}> Save </Text></Button>
+                                        </Col>
+                                        <Col style={{marginRight: 5}}>
+                                    <Button block  style={customStyle.buttonLight} onPress={() => {
                                         this.setState({showModal: false})
                                     }}>
-                                        <Text>Cancel</Text>
+                                        <Text style={customStyle.buttonLightText}>Cancel</Text>
                                     </Button>
-                                </View>
+                                        </Col>
+                                    </Row>
+                                </Grid>
                             </View>
                         </View>
                     </Modal>
@@ -543,10 +561,10 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     starContainer: {
-        justifyContent: 'center',
-        marginHorizontal: 30,
-        flexDirection: 'row',
-        marginTop: 20
+        marginBottom: 15
+    },
+    formGroup: {
+        marginBottom: 15
     },
     contentColors: {
         justifyContent: 'center',

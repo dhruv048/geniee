@@ -25,6 +25,9 @@ import CartEF from "./screens/EatFit/CartEF";
 import ProductsEF from "./screens/EatFit/ProductsEF";
 import ProductDetailEF from "./screens/EatFit/ProductDetailEF";
 import CheckoutEF from "./screens/EatFit/CheckoutEF";
+import ProductsBB from "./screens/BaadshahBiryani/ProductsBB";
+import ProductDetailBB from "./screens/BaadshahBiryani/ProductDetailBB";
+import ImageGalleryBB from "./screens/BaadshahBiryani/ImageGalleryBB";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -44,12 +47,17 @@ Navigation.registerComponent('CartEF', () => CartEF);
 Navigation.registerComponent('CheckoutEF', () => CheckoutEF);
 Navigation.registerComponent('ProductsEF', () => ProductsEF);
 Navigation.registerComponent('ProductDetailEF', () => ProductDetailEF);
+Navigation.registerComponent('ProductsBB', () => ProductsBB);
+Navigation.registerComponent('ProductDetailBB', () => ProductDetailBB);
 Navigation.registerComponent('ContactUs', () => ContactUs);
 Navigation.registerComponent('ForgotPassword', () => ForgotPassword);
 Navigation.registerComponent('SignIn', () => SignIn);
 Navigation.registerComponent('Register', () => Register);
 Navigation.registerComponent('ImageGallery', () => ImageGallery);
-let currentRoute = '';
+Navigation.registerComponent('ImageGalleryBB', () => ImageGalleryBB);
+let currentRoute = ''
+
+
 Navigation.setDefaultOptions({
     animations: {
         setRoot: {

@@ -1,0 +1,50 @@
+  [
+    {
+    "_id": "1",
+    "title": "Chicken Briyani",
+    "description": "The real taste of Chicken Briyani!",
+    "images": ["chicken_briyani.jpg"],
+    "category": "Q7cwDkxA6M7rDZw43",
+    "content": "The real taste of Chicken Briyani!",
+    "unit": "Plate",
+    "price": "450",
+    "discount": "15",
+    "isActive": false,
+    "isVeg": "0",
+    "nutritions":[   {
+      "id" : "BFeZP",
+      "label" : "Chicken",
+      "value" : "120 grms"
+    },
+      {
+        "id" : "CDe59",
+        "label" : "Potato",
+        "value" : "1 piece"
+      }
+    ]
+  },
+    {
+      "_id": "2",
+      "title": "Chicken Chaap",
+      "description": "The real taste of Chicken Chaap!",
+      "images": ["chicken_chaap.jpg"],
+      "category": "Q7cwDkxA6M7rDZw43",
+      "content": "The real taste of Chicken Chaap!",
+      "unit": "Plate",
+      "price": "150",
+      "discount": "15",
+      "isActive": false,
+      "isVeg": "0",
+      "nutritions":[   {
+        "id" : "BFeZP",
+        "label" : "Chicken",
+        "value" : "120 grms"
+      },
+        {
+          "id" : "CDe59",
+          "label" : "Potato",
+          "value" : "1 piece"
+        }
+      ]
+    }
+  ]

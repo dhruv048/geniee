@@ -141,6 +141,9 @@ export const EatFitStack = createStackNavigator({
     headerMode: 'none',
     initialRouteName:'CategoriesEF'
 });
+
+
+
 export const HomeStack = createStackNavigator({
     Dashboard: {
         screen: Dashboard,

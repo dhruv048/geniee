@@ -7,7 +7,7 @@ import {
     Alert,
     FlatList,
     StatusBar,
-    Modal, ToastAndroid, Linking, Dimensions, TouchableNativeFeedback, AsyncStorage
+    Modal, ToastAndroid, Linking, Dimensions, TouchableNativeFeedback, AsyncStorage, Image
 } from 'react-native';
 import {
     Button,
@@ -20,17 +20,18 @@ import {
 } from 'native-base'
 import Meteor  from "../../react-native-meteor";
 import FIcon from 'react-native-vector-icons/Feather';
-import {colors} from "../../config/styles";
+import {colors, customStyle} from "../../config/styles";
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import Product from "../../components/ecommerce/Product";
 import {Navigation} from "react-native-navigation";
 import {goBack,goToRoute} from "../../Navigation";
+import settings from "../../config/settings";
 
 //const { RNEsewaSdk } = NativeModules;
 
 
-class ProductsEF extends Component {
+class ProductsBB extends Component {
     ratingCompleted = (rating) => {
         this.setState({
             starCount: rating,
@@ -56,7 +57,8 @@ class ProductsEF extends Component {
     componentDidMount() {
         Navigation.events().bindComponent(this);
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
-        Meteor.call('EFProductsByCategory',this.props.Id, (err, res) => {
+        Meteor.call('getProductsBB', (err, res) => {
+            console.log(err,res)
             if (err) {
                 console.log('this is due to error. '+err);
             }
@@ -102,11 +104,21 @@ class ProductsEF extends Component {
 
     _renderProduct = (data, index) => {
         let item = data.item;
-        console.log(item);
         return (
             <View style={styles.col}>
-                <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetailEF", {'Id': item._id,data:item})} style={styles.containerStyle}>
-                    <Product key={item._id} product={item}/>
+                <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetailBB", {'Id': item._id,data:item})} style={styles.containerStyle}>
+                    <View style={[customStyle.Card, styles.card]}>
+                        <Image source={{uri: 'http://192.168.1.245:3000/img/'+item.images[0]}} style={styles.thumbnail}/>
+                        <View style={styles.cardDetails}>
+                            <Text style={styles.productTitle}
+                                  numberOfLines={2}>{item.title}</Text>
+                            <Text style={styles.price}>Rs. {(item.price - (item.price * (item.discount / 100)))}{item.unit ?
+                                <Text style={{
+                                    fontSize: 16,
+                                    fontWeight: 'normal'
+                                }}> / {item.unit}</Text> : null}</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
             </View>
         )
@@ -128,35 +140,35 @@ class ProductsEF extends Component {
                         </Left>
 
                         <Body>
-                            <Title style={styles.screenHeader}>{this.state.CategoryName}</Title>
+                            <Title style={styles.screenHeader}>BAADSHAH BIRYANI</Title>
                         </Body>
-                        <Right>
-                            <Button onPress={() => goToRoute(this.props.componentId,'WishListEF')} transparent>
-                                <FIcon name='heart' style={{fontSize:24,color:'white'}} />
-                                {this.state.wishList.length > 0 ?
-                                    <Badge
-                                        style={{position: 'absolute', height: 18}}>
-                                        <Text style={{
-                                            fontSize: 10,
-                                            fontWeight: '100',
-                                            color: 'white',
-                                            lineHeight: 18
-                                        }}>{this.state.wishList.length}</Text></Badge>
-                                    : null}
-                            </Button>
-                            <Button onPress={() => goToRoute(this.props.componentId,'CartEF')} transparent>
-                                <Icon name='ios-cart' style={{fontSize:27,color:'white'}} />
-                                {this.state.totalCount > 0 ?
-                                    <Badge
-                                        style={{position: 'absolute', height: 18}}>
-                                        <Text style={{
-                                            fontSize: 10,
-                                            fontWeight: '100',
-                                            color: 'white',
-                                            lineHeight: 18
-                                        }}>{this.state.totalCount}</Text></Badge> : null}
-                            </Button>
-                        </Right>
+                        {/*<Right>*/}
+                            {/*<Button onPress={() => goToRoute(this.props.componentId,'WishListEF')} transparent>*/}
+                                {/*<FIcon name='heart' style={{fontSize:24,color:'white'}} />*/}
+                                {/*{this.state.wishList.length > 0 ?*/}
+                                    {/*<Badge*/}
+                                        {/*style={{position: 'absolute', height: 18}}>*/}
+                                        {/*<Text style={{*/}
+                                            {/*fontSize: 10,*/}
+                                            {/*fontWeight: '100',*/}
+                                            {/*color: 'white',*/}
+                                            {/*lineHeight: 18*/}
+                                        {/*}}>{this.state.wishList.length}</Text></Badge>*/}
+                                    {/*: null}*/}
+                            {/*</Button>*/}
+                            {/*<Button onPress={() => goToRoute(this.props.componentId,'CartEF')} transparent>*/}
+                                {/*<Icon name='ios-cart' style={{fontSize:27,color:'white'}} />*/}
+                                {/*{this.state.totalCount > 0 ?*/}
+                                    {/*<Badge*/}
+                                        {/*style={{position: 'absolute', height: 18}}>*/}
+                                        {/*<Text style={{*/}
+                                            {/*fontSize: 10,*/}
+                                            {/*fontWeight: '100',*/}
+                                            {/*color: 'white',*/}
+                                            {/*lineHeight: 18*/}
+                                        {/*}}>{this.state.totalCount}</Text></Badge> : null}*/}
+                            {/*</Button>*/}
+                        {/*</Right>*/}
                     </Header>
                     <Content style={styles.content}>
                         <FlatList style={styles.mainContainer}
@@ -190,8 +202,26 @@ const styles = StyleSheet.create({
     col: {
         width: (viewportWidth / 2) - 8,
         padding: 4
+    },
+    thumbnail: {
+        flex: 1, width: undefined, height: 150, resizeMode: 'cover'
+    },
+    productTitle: {
+        fontSize: 15,
+        marginBottom: 5
+    },
+    price: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 0,
+        overflow: 'hidden',
+    },
+    cardDetails: {
+        padding: 15
     }
-
 });
 
 export default Meteor.withTracker((props) => {
@@ -203,4 +233,4 @@ export default Meteor.withTracker((props) => {
         //Products: Meteor.collection('products').find({category: Id}),
     //    Count: Meteor.collection('cartCount').find()
     };
-})(ProductsEF);
+})(ProductsBB);

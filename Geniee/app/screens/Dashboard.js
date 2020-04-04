@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import Meteor from '../react-native-meteor';
 import {
-    StyleSheet,BackHandler,
-    Dimensions,Animated,
+    StyleSheet, BackHandler,
+    Dimensions, Animated,
     StatusBar,
-    View,ToastAndroid,
+    View, ToastAndroid,
     TouchableOpacity,
     ActivityIndicator,
-    FlatList, PermissionsAndroid, Image,TouchableWithoutFeedback
+    FlatList, PermissionsAndroid, Image, TouchableWithoutFeedback
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Geolocation from 'react-native-geolocation-service';
@@ -28,6 +28,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle} from '../config/styles';
 import {Navigation} from 'react-native-navigation';
+
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from "../config/settings";
 import StarRating from "../components/StarRating/StarRating";
@@ -38,7 +39,8 @@ import SplashScreen from "react-native-splash-screen";
 import firebase from "react-native-firebase";
 import AsyncStorage from "@react-native-community/async-storage";
 import {goToRoute} from "../Navigation";
-let isDashBoard=true;
+
+let isDashBoard = true;
 
 class Dashboard extends Component {
 
@@ -64,7 +66,7 @@ class Dashboard extends Component {
         };
         this.granted;
         this.watchID;
-        this.springValue = new Animated.Value(100) ;
+        this.springValue = new Animated.Value(100);
 
         //this.onClick = this.onClick.bind(this);
     }
@@ -82,9 +84,8 @@ class Dashboard extends Component {
     //}
 
 
-
     handleBackButton = () => {
-        if(isDashBoard){
+        if (isDashBoard) {
             console.log('called')
             const {screen, navigator} = this.props;
             console.log(screen, navigator, this.props);
@@ -92,6 +93,7 @@ class Dashboard extends Component {
             return true;
         }
     };
+
     _spring() {
         ToastAndroid.showWithGravityAndOffset(
             "Tap again to Exit.",
@@ -208,6 +210,7 @@ class Dashboard extends Component {
         this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
     }
+
     messageListener = async () => {
         this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
             const {title, body} = notificationOpen.notification;
@@ -227,7 +230,7 @@ class Dashboard extends Component {
             if (notificationOpen.notification.data.navigate) {
                 console.log("subscribe & Navigate");
                 // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-                goToRoute(this.props.componentId,notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
+                goToRoute(this.props.componentId, notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
                 // });
             }
         });
@@ -251,15 +254,16 @@ class Dashboard extends Component {
             }
             if (notificationOpen.notification.data.navigate) {
                 console.log("subscribe & Navigate");
-                goToRoute(this.props.componentId,notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
+                goToRoute(this.props.componentId, notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
             }
 
         }
     }
+
     componentDidAppear() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         console.log('componentDidAppear-Dashboard');
-        isDashBoard=true;
+        isDashBoard = true;
         // Meteor.call('getCategoriesGR', (err, res) => {
         //     //   console.log(err,res)
         //     if (!err) {
@@ -270,7 +274,7 @@ class Dashboard extends Component {
     }
 
     componentDidDisappear() {
-        isDashBoard=false;
+        isDashBoard = false;
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         console.log('componentDidDisappear-Dashboard');
     }
@@ -340,12 +344,12 @@ class Dashboard extends Component {
 
     _handlItemPress = (service) => {
         service.avgRate = this.averageRating(service.ratings);
-      //  this.props.navigation.navigate('Service', {Id: service});
+        //  this.props.navigation.navigate('Service', {Id: service});
         Navigation.push(this.props.componentId, {
             component: {
                 name: "ServiceDetail",
                 passProps: {
-                    Id:service
+                    Id: service
                 }
             }
         });
@@ -368,14 +372,14 @@ class Dashboard extends Component {
             component: {
                 name: "ServiceList",
                 passProps: {
-                    Id:Ids,
-                    Region:this.region
+                    Id: Ids,
+                    Region: this.region
                 }
             }
         });
     }
 
-    gotoEatFit=()=>{
+    gotoEatFit = () => {
         console.log('Eat-Fit');
         Navigation.push(this.props.componentId, {
             component: {
@@ -383,6 +387,15 @@ class Dashboard extends Component {
             }
         });
     }
+
+    gotoBB = () => {
+        console.log('Eat-Fit');
+        Navigation.push(this.props.componentId, {
+            component: {
+                name: "ProductsBB",
+            }
+        });
+    };
     renderItem = (data, index) => {
         var item = data.item;
         return (
@@ -486,7 +499,7 @@ class Dashboard extends Component {
             component: {
                 name: "ProductDetail",
                 passProps: {
-                    Id:pro._id
+                    Id: pro._id
                 }
             }
         });
@@ -515,9 +528,9 @@ class Dashboard extends Component {
             <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
 
                 {showSearchBar == false ? (
-                    <Header androidStatusBarColor={colors.statusBar}  style={{backgroundColor: '#094c6b'}}>
+                    <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                         <Left style={{flex: 1}}>
-                           <CogMenu componentId={this.props.componentId}/>
+                            <CogMenu componentId={this.props.componentId}/>
                         </Left>
                         <Body>
                         <Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>
@@ -530,12 +543,12 @@ class Dashboard extends Component {
                         </Right>
                     </Header>
                 ) : (
-                    <Header androidStatusBarColor={colors.statusBar}  style={{backgroundColor: '#094c6b'}}>
+                    <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                         <Left style={{flex: 1}}>
                             {/*<Button transparent onPress={() => {*/}
-                                {/*this.props.navigation.openDrawer()*/}
+                            {/*this.props.navigation.openDrawer()*/}
                             {/*}}>*/}
-                                {/*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*/}
+                            {/*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*/}
                             <CogMenu componentId={this.props.componentId}/>
                         </Left>
                         <Body style={{flexDirection: 'row', flex: 6}}>
@@ -579,27 +592,28 @@ class Dashboard extends Component {
                     {/*<ScrollView style={{viewportWidth: '100%', flex: 1}}>*/}
                     {this.state.searchMode == false ?
                         <View>
-                            <TouchableOpacity  onPress={()=>this.gotoEatFit()}>
+                            <TouchableOpacity onPress={() => this.gotoEatFit()}>
                                 <View>
-                                <Image onPress={()=>this.gotoEatFit()} source={require("../images/EF2.jpg")} style={{
-                                    flex: 1,
-                                    height: 120,
-                                    width: viewportWidth - 10,
-                                    resizeMode: 'cover',
-                                    margin: 5
-                                }}/>
-                                <View style={{
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    position: 'absolute'
-                                }}>
-                                    <Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>EAT-FIT</Text>
-                                </View>
+                                    <Image onPress={() => this.gotoEatFit()} source={require("../images/EF2.jpg")}
+                                           style={{
+                                               flex: 1,
+                                               height: 120,
+                                               width: viewportWidth - 10,
+                                               resizeMode: 'cover',
+                                               margin: 5
+                                           }}/>
+                                    <View style={{
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        position: 'absolute'
+                                    }}>
+                                        <Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>EAT-FIT</Text>
                                     </View>
+                                </View>
                             </TouchableOpacity>
                             {this.state.Adds.length > 0 ?
                                 <View style={{
@@ -624,7 +638,29 @@ class Dashboard extends Component {
 
                                 </View> : null}
 
-
+                            <TouchableOpacity onPress={() => this.gotoBB()}>
+                                <View>
+                                    <Image onPress={() => this.gotoEatFit()} source={require("../images/baadshah_logo.jpg")}
+                                           style={{
+                                               flex: 1,
+                                               height: 130,
+                                               width: viewportWidth - 10,
+                                               resizeMode: 'cover',
+                                               margin: 5
+                                           }}/>
+                                    {/*<View style={{*/}
+                                    {/*top: 0,*/}
+                                    {/*left: 0,*/}
+                                    {/*right: 0,*/}
+                                    {/*bottom: 0,*/}
+                                    {/*justifyContent: 'center',*/}
+                                    {/*alignItems: 'center',*/}
+                                    {/*position: 'absolute'*/}
+                                    {/*}}>*/}
+                                    {/*<Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>BAADSHAH-BIRYANI</Text>*/}
+                                    {/*</View>*/}
+                                </View>
+                            </TouchableOpacity>
                             {/*<View key="id" style={styles.containerStyle}>*/}
                             {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>*/}
                             {/*<Body>*/}
