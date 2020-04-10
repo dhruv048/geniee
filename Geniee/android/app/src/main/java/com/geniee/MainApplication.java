@@ -17,9 +17,9 @@ import com.facebook.FacebookSdk;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.appevents.AppEventsLogger;
 
+
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this lin
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
-
 public class MainApplication extends NavigationApplication {
 
   private final ReactNativeHost mReactNativeHost =

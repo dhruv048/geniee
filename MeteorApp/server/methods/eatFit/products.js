@@ -51,7 +51,7 @@ Meteor.methods({
     },
 
     'EFProductsByCategory': (_categoryId) => {
-        return EFProducts.find({category: _categoryId}).fetch();
+        return EFProducts.find({category: _categoryId},{sort:{views:-1}}).fetch();
     },
 
     'getSingleProductEF': (Id) => {
@@ -59,9 +59,20 @@ Meteor.methods({
     },
     'getSimilarProductEF': (Id) => {
         let cat = EFProducts.findOne({_id: Id}).category;
-        return EFProducts.find({category: cat,_id:{$ne:Id}}).fetch();
+        return EFProducts.find({category: cat,_id:{$ne:Id}},{sort:{views:-1}}).fetch();
     },
 
+    'updateViewCountEF':(productId)=>{
+        let _product=EFProducts.findOne(productId);
+        if(_product) {
+            let views = _product.views || 0;
+            EFProducts.update({_id: productId}, {
+                $set: {
+                    views: views + 1
+                }
+            });
+        }
+    },
     'addOrderEF': (order, isOrder) => {
         order.orderDate = new Date(new Date().toUTCString());
         order.owner = Meteor.userId();
@@ -111,7 +122,7 @@ Meteor.methods({
 
     'WishListItemsEF': (wishList) => {
         try {
-            return EFProducts.find({_id: {$in: wishList}}).fetch();
+            return EFProducts.find({_id: {$in: wishList}},{$sort:{views:-1}}).fetch();
         }
         catch (e) {
             console.log(e.message);

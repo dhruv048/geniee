@@ -6,6 +6,7 @@ let GOOGLE_MAP_API_KEY = 'AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY';
 
 let API_URL='http://192.168.1.245:3000/api/';
 let IMAGE_URL='http://192.168.1.245:3000/api/images/';
+let WEB_URL='http://192.168.1.245:3000/';
 
 let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 let PHONE='9840023544';
@@ -18,7 +19,8 @@ if (process.env.NODE_ENV === 'production') {
     METEOR_URL = 'wss://api.krishisansaar.com/websocket';
     //API_URL = "http://139.59.81.51/api/";
     API_URL = "https://api.krishisansaar.com/api/";
-    IMAGE_URL='https://api.krishisansaar.com/api/images/'
+    IMAGE_URL='https://api.krishisansaar.com/api/images/';
+    WEB_URL = "https://api.krishisansaar.com/";
 }
 export const settings = {
     env: process.env.NODE_ENV,

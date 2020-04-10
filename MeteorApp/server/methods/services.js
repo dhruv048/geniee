@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import {FIREBASE_MESSAGING} from '../API/fire-base-admin';
-import {EFCategories} from "../../lib/collections/eatFit/efCategories";
+import {Ratings} from "../../lib/collections/genieeRepair/ratings";
+import {EFProducts} from "../../lib/collections/eatFit/efProducts";
 
 Meteor.methods({
 
@@ -10,7 +11,7 @@ Meteor.methods({
             var currentUserId = Meteor.userId();
             let Id = moment().format('DDMMYYx');
             let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
-            if(!serviceInfo.Category.subCatId) {
+            if (!serviceInfo.Category.subCatId) {
                 MainCategories.update(
                     {catId: "0"},
                     {
@@ -57,7 +58,7 @@ Meteor.methods({
                                     Id: res,
                                     navigate: "true",
                                     route: "ServiceDetail",
-                                    image:serviceInfo.coverImage
+                                    image: serviceInfo.coverImage
                                 })
                             } catch (e) {
                                 throw new Meteor.Error(403, e.message);
@@ -200,18 +201,29 @@ Meteor.methods({
     'updateRating': function (Id, rating) {
         try {
             let user = Meteor.user();
-            rating.ratedBy = {_id: Meteor.userId(), name: user.profile.name, coverImage: user.profile.profileImage};
-            rating.rateDate = new Date();
-            let service = Service.findOne({_id: Id});
-            let Ratings = service.ratings;
-            let avg = service.hasOwnProperty('avgRate') ? service.avgRate : 0;
-            avg = avg + rating.count;
-            Ratings.push(rating);
-            Service.update({_id: Id}, {
-                $set: {
-                    ratings: Ratings,
-                    avgRate: avg
-                }
+            // rating.ratedBy = {_id: Meteor.userId(), name: user.profile.name, coverImage: user.profile.profileImage};
+            // rating.rateDate = new Date();
+            // let service = Service.findOne({_id: Id});
+            // let Ratings = service.ratings;
+            // let avg = service.hasOwnProperty('avgRate') ? service.avgRate : 0;
+            // avg = avg + rating.count;
+            // Ratings.push(rating);
+            // Service.update({_id: Id}, {
+            //     $set: {
+            //         ratings: Ratings,
+            //         avgRate: avg
+            //     }
+            // });
+
+            let Rating = {
+                serviceId: Id,
+                ratedBy: user._id,
+                rateDate: new Date(new Date().toUTCString()),
+                rating: rating
+            };
+
+            Ratings.upsert({ratedBy: user._id, serviceId: Id}, {
+                $set: Rating
             });
         }
         catch (err) {
@@ -231,17 +243,17 @@ Meteor.methods({
                     let Id = moment().format('DDMMYYx');
                     ServiceImage.write(new Buffer(image.data, 'base64'),
                         {
-                            fileName:  image.name,
+                            fileName: image.name,
                             type: image.type
                         },
                         (err, res) => {
                             if (err) {
-                                console.log('error',err)
+                                console.log('error', err)
                             }
                             else {
-                                console.log('res:',res._id);
+                                console.log('res:', res._id);
                                 imageIds.push(res._id);
-                                if(productInfo.images.length===imageIds.length){
+                                if (productInfo.images.length === imageIds.length) {
                                     productInfo.images = imageIds;
                                     console.log('insert')
                                     try {
@@ -249,7 +261,7 @@ Meteor.methods({
                                             Id: Id,
                                             navigate: "true",
                                             route: "ProductDetail",
-                                            image:productInfo.images[0]
+                                            image: productInfo.images[0]
                                         })
                                     } catch (e) {
                                         throw new Meteor.Error(403, e.message);
@@ -283,16 +295,12 @@ Meteor.methods({
         }
     },
 
-    'getSingleService':(Id)=>{
-    //   return Service.findOne(Id);
+    'getSingleService': (Id) => {
+        //   return Service.findOne(Id);
 
         const collection = Service.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const addValues={
-            avgRate: {$avg: "$ratings.count"},
-            count: { $size: "$ratings"},
-            category:{$arrayElemAt:['$categories',0]}
-        };
+        const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
         const categoryLookup = {
             from: "MainCategories",
             let: {catId: "$categoryId"},
@@ -308,6 +316,32 @@ Meteor.methods({
             ],
             "as": "categories"
         };
+        const ServiceRatings = {
+            from: "ratings",
+            let: {serviceId: Id},
+            pipeline: [
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                {
+                    $group: {
+                        _id: '$_id',
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1}
+                    }
+                },
+                {$project: {avgRate: 1, count: 1}}
+            ],
+            "as": "servRatings"
+        };
+
+        const addValues = {
+            Rating: {
+                $cond: {
+                    if: {"$eq": ["$servRatings", []]}, then: defaultRating, else: {$arrayElemAt: ["$servRatings", 0]}
+                }
+            },
+            category: {$arrayElemAt: ['$categories', 0]}
+        };
+
         // const project = {
         //     _id: 1,
         //     "products": {$arrayElemAt: ["$products", 0]},
@@ -318,9 +352,10 @@ Meteor.methods({
         //  return Category.find().fetch();
         return Async.runSync(function (done) {
             aggregate([
-                { $match: {_id:Id}},
+                {$match: {_id: Id}},
                 {$lookup: categoryLookup},
-                {$addFields:addValues},
+                {$lookup: ServiceRatings},
+                {$addFields: addValues},
                 // {$project: project}
             ], {cursor: {}}).toArray(function (err, doc) {
                 if (doc) {
@@ -336,6 +371,19 @@ Meteor.methods({
             _id: Id
         });
     },
+
+    'updateViewCount': (productId) => {
+        let _product = Products.findOne(productId);
+        if (_product) {
+            let views = _product.views || 0;
+            Products.update({_id: productId}, {
+                $set: {
+                    views: views + 1
+                }
+            });
+        }
+    },
+
     'getSimilarProduct': Id => {
         let product = Products.findOne({_id: Id});
         return Products.find({
@@ -346,14 +394,10 @@ Meteor.methods({
         }).fetch();
     },
 
-    'getServicesNearBy':(obj)=>{
+    'getServicesNearBy': (obj) => {
         const collection = Service.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const addValues={
-                avgRate: {$avg: "$ratings.count"},
-                count: { $size: "$ratings"},
-                category:{$arrayElemAt:['$categories',0]}
-        };
+        const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
         const categoryLookup = {
             from: "MainCategories",
             let: {catId: "$categoryId"},
@@ -369,6 +413,32 @@ Meteor.methods({
             ],
             "as": "categories"
         };
+
+        const ServiceRatings = {
+            from: "ratings",
+            let: {serviceId: "$_id"},
+            pipeline: [
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                {
+                    $group: {
+                        _id: '$_id',
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1}
+                    }
+                },
+                {$project: {avgRate: 1, count: 1}}
+            ],
+            "as": "servRatings"
+        };
+
+        const addValues = {
+            Rating: {
+                $cond: {
+                    if: {"$eq": ["$servRatings", []]}, then: defaultRating, else: {$arrayElemAt: ["$servRatings", 0]}
+                }
+            },
+            category: {$arrayElemAt: ['$categories', 0]}
+        };
         // const project = {
         //     _id: 1,
         //     "products": {$arrayElemAt: ["$products", 0]},
@@ -379,24 +449,114 @@ Meteor.methods({
         //  return Category.find().fetch();
         return Async.runSync(function (done) {
             aggregate([
-                { $geoNear: {
-                        near: { type: "Point", coordinates: obj.coords },
+                {
+                    $geoNear: {
+                        near: {type: "Point", coordinates: obj.coords},
                         distanceField: "dist.calculated",
-                        query:{categoryId:{$in: obj.subCatIds}},
+                        query: {categoryId: {$in: obj.subCatIds}},
                         spherical: true,
-                        distanceMultiplier : 0.001
-                    }},
+                        distanceMultiplier: 0.001
+                    }
+                },
                 {$lookup: categoryLookup},
-                {$addFields:addValues},
+                {$lookup: ServiceRatings},
+                {$addFields: addValues},
                 {$limit: obj.skip + obj.limit},
                 {$skip: obj.skip},
                 // {$project: project}
             ], {cursor: {}}).toArray(function (err, doc) {
                 if (doc) {
-                  //   console.log('doc', doc.length,doc)
+                    //   console.log('doc', doc.length,doc)
                 }
                 done(err, doc);
             });
         });
-    }
+    },
+
+    'getMyServices':()=>{
+        const collection = Service.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
+        const categoryLookup = {
+            from: "MainCategories",
+            let: {catId: "$categoryId"},
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+
+                            $eq: ["$subCategories.subCatId", "$$catId"]
+                        }
+                    }
+                },
+            ],
+            "as": "categories"
+        };
+
+        const ServiceRatings = {
+            from: "ratings",
+            let: {serviceId: "$_id"},
+            pipeline: [
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                {
+                    $group: {
+                        _id: '$_id',
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1}
+                    }
+                },
+                {$project: {avgRate: 1, count: 1}}
+            ],
+            "as": "servRatings"
+        };
+
+        const addValues = {
+            Rating: {
+                $cond: {
+                    if: {"$eq": ["$servRatings", []]}, then: defaultRating, else: {$arrayElemAt: ["$servRatings", 0]}
+                }
+            },
+            category: {$arrayElemAt: ['$categories', 0]}
+        };
+        // const project = {
+        //     _id: 1,
+        //     "products": {$arrayElemAt: ["$products", 0]},
+        //     createDate: 1,
+        //     title: 1,
+        //     description: 1,
+        // };
+        //  return Category.find().fetch();
+        return Async.runSync(function (done) {
+            aggregate([
+                {
+                   $match:{owner:Meteor.userId()}
+                },
+                {$lookup: categoryLookup},
+                {$lookup: ServiceRatings},
+                {$addFields: addValues},
+                // {$limit: obj.skip + obj.limit},
+                // {$skip: obj.skip},
+                // {$project: project}
+            ], {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
+    'updateServiceViewCount':(serviceId)=>{
+        let _service=Service.findOne(serviceId);
+        if(_service) {
+            let views = _service.views || 0;
+            Service.update({_id: serviceId}, {
+                $set: {
+                    views: views + 1
+                }
+            });
+        }
+    },
+
+
 })

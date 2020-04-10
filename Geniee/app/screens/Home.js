@@ -229,11 +229,11 @@ class Home extends Component {
                         longitude: position.coords.longitude
                     }
                     this.region = region;
-                    Meteor.subscribe('nearByService', {
-                        limit: this.limit,
-                        coords: [region.longitude, region.latitude],
-                        subCatIds: this.props.Id
-                    })
+                    // Meteor.subscribe('nearByService', {
+                    //     limit: this.limit,
+                    //     coords: [region.longitude, region.latitude],
+                    //     subCatIds: this.props.Id
+                    // })
                 },
                 (error) => {
                     // See error code charts below.
@@ -355,7 +355,7 @@ class Home extends Component {
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                         <View style={styles.serviceAction}>
                             {/*<StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>*/}
-                            <StarRating starRate={rowData.avgRate}/>
+                            <StarRating starRate={rowData.Rating.avgRate}/>
                         </View>
                         </Body>
                         <Right>
@@ -409,16 +409,16 @@ class Home extends Component {
         switch (value) {
             case 'all':
                 this.setState({
-                    data: this.props.categories,
+                    data:  this.arrayholder,
                 });
-                this.arrayholder = this.props.categories;
+                //this.arrayholder = this.props.categories;
                 // this._search(this.state.currentSearch);
                 break;
 
             case 'starred':
                 const newDat = this.arrayholder;
                 let latest = newDat.sort((a, b) => {
-                    return (this.averageRating(b.ratings) - this.averageRating(a.ratings));
+                    return (b.Rating.avgRate - a.Rating.avgRate);
                 });
                 this.setState({
                     data: []
@@ -440,7 +440,7 @@ class Home extends Component {
                     }
                 });
                 this.setState({data: newData});
-                this.arrayholder = newData;
+            //    this.arrayholder = newData;
                 //   this._search(this.state.currentSearch)
                 break;
             default:

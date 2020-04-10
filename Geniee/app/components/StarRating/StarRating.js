@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 export default class StarRating extends Component {
     render() {
         //receive rating from prop
-        let ratingDynamicVal = this.props.starRate;
+        let ratingDynamicVal =Math.round(this.props.starRate);
 
         //this array will contain star tags
         let stars = [];

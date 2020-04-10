@@ -94,6 +94,7 @@ class ProductDetail extends Component {
                 }
             });
         };
+
         //Get Similar products
         Meteor.call('getSimilarProduct', productId, (err, res) => {
             if (err) {
@@ -102,7 +103,11 @@ class ProductDetail extends Component {
             else {
                 this.setState({similarProducts: res});
             }
-        });
+        })
+
+
+        //Update View Count
+        Meteor.call('updateViewCount',productId);
     }
 
     // componentWillReceiveProps(newProps) {

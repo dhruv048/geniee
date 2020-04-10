@@ -24,7 +24,7 @@ export default class ImageGalleryBB extends Component {
         const images = this.props.images;
         console.log(images)
         images.map((img, i) => {
-            imgs.push({source: {uri: "http://192.168.1.245:3000/img/"  + img}})
+            imgs.push({source: {uri: settings.WEB_URL+'img/' + img}})
         });
         this.setState({images: imgs});
     }

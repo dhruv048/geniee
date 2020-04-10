@@ -497,7 +497,7 @@ class ProductDetailBB extends Component {
                 })}
             >
                 <Image
-                    source={{uri: "http://192.168.1.245:3000/img/" + item}}
+                    source={{uri:settings.WEB_URL+'img/' + item}}
                     style={{width: Dimensions.get('window').width, height: 300, resizeMode: 'contain'}}
                     resizeMode="cover"
                 />

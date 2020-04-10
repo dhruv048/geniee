@@ -69,7 +69,7 @@ class ProductDetailEF extends Component {
         let productId = this.props.Id;
         let _product = this.props.data;
         let wishList = await AsyncStorage.getItem('myWhishList');
-        console.log('wishList', wishList)
+        console.log('wishList', wishList);
         if (wishList)
             wishList = JSON.parse(wishList);
         else
@@ -80,7 +80,7 @@ class ProductDetailEF extends Component {
                 product: _product,
                 liked: wishList.includes(_product._id) ? true : false
                 // liked: false
-            })
+            });
         }
         else {
             Meteor.call('getSingleProductEF', productId, (err, res) => {
@@ -107,6 +107,10 @@ class ProductDetailEF extends Component {
                 this.setState({similarProducts: res});
             }
         });
+
+
+        //Update Views Count
+        Meteor.call('updateViewCountEF',productId);
     }
 
     setInitial() {

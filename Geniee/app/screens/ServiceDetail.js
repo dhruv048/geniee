@@ -67,6 +67,7 @@ class ServiceDetail extends Component {
         console.log(Id)
         let Service = {};
         if (typeof (Id) === "string") {
+
             Meteor.call('getSingleService',(err,res)=>{
                 if(!err) {
                     Service = res.result[0];
@@ -75,11 +76,13 @@ class ServiceDetail extends Component {
             });
             // Service = Meteor.collection('serviceReact').findOne({_id: Id});
             this.setState({Service});
+            Meteor.call('updateServiceViewCount', Id)
         }
         else {
             console.log(Id)
            // Service = Id;
             this.setState({Service:Id});
+            Meteor.call('updateServiceViewCount', Id._id)
         }
     }
 
@@ -263,7 +266,7 @@ class ServiceDetail extends Component {
                                source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ this.state.Service.coverImage}:userImage}/>
                     </TouchableOpacity>
                     <Text style={styles.name}>{this.state.Service.title}</Text>
-                    <View style={ styles.starView }><StarRating starRate={this.state.Service.avgRate}/></View>
+                    <View style={ styles.starView }><StarRating starRate={this.state.Service.Rating.avgRate}/></View>
                     
                     {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
                         <Text style={styles.availableText}>{this.state.Service.location.formatted_address}

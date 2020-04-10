@@ -99,13 +99,13 @@ class MyServices extends Component {
         if (!this.currentSearch) {
             this.limit = this.limit + 20;
             this.setState({loading: true})
-            Meteor.subscribe('nearByService', {
-                limit: this.limit,
-                coords: [this.region.longitude, this.region.latitude],
-                subCatIds: this.props.Id
-            }, () => {
-                this.setState({loading: false})
-            });
+            // Meteor.subscribe('nearByService', {
+            //     limit: this.limit,
+            //     coords: [this.region.longitude, this.region.latitude],
+            //     subCatIds: this.props.Id
+            // }, () => {
+            //     this.setState({loading: false})
+            // });
         }
     }
     averageRating = (arr) => {
@@ -228,12 +228,12 @@ class MyServices extends Component {
         })
         this.arrayholder = this.props.myServices;
         Navigation.events().bindComponent(this);
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonMyService.bind(this));
     }
 
-    handleBackButton() {
+    handleBackButtonMyService() {
         if (this.isDisplaying) {
-            console.log('handlebackpress')
+            console.log('handlebackpress..')
             // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
             backToRoot(this.props.componentId);
             return true;
@@ -244,17 +244,18 @@ class MyServices extends Component {
         BackHandler.removeEventListener('hardwareBackPress');
     }
 
-    componentWillReceiveProps(newProps) {
-        const oldProps = this.props;
-        if (oldProps.myServices !== newProps.myServices) {
-            this.setState({data: newProps.myServices, loading: false})
-            this.arrayholder = newProps.myServices;
-            this._search(this.currentSearch)
-        }
-    }
+    // componentWillReceiveProps(newProps) {
+    //     const oldProps = this.props;
+    //     if (oldProps.myServices !== newProps.myServices) {
+    //         this.setState({data: newProps.myServices, loading: false})
+    //         this.arrayholder = newProps.myServices;
+    //         this._search(this.currentSearch)
+    //     }
+    // }
 
     componentDidAppear() {
         this.isDisplaying = true;
+        this.fetchData()
     }
 
     componentDidDisappear() {
@@ -267,6 +268,19 @@ class MyServices extends Component {
 
     openDrawer() {
         this.drawer._root.open();
+    }
+    fetchData=()=>{
+        Meteor.call('getMyServices',(err,res)=>{
+            console.log(err,res)
+            if(!err){
+                if(res.result.length>0) {
+                 //   this.skip = this.skip + this.limit;
+                   // this.arrayholder = this.arrayholder.concat(res.result);
+                    this.setState({data:res.result});
+                }
+                this.setState({loading: false});
+            }
+        })
     }
 
     _getListItem = (data) => {
@@ -296,7 +310,7 @@ class MyServices extends Component {
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
                         <View style={styles.serviceAction}>
                             <StarRating
-                                starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>
+                                starRate={rowData.Rating.avgRate}/>
                         </View>
                         </Body>
                         {/*<Right>*/}
@@ -565,8 +579,8 @@ const styles = StyleSheet.create({
 });
 
 export default Meteor.withTracker((props) => {
-    Meteor.subscribe('myServices');
+   // Meteor.subscribe('myServices');
     return {
-        myServices: Meteor.collection('service').find()
+       // myServices: Meteor.collection('service').find()
     }
 })(MyServices);
