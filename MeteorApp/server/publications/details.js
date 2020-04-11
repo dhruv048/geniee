@@ -94,7 +94,7 @@ Meteor.publish('allServices',function(){
         )
 });
 Meteor.publish('allProducts',function(){
-    return Products.find()
+    return Products.find({},{sort:{views:1}})
 });
 Meteor.publish('singleProduct',function(id){
     return Products.find({_id:id})
