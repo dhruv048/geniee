@@ -2,6 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {FIREBASE_MESSAGING} from '../API/fire-base-admin';
 import {Ratings} from "../../lib/collections/genieeRepair/ratings";
 import {EFProducts} from "../../lib/collections/eatFit/efProducts";
+import {ProductOwner} from "../../lib/utils";
 
 Meteor.methods({
 
@@ -234,6 +235,7 @@ Meteor.methods({
     'addNewProduct': (productInfo) => {
         try {
             console.log('addNewProducr:::=>>>');
+            productInfo.productOwner=ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId,
                 productInfo.createDate = new Date(new Date().toUTCString())

@@ -49,6 +49,12 @@ export const OrderStatus = {
     ORDER_CONFIRMED: 3,
     ORDER_CANCELLED: 4,
 }
+
+export const ProductOwner = {
+    REGULAR_USERS:0,
+    EAT_FIT:1,
+    BAADSHAH_BIRYANI:2,
+};
 export default settings;
 
 

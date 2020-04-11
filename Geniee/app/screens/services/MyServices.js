@@ -127,14 +127,19 @@ class MyServices extends Component {
                     loading: true,
                 }
             );
-            var data = this.props.categories;
+            var data = this.arrayholder;
             this.setState({
                 data: data, loading: false
             });
-            this.arrayholder = data;
-            return;
+            // this.arrayholder = data;
+            // return;
         }
         if (text.length > 3) {
+            this.setState(
+                {
+                    loading: true,
+                }
+            );
             clearTimeout(delayTimer);
             // delayTimer = setTimeout(function() {
             this.currentSearch = text;
@@ -170,7 +175,10 @@ class MyServices extends Component {
 
             var dataToSend = this.arrayholder.filter(item => {
                 return (item.title.includes(text) || item.description.includes(text))
-            })
+            });
+            this.setState({
+                data: dataToSend, loading: false
+            });
         }
 
         // const textData = text.trim().toUpperCase();
@@ -439,20 +447,20 @@ class MyServices extends Component {
                         {/*</Button>*/}
 
                     </Item>
-                    <Item style={{height: 40, flex: 2, marginLeft: 4}}>
-                        <Picker
-                            mode="dropdown"
-                            iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}
-                            style={{color: '#ffffff'}}
-                            note={false}
-                            selectedValue={this.state.selected}
-                            onValueChange={this.onValueChange.bind(this)}
-                        >
-                            <Picker.Item label="All" value="all"/>
-                            <Picker.Item label="Starred" value="starred"/>
-                            <Picker.Item label="My Location" value="myLocation"/>
-                        </Picker>
-                    </Item>
+                    {/*<Item style={{height: 40, flex: 2, marginLeft: 4}}>*/}
+                        {/*<Picker*/}
+                            {/*mode="dropdown"*/}
+                            {/*iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}*/}
+                            {/*style={{color: '#ffffff'}}*/}
+                            {/*note={false}*/}
+                            {/*selectedValue={this.state.selected}*/}
+                            {/*onValueChange={this.onValueChange.bind(this)}*/}
+                        {/*>*/}
+                            {/*<Picker.Item label="All" value="all"/>*/}
+                            {/*<Picker.Item label="Starred" value="starred"/>*/}
+                            {/*<Picker.Item label="My Location" value="myLocation"/>*/}
+                        {/*</Picker>*/}
+                    {/*</Item>*/}
                     </Body>
                     {/*<Right>*/}
                     {/*/!*<Button transparent onPress={()=>this.openDrawer()}>*!/*/}

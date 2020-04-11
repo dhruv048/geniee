@@ -12,29 +12,24 @@ import {
     FlatList,
     TouchableOpacity,
     StyleSheet,
-    Linking
+    Linking,ToastAndroid
 } from 'react-native';
 import {
+    Icon as NBIcon,
     View,
     Container,
     Content,
-    Button,
-    Left,
-    Right,
-    Picker,
     Item,
     Grid,
     Col,
-    Toast,
-    Text as NBText, Spinner
+    Text as NBText, Spinner, Button
 } from 'native-base';
-import Icon from "react-native-vector-icons/Feather";
+import FIcon from "react-native-vector-icons/Feather";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
-
 import {Navigation} from 'react-native-navigation';
 import Text from "../../components/Store/Text";
 import Product from "../../components/Store/Product";
-import {colors} from "../../config/styles";
+import {colors, customStyle} from "../../config/styles";
 import Meteor from "../../react-native-meteor";
 import settings from "../../config/settings";
 import {goToRoute} from "../../Navigation";
@@ -57,7 +52,7 @@ class ProductDetail extends Component {
     }
 
 
-    componentDidMount() {
+    async componentDidMount() {
         // /* Select the default color and size (first ones) */
         // let defColor = this.state.product.colors[0];
         // let defSize = this.state.product.sizes[0];
@@ -70,12 +65,18 @@ class ProductDetail extends Component {
         //get the product with id of this.props.product.id from your server
         let productId = this.props.Id;
         let _product = this.props.data;
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        console.log('wishList', wishList);
+        if (wishList)
+            wishList = JSON.parse(wishList);
+        else
+            wishList = [];
 
         if (_product) {
             productId=_product._id;
             this.setState({
                 product: _product,
-                //   liked: wishList.includes(_product._id) ? true : false
+                  liked: wishList.includes(_product._id) ? true : false
                 // liked: false
             })
         }
@@ -88,7 +89,7 @@ class ProductDetail extends Component {
                     productId=res._id;
                     this.setState({
                         product: res,
-                        //  liked: wishList.includes(res._id) ? true : false
+                        liked: wishList.includes(res._id) ? true : false
                         // liked: false
                     });
                 }
@@ -149,20 +150,24 @@ class ProductDetail extends Component {
                                       onPress={() => {
                                           Navigation.pop(this.props.componentId)
                                       }}>
-                        <Icon name='arrow-left' color='white' size={24}/>
+                        <FIcon name='arrow-left' color='white' size={24}/>
                     </TouchableOpacity>
 
-                    {/*<TouchableOpacity style={{*/}
-                    {/*alignSelf: 'center',*/}
-                    {/*justifyContent: 'center',*/}
-                    {/*alignItems: 'center',*/}
-                    {/*width: 40,*/}
-                    {/*height: 40,*/}
-                    {/*borderRadius: 100,*/}
-                    {/*}}*/}
-                    {/*onPress={this.UpdateDoctorProfile}>*/}
-                    {/*<Icon name='check' color={colors.appLayout} size={24}/>*/}
-                    {/*</TouchableOpacity>*/}
+                    {this.state.product ?
+                        <Text numberOfLines={1} note style={{color: 'white'}}>{this.state.product.title}</Text> : null}
+                    <TouchableOpacity style={{
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: 40,
+                        height: 40,
+                        borderRadius: 100,
+                    }}
+                                      onPress={this.addToWishlist.bind(this)}>
+                        {this.state.liked ?
+                            <NBIcon name='heart' style={{fontSize: 26, color: colors.primary}}/>
+                            : <FIcon name='heart' size={24} color='white'/>}
+                    </TouchableOpacity>
 
                 </View>
                 {this.state.product ?
@@ -333,6 +338,29 @@ class ProductDetail extends Component {
                                         </TouchableOpacity>
                                     </Col>
                                 </Grid> : null}
+
+                            <Grid style={{marginTop: 15}}>
+                                <Col size={2}>
+                                    <Button block onPress={this.addToCart}
+                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
+                                        <Text style={customStyle.buttonPrimaryText}>Add to Cart</Text>
+                                    </Button>
+                                </Col>
+                                <Col size={2}>
+                                    <Button block onPress={this.OrderNow.bind(this)}
+                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
+                                        <Text style={customStyle.buttonPrimaryText}>Order Now</Text>
+                                    </Button>
+                                </Col>
+                                <Col size={1}>
+                                    <Button block icon transparent
+                                        // onPress={this.addToCart.bind(this)}
+                                            style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
+                                        <FIcon name={'phone'} size={24} color={colors.primary}/>
+                                    </Button>
+                                </Col>
+                            </Grid>
+
                             {/*<Grid>*/}
                             {/*<Col size={2}>*/}
                             {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
@@ -499,62 +527,75 @@ class ProductDetail extends Component {
         goToRoute(this.props.componentId,'ImageGallery', {images: this.state.product.images, position: pos});
     }
 
-    addToCart() {
+    addToCart=async() =>{
         var product = this.state.product;
-        product['color'] = this.state.selectedColor;
-        product['size'] = this.state.selectedSize;
-        product['quantity'] = this.state.quantity;
-        AsyncStorage.getItem("CART", (err, res) => {
-            if (!res) AsyncStorage.setItem("CART", JSON.stringify([product]));
-            else {
-                var items = JSON.parse(res);
-                items.push(product);
-                AsyncStorage.setItem("CART", JSON.stringify(items));
-            }
-            Toast.show({
-                text: 'Product added to your cart !',
-                position: 'bottom',
-                type: 'success',
-                buttonText: 'Dismiss',
-                duration: 3000
-            });
+        // product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
+        // product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
+        product['orderQuantity'] = this.state.quantity;
+        // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
+        let cartList = await AsyncStorage.getItem('myCart');
+        let cartItem={
+            id:product._id,
+            orderQuantity:product.orderQuantity
+        }
+        if (cartList) {
+            cartList = JSON.parse(cartList);
+        }
+        else {
+            cartList = [];
+        }
+        let index = cartList.findIndex(item => {
+            return item.id == product.id
         });
+        if (index > -1) {
+            cartList.splice(index, 1);
+            cartList.push(cartItem);
+        }
+        else {
+            cartList.push(cartItem);
+        }
+        ToastAndroid.showWithGravityAndOffset(
+            'Product added to your cart !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
+        AsyncStorage.setItem('myCart', JSON.stringify(cartList));
     }
 
-    addToWishlist() {
-        var product = this.state.product;
-        var success = true;
-        AsyncStorage.getItem("WISHLIST", (err, res) => {
-            if (!res) AsyncStorage.setItem("WISHLIST", JSON.stringify([product]));
-            else {
-                var items = JSON.parse(res);
-                if (this.search(items, product)) {
-                    success = false
-                }
-                else {
-                    items.push(product);
-                    AsyncStorage.setItem("WISHLIST", JSON.stringify(items));
-                }
-            }
-            if (success) {
-                Toast.show({
-                    text: 'Product added to your wishlist !',
-                    position: 'bottom',
-                    type: 'success',
-                    buttonText: 'Dismiss',
-                    duration: 3000
-                });
-            }
-            else {
-                Toast.show({
-                    text: 'This product already exist in your wishlist !',
-                    position: 'bottom',
-                    type: 'danger',
-                    buttonText: 'Dismiss',
-                    duration: 3000
-                });
-            }
-        });
+    async addToWishlist() {
+        var productId = this.state.product._id;
+        const liked = this.state.liked;
+        this.setState({liked: !liked});
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        if (wishList) {
+            wishList = JSON.parse(wishList);
+        }
+        else {
+            wishList = [productId];
+        }
+        let index=wishList.findIndex(item=>{return item==productId});
+        if(index>-1)
+            wishList.splice(index,1);
+        else
+            wishList.push(productId);
+
+        AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
+        ToastAndroid.showWithGravityAndOffset(
+            liked ? 'Product removed from  Wishlist !' : 'Product added to  Wishlist !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
+    }
+
+    OrderNow() {
+        let product = this.state.product;
+        product['orderQuantity'] = this.state.quantity;
+        product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
+        goToRoute(this.props.componentId,'CheckoutEF', {'productOrder': product});
     }
 
     search(array, object) {

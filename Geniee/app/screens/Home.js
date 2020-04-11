@@ -451,11 +451,11 @@ class Home extends Component {
 
         return (
             <Container style={{backgroundColor: colors.appBackground}}>
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header style={{backgroundColor: '#094c6b'}}>
+                {/*<StatusBar*/}
+                    {/*backgroundColor={colors.statusBar}*/}
+                    {/*barStyle='light-content'*/}
+                {/*/>*/}
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />

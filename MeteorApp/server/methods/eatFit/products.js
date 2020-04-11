@@ -1,9 +1,11 @@
 import {Meteor} from 'meteor/meteor';
 import {EFProducts,EFOrder} from "../../../lib/collections/eatFit/efProducts";
+import {ProductOwner} from "../../../lib/utils";
 
 Meteor.methods({
     'addNewProductEF': (productInfo) => {
         try {
+            productInfo.productOwner=ProductOwner.EAT_FIT;
             console.log('addNewProduEF:::=>>>',productInfo._id);
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId,
@@ -76,6 +78,7 @@ Meteor.methods({
     'addOrderEF': (order, isOrder) => {
         order.orderDate = new Date(new Date().toUTCString());
         order.owner = Meteor.userId();
+        order.productOwner = ProductOwner.EAT_FIT;
         order.status = 0;
         let itemsUpdated = [];
         return Async.runSync(function (done) {

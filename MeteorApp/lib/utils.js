@@ -205,6 +205,10 @@ export const getTimeSlots = (start, end, duration, breakTime) => {
     }
     return timeSlots;
 }
-
+export const ProductOwner = {
+    REGULAR_USERS:0,
+    EAT_FIT:1,
+    BAADSHAH_BIRYANI:2,
+};
 
 
