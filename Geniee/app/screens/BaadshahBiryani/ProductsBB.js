@@ -23,12 +23,10 @@ import FIcon from 'react-native-vector-icons/Feather';
 import {colors, customStyle} from "../../config/styles";
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
-import Product from "../../components/ecommerce/Product";
 import {Navigation} from "react-native-navigation";
 import {goBack,goToRoute} from "../../Navigation";
 import settings from "../../config/settings";
 
-//const { RNEsewaSdk } = NativeModules;
 
 
 class ProductsBB extends Component {

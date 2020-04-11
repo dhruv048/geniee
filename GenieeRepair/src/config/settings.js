@@ -28,7 +28,8 @@ export const settings = {
     GOOGLE_MAP_API_KEY,
     API_URL,
     IMAGE_URL,
-    PHONE
+    PHONE,
+    WEB_URL
 };
 export const userType = {
     NORMAL: 0,

@@ -511,7 +511,7 @@ class ProductDetailBB extends Component {
             <TouchableOpacity onPress={() => goToRoute(this.props.componentId, "ProductDetailBB",{'Id': item._id, data: item})}
                               style={styles.containerStyle}>
                 <View style={[customStyle.Card, styles.card]}>
-                    <Image source={{uri: "http://192.168.1.245:3000/img/" + item.images[0]}} style={styles.thumbnail}/>
+                    <Image source={{uri: settings.WEB_URL+'img/'  + item.images[0]}} style={styles.thumbnail}/>
                     <View style={styles.cardDetails}>
                         <Text style={styles.productTitle}
                               numberOfLines={2}>{item.title}</Text>
