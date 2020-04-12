@@ -125,7 +125,12 @@ Meteor.methods({
 
     'WishListItemsEF': (wishList) => {
         try {
-            return EFProducts.find({_id: {$in: wishList}},{$sort:{views:-1}}).fetch();
+            let EFProductss = EFProducts.find({_id: {$in: wishList}}, {$sort: {views: -1}}).fetch();
+            let RProducts = Products.find({_id: {$in: wishList}}, {$sort: {views: -1}}).fetch();
+            return Async.runSync(function (done) {
+                 done(null, EFProductss.concat(RProducts));
+            });
+
         }
         catch (e) {
             console.log(e.message);

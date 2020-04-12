@@ -16,19 +16,19 @@ import Icon from "react-native-vector-icons/Feather";
 import Text from '../../components/ecommerce/Text';
 import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
-import settings from "../../config/settings";
+import settings, {ProductOwner} from "../../config/settings";
 import {colors} from '../../config/styles';
 import {Navigation} from "react-native-navigation";
-import {goBack} from "../../Navigation";
+import {goBack, goToRoute} from "../../Navigation";
 
 class WishListEF extends Component {
     constructor(props) {
         super(props);
         this.state = {
             items: [],
-            wishList: []
+            wishList:null
         };
-        this.wishList=[];
+        this.wishList = [];
     }
 
 
@@ -36,28 +36,29 @@ class WishListEF extends Component {
 
     }
 
-    componentDidMount(){
+    componentDidMount() {
         Navigation.events().bindComponent(this);
     }
+
     async componentDidAppear() {
         let wishList = await AsyncStorage.getItem('myWhishList');
         if (wishList)
             wishList = JSON.parse(wishList);
         else
             wishList = [];
-        this.wishList=wishList;
+        this.wishList = wishList;
         this.getWishListItems();
     }
-    getWishListItems= () => {
 
-        Meteor.call('WishListItemsEF', this.wishList,(err, res) =>
-        {
+    getWishListItems = () => {
+
+        Meteor.call('WishListItemsEF', this.wishList, (err, res) => {
             console.log(err, res)
             if (err) {
                 console.log('this is due to error. ' + err);
             }
             else {
-                this.setState({wishList: res});
+                this.setState({wishList: res.result});
             }
         });
     }
@@ -79,7 +80,7 @@ class WishListEF extends Component {
                 </Text>
                 <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>Rs. {item.price}</Text>
                 {/* <Text style={{fontSize: 14, fontStyle: 'italic'}}>{item.Category}</Text> */}
-                <Text style={{fontSize: 14, marginBottom: 3, color: '#8E8E8E'}}>{item.isVeg? "Veg":"Non Veg"}</Text>
+                <Text style={{fontSize: 14, marginBottom: 3, color: '#8E8E8E'}}>{item.isVeg ? "Veg" : "Non Veg"}</Text>
                 {/*<Text style={{color: '#8E8E8E', fontSize: 13}}>{item.availabeQuantity} pieces available</Text>*/}
                 </Body>
                 <Right style={{paddingRight: 5}}>
@@ -92,7 +93,10 @@ class WishListEF extends Component {
     }
 
     itemClicked(item) {
-        goToRoute(this.props.componentId,'ProductDetailEF', {Id: item._id, data: item})
+        if (item.productOwner === ProductOwner.EAT_FIT)
+            goToRoute(this.props.componentId, 'ProductDetailEF', {Id: item._id, data: item});
+        else
+            goToRoute(this.props.componentId, 'ProductDetail', {Id: item._id, data: item})
     }
 
     removeItemPressed(Item) {
@@ -113,9 +117,11 @@ class WishListEF extends Component {
                             wishList.splice(index, 1);
                             this.setState({wishList: wishList});
                         }
-                        let i=this.wishList.findIndex(item=>{return item==Item._id});
-                        if(i>-1)
-                            this.wishList.splice(i,1);
+                        let i = this.wishList.findIndex(item => {
+                            return item == Item._id
+                        });
+                        if (i > -1)
+                            this.wishList.splice(i, 1);
                         AsyncStorage.setItem('myWhishList', JSON.stringify(this.wishList));
                     }
                 },
@@ -131,8 +137,8 @@ class WishListEF extends Component {
                 {text: 'No', onPress: () => console.log('No Pressed'), style: 'cancel'},
                 {
                     text: 'Yes', onPress: () => {
-                        this.wishList=[];
-                        this.setState({wishList:[]});
+                        this.wishList = [];
+                        this.setState({wishList: []});
                         AsyncStorage.setItem('myWhishList', JSON.stringify([]));
                     }
                 },
@@ -143,7 +149,7 @@ class WishListEF extends Component {
     render() {
         var left = (
             <Left style={{flex: 1}}>
-                <Button transparent onPress={() =>goBack(this.props.componentId)}>
+                <Button transparent onPress={() => goBack(this.props.componentId)}>
                     <Icon name="x" size={24} color={'#fff'}/>
                 </Button>
             </Left>
@@ -158,7 +164,7 @@ class WishListEF extends Component {
         return (
             <Container style={styles.container}>
                 <Navbar left={left} right={right} title="My Wishlist"/>
-                {!this.state.wishList.length > 0 ?
+                {this.state.wishList!==null && !this.state.wishList.length > 0 ?
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                         {/* <Icon name="heart" size={48} style={{fontSize: 48, color: '#95a5a6', marginBottom: 7}}/> */}
                         <Image height='293' width='229'

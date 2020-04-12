@@ -24,7 +24,7 @@ import Text from '../../components/ecommerce/Text';
 import Navbar from '../../components/ecommerce/Navbar';
 import {colors, customStyle} from "../../config/styles";
 import Meteor from "../../react-native-meteor";
-import settings from "../../config/settings";
+import settings, {ProductOwner} from "../../config/settings";
 import Loading from "../../components/Loading/Loading";
 import {goBack,goToRoute} from "../../Navigation";
 
@@ -34,11 +34,7 @@ class CartEF extends Component {
         this.state = {
             cartItems: '',
         };
-        this.cartList=[];
-    }
-
-    componentWillMount() {
-
+        this.cartList = [];
     }
 
     getCartItems =(products)=>{
@@ -54,13 +50,13 @@ class CartEF extends Component {
                 console.log('this is due to error. '+err);
             }
             else{
-                res.forEach(product=>{
+                res.result.forEach(product=>{
                     const cartItem=cartList.find(item=>item.id==product._id);
                     console.log(cartItem,product)
                     product.orderQuantity=cartItem.orderQuantity;
-                    product.finalPrice=Math.round(product.price - (product.price * (product.discount / 100)));
+                    product.finalPrice=Math.round(product.price -(product.discount? (product.price * (product.discount / 100)) :0));
                 });
-                this.setState({cartItems: res});
+                this.setState({cartItems: res.result});
             }
         });
     };
@@ -244,7 +240,10 @@ class CartEF extends Component {
     }
 
     itemClicked(item) {
-        goToRoute(this.props.componentId,'ProductDetailEF', {Id: item._id, data: item})
+       if(item.productOwner==ProductOwner.EAT_FIT)
+        goToRoute(this.props.componentId,'ProductDetailEF', {Id: item._id, data: item});
+       else
+        goToRoute(this.props.componentId,'ProductDetail', {Id: item._id, data: item});
     }
 
 }
