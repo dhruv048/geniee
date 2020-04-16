@@ -23,12 +23,11 @@ import {
     Text,
     Input,
     ListItem,
-    Thumbnail,
+    Thumbnail, Badge, Icon as NBIcon
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle} from '../config/styles';
 import {Navigation} from 'react-native-navigation';
-
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from "../config/settings";
 import StarRating from "../components/StarRating/StarRating";
@@ -56,7 +55,9 @@ class Dashboard extends Component {
             Adds: [],
             query: '',
             pickLocation: false,
-            backClickCount: 0
+            backClickCount: 0,
+            wishList:0,
+            totalCount:0
         };
         this.arrayholder;
         this.currentSearch = '';
@@ -260,10 +261,25 @@ class Dashboard extends Component {
         }
     }
 
-    componentDidAppear() {
+  async  componentDidAppear() {
+        isDashBoard = true;
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        if (wishList)
+            wishList = JSON.parse(wishList);
+        else
+            wishList = [];
+
+        let cartList = await AsyncStorage.getItem('myCart');
+        if (cartList) {
+            cartList = JSON.parse(cartList);
+        }
+        else {
+            cartList = [];
+        }
+        this.setState({wishList: wishList, totalCount: cartList.length});
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         console.log('componentDidAppear-Dashboard');
-        isDashBoard = true;
+
         // Meteor.call('getCategoriesGR', (err, res) => {
         //     //   console.log(err,res)
         //     if (!err) {
@@ -532,45 +548,74 @@ class Dashboard extends Component {
                         <Left style={{flex: 1}}>
                             <CogMenu componentId={this.props.componentId}/>
                         </Left>
-                        <Body>
-                        <Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>
-                            Home
-                        </Text>
-                        </Body>
-                        <Right>
+                        {/*<Body>*/}
+                        {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
+                            {/*Home*/}
+                        {/*</Text>*/}
+                        {/*</Body>*/}
+
+                        <Right style={{flex: 1}}>
+                            <Button onPress={() => goToRoute(this.props.componentId, 'WishListEF')} transparent>
+                                <Icon name='heart' style={{fontSize: 24, color: 'white'}}/>
+                                {this.state.wishList.length > 0 ?
+                                    <Badge
+                                        style={{position: 'absolute', height: 18}}>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '100',
+                                            color: 'white',
+                                            lineHeight: 18
+                                        }}>{this.state.wishList.length}</Text></Badge>
+                                    : null}
+                            </Button>
+                            <Button onPress={() => goToRoute(this.props.componentId, 'CartEF')} transparent>
+                                <NBIcon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
+                                {this.state.totalCount > 0 ?
+                                    <Badge
+                                        style={{position: 'absolute', height: 18}}>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '100',
+                                            color: 'white',
+                                            lineHeight: 18
+                                        }}>{this.state.totalCount}</Text></Badge> : null}
+                            </Button>
                             <Button transparent onPress={this.handleOnPress}>
                                 <Icon name={'search'} size={25} color={'white'}/></Button>
                         </Right>
                     </Header>
                 ) : (
-                    <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
-                        <Left style={{flex: 1}}>
-                            {/*<Button transparent onPress={() => {*/}
-                            {/*this.props.navigation.openDrawer()*/}
-                            {/*}}>*/}
-                            {/*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*/}
-                            <CogMenu componentId={this.props.componentId}/>
-                        </Left>
-                        <Body style={{flexDirection: 'row', flex: 6}}>
+                    <Header searchBar rounded androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+                        {/*<Left style={{flex: 1}}>*/}
+                            {/*/!*<Button transparent onPress={() => {*!/*/}
+                            {/*/!*this.props.navigation.openDrawer()*!/*/}
+                            {/*/!*}}>*!/*/}
+                            {/*/!*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*!/*/}
+                            {/*<CogMenu componentId={this.props.componentId}/>*/}
+                        {/*</Left>*/}
+                        {/*<Body style={{flexDirection: 'row', flex: 6}}>*/}
 
 
-                        <Item style={{height: 40, width: '90%'}}>
-                            {!this.state.query ?
-                                <Icon style={styles.activeTabIcon} name='search' size={15}/> : null}
+                        <Item style={{height: 40, width: '95%', paddingLeft:10}}>
+                            {/*<CogMenu componentId={this.props.componentId}/>*/}
+                            {/*{!this.state.query ?*/}
+                                {/*<Icon style={styles.activeTabIcon} name='search' size={15}/> : null}*/}
 
-                            <Input placeholder="Search" style={styles.searchInput}
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
+                            <Icon name='search' size={15} color={colors.primary}/>
+                            <Input placeholder="Search..." style={styles.searchInput}
+                                    placeholderTextColor={colors.primaryText}
+                                   // selectionColor='#ffffff'
                                    onChangeText={(searchText) => {
                                        this._search(searchText), this.setState({query: searchText})
                                    }}
                                    autoCorrect={false}
                             />
-                            <Right>
-                                <Button transparent onPress={this.handleOnPressUnset}>
-                                    <Icon name={'close'} size={25} color={'white'}/></Button></Right>
+                            {/*<Right>*/}
+                                <Button style={{paddingHorizontal:5}} transparent onPress={this.handleOnPressUnset}>
+                                    <NBIcon name={'close'} size={25} style={{color:colors.primary}}/></Button>
+                        {/*</Right>*/}
                         </Item>
-                        </Body>
+                        {/*</Body>*/}
                     </Header>
                 )}
 
@@ -818,7 +863,7 @@ const styles = StyleSheet.create({
     },
 
     searchInput: {
-        color: '#ffffff',
+       // color: '#ffffff',
         borderTopWidth: 0,
         borderRightWidth: 0,
         borderLeftWidth: 0,
