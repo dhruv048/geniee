@@ -86,6 +86,7 @@ class ProductDetail extends Component {
                     console.log('this is due to error. ' + err);
                 }
                 else {
+                    console.log(res);
                     productId=res._id;
                     this.setState({
                         product: res,
@@ -272,7 +273,7 @@ class ProductDetail extends Component {
                                         <Text>Available Quantity:</Text>
                                     </View>
                                 </Col>
-                                <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.qty}</Text></Col>
+                                <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.availabeQuantity}</Text></Col>
                             </Grid>
                             {this.state.product.colors ?
                                 <Grid>

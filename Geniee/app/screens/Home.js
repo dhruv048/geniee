@@ -208,7 +208,7 @@ class Home extends Component {
 
     async componentDidMount() {
         Navigation.events().bindComponent(this);
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackfromHome.bind(this));
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackfromHome);
         this.region=this.props.Region;
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -279,10 +279,10 @@ class Home extends Component {
     componentWillUnmount() {
         this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
-        BackHandler.removeEventListener('hardwareBackPress');
+        BackHandler.removeEventListener('hardwareBackPress',this.handleBackfromHome);
     }
 
-    handleBackfromHome(){
+    handleBackfromHome=()=>{
         if( this.isDisplaying) {
             console.log('handlebackpress')
             // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');

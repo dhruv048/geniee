@@ -7,7 +7,7 @@ import { colors } from '../config/styles';
 import {LoginManager} from "react-native-fbsdk";
 import {onLoginFinished} from "../lib/FBlogin";
 import {Navigation} from "react-native-navigation";
-import {backToRoot, goToDashboard, goToRoute} from "../Navigation";
+import {backToRoot, navigateToRoutefromSideMenu, goToRoute, goBack} from "../Navigation";
 
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
@@ -31,19 +31,23 @@ class SignIn extends Component {
     componentDidMount() {
         Navigation.events().bindComponent(this);
         this.setState({chatList: this.props.chatChannels})
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
 
     }
 
-    handleBackButton(){
+    handleBackButton=()=>{
         console.log('handlebackpress')
         // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
         backToRoot(this.props.componentId);
         return true;
     }
-
+    // componentDidDisappear(){
+    //     console.log('componentDidDisappear')
+    //     BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton);
+    // }
     componentWillUnmount(){
-        BackHandler.removeEventListener('hardwareBackPress');
+        console.log('componentWillUnmount')
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     }
     validInput = (overrideConfirm) => {
         const { email, password } = this.state;
@@ -76,6 +80,7 @@ class SignIn extends Component {
                         result.grantedPermissions.toString()
                     );
                     onLoginFinished(result);
+
                 }
             }).catch(function (error) {
                 console.log('There has been a problem with your fetch operation: ' + error.message);
@@ -111,8 +116,8 @@ class SignIn extends Component {
                         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
                         this.setState({
                             isLogged: true
-                        })
-                        goToDashboard();
+                        });
+                        backToRoot(this.props.componentId);
                     }
                 }.bind(this));
                 // Meteor.call('login',{data: {email: email, password:hashPassword(password), type:'meteor'}}, (err, result) => {

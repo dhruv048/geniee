@@ -48,6 +48,7 @@ class AddProduct extends React.PureComponent {
             unit: null,
             webLink:'',
             images:[],
+            qty:''
         };
 
          
@@ -167,7 +168,8 @@ class AddProduct extends React.PureComponent {
             sizes: sizes,
             qty: qty,
             images:images,
-            service:selectedService._id
+            service:selectedService._id,
+            serviceOwner:selectedService.owner
         };
         if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 ||  !selectedService) {
             ToastAndroid.showWithGravityAndOffset(

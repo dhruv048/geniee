@@ -68,14 +68,16 @@ class ServiceDetail extends Component {
         let Service = {};
         if (typeof (Id) === "string") {
 
-            Meteor.call('getSingleService',(err,res)=>{
+            Meteor.call('getSingleService',Id,(err,res)=>{
                 if(!err) {
+                    console.log(res)
                     Service = res.result[0];
+                    this.setState({Service});
                  //   Service.avgRate = this.averageRating(Service.ratings)
                 }
             });
             // Service = Meteor.collection('serviceReact').findOne({_id: Id});
-            this.setState({Service});
+
             Meteor.call('updateServiceViewCount', Id)
         }
         else {

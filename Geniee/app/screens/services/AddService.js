@@ -489,6 +489,7 @@ class AddService extends React.PureComponent {
     };
     _callSaveServiceMethod = (service) => {
         service.Image = this.state.Image;
+        service.owner=Meteor.userId();
         Meteor.call('addNewService', service, (err, res) => {
             if (err) {
                 ToastAndroid.showWithGravityAndOffset(

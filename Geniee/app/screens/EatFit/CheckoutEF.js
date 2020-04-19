@@ -28,7 +28,7 @@ import {colors} from "../../config/styles";
 import {variables, customStyle} from '../../config/styles';
 import {PaymentType, TransactionTypes} from "../../config/settings";
 import DeviceInfo from 'react-native-device-info'
-import {goBack} from "../../Navigation";
+import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
 
 class CheckoutEF extends Component {
     constructor(props) {
@@ -129,14 +129,14 @@ class CheckoutEF extends Component {
                 console.log('this is due to error. ' + err);
             }
             else {
-                res.forEach(product => {
+                res.result.forEach(product => {
                     const cartItem = cartList.find(item => item.id == product._id);
                     console.log(cartItem, product)
                     product.orderQuantity = cartItem.orderQuantity;
-                    product.finalPrice = Math.round(product.price - (product.price * (product.discount / 100)));
+                    product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)):0));
                 });
-                this.setState({cartItems: res});
-                this.updateTotal(res);
+                this.setState({cartItems: res.result});
+                this.updateTotal(res.result);
             }
         });
         // Meteor.call('getCartItems', (err, res) => {
@@ -311,6 +311,19 @@ class CheckoutEF extends Component {
     }
 
     checkout = () => {
+
+        Alert.alert(
+            'Proceed?',
+            'Are you sure, you want to Checkout?',
+            [
+                {
+                    text: 'Yes Checkout', onPress: () =>  {}
+                },
+                {text: 'Cancel', onPress: () =>{ return} }
+            ],
+            {cancelable: false}
+        );
+
         //debugger;
         // console.log(this.state);
         const {name, email, phone, address, city, postcode, note, total, paymentType} = this.state;
@@ -323,6 +336,7 @@ class CheckoutEF extends Component {
         try {
             cartItems.forEach(item => {
                 let product = {
+                    productOwner:item.productOwner,
                     productId: item._id,
                     title: item.title,
                     price: item.price,
@@ -332,6 +346,8 @@ class CheckoutEF extends Component {
                     unit: item.unit,
                     quantity: item.orderQuantity,
                     category: item.category || '',
+                    service: item.service || '',
+                    serviceOwner: item.serviceOwner || '',
                     productImage: item.images[0],
                     // color: item.product.color,
                     // size: item.product.size,
@@ -362,59 +378,160 @@ class CheckoutEF extends Component {
 
     _performOrder = async (Item) => {
         console.log(Item);
-        const {paymentType, total} = this.state;
-        if (paymentType == PaymentType.ESEWA) {
-            let response = await this._esewaPay(total.toString(), Item.items[0].title, Meteor.userId());
-            if (response.resultCode == -1) {
-                const actualData = JSON.parse(response.data)
-                console.log(actualData);
-                if (actualData.transactionDetails.status == "COMPLETE") {
+        const singleProduct=this.props.productOrder;
+        Meteor.call('addOrder', Item, async (err, res) => {
+            if (err) {
+                console.log(err.reason);
+                ToastAndroid.showWithGravityAndOffset(
+                    err.reason,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    80,
+                );
+            } else {
+                try {
+                    const {paymentType, total} = this.state;
+                    if (paymentType == PaymentType.ESEWA) {
+                        // let response = await this._esewaPay(total.toString(), Item.items[0].title, res.result);
+                        // if (response.resultCode == -1) {
+                        //     const actualData = JSON.parse(response.data)
+                        //     console.log(actualData);
+                        //     if (actualData.transactionDetails.status == "COMPLETE") {
+                        //         ToastAndroid.showWithGravityAndOffset(
+                        //             actualData.message.successMessage,
+                        //             ToastAndroid.LONG,
+                        //             ToastAndroid.TOP,
+                        //             0,
+                        //             80,
+                        //         );
+                        //         Item.esewaDetail = actualData;
+                        //         //    Meteor.call('updateEsewaDetail',res.result, actualData);
+                        //         let item = {
+                        //             orderId: res.result,
+                        //             PaymentType: Item.PaymentType,
+                        //             esewaDetail: Item.esewaDetail,
+                        //             transactionType: TransactionTypes.SHOPPING
+                        //         };
+                        //         console.log(item);
+                        //         Meteor.call('SaveTransactions', item, (err, res) => {
+                        //             if (err) {
+                        //                 console.log(err.reason);
+                        //             }
+                        //         });
+                        //         if (!singleProduct) {
+                        //                             AsyncStorage.setItem('myCart', JSON.stringify([]));
+                        //                             navigateToRoutefromSideMenu(this.props.componentId,'Orders');
+                        //                         }else{
+                        //
+                        //                             goBack(this.props.componentId);
+                        //                         }
+                        //     }
+                        //     else {
+                        //         console.log(res.result)
+                        //         Meteor.call('removeOrder', res.result);
+                        //     }
+                        // }
+                        // else {
+                        //     console.log(res.result)
+                        //     Meteor.call('removeOrder', res.result);
+                        //     ToastAndroid.showWithGravityAndOffset(
+                        //         response.data,
+                        //         ToastAndroid.LONG,
+                        //         ToastAndroid.TOP,
+                        //         0,
+                        //         80,
+                        //     );
+                        //     return 0;
+                        // }
+                    }
+                    else {
+                        if (!singleProduct) {
+                          //  AsyncStorage.setItem('myCart', JSON.stringify([]));
+                            navigateToRoutefromSideMenu(this.props.componentId,'Orders');
+                        }else{
+
+                            goBack(this.props.componentId);
+                        }
+                    }
+                }
+                catch (e) {
+                    Meteor.call('removeOrder', res.result);
                     ToastAndroid.showWithGravityAndOffset(
-                        actualData.message.successMessage,
+                        e.message,
                         ToastAndroid.LONG,
                         ToastAndroid.TOP,
                         0,
                         80,
                     );
                 }
-                Item.esewaDetail = actualData;
             }
-            else {
-                ToastAndroid.showWithGravityAndOffset(
-                    response.data,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    80,
-                );
-                return 0;
-            }
-        }
-        console.log(Item);
-        Meteor.call('addOrderEF', Item, 0, (err, res) => {
-            if (err) {
-                console.log(err.reason);
-            } else {
-                // let item = {
-                //     orderId: res.result,
-                //     PaymentType: PaymentType,
-                //     esewaDetail: Item.esewaDetail,
-                //     transactionType: TransactionTypes.SHOPPING
-                // };
-                //
-                // Meteor.call('SaveTransactions', item, (err, res) => {
-                //     if (err) {
-                //         console.log(err.reason);
-                //     }
-                //     else {
-                //
-                //     }
-                // })
-            }
-        })
-      //  goToRoute(this.props.componentId,'OrderList');
-        goBack(this.props.componentId);
-    }
+        });
+
+
+
+
+
+
+
+
+
+      //
+      //
+      //
+      //   const {paymentType, total} = this.state;
+      //   if (paymentType == PaymentType.ESEWA) {
+      //       let response = await this._esewaPay(total.toString(), Item.items[0].title, Meteor.userId());
+      //       if (response.resultCode == -1) {
+      //           const actualData = JSON.parse(response.data)
+      //           console.log(actualData);
+      //           if (actualData.transactionDetails.status == "COMPLETE") {
+      //               ToastAndroid.showWithGravityAndOffset(
+      //                   actualData.message.successMessage,
+      //                   ToastAndroid.LONG,
+      //                   ToastAndroid.TOP,
+      //                   0,
+      //                   80,
+      //               );
+      //           }
+      //           Item.esewaDetail = actualData;
+      //       }
+      //       else {
+      //           ToastAndroid.showWithGravityAndOffset(
+      //               response.data,
+      //               ToastAndroid.LONG,
+      //               ToastAndroid.TOP,
+      //               0,
+      //               80,
+      //           );
+      //           return 0;
+      //       }
+      //   }
+      //   console.log(Item);
+      //   Meteor.call('addOrder', Item, 0, (err, res) => {
+      //       if (err) {
+      //           console.log(err.reason);
+      //       } else {
+      //           // let item = {
+      //           //     orderId: res.result,
+      //           //     PaymentType: PaymentType,
+      //           //     esewaDetail: Item.esewaDetail,
+      //           //     transactionType: TransactionTypes.SHOPPING
+      //           // };
+      //           //
+      //           // Meteor.call('SaveTransactions', item, (err, res) => {
+      //           //     if (err) {
+      //           //         console.log(err.reason);
+      //           //     }
+      //           //     else {
+      //           //
+      //           //     }
+      //           // })
+      //       }
+      //   })
+      // //  goToRoute(this.props.componentId,'OrderList');
+      //   goBack(this.props.componentId);
+    };
     _esewaPay = async (Amount, Product, Id) => {
         // const response = await NativeModules.RNEsewa.makePayment(Amount, Product, Id, 'http://medidocnepal.com').then(function (res) {
         //     return res

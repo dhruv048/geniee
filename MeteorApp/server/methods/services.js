@@ -53,6 +53,7 @@ Meteor.methods({
                             serviceInfo.coverImage = res._id;
                             serviceInfo.categoryId = CategoryId;
                             serviceInfo.ratings = [{count: 0}];
+                            serviceInfo.Image = null;
                             var res = Service.insert(serviceInfo);
                             try {
                                 FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
@@ -237,8 +238,10 @@ Meteor.methods({
             console.log('addNewProducr:::=>>>');
             productInfo.productOwner=ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
-            productInfo.createdBy = currentUserId,
-                productInfo.createDate = new Date(new Date().toUTCString())
+            productInfo.createdBy = currentUserId;
+            productInfo.qty = parseInt(productInfo.qty);
+            productInfo.availabeQuantity = parseInt(productInfo.qty);
+            productInfo.createDate = new Date(new Date().toUTCString());
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
@@ -258,9 +261,10 @@ Meteor.methods({
                                 if (productInfo.images.length === imageIds.length) {
                                     productInfo.images = imageIds;
                                     console.log('insert')
+                                    let pId= Products.insert(productInfo);
                                     try {
                                         FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product Available - ${productInfo.title}`, productInfo.description, {
-                                            Id: Id,
+                                            Id: pId,
                                             navigate: "true",
                                             route: "ProductDetail",
                                             image: productInfo.images[0]
@@ -268,7 +272,6 @@ Meteor.methods({
                                     } catch (e) {
                                         throw new Meteor.Error(403, e.message);
                                     }
-                                    return Products.insert(productInfo);
                                 }
                             }
                         }, proceedAfterUpload = true)

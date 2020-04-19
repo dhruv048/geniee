@@ -252,7 +252,7 @@ class CartEF extends Component {
 
 export default Meteor.withTracker(() => {
     return {
-        cartItems: Meteor.collection('cart').find()
+       // cartItems: Meteor.collection('cart').find()
     }
 })(CartEF)
 const styles = {

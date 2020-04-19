@@ -2,12 +2,12 @@ import React, { AsyncStorage } from 'react-native';
 import { AccessToken } from 'react-native-fbsdk';
 import Meteor from '../react-native-meteor';
 import {MyFunctions} from "../lib/MyFunctions";
-import {goToDashboard} from "../Navigation";
+import {goToDashboard,goBack} from "../Navigation";
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
 
-export const loginWithTokens = () => {
+export const loginWithTokens = (compId) => {
     const Data = Meteor.getData();
     AccessToken.getCurrentAccessToken()
         .then((res) => {
@@ -22,17 +22,17 @@ export const loginWithTokens = () => {
                         Meteor._loginWithToken(result.token)
                        // MyFunctions._saveDeviceUniqueId();
                         goToDashboard();
-                    }
-                    ;
+                       // goBack(compId)
+                    };
                 });
             }
         })
 };
 
-export const onLoginFinished = (result) => {
+export const onLoginFinished = (result,compId) => {
     if (result.isCancelled) {
         console.log('login cancelled');
     } else {
-        loginWithTokens();
+        loginWithTokens(compId);
     }
 };

@@ -125,7 +125,7 @@ Template.Create_Product.events({
         var content = $('#summernote').summernote('code');
 
         if (!selectedCategory) {
-            sAlert.error("Please Select Category");
+            sAlert.error("Please Select Service");
             return;
         }
         if (title.length < 4) {
@@ -146,12 +146,13 @@ Template.Create_Product.events({
             description: description,
             images: [],
             service: category,
+            serviceOwner: selectedCategory.owner,
             productContent: content,
             createBy: Meteor.userId(),
             unit: unit,
             price: price,
             contact: contact,
-            quantity: quantity,
+            qty: quantity,
             sizes: sizes ? (sizes.includes(';') ? sizes.split(';') : [sizes]) : [],
             colors: colors ? (colors.includes(';') ? colors.split(';') : [colors]) : []
         };

@@ -18,6 +18,7 @@
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.24.0",
     "mongoose": "^5.5.5",
-    "popper.js": "^1.16.0"
+    "popper.js": "^1.16.0",
+    "simpl-schema": "^1.5.7"
   }
 }

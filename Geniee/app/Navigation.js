@@ -104,13 +104,18 @@ export const goToDashboard = () =>
 
 export const navigateToRoutefromSideMenu = (componentId, route) => {
     console.log(componentId, route);
-    Navigation.mergeOptions(componentId, {
-        sideMenu: {
-            left: {
-                visible: false,
+    try {
+        Navigation.mergeOptions(componentId, {
+            sideMenu: {
+                left: {
+                    visible: false,
+                },
             },
-        },
-    });
+        });
+    }
+    catch(e){
+        console.log(e.message)
+    }
     if (route == "Dashboard") {
         // currentRoute='';
             Navigation.setStackRoot('DASHBOARD_STACK', {
@@ -139,7 +144,7 @@ export const navigateToRoutefromSideMenu = (componentId, route) => {
             });
         }
     }
-}
+};
 
 // export const goToChat = (props) => {
 //     Navigation.setStackRoot('DASHBOARD_STACK', {

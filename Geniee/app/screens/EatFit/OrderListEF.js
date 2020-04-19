@@ -47,18 +47,18 @@ class OrderListEF extends Component {
     componentDidMount() {
         Navigation.events().bindComponent(this);
         this.setState({chatList: this.props.chatChannels})
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
 
         const deviceId=DeviceInfo.getUniqueId();
-        Meteor.call('getOrdersEF',deviceId,(err,res)=>{
+        Meteor.call('getOrders',deviceId,(err,res)=>{
             console.log(err,res);
             if(!err){
-                this.setState({orderList:res})
+                this.setState({orderList:res.result})
             }
         })
     }
 
-    handleBackButton(){
+    handleBackButton=()=>{
         if( this.isDisplaying) {
             console.log('handleback press orderList')
             // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
@@ -77,7 +77,7 @@ class OrderListEF extends Component {
     }
 
     componentWillUnmount(){
-        BackHandler.removeEventListener('hardwareBackPress');
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     }
     _approveOrder = (Id) => {
         Meteor.call('approveOrder', Id, (err) => {
