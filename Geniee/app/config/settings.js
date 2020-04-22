@@ -12,14 +12,16 @@ let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 
 
 // let API_URL = "https://api.krishisansaar.com/api/";
-// let IMAGE_URL='https://api.krishisansaar.com/api/'
+// let IMAGE_URL='https://api.krishisansaar.com/api/images/';
+// let METEOR_URL = 'wss://api.krishisansaar.com/websocket';
+// let WEB_URL = "https://api.krishisansaar.com/";
 
 
 if (process.env.NODE_ENV === 'production') {
     METEOR_URL = 'wss://api.krishisansaar.com/websocket';
     //API_URL = "http://139.59.81.51/api/";
     API_URL = "https://api.krishisansaar.com/api/";
-    IMAGE_URL='https://api.krishisansaar.com/api/images/'
+    IMAGE_URL='https://api.krishisansaar.com/api/images/';
     WEB_URL = "https://api.krishisansaar.com/";
 }
 export const settings = {

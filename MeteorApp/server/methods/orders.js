@@ -137,6 +137,17 @@ Meteor.methods({
             console.log(e.message);
         }
     },
+
+    'getMyOrders':()=>{
+        let userId=Meteor.userId();
+        try {
+           return ROrder.find({$or:[{owner:userId},{'items.owner':userId}]}).fetch();
+        }
+        catch (e) {
+            console.log(e.message);
+         //   return new Meteor.Error('',e.reason)
+        }
+    },
 })
 resetOrderQty = (Items) => {
     Items.forEach(async item => {

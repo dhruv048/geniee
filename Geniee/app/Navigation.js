@@ -28,6 +28,7 @@ import CheckoutEF from "./screens/EatFit/CheckoutEF";
 import ProductsBB from "./screens/BaadshahBiryani/ProductsBB";
 import ProductDetailBB from "./screens/BaadshahBiryani/ProductDetailBB";
 import ImageGalleryBB from "./screens/BaadshahBiryani/ImageGalleryBB";
+import Orders from "./screens/store/Orders";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -40,7 +41,7 @@ Navigation.registerComponent('MyServices', () => MyServices);
 Navigation.registerComponent('ServiceList', () => Home);
 Navigation.registerComponent('ServiceDetail', () => ServiceDetail);
 Navigation.registerComponent('LandingPageEF', () => LandingPageEF);
-Navigation.registerComponent('Orders', () => OrderListEF);
+Navigation.registerComponent('Orders', () => Orders);
 Navigation.registerComponent('OrderDetailEF', () => OrderDetailEF);
 Navigation.registerComponent('WishListEF', () => WishListEF);
 Navigation.registerComponent('CartEF', () => CartEF);

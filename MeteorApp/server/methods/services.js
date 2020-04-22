@@ -233,6 +233,11 @@ Meteor.methods({
             throw new Meteor.Error(403, err.message)
         }
     },
+
+    'getMyRating': (servId) => {
+        return Ratings.findOne({serviceId: servId, ratedBy: Meteor.userId()});
+    },
+
     'addNewProduct': (productInfo) => {
         try {
             console.log('addNewProducr:::=>>>');

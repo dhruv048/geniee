@@ -21,11 +21,11 @@ export class CogMenu extends PureComponent{
 
 
     render() {
-        const {componentId, onPress} = this.props;
+        const {componentId, onPress, color} = this.props;
         return (
             <Button transparent onPress={onPress ? onPress: this.onPress.bind(this)}>
                 <Text>
-                    <Icon name={'ellipsis-v'} size={25} color={'white'}/>
+                    <Icon name={'ellipsis-v'} size={25} color={color? color:'white'}/>
                 </Text>
             </Button>
         );

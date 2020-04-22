@@ -2,10 +2,10 @@
  * Created by Roshan on 6/20/2017.
  */
 
-import { Meteor } from 'meteor/meteor';
-import { FilesCollection } from 'meteor/ostrio:files';
+import {Meteor} from 'meteor/meteor';
+import {FilesCollection} from 'meteor/ostrio:files';
 import Grid from 'gridfs-stream';
-import { MongoInternals } from 'meteor/mongo';
+import {MongoInternals} from 'meteor/mongo';
 
 let gfs;
 if (Meteor.isServer) {
@@ -16,25 +16,24 @@ if (Meteor.isServer) {
 }
 
 
-
- ServiceImage = new FilesCollection({
+ServiceImage = new FilesCollection({
     collectionName: 'serviceImages',
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
-        console.log('before upload',file)
+        console.log('before upload', file)
     },
 
-     onAfterUpload(image) {
-         onAfterUpload(image,this)
-     },
+    onAfterUpload(image) {
+        onAfterUpload(image, this)
+    },
 
-     interceptDownload(http, image, versionName) {
-         interceptDownload(http, image, versionName)
-     },
-     onAfterRemove(images) {
-         onAfterRemove(images);
-     }
+    interceptDownload(http, image, versionName) {
+        interceptDownload(http, image, versionName)
+    },
+    onAfterRemove(images) {
+        onAfterRemove(images);
+    }
 });
 
 EFProductImages = new FilesCollection({
@@ -42,11 +41,11 @@ EFProductImages = new FilesCollection({
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
-        console.log('before upload',file)
+        console.log('before upload', file)
     },
 
     onAfterUpload(image) {
-        onAfterUpload(image,this)
+        onAfterUpload(image, this)
     },
 
     interceptDownload(http, image, versionName) {
@@ -62,11 +61,11 @@ ChatFiles = new FilesCollection({
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
-        console.log('before upload',file)
+        console.log('before upload', file)
     },
 
     onAfterUpload(image) {
-        onAfterUpload(image,this)
+        onAfterUpload(image, this)
     },
 
     interceptDownload(http, image, versionName) {
@@ -82,11 +81,11 @@ ProfilePhoto = new FilesCollection({
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
-        console.log('before upload',file)
+        console.log('before upload', file)
     },
 
     onAfterUpload(image) {
-       onAfterUpload(image,this)
+        onAfterUpload(image, this)
     },
 
     interceptDownload(http, image, versionName) {
@@ -102,11 +101,11 @@ AdvertisementImages = new FilesCollection({
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
-        console.log('before upload',file)
+        console.log('before upload', file)
     },
 
     onAfterUpload(image) {
-        onAfterUpload(image,this)
+        onAfterUpload(image, this)
     },
 
     interceptDownload(http, image, versionName) {
@@ -123,11 +122,11 @@ GRuserpic = new FilesCollection({
     allowClientCode: false,
     debug: Meteor.isServer && process.env.NODE_ENV === 'development',
     onBeforeUpload(file) {
-        console.log('before upload',file)
+        console.log('before upload', file)
     },
 
     onAfterUpload(image) {
-       onAfterUpload(image,this)
+        onAfterUpload(image, this)
     },
 
     interceptDownload(http, image, versionName) {
@@ -139,15 +138,13 @@ GRuserpic = new FilesCollection({
 });
 
 
-
-
 // noinspection JSAnnotator
-const  onAfterUpload=function (image, This) {
+const onAfterUpload = function (image, This) {
     try {
-        let fs=getFS();
+        let fs = getFS();
         // Move file to GridFS
         Object.keys(image.versions).forEach(versionName => {
-            const metadata = {versionName, imageId: image._id, storedAt: new Date(), mime:image.type}; // Optional
+            const metadata = {versionName, imageId: image._id, storedAt: new Date(), mime: image.type}; // Optional
             const writeStream = gfs.createWriteStream({filename: image.name, metadata});
 
             fs.createReadStream(image.versions[versionName].path).pipe(writeStream);
@@ -157,7 +154,7 @@ const  onAfterUpload=function (image, This) {
 
                 // If we store the ObjectID itself, Meteor (EJSON?) seems to convert it to a
                 // LocalCollection.ObjectID, which GFS doesn't understand.
-                console.log('collection'+this.collection);
+                console.log('collection' + this.collection);
                 This.collection.update(image._id, {$set: {[property]: file._id.toString()}});
                 This.unlink(This.collection.findOne(image._id), versionName); // Unlink files from FS
             }));
@@ -167,17 +164,17 @@ const  onAfterUpload=function (image, This) {
         console.log(e.message)
     }
 };
-    const  interceptDownload= function(http, image, versionName) {
+const interceptDownload = function (http, image, versionName) {
     const _id = (image.versions[versionName].meta || {}).gridFsFileId;
-    console.log("_id"+_id);
+    console.log("_id" + _id);
     if (_id) {
         const readStream = gfs.createReadStream({_id});
         try {
 
-            console.log('readdStream'+readStream);
+            console.log('readdStream' + readStream);
         }
         catch (e) {
-            console.log('erroron createReadStream'+e.message)
+            console.log('erroron createReadStream' + e.message)
         }
         readStream.on('error', err => {
             throw err;
@@ -186,7 +183,7 @@ const  onAfterUpload=function (image, This) {
     }
     return Boolean(_id); // Serve file from either GridFS or FS if it wasn't uploaded yet
 };
-   const  onAfterRemove=(images)=> {
+const onAfterRemove = (images) => {
     // Remove corresponding file from GridFS
     images.forEach(image => {
         Object.keys(image.versions).forEach(versionName => {

@@ -142,6 +142,7 @@ class Dashboard extends Component {
         Meteor.subscribe('categories-list');
         Meteor.subscribe('aggChatChannels');
         Meteor.call('getActiveAdvertises', (err, res) => {
+            // console.log("banners",err, res)
             if (!err) {
                 this.setState({Adds: res});
             }

@@ -67,7 +67,6 @@ class ServiceDetail extends Component {
         console.log(Id)
         let Service = {};
         if (typeof (Id) === "string") {
-
             Meteor.call('getSingleService',Id,(err,res)=>{
                 if(!err) {
                     console.log(res)
@@ -78,14 +77,28 @@ class ServiceDetail extends Component {
             });
             // Service = Meteor.collection('serviceReact').findOne({_id: Id});
 
-            Meteor.call('updateServiceViewCount', Id)
+            Meteor.call('updateServiceViewCount', Id);
+            Meteor.call('getMyRating', Id, (err, res) => {
+                console.log('myRating:', res);
+                this.setState({myRating: res});
+                if (res && res.hasOwnProperty('rating'))
+                    this.setState({comment: res.rating.comment, starCount: res.rating.count})
+            })
         }
         else {
             console.log(Id)
            // Service = Id;
             this.setState({Service:Id});
             Meteor.call('updateServiceViewCount', Id._id)
+            Meteor.call('getMyRating', Id._id, (err, res) => {
+                console.log('myRating:', res);
+                this.setState({myRating: res});
+                if (res && res.hasOwnProperty('rating'))
+                    this.setState({comment: res.rating.comment, starCount: res.rating.count})
+            })
         }
+
+
     }
 
     componentWillUnmount() {
