@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-import {ProductOwner} from "../../lib/utils";
+import {ProductOwner,OrderStatus} from "../../lib/utils";
 import {EFProducts,EFOrder} from "../../lib/collections/eatFit/efProducts";
 import {ROrder} from "../../lib/collections/orders";
 
@@ -141,14 +141,42 @@ Meteor.methods({
     'getMyOrders':()=>{
         let userId=Meteor.userId();
         try {
-           return ROrder.find({$or:[{owner:userId},{'items.owner':userId}]}).fetch();
+           return ROrder.find({'items.serviceOwner':userId}).fetch();
         }
         catch (e) {
             console.log(e.message);
          //   return new Meteor.Error('',e.reason)
         }
     },
-})
+
+    'updateOrderStatus': (Id, status) => {
+        let loggedUser = Meteor.user();
+        let order = ROrder.findOne({_id: Id});
+        if (status == OrderStatus.ORDER_CANCELLED) {
+            resetOrderQty(order.items);
+        }
+        ROrder.update({_id: Id},
+            {
+                $set: {status: status}
+            }, (err, res) => {
+                if (err) {
+                    return err
+                } else {
+                    let notification = {
+                        title: 'Order Status Change By ' + loggedUser.profile.name,
+                        description: order._id,
+                        owner: loggedUser._id,
+                        navigateId: order._id,
+                        receiver: order.owner,
+                        type: status
+                    }
+                  //  Meteor.call('addNotification', notification);
+                }
+            })
+    },
+}),
+
+
 resetOrderQty = (Items) => {
     Items.forEach(async item => {
 

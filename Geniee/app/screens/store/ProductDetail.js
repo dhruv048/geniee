@@ -595,7 +595,7 @@ class ProductDetail extends Component {
     OrderNow() {
         let product = this.state.product;
         product['orderQuantity'] = this.state.quantity;
-        product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
+        product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.discount ? (this.state.product.price * (this.state.product.discount / 100)):0));
         goToRoute(this.props.componentId,'CheckoutEF', {'productOrder': product});
     }
 

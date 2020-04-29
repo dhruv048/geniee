@@ -1,63 +1,66 @@
-import React,{Component} from 'react';
-import {Body, Container, Content, Header, Item, Text} from "native-base";
+import React, {Component} from 'react';
+import {Body, Container, Content, Header, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
 import UploadProfilePic from "../components/UploadProfilePic/UploadProfilePic";
-import {StatusBar,StyleSheet,Alert} from "react-native";
+import {StatusBar, StyleSheet, Alert, TouchableNativeFeedback, View} from "react-native";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 import ContactUs from "./ContactUs";
 import ForgotPassword from "./ForgotPassword";
-import  Meteor from "../react-native-meteor";
-import { EventRegister } from 'react-native-event-listeners';
+import Meteor from "../react-native-meteor";
+import {EventRegister} from 'react-native-event-listeners';
 import AsyncStorage from "@react-native-community/async-storage";
+import MessageCount from "../components/MessageCount/MessageCount";
+
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
-class SideMenu extends Component{
-    constructor(props){
+
+class SideMenu extends Component {
+    constructor(props) {
         super(props);
-        this.state={
-            isLogged:Meteor.user()?true:false,
-            currentRoute:'Dashboard'
+        this.state = {
+            isLogged: Meteor.user() ? true : false,
+            currentRoute: 'Dashboard'
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         Navigation.events().bindComponent(this);
-        this.setState({isLogged:this.props.loggedUser?true:false})
+        this.setState({isLogged: this.props.loggedUser ? true : false})
         this.listener = EventRegister.addEventListener('routeChanged', (data) => {
-            console.log('routeChanged',data)
+            console.log('routeChanged', data)
             this.setState({
-                currentRoute:data
+                currentRoute: data
             })
         })
 
     }
 
-    componentWillReceiveProps(newProps){
-        this.setState({isLogged:newProps.loggedUser?true:false})
+    componentWillReceiveProps(newProps) {
+        this.setState({isLogged: newProps.loggedUser ? true : false})
     }
 
-    navigateToRoute(route){
-    console.log(this.props.componentId);
-       navigateToRoutefromSideMenu(this.props.componentId,route)
+    navigateToRoute(route) {
+        console.log(this.props.componentId);
+        navigateToRoutefromSideMenu(this.props.componentId, route)
     }
 
-    _signOut(){
+    _signOut() {
         Alert.alert(
             'SignOut',
             'Do you want to SignOut?',
             [
                 {
-                    text: 'Yes SignOut', onPress: () =>  Meteor.logout((err) => {
-                        if (!err){
+                    text: 'Yes SignOut', onPress: () => Meteor.logout((err) => {
+                        if (!err) {
                             console.log('logout')
                             AsyncStorage.setItem(USER_TOKEN_KEY, '');
-                            navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
+                            navigateToRoutefromSideMenu(this.props.componentId, 'Dashboard');
                         }
                         else
                             goBack(this.props.componentId)
                     })
                 },
-                {text: 'Cancel', onPress: () => navigateToRoutefromSideMenu(this.props.componentId,'Dashboard')}
+                {text: 'Cancel', onPress: () => navigateToRoutefromSideMenu(this.props.componentId, 'Dashboard')}
             ],
             {cancelable: false}
         );
@@ -72,51 +75,85 @@ class SideMenu extends Component{
         //         goBack(this.props.componentId)
         // })
     }
-    render(){
-        return(
+
+    render() {
+        return (
             <Container>
-                <Header androidStatusBarColor={colors.statusBar} style={{height: 220, backgroundColor: colors.inputBackground}}>
+                <Header androidStatusBarColor={colors.statusBar}
+                        style={{height: 220, backgroundColor: colors.inputBackground}}>
                     <Body style={{justifyContent: 'center', alignItems: 'center'}}>
                     <UploadProfilePic/>
                     </Body>
                 </Header>
-                <Content style={{backgroundColor: colors.appBackground, flex:1,marginTop:1}}>
-                    <Item style={this.state.currentRoute=='Dashboard'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute("Dashboard")}>
-                        <Text style={this.state.currentRoute=='Dashboard'? style.activeText:style.normalText} >Home</Text>
-                    </Item>
-                    <Item style={this.state.currentRoute=='Orders'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('Orders')}>
-                        <Text style={this.state.currentRoute=='Orders'? style.activeText:style.normalText} >My Orders</Text>
-                    </Item>
-                    {this.state.isLogged?
+                <Content style={{flex: 1, marginTop: 1}}>
+                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("Dashboard")}>
+                        <View style={[style.screenStyle]}>
+                            <Text
+                                style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Home</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("Orders")}>
+                        <View style={[style.screenStyle]}>
+                            <Text
+                                style={[this.state.currentRoute == 'Orders' ? style.selectedTextStyle : style.screenTextStyle]}>My Orders</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    {this.state.isLogged ?
                         <>
-                    <Item style={this.state.currentRoute=='Chat'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('Chat')}>
-                        <Text style={this.state.currentRoute=='Chat'? style.activeText:style.normalText} >Chat</Text>
-                    </Item>
-                    <Item style={this.state.currentRoute=='MyServices'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('MyServices')}>
-                        <Text style={this.state.currentRoute=='MyServices'? style.activeText:style.normalText} >My Services</Text>
-                    </Item>
-                    <Item style={this.state.currentRoute=='AddService'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('AddService')}>
-                        <Text style={this.state.currentRoute=='AddService'? style.activeText:style.normalText} >Add Service</Text>
-                    </Item>
-                    <Item style={this.state.currentRoute=='AddProduct'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('AddProduct')}>
-                        <Text style={this.state.currentRoute=='AddProduct'? style.activeText:style.normalText} >Add Product</Text>
-                    </Item></>:null}
+                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("Chat")}>
+                                <View style={[style.screenStyle]}>
+                                    <Text
+                                        style={[this.state.currentRoute == 'Chat' ? style.selectedTextStyle : style.screenTextStyle]}>Chat</Text>
+                                    <Right style={{marginRight:10}}>
+                                            <MessageCount />
+                                    </Right>
+                                </View>
+                            </TouchableNativeFeedback>
+                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("MyServices")}>
+                                <View style={[style.screenStyle]}>
+                                    <Text
+                                        style={[this.state.currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Services</Text>
+                                </View>
+                            </TouchableNativeFeedback>
+                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("AddService")}>
+                                <View style={[style.screenStyle]}>
+                                    <Text
+                                        style={[this.state.currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Add Service</Text>
+                                </View>
+                            </TouchableNativeFeedback>
+                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("AddProduct")}>
+                                <View style={[style.screenStyle]}>
+                                    <Text
+                                        style={[this.state.currentRoute == 'AddProduct' ? style.selectedTextStyle : style.screenTextStyle]}>Add Product</Text>
+                                </View>
+                            </TouchableNativeFeedback></> : null}
 
-                    <Item style={this.state.currentRoute=='ContactUs'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('ContactUs')}>
-                        <Text style={this.state.currentRoute=='ContactUs'? style.activeText:style.normalText} >Contact Us</Text>
-                    </Item>
-                    <Item style={this.state.currentRoute=='ForgotPassword'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('ForgotPassword')}>
-                        <Text style={this.state.currentRoute=='ForgotPassword'? style.activeText:style.normalText} >Forgot Password</Text>
-                    </Item>
+                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("ContactUs")}>
+                        <View style={[style.screenStyle]}>
+                            <Text
+                                style={[this.state.currentRoute == 'ContactUs' ? style.selectedTextStyle : style.screenTextStyle]}>Contact Us</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("ForgotPassword")}>
+                        <View style={[style.screenStyle]}>
+                            <Text
+                                style={[this.state.currentRoute == 'ForgotPassword' ? style.selectedTextStyle : style.screenTextStyle]}>Forgot Password</Text>
+                        </View>
+                    </TouchableNativeFeedback>
 
-
-                    {this.state.isLogged?
-                    <Item onPress={()=>this._signOut()} style={this.state.currentRoute=='SignOut'? style.activeRoute:style.normalRoute}>
-                        <Text style={this.state.currentRoute=='SignOut'? style.activeText:style.normalText} >SignOut</Text>
-                    </Item>:
-                        <Item style={this.state.currentRoute=='SignIn'? style.activeRoute:style.normalRoute} onPress={()=>this.navigateToRoute('SignIn')}>
-                            <Text style={this.state.currentRoute=='SignIn'? style.activeText:style.normalText} >Sign In</Text>
-                        </Item>}
+                    {this.state.isLogged ?
+                        <TouchableNativeFeedback onPress={() => this._signOut()}>
+                            <View style={[style.screenStyle]}>
+                                <Text
+                                    style={[this.state.currentRoute == 'SignOut' ? style.selectedTextStyle : style.screenTextStyle]}>SignOut</Text>
+                            </View>
+                        </TouchableNativeFeedback> :
+                        <TouchableNativeFeedback onPress={() => this.navigateToRoute("SignIn")}>
+                            <View style={[style.screenStyle]}>
+                                <Text
+                                    style={[this.state.currentRoute == 'SignIn' ? style.selectedTextStyle : style.screenTextStyle]}>Sign In</Text>
+                            </View>
+                        </TouchableNativeFeedback>}
 
                 </Content>
             </Container>
@@ -124,33 +161,50 @@ class SideMenu extends Component{
     }
 }
 
-const style=StyleSheet.create({
-    activeRoute:{
-        backgroundColor:colors.appLayout,
-       height:50,
-        padding:2
+const style = StyleSheet.create({
+    activeRoute: {
+        backgroundColor: colors.appLayout,
+        height: 50,
+        padding: 2
     },
-    normalRoute:{
-        backgroundColor:'white',
-        height:50,
-        padding:2
+    normalRoute: {
+        backgroundColor: 'white',
+        height: 50,
+        padding: 2
     },
-    activeText:{
-        color:'#ffffff',
-        fontSize:22,
-        marginLeft:30,
-        fontWeight:'700'
+    activeText: {
+        color: '#ffffff',
+        fontSize: 22,
+        marginLeft: 30,
+        fontWeight: '700'
     },
-    normalText:{
-        color:colors.appLayout,
-        fontSize:20,
-        marginLeft:30,
-        fontWeight:'600'
-    }
+    normalText: {
+        color: colors.appLayout,
+        fontSize: 20,
+        marginLeft: 30,
+        fontWeight: '600'
+    },
+    screenStyle: {
+        height: 45,
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%'
+    },
+    screenTextStyle: {
+        fontSize: 17,
+        paddingHorizontal: 30,
+        color: colors.gray_200,
+    },
+    selectedTextStyle: {
+        fontSize: 19,
+        paddingHorizontal: 30,
+        color: colors.primary,
+        fontWeight: '500'
+    },
 })
 
-export default Meteor.withTracker(()=>{
-    return{
-        loggedUser:Meteor.user()
+export default Meteor.withTracker(() => {
+    return {
+        loggedUser: Meteor.user()
     }
-}) (SideMenu);
+})(SideMenu);

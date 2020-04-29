@@ -638,27 +638,27 @@ class Dashboard extends Component {
                     {/*<ScrollView style={{viewportWidth: '100%', flex: 1}}>*/}
                     {this.state.searchMode == false ?
                         <View>
-                            <TouchableOpacity onPress={() => this.gotoEatFit()}>
+                            <TouchableOpacity onPress={() => this.gotoBB()}>
                                 <View>
-                                    <Image onPress={() => this.gotoEatFit()} source={require("../images/EF2.jpg")}
+                                    <Image onPress={() => this.gotoBB()} source={require("../images/baadshah_logo.jpg")}
                                            style={{
                                                flex: 1,
-                                               height: 120,
+                                               height: 130,
                                                width: viewportWidth - 10,
                                                resizeMode: 'cover',
                                                margin: 5
                                            }}/>
-                                    <View style={{
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        position: 'absolute'
-                                    }}>
-                                        <Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>EAT-FIT</Text>
-                                    </View>
+                                    {/*<View style={{*/}
+                                    {/*top: 0,*/}
+                                    {/*left: 0,*/}
+                                    {/*right: 0,*/}
+                                    {/*bottom: 0,*/}
+                                    {/*justifyContent: 'center',*/}
+                                    {/*alignItems: 'center',*/}
+                                    {/*position: 'absolute'*/}
+                                    {/*}}>*/}
+                                    {/*<Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>BAADSHAH-BIRYANI</Text>*/}
+                                    {/*</View>*/}
                                 </View>
                             </TouchableOpacity>
                             {this.state.Adds.length > 0 ?
@@ -683,30 +683,30 @@ class Dashboard extends Component {
                                     />
 
                                 </View> : null}
-
-                            <TouchableOpacity onPress={() => this.gotoBB()}>
+                            <TouchableOpacity onPress={() => this.gotoEatFit()}>
                                 <View>
-                                    <Image onPress={() => this.gotoEatFit()} source={require("../images/baadshah_logo.jpg")}
+                                    <Image onPress={() => this.gotoEatFit()} source={require("../images/EF2.jpg")}
                                            style={{
                                                flex: 1,
-                                               height: 130,
+                                               height: 120,
                                                width: viewportWidth - 10,
                                                resizeMode: 'cover',
                                                margin: 5
                                            }}/>
-                                    {/*<View style={{*/}
-                                    {/*top: 0,*/}
-                                    {/*left: 0,*/}
-                                    {/*right: 0,*/}
-                                    {/*bottom: 0,*/}
-                                    {/*justifyContent: 'center',*/}
-                                    {/*alignItems: 'center',*/}
-                                    {/*position: 'absolute'*/}
-                                    {/*}}>*/}
-                                    {/*<Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>BAADSHAH-BIRYANI</Text>*/}
-                                    {/*</View>*/}
+                                    <View style={{
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        position: 'absolute'
+                                    }}>
+                                        <Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>EAT-FIT</Text>
+                                    </View>
                                 </View>
                             </TouchableOpacity>
+
                             {/*<View key="id" style={styles.containerStyle}>*/}
                             {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>*/}
                             {/*<Body>*/}

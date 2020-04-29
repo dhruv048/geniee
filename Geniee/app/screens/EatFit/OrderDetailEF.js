@@ -12,7 +12,7 @@ import {
     List,
     ListItem,
     Body,
-   Badge, Thumbnail
+    Badge, Thumbnail, Footer
 } from 'native-base';
 
 
@@ -63,6 +63,13 @@ class OrderDetailEF extends Component {
                 }
             });
         };
+    }
+
+    _updateOrderStatus(Id,status){
+        Meteor.call('updateOrderStatus',Id,status,(err,res)=>{
+            if(err)
+                console.log(err)
+        })
     }
 
     render() {
@@ -161,6 +168,49 @@ class OrderDetailEF extends Component {
                         {/*</CardItem>*/}
                     
                 </Content>
+                {!this.props.isOwnOrder?
+                <View>
+                    {order.status == OrderStatus.ORDER_REQUESTED ?
+                        <Footer style={customStyle.footer}>
+                            <View style={customStyle.row}>
+                                <View style={customStyle.col}>
+                                    <Button
+                                        block light style={customStyle.buttonLight}
+                                        onPress={this._updateOrderStatus.bind(this,OrderStatus.ORDER_CANCELLED)}>
+                                        <Text uppercase={false} style={customStyle.buttonLightText}>Reject Order</Text>
+                                    </Button>
+                                </View>
+                                <View style={customStyle.col}>
+                                    <Button block style={customStyle.buttonPrimary}
+                                            onPress={this._updateOrderStatus.bind(this,OrderStatus.ORDER_DISPATCHED)}>
+                                        <Text uppercase={false} style={customStyle.buttonPrimaryText}>Dispatch</Text>
+                                    </Button>
+                                </View>
+                            </View>
+                        </Footer>:null}
+                    {order.status == OrderStatus.ORDER_DISPATCHED ?
+                        <Footer style={customStyle.footer}>
+                            <View style={customStyle.row}>
+                                <View style={customStyle.col}>
+                                    <Button block style={customStyle.buttonSecondary}
+                                            onPress={this._updateOrderStatus.bind(this,OrderStatus.ORDER_DELIVERED)}>
+                                        <Text uppercase={false} style={customStyle.buttonSecondaryText}>Deliver</Text>
+                                    </Button>
+                                </View>
+                            </View>
+                        </Footer>:null}
+                    {order.status == OrderStatus.ORDER_DELIVERED ?
+                        <Footer style={customStyle.footer}>
+                            <View style={customStyle.row}>
+                                <View style={customStyle.col}>
+                                    <Button block style={customStyle.buttonDisabled}
+                                            onPress={() =>{}}>
+                                        <Text uppercase={false} style={customStyle.buttonDisabledText}>Delivered</Text>
+                                    </Button>
+                                </View>
+                            </View>
+                        </Footer>:null}
+                </View>:null}
             </Container>
         );
     }

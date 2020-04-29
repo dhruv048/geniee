@@ -36,7 +36,8 @@ class Orders extends Component {
         this.state={
             ordersToMe:'',
             ordersByMe:'',
-            query:''
+            query:'',
+            isOwnOrders:false
         };
         this.isDisplaying=false;
         this.debounceSearch = _.debounce(this._searchOrders, 500);
@@ -154,13 +155,18 @@ class Orders extends Component {
         return total
     }
 
+    _handleTabChange=(isOwn)=>{
+        console.log('changed',isOwn)
+        this.setState({isOwnOrders:isOwn})
+    }
+
     _renderItem = (dataa, index) => {
         var order = dataa.item;
         let TotalAmount = order.totalPrice;
         return (
             <Card key={order._id} style={customStyle.Card}>
                 <TouchableNativeFeedback onPress={() => {
-                    goToRoute(this.props.componentId,'OrderDetailEF', {'Id':order._id,'Order': order})
+                    goToRoute(this.props.componentId,'OrderDetailEF', {'Id':order._id,'Order': order,isOwnOrder: this.state.isOwnOrders})
                 }} background={TouchableNativeFeedback.SelectableBackground()}>
                     <CardItem>
                         <Grid>
@@ -265,6 +271,7 @@ class Orders extends Component {
                 </Header>
 
                 <Tabs
+                    onChangeTab={({i}) => this._handleTabChange(i)}
                     tabContainerStyle={customStyle.tabContainerStyle}
                     tabsContainerStyle={customStyle.tabsContainerStyle}
                     tabBarUnderlineStyle={customStyle.tabBarUnderlineStyle}
@@ -297,7 +304,7 @@ class Orders extends Component {
                         activeTabStyle={customStyle.activeTabStyle}
                         activeTextStyle={customStyle.activeTextStyle}
                         textStyle={customStyle.textStyle}
-                        heading="OrdersByMe">
+                        heading="Orders By Me">
                         <View style={[customStyle.Container, {flex: 1}]}>
                             {this.state.ordersByMe && this.state.ordersByMe.length > 0 ?
                                 <FlatList
