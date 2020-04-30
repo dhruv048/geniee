@@ -26,9 +26,10 @@ import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
 import {colors} from "../../config/styles";
 import {variables, customStyle} from '../../config/styles';
-import {PaymentType, TransactionTypes} from "../../config/settings";
+import {PaymentType, TransactionTypes,OrderStatus} from "../../config/settings";
 import DeviceInfo from 'react-native-device-info'
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
+
 
 class CheckoutEF extends Component {
     constructor(props) {
@@ -349,6 +350,7 @@ class CheckoutEF extends Component {
                     service: item.service || '',
                     serviceOwner: item.serviceOwner || '',
                     productImage: item.images[0],
+                    status:OrderStatus.ORDER_REQUESTED
                     // color: item.product.color,
                     // size: item.product.size,
                 };

@@ -176,8 +176,8 @@ class Orders extends Component {
                                 <Text style={{fontSize: 16}}>Order ID: {order._id || "0000145"}</Text>
                                 <Text note>{Moment(order.orderDate).format('DD MMM, YYYY')}</Text>
                                 {order.status == OrderStatus.ORDER_REQUESTED ?
-                                    <Badge warning style={[customStyle.badgePrimary, {marginTop: 4}]}>
-                                        <Text style={customStyle.badgePrimaryText}>Order Placed</Text>
+                                    <Badge warning style={[customStyle.badgeWarning, {marginTop: 4}]}>
+                                        <Text style={customStyle.badgeWarningText}>Order Placed</Text>
                                     </Badge> : null}
 
                                 {order.status == OrderStatus.ORDER_DISPATCHED ?
