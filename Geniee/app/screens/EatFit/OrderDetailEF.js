@@ -8,13 +8,12 @@ import {
     List,    ListItem,
     Body,    Badge, Thumbnail, Footer, Card, CardItem, H2
 } from 'native-base';
-
-
 // Our custom files and classes import
 import Text from '../../components/ecommerce/Text';
 import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
 import {colors, customStyle} from "../../config/styles";
+import {orderModal} from "../../config/modals";
 import {OrderStatus, PaymentType, ProductOwner} from "../../config/settings";
 import Moment from "moment/moment";
 import settings from "../../config/settings";
@@ -27,7 +26,7 @@ class OrderDetailEF extends Component {
         this.state = {
             total: 0,
             card: true,
-            order :''
+            order :orderModal
         };
     }
 
@@ -50,8 +49,8 @@ class OrderDetailEF extends Component {
         };
     }
 
-    _updateOrderStatus(Id,status){
-        Meteor.call('updateOrderStatus',Id,status,(err,res)=>{
+    _updateOrderStatus(status){
+        Meteor.call('updateOrderStatus',this.state.order._id,status,(err,res)=>{
             if(err)
                 console.log(err)
             else
@@ -63,12 +62,13 @@ class OrderDetailEF extends Component {
                     0,
                     80,
                 );
-                Meteor.call('getSingleOrder',this.state.order._id, (err, res) => {
+                Meteor.call('getSingleOrder',this.state.order._id, (err, ress) => {
                     if (err) {
                         console.log('this is due to error. '+err);
                     }
                     else{
-                        this.setState({order: res});
+                        console.log('success. ',ress);
+                        this.setState({order:ress});
                     }
                 });
 
@@ -78,7 +78,7 @@ class OrderDetailEF extends Component {
     }
 
     render() {
-        var order = this.props.Order;
+        var order = this.state.order;
         var left = (
             <Left style={{flex: 1}}>
                 <Button onPress={() => goBack(this.props.componentId)} transparent>
@@ -218,9 +218,9 @@ class OrderDetailEF extends Component {
                         <Footer style={customStyle.footer}>
                             <View style={customStyle.row}>
                                 <View style={customStyle.col}>
-                                    <Button block style={customStyle.buttonSecondary}
+                                    <Button block style={customStyle.buttonPrimary}
                                             onPress={this._updateOrderStatus.bind(this,OrderStatus.ORDER_DELIVERED)}>
-                                        <Text uppercase={false} style={customStyle.buttonSecondaryText}>Deliver</Text>
+                                        <Text uppercase={false} style={customStyle.buttonPrimaryText}>Deliver</Text>
                                     </Button>
                                 </View>
                             </View>

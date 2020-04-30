@@ -150,14 +150,14 @@ Meteor.methods({
     },
 
     getSingleOrder(id) {
-        return ROrder.findOne(id);
+        return ROrder.findOne({_id:id});
     },
 
     'updateOrderStatus': (Id, status) => {
         let loggedUser = Meteor.user();
         let order = ROrder.findOne({_id: Id});
         order.items.forEach(item => {
-            if (item.serviceOwner === userId) {
+            if (item.serviceOwner === loggedUser._id) {
                item.status=status;
                item.lastUpdated=new Date(new Date().toUTCString());
             }
