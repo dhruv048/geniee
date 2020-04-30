@@ -166,7 +166,7 @@ class Orders extends Component {
         return (
             <Card key={order._id} style={customStyle.Card}>
                 <TouchableNativeFeedback onPress={() => {
-                    goToRoute(this.props.componentId,'OrderDetailEF', {'Id':order._id,'Order': order,isOwnOrder: this.state.isOwnOrders})
+                    goToRoute(this.props.componentId,this.state.isOwnOrders?'OrderDetailEF':'OrderDetailIn', {'Id':order._id,'Order': order,isOwnOrder: this.state.isOwnOrders})
                 }} background={TouchableNativeFeedback.SelectableBackground()}>
                     <CardItem>
                         <Grid>

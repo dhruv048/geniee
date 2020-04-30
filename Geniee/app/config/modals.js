@@ -10,8 +10,7 @@ export const orderModal={
         "note" : ""
 },
 "totalPrice" : 0,
-    "items" : [
-],
+    "items" : [{status:101}],
     "deviceId" : "",
     "PaymentType" : 101,
     "orderDate" : "2020-04-29T06:24:57.000Z",

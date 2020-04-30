@@ -38,7 +38,19 @@ class App extends Component {
             });
         //   Meteor.subscribe('srvicesByLimit', {limit:100,coordinates:[this.initialPosition.coords.longitude||85.312950,this.initialPosition.coords.latitude||27.712020]})
         Meteor.subscribe('categories-list');
+
+        Meteor.Accounts.onLogin(async cd => {
+            console.log('onLogin')
+            // Meteor.call('getSingleUser', Meteor._userIdSaved, (err, res) => {
+            //     if (!err) {
+            //         // console.log(res)
+                    //AsyncStorage.setItem('loggedUser', JSON.stringify(Meteor.collection('userDetails').findOne({_id:  Meteor._userIdSaved})));
+                    AsyncStorage.setItem('loggedUser', JSON.stringify(Meteor.user()));
+                // }
+            });
         goToDashboard();
+
+
     }
     checkPermission = async () => {
         const enabled = await firebase.messaging().hasPermission();

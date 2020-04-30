@@ -29,6 +29,7 @@ import ProductsBB from "./screens/BaadshahBiryani/ProductsBB";
 import ProductDetailBB from "./screens/BaadshahBiryani/ProductDetailBB";
 import ImageGalleryBB from "./screens/BaadshahBiryani/ImageGalleryBB";
 import Orders from "./screens/store/Orders";
+import OrderDetailIn from "./screens/store/OrderDetailIn";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -43,6 +44,7 @@ Navigation.registerComponent('ServiceDetail', () => ServiceDetail);
 Navigation.registerComponent('LandingPageEF', () => LandingPageEF);
 Navigation.registerComponent('Orders', () => Orders);
 Navigation.registerComponent('OrderDetailEF', () => OrderDetailEF);
+Navigation.registerComponent('OrderDetailIn', () => OrderDetailIn);
 Navigation.registerComponent('WishListEF', () => WishListEF);
 Navigation.registerComponent('CartEF', () => CartEF);
 Navigation.registerComponent('CheckoutEF', () => CheckoutEF);
