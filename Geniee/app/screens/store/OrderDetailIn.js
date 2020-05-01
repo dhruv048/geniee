@@ -52,12 +52,13 @@ class OrderDetailIn extends Component {
                     console.log('this is due to error. ' + err);
                 }
                 else {
-                    let items = res.items.filter(item => {
+                    _order=res.result
+                    let items = _order.items.filter(item => {
                         return item.serviceOwner == this.loggedUser._id
                     });
                     this._updateTotal(items);
-                    res.items = items;
-                    this.setState({order: res})
+                    _order.items = items;
+                    this.setState({order: _order})
                 }
             });
         }
@@ -93,12 +94,13 @@ class OrderDetailIn extends Component {
                     }
                     else {
                         console.log('success. ', ress);
-                        let items = ress.items.filter(item => {
+                        let  _order=res.result
+                        let items = _order.items.filter(item => {
                             return item.serviceOwner == this.loggedUser._id
                         });
                         this._updateTotal(items);
-                        ress.items = items;
-                        this.setState({order: ress});
+                        _order.items = items;
+                        this.setState({order: _order})
                     }
                 });
 
@@ -293,6 +295,7 @@ class OrderDetailIn extends Component {
     renderItem(data, i) {
         let item = data.item;
         item.amount=item.finalPrice * item.quantity;
+
         return (
             <ListItem
                 key={i}

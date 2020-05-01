@@ -150,7 +150,33 @@ Meteor.methods({
     },
 
     getSingleOrder(id) {
-        return ROrder.findOne({_id:id});
+        const collection = ROrder.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+
+        const pipeline = [
+            {
+                $match:{_id:id},
+            },
+            {
+                $lookup:
+                    {
+                        from: "service",
+                        localField: "items.service",
+                        foreignField: "_id",
+                        as: "Services"
+                    }
+            }
+        ];
+        return Async.runSync(function (done) {
+            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc[0]);
+            });
+        });
+
+       // return ROrder.findOne({_id:id});
     },
 
     'updateOrderStatus': (Id, status) => {

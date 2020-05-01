@@ -199,7 +199,7 @@ const style = StyleSheet.create({
         fontSize: 19,
         paddingHorizontal: 30,
         color: colors.primary,
-        fontWeight: '500'
+        fontWeight: 'bold'
     },
 })
 

@@ -116,7 +116,8 @@ export const customStyle = StyleSheet.create({
         backgroundColor: variables.white,
     },
     activeTextStyle: {
-        color: variables.primary
+        color: variables.primary,
+        fontWeight:'bold'
     },
     //Buttons
     buttonPrimary: {
