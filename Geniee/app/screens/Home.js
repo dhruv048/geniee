@@ -37,7 +37,7 @@ import {
 import Meteor from "../react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
-import {colors} from "../config/styles";
+import {colors, customStyle} from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
 import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
@@ -518,17 +518,17 @@ class Home extends Component {
                     {/*</List>*/}
                 </Content>
                 <Footer>
-                    <FooterTab style={styles.footerTab}>
-                        <Button vertical active={this.state.selectedTab === 'home'}
+                    <FooterTab style={[customStyle.footer,{paddingHorizontal:0}]}>
+                        <Button vertical style={{height:'100%',backgroundColor : this.state.selectedTab === 'home'? colors.primary : 'white'}}
                                 onPress={() => this.setState({selectedTab: 'home'})}>
-                            <Icon name="list" style={styles.activeTabIcon}/>
-                            <Text style={styles.activeTabText}>List View</Text>
+                            <Icon name="list" style={this.state.selectedTab === 'home'? styles.activeTabIcon:{ color: colors.primary}}/>
+                            <Text style={this.state.selectedTab === 'home'? styles.activeTabText :{ color: colors.primary}}>List View</Text>
                         </Button>
                         {/*<Image source={logoImage} style={styles.image}/>*/}
-                        <Button vertical active={this.state.selectedTab === 'map'}
+                        <Button   vertical  style={{height : '100%', backgroundColor : this.state.selectedTab === 'map'? colors.primary : 'white'}}
                                 onPress={() => this.setState({selectedTab: 'map'})}>
-                            <Icon name="map"/>
-                            <Text>Map View</Text>
+                            <Icon name="map"  style={this.state.selectedTab === 'map'? styles.activeTabIcon:{ color: colors.primary}}/>
+                            <Text style={this.state.selectedTab === 'map'? styles.activeTabText :{ color: colors.primary}}>Map View</Text>
                         </Button>
                     </FooterTab>
                 </Footer>
