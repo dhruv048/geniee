@@ -110,15 +110,21 @@ class App extends Component {
                 sound: 'default',
                 show_in_foreground: true,
                 title: notification.title,
-                body: notification.body,
             });
 
             if (Platform.OS == "android") {
                 notification_to_be_displayed
                     .android.setPriority(firebase.notifications.Android.Priority.High)
                     .android.setChannelId("Default")
-                    .android.setBigText(notification.body)
+                    .android.setColor(colors.primary)
+                    .android.setAutoCancel(true)
                     .android.setVibrate(1000);
+                if(notification.data.image)
+                 notification_to_be_displayed.android.setBigPicture(notification.data.image,notification.data.icon, notification.title, notification.body);
+                else
+                    notification_to_be_displayed.android.setBigText(notification.body);
+
+                console.log(notification_to_be_displayed)
             }
 
             firebase.notifications().displayNotification(notification_to_be_displayed);

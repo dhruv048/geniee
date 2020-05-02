@@ -5,15 +5,15 @@ export const FIREBASE_MESSAGING = {
 
         // These registration tokens come from the client FCM SDKs.
         const registrationTokens = [
-            'ffuwM8tr3EU:APA91bH3wEY0YN7Jch60Z2vRqTj4z9arepGqIGGVyweY5a7w-TRmyyEDiYwuh-OaO_FWEeApHVhDEhjy_FbGVnuE4YUbWnp672yUajB-zTiir7VVBQBdsG_dmUglBolYxiLz2CI2yLN2',
+            'fA1EQWZ3x-I:APA91bH2424HEgp5uKABTIwt-8cenSTR9rHkGD1xGnQndrMODhvEhQXnypR0I00aEfX0KqZ7rQlTEgzJPUOAzGRjG92k8h1G9-lJ2sietLCpJi-2BPxgs0BO3U--JTeZPPSEDYGYcLjX',
         ];
 
         const message = {
             notification: {
                 title: 'Test',
-                body: 'This is to test Push Notification from server'
+                body: 'This is to test Push Notification from server.'
             },
-            data: {score: '850', time: '2:45'},
+            data: {score: '850', time: '2:45', image:"https://api.krishisansaar.com/img/gr.jpg", icon:"https://api.krishisansaar.com/img/gr-icon.jpg"},
             tokens: registrationTokens,
         };
 

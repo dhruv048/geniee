@@ -15,7 +15,7 @@ Meteor.startup(function () {
         credential: admin.credential.cert(serviceAccount),
      //   databaseURL: ""
     });
-  //  FIREBASE_MESSAGING.sendTestMessage();
+    FIREBASE_MESSAGING.sendTestMessage();
 
 
     FacebookOAuthInit();
