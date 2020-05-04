@@ -123,9 +123,9 @@ class UploadProfilePic extends React.Component {
                 </TouchableOpacity>:
                     <Image style={{width: 150, height: 150}}
                            source={require('../../images/logo2-trans-640X640.png')} />}
-                <Text style={{fontSize:16,fontWeight:"400",color:'white'}}>WELLCOME</Text>
-                {this.state.user?
-                    <Text style={{fontSize:14,fontWeight:"200",color:'white'}}>{this.state.user.profile.name}</Text>:null}
+                {/*<Text style={{fontSize:16,fontWeight:"400",color:'white'}}>WELLCOME</Text>*/}
+                {/*{this.state.user?*/}
+                    {/*<Text style={{fontSize:14,fontWeight:"200",color:'white'}}>{this.state.user.profile.name}</Text>:null}*/}
 
                 <ActionSheet
                     ref={o => this.ActionSheet = o}

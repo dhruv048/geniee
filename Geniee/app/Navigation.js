@@ -30,6 +30,7 @@ import ImageGalleryBB from "./screens/BaadshahBiryani/ImageGalleryBB";
 import Orders from "./screens/store/Orders";
 import OrderDetailIn from "./screens/store/OrderDetailIn";
 import OrderDetailOut from "./screens/store/OrderDetailOut";
+import Profile from "./screens/Profile/Profile";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -59,6 +60,8 @@ Navigation.registerComponent('SignIn', () => SignIn);
 Navigation.registerComponent('Register', () => Register);
 Navigation.registerComponent('ImageGallery', () => ImageGallery);
 Navigation.registerComponent('ImageGalleryBB', () => ImageGalleryBB);
+Navigation.registerComponent('Profile', () => Profile);
+
 let currentRoute = ''
 
 
