@@ -1,37 +1,66 @@
-import React,{PureComponent} from 'react';
+import React, {PureComponent} from 'react';
 import AsyncStorage from "@react-native-community/async-storage";
 import {colors, customStyle} from "../../config/styles";
 import Meteor from '../../react-native-meteor';
 import {Container, Content, Header, Item, Input, Label, Text, Radio} from "native-base";
 import UploadProfilePic from '../../components/UploadProfilePic/UploadProfilePic';
-import {KeyboardAvoidingView, SafeAreaView, StatusBar, TouchableNativeFeedback, View,StyleSheet} from "react-native";
+import {KeyboardAvoidingView, SafeAreaView, StatusBar, TouchableNativeFeedback, View, StyleSheet,ToastAndroid} from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import {backToRoot} from "../../Navigation";
 
 class Profile extends React.PureComponent {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-          profile:null,
-          name:'',
-            address:'',
-            email:'',
-            phone:'',
-            profileImage:'',
+        this.state = {
+            name: '',
+            address: '',
+            email: '',
+            contact: '',
         }
         this.loggedUser;
     }
 
-   async componentDidMount() {
+    async componentDidMount() {
         let user = await AsyncStorage.getItem('loggedUser');
-        this.loggedUser = JSON.parse(user);
-        const profile=Meteor.user()? Meteor.user().profile:this.loggedUser.profile;
-        this.setState({profile})
+        this.loggedUser =  Meteor.user() ? Meteor.user():JSON.parse(user);
+       // const profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
+        this._updateState(this.loggedUser.profile)
     }
 
+    _updateState(profile) {
+        this.setState({
+            name: profile.name,
+            address: profile.location.formatted_address,
+            email: profile.email,
+            contact: profile.contactNo,
+        })
+    }
 
-    render(){
-        return(
+    UpdateVisitorProfile=()=>{
+        const {name, contact, email, address} = this.state;
+        let profile=this.loggedUser.profile;
+        profile.name = name;
+        profile.contactNo=contact;
+        profile.email=email;
+
+        Meteor.call('updateProfile',profile,(err,res)=>{
+            if(err){
+                console.log(err)
+            }
+            else{
+                ToastAndroid.showWithGravityAndOffset(
+                    'updated profile Successfully',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+            }
+        })
+    }
+
+    render() {
+        return (
             <Container style={styles.container}>
                 {/*<Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}/>*/}
                 <StatusBar
@@ -45,21 +74,21 @@ class Profile extends React.PureComponent {
                     alignItems: 'center',
                     height: 60
                 }} androidStatusBarColor={colors.statusBar}>
-                    <View style={styles.buttonOutline}>
-                        <View style={styles.buttonOutlineWrap}>
+                    <View>
+                        <View>
                             <TouchableNativeFeedback onPress={() => {
                                 backToRoot(this.props.componentId)
                             }}>
-                                <View style={styles.buttonOutlineContent}>
+                                <View>
                                     <Icon name='arrow-left' color={colors.primary} size={24}/>
                                 </View>
                             </TouchableNativeFeedback>
                         </View>
                     </View>
-                    <View style={styles.buttonOutline}>
-                        <View style={styles.buttonOutlineWrap}>
+                    <View>
+                        <View>
                             <TouchableNativeFeedback onPress={this.UpdateVisitorProfile}>
-                                <View style={styles.buttonOutlineContent}>
+                                <View>
                                     <Icon name='check' color={colors.primary} size={24}/>
                                 </View>
                             </TouchableNativeFeedback>
@@ -67,87 +96,87 @@ class Profile extends React.PureComponent {
                     </View>
                 </Header>
                 <Content>
-                        <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='always'>
-                            <UploadProfilePic />
-                            <KeyboardAvoidingView>
-                                <View style={styles.containerRegister}>
-                                    <Item inlineLabel style={customStyle.formGroup}>
-                                        <Label style={customStyle.formLabel}>Name</Label>
-                                        <Input
-                                            style={customStyle.formControl}
-                                            value={this.state.name}
-                                            onChangeText={(name) => this.setState({name})}
-                                        />
-                                    </Item>
-                                    <Item inlineLabel style={customStyle.formGroup}>
-                                        <Label style={customStyle.formLabel}>Email</Label>
-                                        <Input
-                                            style={customStyle.formControl}
-                                            value={this.state.email}
-                                            onChangeText={(email) => this.setState({email})}
-                                        />
-                                    </Item>
-                                        {/*<View style={[customStyle.formGroup, {*/}
-                                            {/*flexDirection: 'column'*/}
-                                        {/*}]}>*/}
-                                            {/*<Label style={[customStyle.formLabel, {marginBottom: 5}]}>Gender</Label>*/}
-                                            {/*<View style={customStyle.radioGroup}>*/}
-                                                {/*<Item onPress={() => {*/}
-                                                    {/*this._changeGender('Male')*/}
-                                                {/*}} style={customStyle.radioInline}>*/}
-                                                    {/*<Radio*/}
-                                                        {/*style={customStyle.radioButton}*/}
-                                                        {/*color={colors.radioNormal}*/}
-                                                        {/*selectedColor={colors.radioActive}*/}
-                                                        {/*selected={this.state.gender === 'Male'}*/}
-                                                    {/*/>*/}
-                                                    {/*<Text>Male</Text>*/}
-                                                {/*</Item>*/}
-                                                {/*<Item onPress={() => {*/}
-                                                    {/*this._changeGender('Female')*/}
-                                                {/*}} style={customStyle.radioInline}>*/}
-                                                    {/*<Radio*/}
-                                                        {/*style={customStyle.radioButton}*/}
-                                                        {/*color={colors.radioNormal}*/}
-                                                        {/*selectedColor={colors.radioActive}*/}
-                                                        {/*selected={this.state.gender === 'Female'}*/}
-                                                    {/*/>*/}
-                                                    {/*<Text>Female</Text>*/}
-                                                {/*</Item>*/}
-                                                {/*<Item onPress={() => {*/}
-                                                    {/*this._changeGender('Other')*/}
-                                                {/*}} style={customStyle.radioInline}>*/}
-                                                    {/*<Radio*/}
-                                                        {/*style={customStyle.radioButton}*/}
-                                                        {/*color={colors.radioNormal}*/}
-                                                        {/*selectedColor={colors.radioActive}*/}
-                                                        {/*selected={this.state.gender === 'Other'}*/}
-                                                    {/*/>*/}
-                                                    {/*<Text>Others</Text>*/}
-                                                {/*</Item>*/}
-                                            {/*</View>*/}
-                                        {/*</View>*/}
-                                    <Item inlineLabel style={customStyle.formGroup}>
-                                        <Label style={customStyle.formLabel}>Mobile</Label>
-                                        <Input
-                                            style={customStyle.formControl}
-                                            value={this.state.contact}
-                                            keyboardType='phone-pad'
-                                            onChangeText={(contact) => this.setState({contact})}
-                                        />
-                                    </Item>
-                                    <Item inlineLabel style={customStyle.formGroup}>
-                                        <Label style={customStyle.formLabel}>Address</Label>
-                                        <Input
-                                            style={customStyle.formControl}
-                                            onFocus={() => this.setState({locationModal: true})}
-                                            onKeyPress={() => this.setState({locationModal: true})}
-                                            value={this.state.address.formatted_address}
-                                        />
-                                    </Item>
-                                </View>
-                            </KeyboardAvoidingView>
-                        </SafeAreaView>
+                    <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='always'>
+                        <UploadProfilePic/>
+                        <KeyboardAvoidingView>
+                            <View style={styles.containerRegister}>
+                                <Item inlineLabel style={customStyle.formGroup}>
+                                    <Label style={customStyle.formLabel}>Name</Label>
+                                    <Input
+                                        style={customStyle.formControl}
+                                        value={this.state.name}
+                                        onChangeText={(name) => this.setState({name})}
+                                    />
+                                </Item>
+                                <Item inlineLabel style={customStyle.formGroup}>
+                                    <Label style={customStyle.formLabel}>Email</Label>
+                                    <Input
+                                        style={customStyle.formControl}
+                                        value={this.state.email}
+                                        onChangeText={(email) => this.setState({email})}
+                                    />
+                                </Item>
+                                {/*<View style={[customStyle.formGroup, {*/}
+                                {/*flexDirection: 'column'*/}
+                                {/*}]}>*/}
+                                {/*<Label style={[customStyle.formLabel, {marginBottom: 5}]}>Gender</Label>*/}
+                                {/*<View style={customStyle.radioGroup}>*/}
+                                {/*<Item onPress={() => {*/}
+                                {/*this._changeGender('Male')*/}
+                                {/*}} style={customStyle.radioInline}>*/}
+                                {/*<Radio*/}
+                                {/*style={customStyle.radioButton}*/}
+                                {/*color={colors.radioNormal}*/}
+                                {/*selectedColor={colors.radioActive}*/}
+                                {/*selected={this.state.gender === 'Male'}*/}
+                                {/*/>*/}
+                                {/*<Text>Male</Text>*/}
+                                {/*</Item>*/}
+                                {/*<Item onPress={() => {*/}
+                                {/*this._changeGender('Female')*/}
+                                {/*}} style={customStyle.radioInline}>*/}
+                                {/*<Radio*/}
+                                {/*style={customStyle.radioButton}*/}
+                                {/*color={colors.radioNormal}*/}
+                                {/*selectedColor={colors.radioActive}*/}
+                                {/*selected={this.state.gender === 'Female'}*/}
+                                {/*/>*/}
+                                {/*<Text>Female</Text>*/}
+                                {/*</Item>*/}
+                                {/*<Item onPress={() => {*/}
+                                {/*this._changeGender('Other')*/}
+                                {/*}} style={customStyle.radioInline}>*/}
+                                {/*<Radio*/}
+                                {/*style={customStyle.radioButton}*/}
+                                {/*color={colors.radioNormal}*/}
+                                {/*selectedColor={colors.radioActive}*/}
+                                {/*selected={this.state.gender === 'Other'}*/}
+                                {/*/>*/}
+                                {/*<Text>Others</Text>*/}
+                                {/*</Item>*/}
+                                {/*</View>*/}
+                                {/*</View>*/}
+                                <Item inlineLabel style={customStyle.formGroup}>
+                                    <Label style={customStyle.formLabel}>Mobile</Label>
+                                    <Input
+                                        style={customStyle.formControl}
+                                        value={this.state.contact}
+                                        keyboardType='phone-pad'
+                                        onChangeText={(contact) => this.setState({contact})}
+                                    />
+                                </Item>
+                                <Item inlineLabel style={customStyle.formGroup}>
+                                    <Label style={customStyle.formLabel}>Address</Label>
+                                    <Input
+                                        style={customStyle.formControl}
+                                        onFocus={() => this.setState({locationModal: true})}
+                                        onKeyPress={() => this.setState({locationModal: true})}
+                                        value={this.state.address}
+                                    />
+                                </Item>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </SafeAreaView>
                 </Content>
             </Container>
         );
@@ -160,7 +189,7 @@ const styles = StyleSheet.create({
         padding: 10,
         flexGrow: 1,
         width: '100%',
-        flex:1
+        flex: 1
     },
     sbf9e8383: {
         flex: 1,
@@ -174,7 +203,7 @@ const styles = StyleSheet.create({
     },
     containerRegister: {
         padding: 30,
-        width:'100%'
+        width: '100%'
     },
 
     inputBox: {

@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {FIREBASE_MESSAGING} from '../API/fire-base-admin';
 import {Ratings} from "../../lib/collections/genieeRepair/ratings";
 import {EFProducts} from "../../lib/collections/eatFit/efProducts";
-import {ProductOwner} from "../../lib/utils";
+import {ProductOwner,NotificationTypes} from "../../lib/utils";
 
 Meteor.methods({
 
@@ -36,6 +36,7 @@ Meteor.methods({
             }
             //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
             serviceInfo.location = location;
+            let Owner=Meteor.users().findOme({_id:serviceInfo.owner});
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
@@ -56,34 +57,38 @@ Meteor.methods({
                             serviceInfo.Image = null;
                             var res = Service.insert(serviceInfo);
                             try {
-                                FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
+                                FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service by- ${Owner.profile.name}`, serviceInfo.title, {
                                     Id: res,
                                     navigate: "true",
                                     route: "ServiceDetail",
-                                    image: serviceInfo.coverImage
+                                    image: serviceInfo.coverImage,
+                                    icon:Owner.profile.profileImage
                                 })
                             } catch (e) {
                                 throw new Meteor.Error(403, e.message);
                             }
+                            const notification={
+                                title:`New Service by- ${Owner.profile.name}`,
+                                description: serviceInfo.title,
+                                owner: serviceInfo.owner,
+                                navigateId: res,
+                                receiver:[],
+                                removedBy:[],
+                                type: NotificationTypes.ADD_SERVICE
+                            };
+                            Meteor.call('addNotification',notification);
                             return res;
                         }
                     }, proceedAfterUpload = true)
             }
             else {
-
-                var res = Service.insert({
-                    title: serviceInfo.title,
-                    description: serviceInfo.description,
-                    contact: serviceInfo.contact,
-                    location: serviceInfo.location,
-                    radius: serviceInfo.radius,
-                    coverImage: null,
-                    homeDelivery: serviceInfo.homeDelivery,
-                    categoryId: CategoryId,
-                    createdAt: new Date(),
-                    createdBy: currentUserId,
-                    ratings: [{count: 0}],
-                });
+                serviceInfo.createdAt = new Date(new Date().toUTCString());
+                serviceInfo.createdBy = currentUserId;
+                serviceInfo.coverImage = null;
+                serviceInfo.categoryId = CategoryId;
+                serviceInfo.ratings = [{count: 0}];
+                serviceInfo.Image = null;
+                var res = Service.insert(serviceInfo);
                 try {
                     FIREBASE_MESSAGING.notificationToAll("newServiceStaging", `New Service Provider - ${serviceInfo.title}`, serviceInfo.description, {
                         Id: res,
@@ -93,6 +98,16 @@ Meteor.methods({
                 } catch (e) {
                     throw new Meteor.Error(403, e.message);
                 }
+                const notification={
+                    title:`New Service by- ${Owner.profile.name}`,
+                    description: serviceInfo.title,
+                    owner: serviceInfo.owner,
+                    navigateId: res,
+                    receiver:[],
+                    removedBy:[],
+                    type: NotificationTypes.ADD_SERVICE
+                };
+                Meteor.call('addNotification',notification);
                 return res;
             }
 
@@ -247,6 +262,7 @@ Meteor.methods({
             productInfo.qty = parseInt(productInfo.qty);
             productInfo.availabeQuantity = parseInt(productInfo.qty);
             productInfo.createDate = new Date(new Date().toUTCString());
+            let _service = Service.findOne({_id:productIno.service})
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
@@ -268,11 +284,12 @@ Meteor.methods({
                                     console.log('insert')
                                     let pId= Products.insert(productInfo);
                                     try {
-                                        FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product Available - ${productInfo.title}`, productInfo.description, {
+                                        FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
                                             Id: pId,
                                             navigate: "true",
                                             route: "ProductDetail",
-                                            image: productInfo.images[0]
+                                            image: productInfo.images[0],
+                                            icon:_service.coverImage
                                         })
                                     } catch (e) {
                                         throw new Meteor.Error(403, e.message);
@@ -286,7 +303,7 @@ Meteor.methods({
                 productInfo.images = [];
                 console.log('insert');
                 try {
-                    FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product Available - ${productInfo.title}`, productInfo.description, {
+                    FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
                         Id: Id,
                         navigate: "true",
                         route: "ProductDetail",

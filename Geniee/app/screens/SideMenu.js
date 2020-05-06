@@ -98,7 +98,7 @@ class SideMenu extends Component {
                                     alignSelf: 'center',
                                     borderColor: `rgba(87, 150, 252, 1)`
                                 }}
-                                       source={this.state.avatarSource ? {uri: this.state.avatarSource.includes('https://') ? this.state.avatarSource : settings.IMAGE_URL + this.state.avatarSource} : require('../images/duser.png')}/>
+                                       source={this.state.user.profile.profileImage ? {uri: this.state.user.profile.profileImage.includes('https://') ? this.state.user.profile.profileImage : settings.IMAGE_URL + this.state.user.profile.profileImage} : require('../images/duser.png')}/>
                                 {/*{this.state.user?*/}
                                 {/*<Icon name="edit" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}*/}
                             </>

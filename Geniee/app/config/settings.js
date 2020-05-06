@@ -57,6 +57,10 @@ export const ProductOwner = {
     EAT_FIT:1,
     BAADSHAH_BIRYANI:2,
 };
+
+export const NotificationTypes = {
+    ADD_SERVICE:0
+};
 export default settings;
 
 

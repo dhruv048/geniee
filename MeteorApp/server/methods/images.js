@@ -23,11 +23,12 @@ Meteor.methods({
                     console.log(err)
                 }
                 else {
-                    console.log("imageId",res._id)
+                    let Id=res._id;
+                    console.log("imageId",Id)
                     Meteor.users.update({_id:userId},{
-                        $set:{'profile.profileImage':res._id}
+                        $set:{'profile.profileImage':Id}
                     })
-                    return res._id;
+                    return Id;
                 }
             },proceedAfterUpload = true)
     }

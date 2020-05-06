@@ -77,16 +77,16 @@ Meteor.startup(function () {
         }
     }
 
-    if(Notifications.find().count()===0){
-        Notifications.insert({
-            title:"Updates",
-            message:"A lot new features available now. Grab new App now",
-            url:"http://.github.com",
-            linkText:"App Store",
-            isActive:false
-        }
-        )
-    }
+    // if(Notifications.find().count()===0){
+    //     Notifications.insert({
+    //         title:"Updates",
+    //         message:"A lot new features available now. Grab new App now",
+    //         url:"http://.github.com",
+    //         linkText:"App Store",
+    //         isActive:false
+    //     }
+    //     )
+    // }
 
     if(MainCategories.find().count()<1){
 

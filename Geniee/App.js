@@ -29,6 +29,8 @@ class App extends Component {
         firebase.messaging().subscribeToTopic('newPoductStaging');
         firebase.messaging().subscribeToTopic('newServiceStaging');
         firebase.messaging().subscribeToTopic('allGenieeStaging');
+
+        Meteor.subscribe('newNotificationCount');
         this.checkPermission().catch(e => {
             console.log(e)
         });
@@ -120,11 +122,11 @@ class App extends Component {
                     .android.setAutoCancel(true)
                     .android.setVibrate(1000);
                 if(notification.data.image)
-                 notification_to_be_displayed.android.setBigPicture(notification.data.image,notification.data.icon, notification.title, notification.body);
+                 notification_to_be_displayed.android.setBigPicture(settings.IMAGE_URL+notification.data.image,settings.IMAGE_URL+notification.data.icon, notification.title, notification.body);
                 else
                     notification_to_be_displayed.android.setBigText(notification.body);
 
-                console.log(notification_to_be_displayed)
+               // console.log(notification_to_be_displayed)
             }
 
             firebase.notifications().displayNotification(notification_to_be_displayed);

@@ -1,15 +1,15 @@
-import { Meteor } from 'meteor/meteor';
+import {Meteor} from 'meteor/meteor';
 
 Meteor.methods({
 
-    'registerUser':  (userInfo)=> {
-        var user= Meteor.user();
-        var createdBy=null;
-        if(user.profile.role===1 || user.profile.role===2   ){
-          createdBy= user._id;
+    'registerUser': (userInfo) => {
+        var user = Meteor.user();
+        var createdBy = null;
+        if (user.profile.role === 1 || user.profile.role === 2) {
+            createdBy = user._id;
         }
-        else if(user.profile.role===0){
-         createdBy=user.profile.createdBy
+        else if (user.profile.role === 0) {
+            createdBy = user.profile.createdBy
         }
         try {
             Accounts.createUser({
@@ -18,37 +18,37 @@ Meteor.methods({
                 email: userInfo.email,
                 createdAt: new Date(),
                 profile: {
-                   // role: userInfo.role,
-                    role: user.profile.role===2 ? 1:0,
+                    // role: userInfo.role,
+                    role: user.profile.role === 2 ? 1 : 0,
                     // profileimage: null,
                     name: userInfo.name,
-                    contactNo:userInfo.contact,
-                    createdBy:createdBy,
+                    contactNo: userInfo.contact,
+                    createdBy: createdBy,
+                    primaryEmail: userInfo.email,
+                    email: userInfo.email
                 }
             });
         }
         catch (e) {
             console.log(e.message);
-            throw new Meteor.Error(401,e.message);
+            throw new Meteor.Error(401, e.message);
 
         }
     },
 
-    'signUpUser':  (userInfo)=> {
+    'signUpUser': (userInfo) => {
         try {
             Accounts.createUser(userInfo);
         }
         catch (e) {
             console.log(e.message);
-            throw new Meteor.Error(401,e.message);
+            throw new Meteor.Error(401, e.message);
 
         }
     },
 
 
-
-
-    'loginUser':(username,password)=> {
+    'loginUser': (username, password) => {
         // Meteor.loginWithPassword({email: username}, password, function(error) {
         //     console.log(error)
         // });
@@ -156,10 +156,24 @@ Meteor.methods({
             });
         }
     },
+
+    'updateProfile': (profile) => {
+        Meteor.users.update(
+            {_id: Meteor.userId()},
+            {
+                $set: {
+                    'profile.name': profile.name,
+                    'profile.location': profile.location,
+                    'profile.email': profile.email,
+                    'profile.contactNo': profile.contactNo
+                }
+            }
+        )
+    }
 });
 const pluckAddresses = (emails = []) => emails.map(email => email.address);
-const randomNum=()=>{
-    return   Math.floor(100000 + Math.random() * 900000)
+const randomNum = () => {
+    return Math.floor(100000 + Math.random() * 900000)
 }
 
 

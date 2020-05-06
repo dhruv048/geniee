@@ -13,7 +13,8 @@ export const FIREBASE_MESSAGING = {
                 title: 'Test',
                 body: 'This is to test Push Notification from server.'
             },
-            data: {score: '850', time: '2:45', image:"https://api.krishisansaar.com/img/gr.jpg", icon:"https://api.krishisansaar.com/img/gr-icon.jpg"},
+           // data: {score: '850', time: '2:45', image:"https://api.krishisansaar.com/img/gr.jpg", icon:"https://api.krishisansaar.com/img/gr-icon.jpg"},
+            data: {score: '850', time: '2:45', image:"fJeksckQAaMt8W6zt", icon:"5JdKu8yCxwvSXyrHb"},
             tokens: registrationTokens,
         };
 

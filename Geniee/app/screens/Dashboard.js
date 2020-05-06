@@ -57,7 +57,8 @@ class Dashboard extends Component {
             pickLocation: false,
             backClickCount: 0,
             wishList:0,
-            totalCount:0
+            totalCount:0,
+            notificationCount:0
         };
         this.arrayholder;
         this.currentSearch = '';
@@ -141,6 +142,8 @@ class Dashboard extends Component {
         Navigation.events().bindComponent(this);
         Meteor.subscribe('categories-list');
         Meteor.subscribe('aggChatChannels');
+        if(this.props.notificationCount.length>0)
+            this.setState({notificationCount:this.props.notificationCount[0].totalCount})
         Meteor.call('getActiveAdvertises', (err, res) => {
             // console.log("banners",err, res)
             if (!err) {
@@ -206,6 +209,8 @@ class Dashboard extends Component {
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch)
         }
+        if(newProps.notificationCount.length>0 && newProps.notificationCount[0].totalCount!=this.state.notificationCount)
+            this.setState({notificationCount:newProps.notificationCount[0].totalCount})
     }
 
     componentWillUnmount() {
@@ -581,6 +586,18 @@ class Dashboard extends Component {
                                             lineHeight: 18
                                         }}>{this.state.totalCount}</Text></Badge> : null}
                             </Button>
+                            <Button onPress={() => goToRoute(this.props.componentId, 'Notification')} transparent>
+                                <NBIcon name='ios-notifications' style={{fontSize: 27, color: 'white'}}/>
+                                {this.state.notificationCount > 0 ?
+                                    <Badge
+                                        style={{position: 'absolute', height: 18}}>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '100',
+                                            color: 'white',
+                                            lineHeight: 18
+                                        }}>{this.state.notificationCount}</Text></Badge> : null}
+                            </Button>
                             <Button transparent onPress={this.handleOnPress}>
                                 <Icon name={'search'} size={25} color={'white'}/></Button>
                         </Right>
@@ -885,7 +902,8 @@ const styles = StyleSheet.create({
 })
 export default Meteor.withTracker(() => {
     return {
-        categories: Meteor.collection('MainCategories').find()
+        categories: Meteor.collection('MainCategories').find(),
+        notificationCount: Meteor.collection("newNotificationCount").find()
     }
 })(Dashboard);
 

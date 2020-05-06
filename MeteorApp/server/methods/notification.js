@@ -1,63 +1,51 @@
 import {Meteor} from 'meteor/meteor';
-
+import {Notification} from '../../lib/collections/notification';
 Meteor.methods({
-    'createNotification': (notification) => {
-        console.log('addNewNotification:::=>>>');
-        var currentUserId = Meteor.userId();
-        notification.createdAt=new Date();
-        notification.createdBy=currentUserId;
-
+    'addNotification': (notification) => {
         try {
-        return    Notifications.insert(notification);
+            let loggedUser = Meteor.user();
+            notification.createdAt = new Date(new Date().toUTCString());
+            notification.seenBy = [];
+            if (!notification.owner)
+                notification.owner = loggedUser._id;
+            Notification.insert(notification);
+
         }
         catch (e) {
-            console.log(e.message);
-            throw new Meteor.Error(403,e.message)
-
+            console.log(e.message)
         }
     },
 
-    'updateNotification': function (notification) {
-        var not= Notifications.findOne({_id:notification._id});
-        if (not.createdBy===Meteor.userId() || Meteor.user().profile.role === 2) {
-            try {
+    'updateNotificationSeen': function (notificationId) {
+        try {
+            Notification.update({_id: {$in: notificationId}},
+                {
+                    $addToSet: {seenBy: Meteor.userId()}
+                },
+                {multi: true});
+        }
+        catch (e) {
+            Meteor.Error(500, e.message)
+        }
+    },
 
-                Category.update({_id: notification._id}, {
-                    $set: {
-                        title: notification.title,
-                        message: notification.message,
-                        url: notification.url,
-                        isActive: notification.isActive,
-                        linkText:notification.linkText
-                    }
+    'removeNotification': function (notificationId) {
+        try {
+            const logged = Meteor.userId();
+            let notification = Notification.findOne({_id: notificationId});
+            if (notification.receiver.length == 1) {
+                Notification.remove(notificationId);
+            }
+            else {
+                let removedBy=notification.removedBy ||[];
+                removedBy.push(logged);
+                Notification.update({_id: notificationId}, {
+                    $set: {removedBy:removedBy}
                 });
             }
-            catch (err) {
-                console.log(err.message);
-                throw new Meteor.Error(403,e.message)
-            }
-
         }
-        else {
-            console.log("Permission Denied")
-            throw new Meteor.Error(401, "Permission Denied");
+        catch (e) {
+            Meteor.Error(500, e.message)
         }
-    },
-
-    'removeNotification': function (id) {
-        var notification= Notifications.findOne({_id:id});
-        if  (Meteor.userId()===notification.createdBy || Meteor.user().profile.role === 2)  {
-            try {
-                Notifications.remove({_id:id});
-            }
-            catch (err) {
-                console.log(err.message);
-                throw new Meteor.Error(403,err.message);
-            }
-        }
-        else {
-            throw new Meteor.Error(401,"Permission Denied");
-        }
-    },
-
+    }
 })

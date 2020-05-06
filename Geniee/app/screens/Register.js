@@ -111,7 +111,9 @@ class Register extends Component {
                         name: capitalzeFirstLetter(name),
                         contactNo: contact,
                         profileImage: null,
-                        location: location
+                        location: location,
+                        primaryEmail:email,
+                        email:email
                     }
                 };
                 Meteor.call('signUpUser', user, (err, res) => {

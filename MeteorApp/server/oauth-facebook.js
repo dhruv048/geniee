@@ -96,7 +96,16 @@ const registerHandler = () => {
                     services: {
                         facebook: fields
                     },
-                    profile: {name: identity.name, profileImage: identity.picture.data.url},
+                    profile: {name: identity.name, profileImage: identity.picture.data.url,location:{
+                            "formatted_address" : "",
+                            "geometry" : {
+                                "type" : "Point",
+                                "coordinates" : [
+                                    0,
+                                    0
+                                ]
+                            }
+                        }},
                     emails: [{
                         address: identity.email,
                         verified: true

@@ -1,13 +1,6 @@
 
 export const NotificationTypes = {
-    HOSPITAL_ADD: 1,
-    DOCTOR_ADD: 2,
-    NEW_ARTICLE: 3,
-    LIKE_ARTICLE: 5,
-    COMMENT_ARTICLE: 6,
-    ANSWER_QUESTION: 4,
-    MESSAGE_RECEIVED: 7,
-    FOLLOWED: 8,
+   ADD_SERVICE:0
 };
 
 export const userType = {
