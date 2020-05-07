@@ -6,7 +6,7 @@ Meteor.publish('getNotification', () => {
     return Notification.find({receiver: Meteor.userId});
 })
 
-Meteor.publish('notificationWithLimit', function (skip) {
+Meteor.publish('notificationWithLimit', function (skip,deviceId) {
     let logged = this.userId;
     let _skip = skip ? skip : 0;
     ReactiveAggregate(this, Notification, [
@@ -15,14 +15,17 @@ Meteor.publish('notificationWithLimit', function (skip) {
                 $and: [
                     {
                         $or: [
-                            {receiver: logged},
-                            {type: {$in: [NotificationTypes.ADD_SERVICE]}}
+                            {type: {$in: [NotificationTypes.ADD_SERVICE,3,21,22]}},
+                            {receiver: logged}
                         ]
                     },
-                    {removedBy: {$nin: [logged]}}
+                    {removedBy: {$nin: [logged,deviceId]}}
                 ]
             }
         },
+        {$sort: {"createdAt": -1}},
+        {$limit: _skip + 20},
+        {$skip: _skip},
         {
             $lookup: {
                 from: "users",
@@ -36,9 +39,7 @@ Meteor.publish('notificationWithLimit', function (skip) {
                 "Owner": {$arrayElemAt: ["$Users", 0]}
             }
         },
-        {$sort: {"createdAt": -1}},
-        {$limit: _skip + 20},
-        {$skip: _skip},
+
         {
             $project: {
                 _id: 1,
@@ -57,19 +58,20 @@ Meteor.publish('notificationWithLimit', function (skip) {
         }], {clientCollection: 'notificationDetail', allowDiskUse: true});
 });
 
-Meteor.publish('newNotificationCount', function () {
+Meteor.publish('newNotificationCount', function (deviceId) {
     ReactiveAggregate(this, Notification, [
             {
                 $match: {
                     $and: [
                         {
                             $or: [
-                                {receiver: this.userId},
-                                {type: {$in: [NotificationTypes.ADD_SERVICE]}}
+                                {type: {$in: [NotificationTypes.ADD_SERVICE,3,21,22]}},
+                                {receiver: this.userId}
+
                             ]
                         },
-                        {seen: false},
-                        {removedBy: {$nin: [this.userId]}}
+                        {seenBy: {$nin: [this.userId,deviceId]}},
+                        {removedBy: {$nin: [this.userId,deviceId]}}
                     ]
                 }
             },

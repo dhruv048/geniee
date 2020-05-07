@@ -20,17 +20,19 @@ import Meteor from './app/react-native-meteor';
 import firebase from "react-native-firebase";
 import MyFunctions from "./app/lib/MyFunctions";
 import AsyncStorage from "@react-native-community/async-storage";
+import DeviceInfo from "react-native-device-info";
 class App extends Component {
     constructor(props){
         super(props)
         Meteor.connect(settings.METEOR_URL);
     };
     componentDidMount(){
+        const deviceId = DeviceInfo.getUniqueId();
         firebase.messaging().subscribeToTopic('newPoductStaging');
         firebase.messaging().subscribeToTopic('newServiceStaging');
         firebase.messaging().subscribeToTopic('allGenieeStaging');
 
-        Meteor.subscribe('newNotificationCount');
+        Meteor.subscribe('newNotificationCount',deviceId);
         this.checkPermission().catch(e => {
             console.log(e)
         });

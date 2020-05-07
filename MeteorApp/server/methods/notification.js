@@ -16,11 +16,12 @@ Meteor.methods({
         }
     },
 
-    'updateNotificationSeen': function (notificationId) {
+    'updateNotificationSeen': function (notificationId,deviceId) {
         try {
+            let userId=Meteor.userId() ? Meteor.userId():deviceId;
             Notification.update({_id: {$in: notificationId}},
                 {
-                    $addToSet: {seenBy: Meteor.userId()}
+                    $addToSet: {seenBy: userId}
                 },
                 {multi: true});
         }
@@ -29,11 +30,11 @@ Meteor.methods({
         }
     },
 
-    'removeNotification': function (notificationId) {
+    'removeNotification': function (notificationId,deviceId) {
         try {
-            const logged = Meteor.userId();
+            const logged = Meteor.userId()? Meteor.userId():deviceId;
             let notification = Notification.findOne({_id: notificationId});
-            if (notification.receiver.length == 1) {
+            if (Meteor.userId() && notification.receiver.length == 1) {
                 Notification.remove(notificationId);
             }
             else {

@@ -194,7 +194,7 @@ const styles = {
         backgroundColor: '#fff'
     },
     content: {
-       flex:1
+       flex:1,
     },
     header: {
         paddingHorizontal: 30,
