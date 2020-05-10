@@ -173,13 +173,13 @@ class Notification extends Component {
                 }}>
                     <Left style={{flex: 0, alignSelf: 'flex-start', paddingTop: 4}}>
                         {[NotificationTypes.ORDER_CANCELLED, NotificationTypes.ORDER_DISPATCHED, NotificationTypes.ORDER_DELIVERED].includes(item.type) ?
-                            <Thumbnail square source={require('../../images/logo.png')} small/> :
+                            <Thumbnail medium square style={{borderRadius:5}} source={require('../../images/logo.png')} /> :
 
-                            <Thumbnail square
+                            <Thumbnail square medium style={{borderRadius:5}}
                                 source={item.Owner.profile.profileImage ?
                                     {uri: settings.IMAGE_URL + item.Owner.profile.profileImage}
                                     : require('../../images/duser.png')}
-                                small/>}
+                            />}
                     </Left>
                     <Body style={{flex: 3, flexDirection: 'column', alignItems: 'flex-start', paddingHorizontal: 10}}>
                     <Text style={{flex: 1, marginBottom: 3}}>
@@ -190,6 +190,10 @@ class Notification extends Component {
 
                         {item.type == NotificationTypes.ADD_SERVICE ?
                             <Label style={{fontSize: 14}}> has started new service '{item.description}'. </Label> : null}
+                        {item.type == NotificationTypes.ADD_PRODUCT ?
+                            <Label style={{fontSize: 14}}> has added new product '{item.description}'. </Label> : null}
+                        {item.type == NotificationTypes.RATE_SERVICE ?
+                            <Label style={{fontSize: 14}}> has added rated service '{item.description}'. </Label> : null}
                         {item.type == 3 ?
                             <Label style={{fontSize: 14}}> has written new article. </Label> : null}
 
@@ -204,7 +208,7 @@ class Notification extends Component {
                         {item.type == NotificationTypes.ORDER_CANCELLED ?
                             <Label style={{fontSize: 14}}>Your Order has ben cancelled. </Label> : null}
                     </Text>
-                    <Text style={{color: item.seenBy.includes(logged) ? colors.gray_200 : colors.primaryText, fontSize: 13}}>{Moment(item.createdAt).fromNow()}</Text>
+                    <Text style={{color: item.seenBy.includes(logged) ? colors.gray_200 : colors.primaryText, fontSize: 13}}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
                     </Body>
                     <Right style={{flex: 0}}>
                         {/*<TouchableOpacity*/}

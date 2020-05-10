@@ -1,7 +1,6 @@
 import {Navigation} from "react-native-navigation";
 import {EventRegister} from 'react-native-event-listeners';
 
-
 import Dashboard from "./screens/Dashboard";
 import SideMenu from "./screens/SideMenu";
 import ChatList from "./screens/chat/ChatList";
@@ -32,6 +31,7 @@ import OrderDetailIn from "./screens/store/OrderDetailIn";
 import OrderDetailOut from "./screens/store/OrderDetailOut";
 import Profile from "./screens/Profile/Profile";
 import Notification from "./screens/Notification/Notification";
+import ServiceRatings from "./screens/services/ServiceRatings";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -63,6 +63,7 @@ Navigation.registerComponent('ImageGallery', () => ImageGallery);
 Navigation.registerComponent('ImageGalleryBB', () => ImageGalleryBB);
 Navigation.registerComponent('Profile', () => Profile);
 Navigation.registerComponent('Notification', () => Notification);
+Navigation.registerComponent('ServiceRatings', () => ServiceRatings);
 
 let currentRoute = ''
 

@@ -109,7 +109,7 @@ class ChatList extends Component {
                     <ListItem thumbnail>
                         <Left>
 
-                            <Thumbnail
+                            <Thumbnail square style={{borderRadius:5}}
                                 source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL + item.user.profile.profileImage} : require('../../images/duser.png')}/>
                         </Left>
                         <Body>
@@ -147,7 +147,6 @@ class ChatList extends Component {
                                     // <Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text>
                                     :
                                     <View style={{
-                                        flexDirection: 'row',
                                         alignSelf: 'flex-end',
                                     }}>
                                         {/*<Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text>*/}
@@ -155,9 +154,9 @@ class ChatList extends Component {
                                               note>{Moment(item.latestMessage.messageOn).local().fromNow()}</Text>
                                         {item.latestMessage.seen ?
                                             <MaterialIcon name={'done-all'} size={13}
-                                                          style={{color: colors.appLayout, marginHorizontal: 5}}/> :
+                                                          style={{color: colors.appLayout, marginHorizontal: 5, alignSelf:'center'}}/> :
                                             <MaterialIcon name={'done'} size={13}
-                                                          style={{color: '#8E8E8E', marginHorizontal: 5}}/>
+                                                          style={{color: '#8E8E8E', marginHorizontal: 5, alignSelf:'center'}}/>
                                         }
                                     </View>}
                             </Right>

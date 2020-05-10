@@ -25,7 +25,7 @@ import {
 import {
     StyleSheet,
     Image,
-    StatusBar,
+    TouchableOpacity,
     TouchableWithoutFeedback,
     ActivityIndicator,
     Alert,BackHandler,
@@ -43,7 +43,7 @@ import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
 import StarRating from "../components/StarRating/StarRating";
 import {Navigation} from "react-native-navigation";
-import {backToRoot} from "../Navigation";
+import {backToRoot, goToRoute} from "../Navigation";
 
 class Home extends Component {
 
@@ -333,7 +333,7 @@ class Home extends Component {
     _getListItem = (data) => {
        let rowData = data.item;
         return (
-            <View key={data.item._id} style={styles.serviceList}>
+            <TouchableOpacity key={data.item._id} style={styles.serviceList}>
                 <TouchableWithoutFeedback onPress={() => {
                     this._handlItemPress(data.item)
                 }}>
@@ -353,10 +353,10 @@ class Home extends Component {
                         {rowData.dist?
                         <Text note style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
-                        <View style={styles.serviceAction}>
+                        <TouchableOpacity onPress={()=>goToRoute(this.props.componentId, 'ServiceRatings', {Id:rowData._id})} style={styles.serviceAction}>
                             {/*<StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>*/}
                             <StarRating starRate={rowData.Rating.avgRate}/>
-                        </View>
+                        </TouchableOpacity>
                         </Body>
                         <Right>
                             {(data.item.contact ||data.item.contact1)?
@@ -367,12 +367,11 @@ class Home extends Component {
                                 <Icon name={'call'} size={20} style={styles.catIcon}/>
                             </Button>
                                 :null}
-                            
                         </Right>
 
                     </ListItem>
                 </TouchableWithoutFeedback>
-            </View>
+            </TouchableOpacity>
         )
 
     }

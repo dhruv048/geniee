@@ -361,7 +361,7 @@ class Chat extends Component {
                     </Text>
                     </Body>
                     <Right style={{margin: 7}}>
-                        <Thumbnail
+                        <Thumbnail square small style={{borderRadius:5}}
                             source={channel.user.profileImage ? {uri: settings.IMAGE_URL+ channel.user.profileImage} : require('../../images/duser.png')}/>
                     </Right>
                 </Header>

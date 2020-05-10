@@ -218,19 +218,7 @@ Meteor.methods({
     'updateRating': function (Id, rating) {
         try {
             let user = Meteor.user();
-            // rating.ratedBy = {_id: Meteor.userId(), name: user.profile.name, coverImage: user.profile.profileImage};
-            // rating.rateDate = new Date();
-            // let service = Service.findOne({_id: Id});
-            // let Ratings = service.ratings;
-            // let avg = service.hasOwnProperty('avgRate') ? service.avgRate : 0;
-            // avg = avg + rating.count;
-            // Ratings.push(rating);
-            // Service.update({_id: Id}, {
-            //     $set: {
-            //         ratings: Ratings,
-            //         avgRate: avg
-            //     }
-            // });
+             const service = Service.findOne({_id: Id});
 
             let Rating = {
                 serviceId: Id,
@@ -242,6 +230,17 @@ Meteor.methods({
             Ratings.upsert({ratedBy: user._id, serviceId: Id}, {
                 $set: Rating
             });
+
+            const notification={
+                title:`Rating provided by- ${user.profile.name}`,
+                description: service.title,
+                owner: user._id,
+                navigateId: Id,
+                receiver:[service.owner],
+                removedBy:[],
+                type: NotificationTypes.RATE_SERVICE
+            };
+            Meteor.call('addNotification',notification);
         }
         catch (err) {
             console.log(err.message);
@@ -251,6 +250,52 @@ Meteor.methods({
 
     'getMyRating': (servId) => {
         return Ratings.findOne({serviceId: servId, ratedBy: Meteor.userId()});
+    },
+
+
+    'getRatings':(servId,skip)=>{
+        let logged = this.userId;
+        let _skip = skip ? skip : 0;
+        const collection = Ratings.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const pipeline= [
+            {$match: {serviceId: servId}},
+            {
+                "$lookup": {
+                    "from": "users",
+                    "as": "users",
+                    "localField": "ratedBy",
+                    "foreignField": "_id",
+                    as: "Users"
+                }
+            },
+            {
+                "$addFields": {
+                    "RatedBy": {$arrayElemAt: ["$Users", 0]}
+                }
+            },
+            {$sort: {"rateDate": -1}},
+            {$limit: _skip + 20},
+            {$skip: _skip},
+            {
+                $project: {
+                    _id: 1,
+                    "ratedBy": 1,
+                    "rateDate": 1,
+                    "rating": 1,
+                    "RatedBy.profile.name": 1,
+                    "RatedBy.profile.profileImage": 1
+                }
+            }
+        ] ;
+        return Async.runSync(function (done) {
+            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
     },
 
     'addNewProduct': (productInfo) => {
@@ -294,6 +339,17 @@ Meteor.methods({
                                     } catch (e) {
                                         throw new Meteor.Error(403, e.message);
                                     }
+                                    const notification={
+                                        title:`New Product by- ${_service.title}`,
+                                        description: productInfo.title,
+                                        owner: _service.owner,
+                                        navigateId: pId,
+                                        productOwner:ProductOwner.REGULAR_USERS,
+                                        receiver:[],
+                                        removedBy:[],
+                                        type: NotificationTypes.ADD_PRODUCT
+                                    };
+                                    Meteor.call('addNotification',notification);
                                 }
                             }
                         }, proceedAfterUpload = true)
@@ -302,18 +358,18 @@ Meteor.methods({
             else {
                 productInfo.images = [];
                 console.log('insert');
+                let pId= Products.insert(productInfo);
                 try {
                     FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
-                        Id: Id,
+                        Id: pId,
                         navigate: "true",
                         route: "ProductDetail",
                     })
                 } catch (e) {
                     throw new Meteor.Error(403, e.message);
                 }
-                return Products.insert(productInfo);
             }
-
+            return pId;
         }
         catch (e) {
             console.log(e.message);

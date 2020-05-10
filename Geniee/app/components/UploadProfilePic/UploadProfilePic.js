@@ -110,7 +110,7 @@ class UploadProfilePic extends React.Component {
                         <Image style={{
                             width: 147,
                             height: 147,
-                            borderRadius: 75,
+                            borderRadius: 15,
                             borderWidth: 3,
                             // height: 150,
                             justifyContent: `center`,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     imageView: {
         alignSelf: `center`,
         borderColor: `rgba(87, 150, 252, 1)`,
-        borderRadius: 75,
+        borderRadius: 15,
         borderWidth: 3,
         height: 150,
         justifyContent: `center`,

@@ -1,6 +1,8 @@
 
 export const NotificationTypes = {
-   ADD_SERVICE:0
+   ADD_SERVICE:0,
+    ADD_PRODUCT:1,
+    RATE_SERVICE:2,
 };
 
 export const userType = {

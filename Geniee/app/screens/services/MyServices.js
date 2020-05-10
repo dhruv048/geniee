@@ -29,7 +29,7 @@ import {
     TouchableWithoutFeedback,
     ActivityIndicator,
     Alert,
-    PermissionsAndroid,
+    TouchableOpacity,
     FlatList, View
 } from 'react-native';
 
@@ -316,10 +316,10 @@ class MyServices extends Component {
                             <Text note
                                   style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text> : null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
-                        <View style={styles.serviceAction}>
+                        <TouchableOpacity onPress={()=>goToRoute(this.props.componentId, 'ServiceRatings', {Id:rowData._id})} style={styles.serviceAction}>
                             <StarRating
                                 starRate={rowData.Rating.avgRate}/>
-                        </View>
+                        </TouchableOpacity>
                         </Body>
                         {/*<Right>*/}
                         {/*<Button transparent style={styles.serviceIconBtn} onPress={() => {*/}

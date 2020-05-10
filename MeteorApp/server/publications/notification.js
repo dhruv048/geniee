@@ -15,7 +15,7 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
                 $and: [
                     {
                         $or: [
-                            {type: {$in: [NotificationTypes.ADD_SERVICE,3,21,22]}},
+                            {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
                             {receiver: logged}
                         ]
                     },
@@ -65,7 +65,7 @@ Meteor.publish('newNotificationCount', function (deviceId) {
                     $and: [
                         {
                             $or: [
-                                {type: {$in: [NotificationTypes.ADD_SERVICE,3,21,22]}},
+                                {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
                                 {receiver: this.userId}
 
                             ]

@@ -43,7 +43,6 @@ class SideMenu extends Component {
     }
 
     navigateToRoute(route) {
-        console.log(this.props.componentId);
         navigateToRoutefromSideMenu(this.props.componentId, route)
     }
 
@@ -91,7 +90,7 @@ class SideMenu extends Component {
                                 <Image style={{
                                     width: 147,
                                     height: 147,
-                                    borderRadius: 75,
+                                    borderRadius: 15,
                                     borderWidth: 3,
                                     // height: 150,
                                     justifyContent: `center`,

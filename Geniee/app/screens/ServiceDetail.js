@@ -34,6 +34,7 @@ import {Navigation} from 'react-native-navigation';
 
 import Product from "../components/Store/Product";
 import MyFunctions from "../lib/MyFunctions";
+import ServiceRatings from "./services/ServiceRatings";
 
 
 //const { RNEsewaSdk } = NativeModules;
@@ -281,7 +282,7 @@ class ServiceDetail extends Component {
                                source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ this.state.Service.coverImage}:userImage}/>
                     </TouchableOpacity>
                     <Text style={styles.name}>{this.state.Service.title}</Text>
-                    <View style={ styles.starView }><StarRating starRate={this.state.Service.Rating.avgRate}/></View>
+                    <TouchableOpacity onPress={()=>goToRoute(this.props.componentId, 'ServiceRatings', {Id:this.state.Service._id})} style={ styles.starView }><StarRating starRate={this.state.Service.Rating.avgRate}/></TouchableOpacity>
                     
                     {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
                         <Text style={styles.availableText}>{this.state.Service.location.formatted_address}

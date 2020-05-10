@@ -31,8 +31,20 @@ Meteor.methods({
                                 imageIds.push(imageId);
                                 if(productInfo.images.length===imageIds.length){
                                     productInfo.images = imageIds;
-                                    console.log('insert')
-                                  return  EFProducts.insert(productInfo);
+                                    console.log('insert');
+                                  let Id=  EFProducts.insert(productInfo);
+                                    const notification={
+                                        title:'New Product by- EAT-FIT',
+                                        description: productInfo.title,
+                                        owner: Meteor.userId(),
+                                        productOwner:ProductOwner.EAT_FIT,
+                                        navigateId: Id,
+                                        receiver:[],
+                                        removedBy:[],
+                                        type: NotificationTypes.ADD_PRODUCT
+                                    };
+                                    Meteor.call('addNotification',notification);
+                                    return Id;
                                 }
                             }
                         }, proceedAfterUpload = true)
