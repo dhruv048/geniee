@@ -115,6 +115,50 @@ if (Meteor.isServer) {
                 //           ).fetch();
                 //       }
                 //
+
+
+                const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
+                const categoryLookup = {
+                    from: "MainCategories",
+                    let: {catId: "$categoryId"},
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+
+                                    $eq: ["$subCategories.subCatId", "$$catId"]
+                                }
+                            }
+                        },
+                    ],
+                    "as": "categories"
+                };
+
+                const ServiceRatings = {
+                    from: "ratings",
+                    let: {serviceId: "$_id"},
+                    pipeline: [
+                        {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                        {
+                            $group: {
+                                _id: '$_id',
+                                avgRate: {$avg: "$rating.count"},
+                                count: {$sum: 1}
+                            }
+                        },
+                        {$project: {avgRate: 1, count: 1}}
+                    ],
+                    "as": "servRatings"
+                };
+
+                const addValues = {
+                    Rating: {
+                        $cond: {
+                            if: {"$eq": ["$servRatings", []]}, then: defaultRating, else: {$arrayElemAt: ["$servRatings", 0]}
+                        }
+                    },
+                    category: {$arrayElemAt: ['$categories', 0]}
+                };
                 var pipeline = [
                     {
                         $geoNear: {
@@ -129,8 +173,11 @@ if (Meteor.isServer) {
                             spherical: true,
                             distanceMultiplier: 0.001
                         }
-                    }
-                ]
+                    },
+                    {$lookup: categoryLookup},
+                    {$lookup: ServiceRatings},
+                    {$addFields: addValues},
+                ];
 
                 let Service = MongoInternals.defaultRemoteCollectionDriver().mongo.db.collection('service');
                 Service.aggregate(

@@ -99,28 +99,28 @@ class Home extends Component {
         let sum = 0;
         arr.forEach(item => {
             sum = sum + item.count;
-        })
+        });
         var avg = sum / arr.length;
         return Math.round(avg);
     }
     _search = (text) => {
-        console.log('search')
+        console.log('search',text);
+        if (text.length<1) {
+            this.currentSearch = text;
+            this.skip=0;
+            this.arrayholder=[];
+            this.fetchData(this.skip,this.limit);
+            // var data = this.props.categories;
+            // this.setState({
+            //     data: data, loading: false
+            // });
+            // this.arrayholder = data;
+            return;
+        }
         var delayTimer;
         if (text === this.currentSearch)
             return;
-        if (text === "") {
-            this.setState(
-                {
-                    loading: true,
-                }
-            );
-            var data = this.props.categories;
-            this.setState({
-                data: data, loading: false
-            });
-            this.arrayholder = data;
-            return;
-        }
+
         if (text.length > 3) {
             clearTimeout(delayTimer);
             // delayTimer = setTimeout(function() {
@@ -301,8 +301,10 @@ class Home extends Component {
             subCatIds: this.props.Id
         };
         this.lastSkip=this.skip;
+        this.setState({loading:true})
         Meteor.call('getServicesNearBy',data,(err,res)=>{
-            console.log(err,res)
+            console.log(err,res);
+            this.setState({loading:false})
             if(!err){
                 if(res.result.length>0) {
                     this.skip = this.skip + this.limit;

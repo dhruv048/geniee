@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, ToastAndroid, AsyncStorage,BackHandler } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, ToastAndroid, AsyncStorage,BackHandler} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import Meteor from '../react-native-meteor';
 import Logo from '../components/Logo/Logo';
@@ -79,6 +79,7 @@ class SignIn extends Component {
                         "Login success with permissions: " +
                         result.grantedPermissions.toString()
                     );
+                    Keyboard.dismiss();
                     onLoginFinished(result);
 
                 }
@@ -95,6 +96,7 @@ class SignIn extends Component {
     }
 
     handleSignIn = () => {
+
         if (this.validInput(true)) {
             const { email, password } = this.state;            
 
@@ -111,6 +113,7 @@ class SignIn extends Component {
                         );
                     }
                     else {
+                        Keyboard.dismiss();
                         console.log("Resulton LogedIN:" + Meteor.getData()._tokenIdSaved);
                         AsyncStorage.setItem(USER_TOKEN_KEY,  Meteor.getData()._tokenIdSaved );
                         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
@@ -154,7 +157,7 @@ class SignIn extends Component {
     render() {
         return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={styles.container}>
+                <View style={styles.container} keyboardShouldPersistTaps='always'>
                     <StatusBar
                         backgroundColor={colors.statusBar}
                         barStyle='light-content'

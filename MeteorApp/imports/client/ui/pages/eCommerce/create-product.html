@@ -16,9 +16,9 @@
                             <div class="col-lg-8">
                                 <form role="form" id="productCreateForm">
                                     <div class="form-group">
-                                        <label>Category</label>
+                                        <label>Service</label>
                                         {{> inputAutocomplete settings=settings id="msg" class="form-control"
-                                        placeholder="Type Category"}}
+                                        placeholder="Search and select Service"}}
                                     </div>
                                     <div class="form-group">
                                         <label>Title</label>
@@ -116,11 +116,11 @@
     </div>
 </template>
 <template name="category">
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <li class="d-flex flex-row align-items-center justify-content-start">
         <!--<div class="small">-->
         <!--<img width="30" height="30" src="{{getImage profile.profileImage}}" class="img-profile rounded-circle small"-->
         <!--alt="{{profile.name}}">-->
         <!--</div>-->
-        {{title}}
+       <span>{{title}}</span>
     </li>
 </template>

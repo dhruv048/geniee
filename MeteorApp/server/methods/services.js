@@ -36,7 +36,7 @@ Meteor.methods({
             }
             //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
             serviceInfo.location = location;
-            let Owner=Meteor.users().findOme({_id:serviceInfo.owner});
+            let Owner=Meteor.users.findOme({_id:serviceInfo.owner});
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
@@ -254,7 +254,6 @@ Meteor.methods({
 
 
     'getRatings':(servId,skip)=>{
-        let logged = this.userId;
         let _skip = skip ? skip : 0;
         const collection = Ratings.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);

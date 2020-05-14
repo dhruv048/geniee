@@ -122,7 +122,7 @@ Meteor.methods({
         return Email.send({
             to: email,
             from: "contact_us@gennie.com",
-            cc: "roshanshah.011@gmail.com",
+            cc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
             subject: "Code to set your new Password",
             html: "Pleas use code to Set New Password : " + token,
         }, function (err) {

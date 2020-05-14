@@ -1,7 +1,6 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {Body, Container, Content, Header, Icon, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
-import UploadProfilePic from "../components/UploadProfilePic/UploadProfilePic";
 import {StatusBar, StyleSheet, Alert, TouchableNativeFeedback, View, Image, TouchableOpacity} from "react-native";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
@@ -12,10 +11,11 @@ import {EventRegister} from 'react-native-event-listeners';
 import AsyncStorage from "@react-native-community/async-storage";
 import MessageCount from "../components/MessageCount/MessageCount";
 import settings from "../config/settings";
+import DeviceInfo from 'react-native-device-info';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 
-class SideMenu extends Component {
+class SideMenu extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,9 +25,10 @@ class SideMenu extends Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        let Token=await AsyncStorage.getItem(USER_TOKEN_KEY)
         Navigation.events().bindComponent(this);
-        this.setState({isLogged: this.props.loggedUser ? true : false, user: this.props.loggedUser})
+        this.setState({isLogged: Token ? true : false, user: this.props.loggedUser})
         this.listener = EventRegister.addEventListener('routeChanged', (data) => {
             console.log('routeChanged', data)
             this.setState({
@@ -111,7 +112,11 @@ class SideMenu extends Component {
                             fontWeight: "200",
                             color: 'white'
                         }}>{this.state.user.profile.name}</Text> : null}
+
+                    <Text note style={{color:'white'}}>[ Version: {DeviceInfo.getVersion()} ]</Text>
                     </Body>
+
+
                 </Header>
                 <Content style={{flex: 1, marginTop: 1}}>
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Dashboard")}>
@@ -189,6 +194,12 @@ class SideMenu extends Component {
                                     In</Text>
                             </View>
                         </TouchableNativeFeedback>}
+
+                    {/*<View style={[styles.screenStyle, {paddingLeft: 28}]}>*/}
+                        {/*<MaterialIcons name='get-app' size={20}/>*/}
+                        {/*<Text*/}
+                            {/*style={[styles.screenTextStyle, {paddingLeft: 20}]}>V: {DeviceInfo.getVersion()}</Text>*/}
+                    {/*</View>*/}
 
                 </Content>
             </Container>

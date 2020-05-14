@@ -38,10 +38,10 @@ class Notification extends Component {
         console.log('press');
         const navigator = this.props.navigation;
         const deviceId = DeviceInfo.getUniqueId();
-        Meteor.call('updateNotificationSeen', [item._id], deviceId,(err) => {
+        Meteor.call('updateNotificationSeen', [item._id], deviceId, (err) => {
             if (err) {
                 console.log(err.reason);
-               // this.dropDownAlertRef.alertWithType('error', 'Error', err.reason);
+                // this.dropDownAlertRef.alertWithType('error', 'Error', err.reason);
             }
         })
 
@@ -60,7 +60,7 @@ class Notification extends Component {
     }
     NotificationMarkAsRead = (item) => {
         const deviceId = DeviceInfo.getUniqueId();
-        Meteor.call('updateNotificationSeen',deviceId, [item._id], (err) => {
+        Meteor.call('updateNotificationSeen', deviceId, [item._id], (err) => {
             if (err) {
                 console.log(err.reason);
                 this.dropDownAlertRef.alertWithType('error', 'Error', err.reason);
@@ -91,7 +91,7 @@ class Notification extends Component {
                     notifications,
                 };
             });
-          //  console.log(_id, this.state.newNotifications)
+            //  console.log(_id, this.state.newNotifications)
         }
         else {
             this.setState(state => {
@@ -103,7 +103,7 @@ class Notification extends Component {
         }
         Meteor.call('removeNotification', _id, (err) => {
             if (err) {
-              //  this.dropDownAlertRef.alertWithType('error', 'Error', err.reason);
+                //  this.dropDownAlertRef.alertWithType('error', 'Error', err.reason);
             }
         })
     };
@@ -154,13 +154,18 @@ class Notification extends Component {
     };
 
     renderItem = (item) => {
-        const logged = this.loggedUser._id;
+        const logged = this.loggedUser ? this.loggedUser._id : Meteor._userIdSaved;
+        const deviceId = DeviceInfo.getUniqueId();
+        let seen = false;
+        if (item.seenBy.includes(logged) || item.seenBy.includes(deviceId))
+            seen = true;
+        
         return (
             <TouchableOpacity onPress={() => this._notificationPressed(item)}>
                 <View style={{
                     borderWidth: 1,
                     //borderColor: '#C8E3F5',
-                    borderColor: item.seenBy.includes(logged) ? '#fff' : 'rgba(17,131, 131, .15)',
+                    borderColor: seen ? '#fff' : 'rgba(17,131, 131, .15)',
                     backgroundColor: '#fff',
                     marginBottom: 3,
                     borderRadius: 4,
@@ -173,27 +178,29 @@ class Notification extends Component {
                 }}>
                     <Left style={{flex: 0, alignSelf: 'flex-start', paddingTop: 4}}>
                         {[NotificationTypes.ORDER_CANCELLED, NotificationTypes.ORDER_DISPATCHED, NotificationTypes.ORDER_DELIVERED].includes(item.type) ?
-                            <Thumbnail medium square style={{borderRadius:5}} source={require('../../images/logo.png')} /> :
+                            <Thumbnail medium square style={{borderRadius: 5}}
+                                       source={require('../../images/logo.png')}/> :
 
-                            <Thumbnail square medium style={{borderRadius:5}}
-                                source={item.Owner.profile.profileImage ?
-                                    {uri: settings.IMAGE_URL + item.Owner.profile.profileImage}
-                                    : require('../../images/duser.png')}
+                            <Thumbnail square medium style={{borderRadius: 5}}
+                                       source={item.Owner.profile.profileImage ?
+                                           {uri: settings.IMAGE_URL + item.Owner.profile.profileImage}
+                                           : require('../../images/duser.png')}
                             />}
                     </Left>
                     <Body style={{flex: 3, flexDirection: 'column', alignItems: 'flex-start', paddingHorizontal: 10}}>
                     <Text style={{flex: 1, marginBottom: 3}}>
-                            <Label style={{
-                                fontSize: 14,
-                                fontWeight: "bold"
-                            }}>{[].includes(item.type) ?"Geniee":item.Owner.profile.name}</Label>
+                        <Label style={{
+                            fontSize: 14,
+                            fontWeight: "bold"
+                        }}>{[].includes(item.type) ? "Geniee" : item.Owner.profile.name}</Label>
 
                         {item.type == NotificationTypes.ADD_SERVICE ?
-                            <Label style={{fontSize: 14}}> has started new service '{item.description}'. </Label> : null}
+                            <Label style={{fontSize: 14}}> has started new service
+                                '{item.description}'. </Label> : null}
                         {item.type == NotificationTypes.ADD_PRODUCT ?
                             <Label style={{fontSize: 14}}> has added new product '{item.description}'. </Label> : null}
                         {item.type == NotificationTypes.RATE_SERVICE ?
-                            <Label style={{fontSize: 14}}> has added rated service '{item.description}'. </Label> : null}
+                            <Label style={{fontSize: 14}}> has rated service '{item.description}'. </Label> : null}
                         {item.type == 3 ?
                             <Label style={{fontSize: 14}}> has written new article. </Label> : null}
 
@@ -208,23 +215,26 @@ class Notification extends Component {
                         {item.type == NotificationTypes.ORDER_CANCELLED ?
                             <Label style={{fontSize: 14}}>Your Order has ben cancelled. </Label> : null}
                     </Text>
-                    <Text style={{color: item.seenBy.includes(logged) ? colors.gray_200 : colors.primaryText, fontSize: 13}}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
+                    <Text style={{
+                        color: seen ? colors.gray_200 : colors.primaryText,
+                        fontSize: 13
+                    }}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
                     </Body>
                     <Right style={{flex: 0}}>
                         {/*<TouchableOpacity*/}
-                            {/*style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}*/}
-                            {/*onPress={() => {*/}
-                            {/*}}>*/}
-                            {/*<Menu*/}
-                                {/*ref={ref => (this[`menu${item._id}`] = ref)}*/}
-                                {/*button={*/}
-                                    {/*<Button transparent onPress={() => this[`menu${item._id}`].show()}>*/}
-                                        {/*<Icon name={'more-vertical'} size={18} color={variables.gray_200}/>*/}
-                                    {/*</Button>}>*/}
-                                {/*<MenuItem onPress={() => {*/}
-                                    {/*this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)*/}
-                                {/*}}>Mark as read</MenuItem>*/}
-                            {/*</Menu>*/}
+                        {/*style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}*/}
+                        {/*onPress={() => {*/}
+                        {/*}}>*/}
+                        {/*<Menu*/}
+                        {/*ref={ref => (this[`menu${item._id}`] = ref)}*/}
+                        {/*button={*/}
+                        {/*<Button transparent onPress={() => this[`menu${item._id}`].show()}>*/}
+                        {/*<Icon name={'more-vertical'} size={18} color={variables.gray_200}/>*/}
+                        {/*</Button>}>*/}
+                        {/*<MenuItem onPress={() => {*/}
+                        {/*this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)*/}
+                        {/*}}>Mark as read</MenuItem>*/}
+                        {/*</Menu>*/}
                         {/*</TouchableOpacity>*/}
                     </Right>
                 </View>
@@ -232,12 +242,12 @@ class Notification extends Component {
         )
     };
     _handleEndReach = (data) => {
-        if(!this.loadMore) {
-            this.loadMore=true;
+        if (!this.loadMore) {
+            this.loadMore = true;
             console.log(data)
-            Meteor.subscribe('notificationWithLimit', this.skip,()=>{
+            Meteor.subscribe('notificationWithLimit', this.skip, () => {
                 this.skip = this.skip + 20;
-                this.loadMore=false;
+                this.loadMore = false;
             });
         }
     }
@@ -258,17 +268,17 @@ class Notification extends Component {
         }
         this.loggedUser = Meteor.user();
         this.subHandle = null;
-        this.loadMore=false;
+        this.loadMore = false;
     }
 
     componentDidMount() {
         const deviceId = DeviceInfo.getUniqueId();
-        this.subHandle = Meteor.subscribe("notificationWithLimit",0,deviceId);
+        this.subHandle = Meteor.subscribe("notificationWithLimit", 0, deviceId);
         this.skip = this.skip + 20;
         this.setState({
             newNotifications: this.props.newNotifications,
             earlyNotifications: this.props.earlyNotifications,
-            notifications:this.props.notifications
+            notifications: this.props.notifications
         })
         this._notificationPressed = this._notificationPressed.bind(this);
     }
@@ -323,7 +333,7 @@ class Notification extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Notification</Title>
+                    <Title>Notification</Title>
                     </Body>
                     <Right/>
                     {/*<Right>*/}
@@ -336,7 +346,7 @@ class Notification extends Component {
                 </Header>
                 <Content style={styles.content}>
                     {/*{this.state.newNotifications.length > 0 ?*/}
-                        {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>New</Text> : null}*/}
+                    {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>New</Text> : null}*/}
                     <FlatList
                         data={this.state.notifications}
                         renderItem={this._renderNotification}
@@ -348,16 +358,16 @@ class Notification extends Component {
                         // viewabilityConfig={this.viewabilityConfig}
                     />
                     {/*{this.state.earlyNotifications.length > 0 ?*/}
-                        {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>Earlier</Text> : null}*/}
+                    {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>Earlier</Text> : null}*/}
                     {/*<FlatList*/}
-                        {/*data={this.state.earlyNotifications}*/}
-                        {/*renderItem={this._renderEarly}*/}
-                        {/*keyExtracter={(item) => item._id}*/}
-                        {/*onEndReached={this._handleEndReach}*/}
-                        {/*onEndReachedThreshold={0.5}*/}
-                        {/*keyboardShouldPersistTaps='always'*/}
-                        {/*// onViewableItemsChanged={this._onViewChange}*/}
-                        {/*// viewabilityConfig={this.viewabilityConfig}*/}
+                    {/*data={this.state.earlyNotifications}*/}
+                    {/*renderItem={this._renderEarly}*/}
+                    {/*keyExtracter={(item) => item._id}*/}
+                    {/*onEndReached={this._handleEndReach}*/}
+                    {/*onEndReachedThreshold={0.5}*/}
+                    {/*keyboardShouldPersistTaps='always'*/}
+                    {/*// onViewableItemsChanged={this._onViewChange}*/}
+                    {/*// viewabilityConfig={this.viewabilityConfig}*/}
                     {/*/>*/}
 
                 </Content>
@@ -375,7 +385,7 @@ const styles = StyleSheet.create({
     content: {
         backgroundColor: colors.appBackground,
         flex: 1,
-        paddingTop:10
+        paddingTop: 10
     }
 });
 

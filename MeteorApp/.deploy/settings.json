@@ -41,8 +41,8 @@
         [16,"Travel, Ticket & Vouchers","plane"],
         [17,"Want To Buy (Buyer List)","shopping-cart"],
         [18,"Announcements","bullhorn"],
-        [0,"Others","question-circle"],
-        [19,"Emergency","fire-extinguisher"]
+        [19,"Emergency","fire-extinguisher"],
+        [0,"Others","question-circle"]
       ]
     }
   }

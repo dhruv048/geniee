@@ -231,10 +231,10 @@ class MyServices extends Component {
 
 
     async componentDidMount() {
-        this.setState({
-            data: this.props.myServices, loading: false
-        })
-        this.arrayholder = this.props.myServices;
+        // this.setState({
+        //     data: this.props.myServices, loading: false
+        // })
+        // this.arrayholder = this.props.myServices;
         Navigation.events().bindComponent(this);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonMyService.bind(this));
     }
@@ -285,6 +285,7 @@ class MyServices extends Component {
                  //   this.skip = this.skip + this.limit;
                    // this.arrayholder = this.arrayholder.concat(res.result);
                     this.setState({data:res.result});
+                    this.arrayholder=res.result;
                 }
                 this.setState({loading: false});
             }
