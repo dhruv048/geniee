@@ -4,7 +4,7 @@ import {Button, Text} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-crop-picker';
 import Meteor from '../../react-native-meteor';
-import settings from '../../config/settings';
+import settings, {getProfileImage} from '../../config/settings';
 import Moment from "moment/moment";
 import ActionSheet from 'react-native-actionsheet';
 import {colors} from "../../config/styles";
@@ -116,7 +116,7 @@ class UploadProfilePic extends React.Component {
                             justifyContent: `center`,
                             alignSelf: 'center',
                             borderColor: `rgba(87, 150, 252, 1)`
-                        }} source={this.state.avatarSource? {uri:this.state.avatarSource.includes('https://')?this.state.avatarSource :  settings.IMAGE_URL+this.state.avatarSource} : require('../../images/duser.png')}/>
+                        }} source={this.state.avatarSource? {uri:getProfileImage(this.state.avatarSource)} : require('../../images/duser.png')}/>
                     {this.state.user?
                     <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}
 

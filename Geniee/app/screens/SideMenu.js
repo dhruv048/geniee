@@ -10,7 +10,7 @@ import Meteor from "../react-native-meteor";
 import {EventRegister} from 'react-native-event-listeners';
 import AsyncStorage from "@react-native-community/async-storage";
 import MessageCount from "../components/MessageCount/MessageCount";
-import settings from "../config/settings";
+import settings , {getProfileImage} from "../config/settings";
 import DeviceInfo from 'react-native-device-info';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
@@ -39,7 +39,7 @@ class SideMenu extends PureComponent {
 
     componentWillReceiveProps(newProps) {
         this.setState({isLogged: newProps.loggedUser ? true : false})
-        if (newProps.loggedUser)
+       // if (newProps.loggedUser)
             this.setState({user: newProps.loggedUser})
     }
 
@@ -98,7 +98,7 @@ class SideMenu extends PureComponent {
                                     alignSelf: 'center',
                                     borderColor: `rgba(87, 150, 252, 1)`
                                 }}
-                                       source={this.state.user.profile.profileImage ? {uri: this.state.user.profile.profileImage.includes('https://') ? this.state.user.profile.profileImage : settings.IMAGE_URL + this.state.user.profile.profileImage} : require('../images/duser.png')}/>
+                                       source={this.state.user.profile.profileImage ? {uri: getProfileImage(this.state.user.profile.profileImage)} : require('../images/duser.png')}/>
                                 {/*{this.state.user?*/}
                                 {/*<Icon name="edit" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}*/}
                             </>

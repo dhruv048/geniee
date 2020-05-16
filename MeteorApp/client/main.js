@@ -28,7 +28,8 @@ import "../imports/client/ui/pages/eCommerce/create-product.html";
 import "../imports/client/ui/pages/eCommerce/create-product";
 import "../imports/client/ui/pages/advertisements/advertisements.html";
 import "../imports/client/ui/pages/advertisements/advertisements";
-
+import "../imports/client/ui/pages/privacyPolicy.html";
+import "../imports/client/ui/pages/termsAndConditions.html"
 //Gr Categories
 import "../imports/client/ui/pages/genieeRepair/category/category.html";
 import "../imports/client/ui/pages/genieeRepair/category/category";

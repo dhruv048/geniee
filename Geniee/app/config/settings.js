@@ -64,5 +64,11 @@ export const NotificationTypes = {
     RATE_SERVICE:2
 };
 export default settings;
+export const getProfileImage=(url)=>{
 
+    if(url.includes('https://'))
+        return url ;
+    else
+        return settings.IMAGE_URL + url;
+}
 

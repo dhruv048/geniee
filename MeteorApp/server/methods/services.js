@@ -36,7 +36,7 @@ Meteor.methods({
             }
             //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
             serviceInfo.location = location;
-            let Owner=Meteor.users.findOme({_id:serviceInfo.owner});
+            let Owner=Meteor.users.findOne({_id:serviceInfo.owner});
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
@@ -62,7 +62,7 @@ Meteor.methods({
                                     navigate: "true",
                                     route: "ServiceDetail",
                                     image: serviceInfo.coverImage,
-                                    icon:Owner.profile.profileImage
+                                    icon:Owner.profile.profileImage?Owner.profile.profileImage:""
                                 })
                             } catch (e) {
                                 throw new Meteor.Error(403, e.message);
@@ -306,7 +306,7 @@ Meteor.methods({
             productInfo.qty = parseInt(productInfo.qty);
             productInfo.availabeQuantity = parseInt(productInfo.qty);
             productInfo.createDate = new Date(new Date().toUTCString());
-            let _service = Service.findOne({_id:productIno.service})
+            let _service = Service.findOne({_id:productInfo.service})
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
@@ -349,6 +349,7 @@ Meteor.methods({
                                         type: NotificationTypes.ADD_PRODUCT
                                     };
                                     Meteor.call('addNotification',notification);
+                                    return pId;
                                 }
                             }
                         }, proceedAfterUpload = true)
@@ -367,8 +368,20 @@ Meteor.methods({
                 } catch (e) {
                     throw new Meteor.Error(403, e.message);
                 }
+                const notification={
+                    title:`New Product by- ${_service.title}`,
+                    description: productInfo.title,
+                    owner: _service.owner,
+                    navigateId: pId,
+                    productOwner:ProductOwner.REGULAR_USERS,
+                    receiver:[],
+                    removedBy:[],
+                    type: NotificationTypes.ADD_PRODUCT
+                };
+                Meteor.call('addNotification',notification);
+                return pId;
             }
-            return pId;
+
         }
         catch (e) {
             console.log(e.message);

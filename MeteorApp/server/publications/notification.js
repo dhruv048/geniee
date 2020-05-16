@@ -3,11 +3,11 @@ import {Notification} from "../../lib/collections/notification";
 import {NotificationTypes} from "../../lib/utils";
 
 Meteor.publish('getNotification', () => {
-    return Notification.find({receiver: Meteor.userId});
+    return Notification.find({receiver: this.userId});
 })
 
 Meteor.publish('notificationWithLimit', function (skip,deviceId) {
-    let logged = this.userId;
+    let logged = this.userId?this.userId:"";
     let _skip = skip ? skip : 0;
     ReactiveAggregate(this, Notification, [
         {
@@ -16,7 +16,7 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
                     {
                         $or: [
                             {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
-                            {receiver:{$in:[ logged]}}
+                            {receiver:{$in:[logged]}}
                         ]
                     },
                     {removedBy: {$nin: [logged,deviceId]}}
@@ -54,11 +54,13 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
                 appointmentId: 1,
                 seenBy: 1,
                 createdAt: 1,
+                owner:1,
             }
         }], {clientCollection: 'notificationDetail', allowDiskUse: true});
 });
 
 Meteor.publish('newNotificationCount', function (deviceId) {
+    let logged = this.userId?this.userId:"";
     ReactiveAggregate(this, Notification, [
             {
                 $match: {
@@ -66,12 +68,12 @@ Meteor.publish('newNotificationCount', function (deviceId) {
                         {
                             $or: [
                                 {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
-                                {receiver: {$in:[this.userId]}}
+                                {receiver: {$in:[logged]}}
 
                             ]
                         },
-                        {seenBy: {$nin: [this.userId,deviceId]}},
-                        {removedBy: {$nin: [this.userId,deviceId]}}
+                        {seenBy: {$nin: [logged,deviceId]}},
+                        {removedBy: {$nin: [logged,deviceId]}}
                     ]
                 }
             },

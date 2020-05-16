@@ -9,7 +9,7 @@ import {
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from "../../config/styles";
-import {settings} from "../../config/settings";
+import settings,{getProfileImage} from "../../config/settings";
 import Meteor from '../../react-native-meteor';
 import Moment from "moment/moment";
 import {Navigation} from "react-native-navigation/lib/dist/index";
@@ -110,7 +110,7 @@ class ChatList extends Component {
                         <Left>
 
                             <Thumbnail square style={{borderRadius:5}}
-                                source={item.user.profile.profileImage ? {uri: settings.IMAGE_URL + item.user.profile.profileImage} : require('../../images/duser.png')}/>
+                                source={item.user.profile.profileImage ? {uri: getProfileImage(item.user.profile.profileImage)} : require('../../images/duser.png')}/>
                         </Left>
                         <Body>
                         <View style={{flexDirection: 'row'}}>

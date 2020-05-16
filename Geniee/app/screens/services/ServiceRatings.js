@@ -13,9 +13,8 @@ import {
     FlatList, ToastAndroid, View
 } from 'react-native';
 import {colors, customStyle} from "../../config/styles";
-
 import Meteor from '../../react-native-meteor';
-import settings from "../../config/settings";
+import settings, {getProfileImage} from "../../config/settings";
 import Icon from 'react-native-vector-icons/Feather';
 import CommentBlock from "../../components/Comment/CommentBlock";
 import {goBack} from "../../Navigation";
@@ -78,7 +77,7 @@ export default class ServiceRatings extends Component {
         // console.log(Comment);
         return (
             <CommentBlock
-                source={Rating.RatedBy.profile.profileImage ? {uri: settings.IMAGE_URL + Rating.RatedBy.profile.profileImage} : require("../../images/duser.png")}
+                source={Rating.RatedBy.profile.profileImage ? {uri:getProfileImage(Rating.RatedBy.profile.profileImage)} : require("../../images/duser.png")}
                 name={Rating.RatedBy.profile.name}
                 rating={Rating.rating.count}
                 Comment={Rating.rating.comment}

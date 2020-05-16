@@ -20,7 +20,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import {colors, variables} from "../../config/styles";
-import settings, {NotificationTypes, userType} from "../../config/settings";
+import settings, {NotificationTypes, userType,getProfileImage} from "../../config/settings";
 import Meteor from '../../react-native-meteor';
 import MyFunctions from "../../lib/MyFunctions";
 import Moment from 'moment';
@@ -155,6 +155,8 @@ class Notification extends Component {
 
     renderItem = (item) => {
         const logged = this.loggedUser ? this.loggedUser._id : Meteor._userIdSaved;
+        if(item.owner==logged)
+            return true;
         const deviceId = DeviceInfo.getUniqueId();
         let seen = false;
         if (item.seenBy.includes(logged) || item.seenBy.includes(deviceId))
@@ -183,8 +185,8 @@ class Notification extends Component {
 
                             <Thumbnail square medium style={{borderRadius: 5}}
                                        source={item.Owner.profile.profileImage ?
-                                           {uri: settings.IMAGE_URL + item.Owner.profile.profileImage}
-                                           : require('../../images/duser.png')}
+                                           {uri: getProfileImage(item.Owner.profile.profileImage)}
+                                           : require('../../images/user-icon.png')}
                             />}
                     </Left>
                     <Body style={{flex: 3, flexDirection: 'column', alignItems: 'flex-start', paddingHorizontal: 10}}>

@@ -1230,4 +1230,33 @@
     <!--<script type='text/javascript' src='https://medidocnepal.com/wp-content/themes/docdirect/js/gmap3.min.js?ver=5.1.3'></script>-->
 
     <!--</body>-->
+
+
+    <body id="page-top">
+    {{> sAlert}}
+    <div id="wrapper">
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column" style="padding-bottom: 1rem !important;">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <!-- Image and text -->
+                <!--<nav class="navbar navbar-light" style="background-color: #e1f2f2 !important;">-->
+                    <!--<a class="navbar-brand" href="#">-->
+                        <!--<img src="img/medidoc_logo.png" height="70px" width="auto"-->
+                             <!--class="d-inline-block align-content-center" alt="">-->
+                    <!--</a>-->
+                <!--</nav>-->
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    {{>Template.dynamic template=main}}
+                </div>
+                <!-- Sidebar Toggle (Topbar) -->
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    </body>
 </template>

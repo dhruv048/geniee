@@ -477,6 +477,28 @@ var clientRoutes = FlowRouter.group({
         console.log('running client group triggers');
     }]
 });
+clientRoutes.route('/policy', {
+    name: 'dashboard',
+    action: function () {
+        BlazeLayout.render('ClientMainLayout', {main: 'PrivacyPolicy'});
+        document.title = "Privacy Policy";
+    },
+    triggersEnter: [function (context, redirect) {
+        console.log('running /client trigger');
+    }]
+});
+
+clientRoutes.route('/terms', {
+    name: 'dashboard',
+    action: function () {
+        BlazeLayout.render('ClientMainLayout', {main: 'TermsAndConditions'});
+        document.title = "Terms & Conditions";
+    },
+    triggersEnter: [function (context, redirect) {
+        console.log('running /client trigger');
+    }]
+});
+
 
 clientRoutes.route('/news-all', {
     name: 'News',

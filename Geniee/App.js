@@ -15,7 +15,7 @@ import {
 import { colors} from './app/config/styles';
 import {goToDashboard, goToRoute} from "./app/Navigation";
 import {Container} from "native-base";
-import settings from "./app/config/settings";
+import settings, {getProfileImage} from "./app/config/settings";
 import Meteor from './app/react-native-meteor';
 import firebase from "react-native-firebase";
 import MyFunctions from "./app/lib/MyFunctions";
@@ -33,9 +33,7 @@ class App extends Component {
         firebase.messaging().subscribeToTopic('allGenieeStaging');
 
         Meteor.subscribe('newNotificationCount',deviceId);
-        this.checkPermission().catch(e => {
-            console.log(e)
-        });
+
         this.messageListener()
             .catch(e => {
                 console.log(e)
@@ -44,7 +42,11 @@ class App extends Component {
         Meteor.subscribe('categories-list');
 
         Meteor.Accounts.onLogin(async cd => {
-            console.log('onLogin')
+            console.log('onLogin');
+            this.checkPermission().catch(e => {
+                console.log(e)
+            });
+            this.getFcmToken;
             // Meteor.call('getSingleUser', Meteor._userIdSaved, (err, res) => {
             //     if (!err) {
             //         // console.log(res)
@@ -53,8 +55,6 @@ class App extends Component {
                 // }
             });
         goToDashboard();
-
-
     }
     checkPermission = async () => {
         const enabled = await firebase.messaging().hasPermission();
@@ -71,7 +71,7 @@ class App extends Component {
         if (fcmToken && Meteor.user()) {
             // this.showAlert('Your Firebase Token is:', fcmToken);
             let oldToken = await AsyncStorage.getItem("FCM_TOKEN");
-            if(oldToken!=fcmToken) {
+            if(fcmToken && oldToken!=fcmToken) {
                 MyFunctions._saveDeviceUniqueId(fcmToken);
                 if (oldToken) {
                     Meteor.call('removeToken', oldToken)
@@ -124,7 +124,7 @@ class App extends Component {
                     .android.setAutoCancel(true)
                     .android.setVibrate(1000);
                 if(notification.data.image)
-                 notification_to_be_displayed.android.setBigPicture(settings.IMAGE_URL+notification.data.image,settings.IMAGE_URL+notification.data.icon, notification.title, notification.body);
+                 notification_to_be_displayed.android.setBigPicture(settings.IMAGE_URL+notification.data.image,getProfileImage(notification.data.icon), notification.title, notification.body);
                 else
                     notification_to_be_displayed.android.setBigText(notification.body);
 

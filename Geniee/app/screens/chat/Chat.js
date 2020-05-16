@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from "../../config/styles";
 import Meteor from '../../react-native-meteor';
-import settings from "../../config/settings";
+import settings, {getProfileImage} from "../../config/settings";
 import Moment from 'moment';
 import MyFunctions from '../../lib/MyFunctions';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -362,7 +362,7 @@ class Chat extends Component {
                     </Body>
                     <Right style={{margin: 7}}>
                         <Thumbnail square small style={{borderRadius:5}}
-                            source={channel.user.profileImage ? {uri: settings.IMAGE_URL+ channel.user.profileImage} : require('../../images/duser.png')}/>
+                            source={channel.user.profileImage ? {uri: getProfileImage(channel.user.profileImage)} : require('../../images/duser.png')}/>
                     </Right>
                 </Header>
                 <View style={styles.content}>
