@@ -110,7 +110,7 @@ class ChatList extends Component {
                         <Left>
 
                             <Thumbnail square style={{borderRadius:5}}
-                                source={item.user.profile.profileImage ? {uri: getProfileImage(item.user.profile.profileImage)} : require('../../images/duser.png')}/>
+                                source={item.user.profile.profileImage ? {uri: getProfileImage(item.user.profile.profileImage)} : require('../../images/user-icon.png')}/>
                         </Left>
                         <Body>
                         <View style={{flexDirection: 'row'}}>

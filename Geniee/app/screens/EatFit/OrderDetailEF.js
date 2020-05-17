@@ -143,7 +143,7 @@ class OrderDetailEF extends Component {
                         <CardItem style={{paddingBottom: 10}}>
                             <Left>
                                 <Thumbnail large
-                                           source={require('../../images/duser.png')}/>
+                                           source={require('../../images/user-icon.png')}/>
                             </Left>
                             <Body style={{flex: 3, paddingLeft: 15}}>
                             <H2 style={{fontWeight: '700'}}>{order.contact.name}</H2>

@@ -115,8 +115,9 @@ class UploadProfilePic extends React.Component {
                             // height: 150,
                             justifyContent: `center`,
                             alignSelf: 'center',
-                            borderColor: `rgba(87, 150, 252, 1)`
-                        }} source={this.state.avatarSource? {uri:getProfileImage(this.state.avatarSource)} : require('../../images/duser.png')}/>
+                            borderColor: `rgba(87, 150, 252, 1)`,
+                            backgroundColor:'white',
+                        }} source={this.state.avatarSource? {uri:getProfileImage(this.state.avatarSource)} : require('../../images/user-icon.png')}/>
                     {this.state.user?
                     <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}
 

@@ -241,6 +241,14 @@ Meteor.methods({
                 type: NotificationTypes.RATE_SERVICE
             };
             Meteor.call('addNotification',notification);
+            const tokens= Meteor.users.findOne({_id:service.owner}).devices || [];
+            FIREBASE_MESSAGING.notificationToList(tokens,'New Service Review',`${user.profile.name} has reviewd your service '${service.title}. "${rating.comment}"`,{
+                Id: Id,
+                navigate: "true",
+                route: "ServiceRatings",
+                image:service.coverImage||"",
+                icon:user.profile.profileImage||""
+            })
         }
         catch (err) {
             console.log(err.message);

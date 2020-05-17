@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import {EFProducts,EFOrder} from "../../../lib/collections/eatFit/efProducts";
 import {ProductOwner} from "../../../lib/utils";
+import {FIREBASE_MESSAGING} from "../../API/fire-base-admin";
 
 Meteor.methods({
     'addNewProductEF': (productInfo) => {
@@ -44,6 +45,17 @@ Meteor.methods({
                                         type: NotificationTypes.ADD_PRODUCT
                                     };
                                     Meteor.call('addNotification',notification);
+                                    try {
+                                        FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - EAT-FIT`, productInfo.title, {
+                                            Id: Id,
+                                            navigate: "true",
+                                            route: "ProductDetailEF",
+                                            image: productInfo.images[0],
+                                          //  icon:_service.coverImage
+                                        })
+                                    } catch (e) {
+                                        throw new Meteor.Error(403, e.message);
+                                    }
                                     return Id;
                                 }
                             }
@@ -52,8 +64,29 @@ Meteor.methods({
             }
             else {
                 productInfo.images = [];
-                console.log('insert')
-                return EFProducts.insert(productInfo);
+                console.log('insert');
+                let Id= EFProducts.insert(productInfo);
+                const notification={
+                    title:'New Product by- EAT-FIT',
+                    description: productInfo.title,
+                    owner: Meteor.userId(),
+                    productOwner:ProductOwner.EAT_FIT,
+                    navigateId: Id,
+                    receiver:[],
+                    removedBy:[],
+                    type: NotificationTypes.ADD_PRODUCT
+                };
+                Meteor.call('addNotification',notification);
+                try {
+                    FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - EAT-FIT`, productInfo.title, {
+                        Id: Id,
+                        navigate: "true",
+                        route: "ProductDetailEF",
+                    })
+                } catch (e) {
+                    throw new Meteor.Error(403, e.message);
+                }
+                return Id;
             }
 
         }

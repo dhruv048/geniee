@@ -70,7 +70,8 @@ class SignIn extends Component {
     _loginFacabook = () => {
         console.log('loginFB')
         // try {
-            LoginManager.logInWithPermissions(["email", "user_location", "user_birthday","public_profile"]).then(function (result) {
+          //  LoginManager.logInWithPermissions(["email", "user_location", "user_birthday","public_profile"]).then(function (result) {
+            LoginManager.logInWithPermissions(["email","public_profile"]).then(function (result) {
                 console.log('resulttt',result)
                 if (result.isCancelled) {
                     console.log("Login cancelled");

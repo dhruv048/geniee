@@ -191,6 +191,14 @@ class ServiceDetail extends Component {
                     0,
                     50,
                 );
+                Meteor.call('getSingleService',this.state.Service._id,(err,res)=> {
+                    if (!err) {
+                        console.log(res)
+                        let Service = res.result[0];
+                        this.setState({Service});
+                        //   Service.avgRate = this.averageRating(Service.ratings)
+                    }
+                });
             }
         })
     }

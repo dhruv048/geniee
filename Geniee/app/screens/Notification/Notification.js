@@ -20,7 +20,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import {colors, variables} from "../../config/styles";
-import settings, {NotificationTypes, userType,getProfileImage} from "../../config/settings";
+import settings, {NotificationTypes, userType, getProfileImage, ProductOwner} from "../../config/settings";
 import Meteor from '../../react-native-meteor';
 import MyFunctions from "../../lib/MyFunctions";
 import Moment from 'moment';
@@ -28,7 +28,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 // import DropdownAlert from 'react-native-dropdownalert';
 // import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 import Loading from "../../components/Loading/Loading";
-import {goBack} from '../../Navigation';
+import {goBack, goToRoute} from '../../Navigation';
 import DeviceInfo from "react-native-device-info";
 
 
@@ -36,7 +36,6 @@ class Notification extends Component {
 
     _notificationPressed = (item) => {
         console.log('press');
-        const navigator = this.props.navigation;
         const deviceId = DeviceInfo.getUniqueId();
         Meteor.call('updateNotificationSeen', [item._id], deviceId, (err) => {
             if (err) {
@@ -47,15 +46,15 @@ class Notification extends Component {
 
         switch (item.type) {
 
-            case NotificationTypes.NEW_PRODUCT:
-                Meteor.subscribe("singleProduct", item.navigateId, () => {
-                    this.setState({loading: false});
-                    navigator.navigate('ProductDetail', {Id: item.navigateId});
-                });
-                break;
-            default :
-                this.setState({loading: false});
-
+            case NotificationTypes.ADD_PRODUCT:
+                if (item.productOwner == ProductOwner.EAT_FIT)
+                    goToRoute(this.props.componentId, "ProductDetailEF", {Id: item.navigateId});
+                else
+                    goToRoute(this.props.componentId, "ProductDetail", {Id: item.navigateId});
+            case NotificationTypes.ADD_SERVICE:
+                goToRoute(this.props.componentId, "ServiceDetail", {Id: item.navigateId});
+            case NotificationTypes.RATE_SERVICE:
+                goToRoute(this.props.componentId, "ServiceRatings", {Id: item.navigateId});
         }
     }
     NotificationMarkAsRead = (item) => {
@@ -155,13 +154,13 @@ class Notification extends Component {
 
     renderItem = (item) => {
         const logged = this.loggedUser ? this.loggedUser._id : Meteor._userIdSaved;
-        if(item.owner==logged)
+        if (item.owner == logged)
             return true;
         const deviceId = DeviceInfo.getUniqueId();
         let seen = false;
         if (item.seenBy.includes(logged) || item.seenBy.includes(deviceId))
             seen = true;
-        
+
         return (
             <TouchableOpacity onPress={() => this._notificationPressed(item)}>
                 <View style={{

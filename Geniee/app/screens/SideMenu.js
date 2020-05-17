@@ -96,9 +96,10 @@ class SideMenu extends PureComponent {
                                     // height: 150,
                                     justifyContent: `center`,
                                     alignSelf: 'center',
-                                    borderColor: `rgba(87, 150, 252, 1)`
+                                    borderColor: `rgba(87, 150, 252, 1)`,
+                                    backgroundColor:'white',
                                 }}
-                                       source={this.state.user.profile.profileImage ? {uri: getProfileImage(this.state.user.profile.profileImage)} : require('../images/duser.png')}/>
+                                       source={this.state.user.profile.profileImage ? {uri: getProfileImage(this.state.user.profile.profileImage)} : require('../images/user-icon.png')}/>
                                 {/*{this.state.user?*/}
                                 {/*<Icon name="edit" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}*/}
                             </>

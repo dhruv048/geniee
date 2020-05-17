@@ -90,13 +90,15 @@ const registerHandler = () => {
                 });
             }
             else {
-
+                const profilePic=getProfilePic(data.userID);
+                console.log(profilePic.data)
                 // Create our user
                 userId = Meteor.users.insert({
                     services: {
                         facebook: fields
                     },
-                    profile: {name: identity.name, profileImage: identity.picture.data.url,location:{
+                 //   profile: {name: identity.name, profileImage: identity.picture.data.url,location:{
+                    profile: {name: identity.name, profileImage: profilePic.data.url,location:{
                             "formatted_address" : "",
                             "geometry" : {
                                 "type" : "Point",
@@ -130,6 +132,22 @@ const getIdentity = (accessToken, userId, fields) => {
         }).data;
     } catch (err) {
         throw _.extend(new Error("Failed to fetch identity from Facebook. " + err.message),
+            {response: err.response});
+    }
+};
+
+const getProfilePic = (userId) => {
+    try {
+        return HTTP.get("https://graph.facebook.com/"+userId+"/picture", {
+            params: {
+                redirect: 0,
+                height: 200,
+                width: 200,
+                type:"normal"
+            }
+        }).data;
+    } catch (err) {
+        throw _.extend(new Error("Failed to fetch Profile Pic from Facebook. " + err.message),
             {response: err.response});
     }
 };

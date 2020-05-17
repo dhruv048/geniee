@@ -371,7 +371,7 @@ class Dashboard extends Component {
             component: {
                 name: "ServiceDetail",
                 passProps: {
-                    Id: service
+                    Id: service._id
                 }
             }
         });

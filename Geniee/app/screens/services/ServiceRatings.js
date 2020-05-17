@@ -77,7 +77,7 @@ export default class ServiceRatings extends Component {
         // console.log(Comment);
         return (
             <CommentBlock
-                source={Rating.RatedBy.profile.profileImage ? {uri:getProfileImage(Rating.RatedBy.profile.profileImage)} : require("../../images/duser.png")}
+                source={Rating.RatedBy.profile.profileImage ? {uri:getProfileImage(Rating.RatedBy.profile.profileImage)} : require("../../images/user-icon.png")}
                 name={Rating.RatedBy.profile.name}
                 rating={Rating.rating.count}
                 Comment={Rating.rating.comment}
