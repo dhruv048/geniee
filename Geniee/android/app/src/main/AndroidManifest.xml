@@ -48,8 +48,9 @@
 See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@mipmap/ic_launcher_round"/>
-                <!--android:resource="@drawable/icon"/>-->
+                android:resource="@drawable/cicon"/>
+        <!--android:resource="@mipmap/ic_launcher_round"/>-->
+
 
         <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more. -->
@@ -61,12 +62,13 @@ See README(https://goo.gl/l4GJaQ) for more. -->
                 android:value="@string/default_notification_channel_id"/>
 
         <receiver android:name="io.invertase.firebase.notifications.RNFirebaseNotificationReceiver"/>
-        <receiver android:enabled="true" android:exported="true"  android:name="io.invertase.firebase.notifications.RNFirebaseNotificationsRebootReceiver">
+        <receiver android:enabled="true" android:exported="true"
+                  android:name="io.invertase.firebase.notifications.RNFirebaseNotificationsRebootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
         <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">

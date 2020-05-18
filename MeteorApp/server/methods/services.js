@@ -662,4 +662,12 @@ Meteor.methods({
     },
 
 
+    'removeService':(Id)=>{
+        let _service=Service.findOne(Id);
+        Service.remove(Id);
+        Products.remove({service:Id});
+        ServiceImage.remove(_service.coverImage);
+    }
+
+
 })

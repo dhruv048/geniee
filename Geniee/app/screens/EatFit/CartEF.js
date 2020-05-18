@@ -171,7 +171,8 @@ class CartEF extends Component {
                         {item.title}
                     </Text>
                     <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>Rs. {item.finalPrice} <Text style={{fontWeight: 'normal', fontSize: 13}}>{item.orderQuantity > 1 ? "x " + item.orderQuantity : null}</Text></Text>
-                    <Text style={{color: '#8E8E8E', fontSize: 14}}>{item.isVeg?"Veg":"Non-Veg"}</Text>
+                    {item.productOwner==ProductOwner.EAT_FIT?
+                    <Text style={{color: '#8E8E8E', fontSize: 14}}>{item.isVeg?"Veg":"Non-Veg"}</Text>:null}
                     {/*<Text style={{color: '#8E8E8E', fontSize: 13}}>Color: {item.color}</Text>*/}
                     {/*<Text style={{color: '#8E8E8E', fontSize: 13}}>Size: {item.size}</Text>*/}
                 </Body>
@@ -193,7 +194,7 @@ class CartEF extends Component {
                 {
                     text: 'Yes', onPress: () => {
                         let {cartItems} = this.state;
-                        let index= cartItems.findIndex(item=>item._id==Item,_id);
+                        let index= cartItems.findIndex(item=>item._id==Item._id);
                         if(index>=0){
                             cartItems.splice(index,1);
                             this.setState({cartItems});

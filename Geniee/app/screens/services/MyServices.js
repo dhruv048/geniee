@@ -5,21 +5,14 @@ import {
     Header,
     Left,
     Body,
-    Subtitle,
     Right,
     Content,
-    List,
     ListItem,
     Thumbnail,
-    Footer,
-    FooterTab,
     Button,
-    Icon,
     Text,
     Item,
     Input,
-    Picker,
-    Fab
 } from 'native-base';
 
 import {
@@ -30,10 +23,10 @@ import {
     ActivityIndicator,
     Alert,
     TouchableOpacity,
-    FlatList, View
+    FlatList, View, ToastAndroid
 } from 'react-native';
 
-
+import Icon from 'react-native-vector-icons/Feather';
 import Meteor from "../../react-native-meteor";
 import settings from "../../config/settings";
 import {colors} from "../../config/styles";
@@ -42,9 +35,10 @@ import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
 import StarRating from "../../components/StarRating/StarRating";
 import {Navigation} from "react-native-navigation/lib/dist/index";
-import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
+import {backToRoot, goBack, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
 import ServiceDetail from "../ServiceDetail";
-
+import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+import AsyncStorage from "@react-native-community/async-storage";
 
 class MyServices extends Component {
     _callPhone = (number) => {
@@ -290,6 +284,39 @@ class MyServices extends Component {
                 this.setState({loading: false});
             }
         })
+    };
+
+    removeService=(_service)=>{
+        Alert.alert(
+            'Remove Service',
+            `Do you want to remove service '${_service.title}'? All the products under service will also be removed`,
+            [
+                {
+                    text: 'Yes Remove', onPress: () => Meteor.call('removeService',_service._id,(err,res)=>{
+                        if(!err){
+                            ToastAndroid.showWithGravityAndOffset(
+                                "Removed Successfully",
+                                ToastAndroid.SHORT,
+                                ToastAndroid.BOTTOM,
+                                0,
+                                50,
+                            );
+                        }
+                        else{
+                            ToastAndroid.showWithGravityAndOffset(
+                               err.reason,
+                                ToastAndroid.SHORT,
+                                ToastAndroid.BOTTOM,
+                                0,
+                                50,
+                            );
+                        }
+                    })
+                },
+                {text: 'Cancel', onPress: () => {return true;}}
+            ],
+            {cancelable: false}
+        );
     }
 
     _getListItem = (data) => {
@@ -332,6 +359,24 @@ class MyServices extends Component {
 
                         {/*</Right>*/}
 
+                        <Right style={{flex: 0}}>
+                            <TouchableOpacity
+                            style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}
+                            onPress={() => {
+                            }}>
+                            <Menu
+                            ref={ref => (this[`menu${rowData._id}`] = ref)}
+                            button={
+                            <Button transparent onPress={() => this[`menu${rowData._id}`].show()}>
+                            <Icon name={'more-vertical'} size={18} color={colors.gray_200}/>
+                            </Button>}>
+                            <MenuItem onPress={() => {
+                            this[`menu${rowData._id}`].hide(), this.removeService(rowData)
+                            }}>Remove Service</MenuItem>
+                            </Menu>
+                            </TouchableOpacity>
+                        </Right>
+
                     </ListItem>
                 </TouchableWithoutFeedback>
             </View>
@@ -345,7 +390,7 @@ class MyServices extends Component {
                       data={this.state.data}
                       renderItem={this._getListItem}
                       initialNumToRender={15}
-                      onEndReached={(distance) => this._onEndReached(distance)}
+                    //  onEndReached={(distance) => this._onEndReached(distance)}
                       onEndReachedThreshold={0.1}
                       ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
                       keyExtractor={(item, index) => index.toString()}
@@ -414,11 +459,8 @@ class MyServices extends Component {
 
         return (
             <Container style={{backgroundColor: colors.appBackground}}>
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header style={{backgroundColor: '#094c6b'}}>
+
+                <Header  androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />
