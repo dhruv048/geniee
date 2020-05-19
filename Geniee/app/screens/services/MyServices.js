@@ -368,7 +368,7 @@ class MyServices extends Component {
                             ref={ref => (this[`menu${rowData._id}`] = ref)}
                             button={
                             <Button transparent onPress={() => this[`menu${rowData._id}`].show()}>
-                            <Icon name={'more-vertical'} size={18} color={colors.gray_200}/>
+                            <Icon name={'more-vertical'} size={20} color={colors.primary}/>
                             </Button>}>
                             <MenuItem onPress={() => {
                             this[`menu${rowData._id}`].hide(), this.removeService(rowData)

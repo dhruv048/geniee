@@ -3,6 +3,7 @@ import { AccessToken } from 'react-native-fbsdk';
 import Meteor from '../react-native-meteor';
 import {MyFunctions} from "../lib/MyFunctions";
 import {goToDashboard,goBack} from "../Navigation";
+import {EventRegister} from "react-native-event-listeners";
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
@@ -20,6 +21,7 @@ export const loginWithTokens = (compId) => {
                         Data._tokenIdSaved = result.token;
                         Meteor._userIdSaved = result.id;
                         Meteor._loginWithToken(result.token)
+                        EventRegister.emit('siggnedIn',true)
                        // MyFunctions._saveDeviceUniqueId();
                         goToDashboard();
                        // goBack(compId)

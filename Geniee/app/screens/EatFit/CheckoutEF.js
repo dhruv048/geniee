@@ -134,6 +134,8 @@ class CheckoutEF extends Component {
                     const cartItem = cartList.find(item => item.id == product._id);
                     console.log(cartItem, product)
                     product.orderQuantity = cartItem.orderQuantity;
+                    product.size=cartItem.size;
+                    product.color=cartItem.color;
                     product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)):0));
                 });
                 this.setState({cartItems: res.result});
@@ -296,16 +298,21 @@ class CheckoutEF extends Component {
                 key={data.item._id}
                 style={{marginLeft: 0}}
             >
-                <Body style={{paddingLeft: 10}}>
+                <Body style={{paddingLeft: 10, flex:4}}>
                 <Text style={{fontSize: 18}}>
                     {item.orderQuantity > 1 ? item.orderQuantity + "x " : null}
                     {item.title}
                 </Text>
-                {/*<Text style={{fontSize: 14, fontStyle: 'italic'}}>Color: {item.color}</Text>*/}
-                {/*<Text style={{fontSize: 14, fontStyle: 'italic'}}>Size: {item.size}</Text>*/}
+                <Text style={{fontSize: 15, fontStyle: 'italic'}}>Price: Rs. {item.finalPrice}</Text>
+                <View style={{flexDirection:'row'}}>
+                {item.color?
+                <Text style={{fontSize: 14, fontStyle: 'italic'}}>Color: {item.color}</Text>:null}
+                {item.size?
+                <Text style={{fontSize: 14, fontStyle: 'italic', marginLeft:item.color? 10:0 }}>Size: {item.size}</Text>:null}
+                </View>
                 </Body>
-                <Right>
-                    <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 10}}>Rs. {item.finalPrice}</Text>
+                <Right style={{flex:2}}>
+                    <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 10}}>Rs. {item.finalPrice*item.orderQuantity}</Text>
                 </Right>
             </ListItem>
         );

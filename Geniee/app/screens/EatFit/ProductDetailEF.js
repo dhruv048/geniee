@@ -36,7 +36,7 @@ import {colors, customStyle} from "../../config/styles";
 import Meteor from "../../react-native-meteor";
 import settings from "../../config/settings";
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import {goBack,goToRoute} from "../../Navigation";
+import {goBack, goToRoute} from "../../Navigation";
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -99,7 +99,7 @@ class ProductDetailEF extends Component {
         ;
         //Get Similar products
         Meteor.call('getSimilarProductEF', productId, (err, res) => {
-            console.log(err,res);
+            console.log(err, res);
             if (err) {
                 console.log('this is due to error. ' + err);
             }
@@ -110,7 +110,7 @@ class ProductDetailEF extends Component {
 
 
         //Update Views Count
-        Meteor.call('updateViewCountEF',productId);
+        Meteor.call('updateViewCountEF', productId);
     }
 
     setInitial() {
@@ -137,7 +137,7 @@ class ProductDetailEF extends Component {
         let product = this.state.product;
         product['orderQuantity'] = this.state.quantity;
         product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
-        goToRoute(this.props.componentId,'CheckoutEF', {'productOrder': product});
+        goToRoute(this.props.componentId, 'CheckoutEF', {'productOrder': product});
     }
 
     _browse = (url) => {
@@ -217,79 +217,79 @@ class ProductDetailEF extends Component {
 
                 </View>
                 {this.state.product ?
+                    <>
+                        <Content style={styles.content}>
+                            <Carousel style={{backgroundColor: '#fff'}}
+                                      data={this.state.product.images}
+                                      renderItem={this._renderItem}
+                                      ref={(carousel) => {
+                                          this._carousel = carousel;
+                                      }}
+                                      sliderWidth={Dimensions.get('window').width}
+                                      itemWidth={Dimensions.get('window').width}
+                                      onSnapToItem={(index) => this.setState({activeSlide: index})}
+                                      enableSnap={true}
+                                      containerCustomStyle={{backgroundColor: '#fff'}}
+                            />
+                            <Pagination
+                                dotsLength={this.state.product.images.length}
+                                activeDotIndex={this.state.activeSlide}
+                                containerStyle={{
+                                    paddingTop: 10,
+                                    paddingBottom: 10,
+                                    marginTop: -15,
+                                    backgroundColor: '#fff'
+                                }}
+                                dotContainerStyle={{marginHorizontal: 3}}
+                                dotStyle={{
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: 20,
+                                    marginHorizontal: 0,
+                                    backgroundColor: colors.primary
+                                }}
+                                inactiveDotStyle={{backgroundColor: '#ddd'}}
+                                inactiveDotScale={1}
+                            />
 
-                    <Content style={styles.content}>
-                        <Carousel style={{backgroundColor: '#fff'}}
-                                  data={this.state.product.images}
-                                  renderItem={this._renderItem}
-                                  ref={(carousel) => {
-                                      this._carousel = carousel;
-                                  }}
-                                  sliderWidth={Dimensions.get('window').width}
-                                  itemWidth={Dimensions.get('window').width}
-                                  onSnapToItem={(index) => this.setState({activeSlide: index})}
-                                  enableSnap={true}
-                                  containerCustomStyle={{backgroundColor: '#fff'}}
-                        />
-                        <Pagination
-                            dotsLength={this.state.product.images.length}
-                            activeDotIndex={this.state.activeSlide}
-                            containerStyle={{
-                                paddingTop: 10,
-                                paddingBottom: 10,
-                                marginTop: -15,
-                                backgroundColor: '#fff'
-                            }}
-                            dotContainerStyle={{marginHorizontal: 3}}
-                            dotStyle={{
-                                width: 6,
-                                height: 6,
-                                borderRadius: 20,
-                                marginHorizontal: 0,
-                                backgroundColor: colors.primary
-                            }}
-                            inactiveDotStyle={{backgroundColor: '#ddd'}}
-                            inactiveDotScale={1}
-                        />
+                            <View style={{padding: 16, backgroundColor: '#fff'}}>
 
-                        <View style={{padding: 16, backgroundColor: '#fff'}}>
-
-                            <Text style={{
-                                fontSize: 20,
-                                marginBottom: 7,
-                                color: colors.primaryText
-                            }}>{this.state.product.title}
-                                <Text style={{fontSize: 16}}
-                                      note> ({this.state.product.isVeg ? "Veg" : "Non-Veg"})</Text>
-                            </Text>
-                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end', marginBottom: 7}}>
-                                {this.state.product.price ?
-                                    <Text style={{
-                                        fontSize: 24,
-                                        fontWeight: 'bold'
-                                    }}>Rs. {(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)))}{this.state.product.unit ?
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'normal'
-                                        }}> / {this.state.product.unit}</Text> : null}</Text>
-                                    : null}
                                 <Text style={{
-                                    fontSize: 16,
-                                    color: '#8E8E8E',
-                                    textDecorationLine: 'line-through',
-                                    paddingBottom: 2,
-                                    marginLeft: 14
-                                }}>MRP Rs {this.state.product.price}</Text>
-                                <Text
-                                    style={{
+                                    fontSize: 20,
+                                    marginBottom: 7,
+                                    color: colors.primaryText
+                                }}>{this.state.product.title}
+                                    <Text style={{fontSize: 16}}
+                                          note> ({this.state.product.isVeg ? "Veg" : "Non-Veg"})</Text>
+                                </Text>
+                                <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end', marginBottom: 7}}>
+                                    {this.state.product.price ?
+                                        <Text style={{
+                                            fontSize: 24,
+                                            fontWeight: 'bold'
+                                        }}>Rs. {(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)))}{this.state.product.unit ?
+                                            <Text style={{
+                                                fontSize: 16,
+                                                fontWeight: 'normal'
+                                            }}> / {this.state.product.unit}</Text> : null}</Text>
+                                        : null}
+                                    <Text style={{
                                         fontSize: 16,
-                                        color: colors.success,
+                                        color: '#8E8E8E',
+                                        textDecorationLine: 'line-through',
                                         paddingBottom: 2,
-                                        marginLeft: 7
-                                    }}>{this.state.product.discount ? this.state.product.discount : 0}% off</Text>
-                            </View>
+                                        marginLeft: 14
+                                    }}>MRP Rs {this.state.product.price}</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            color: colors.success,
+                                            paddingBottom: 2,
+                                            marginLeft: 7
+                                        }}>{this.state.product.discount ? this.state.product.discount : 0}% off</Text>
+                                </View>
 
-                            {/* <Grid>
+                                {/* <Grid>
                                 <Col size={3}>
                                     <Text style={{
                                         fontSize: 18,
@@ -308,111 +308,160 @@ class ProductDetailEF extends Component {
                                     : null}
                             </Grid> */}
 
-                            {/*<Text*/}
-                            {/*style={{fontSize: 16, marginBottom: 16}}>{this.state.product.availabeQuantity} {this.state.product.unit}{this.state.product.availabeQuantity > 1 ? 's' : ''} available</Text>*/}
-                            {/*<Grid >*/}
-                            {/*<Col size={2}>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text style={{fontSize: 15}}>Is Veg</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*<Col size={1}><Text style={{fontSize: 16}}>{this.state.product.isVeg}</Text></Col>*/}
-                            {/*</Grid>*/}
-                            {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
-                            {/*<Col size={2}>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text style={{fontSize: 15}}>Brand</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*<Col size={1}><Text*/}
-                            {/*style={{fontSize: 16}}>{this.state.product.brand}</Text></Col>*/}
-                            {/*</Grid>*/}
-                            <Label style={{
-                                borderBottomColor: '#ddd',
-                                borderBottomWidth: 1,
-                                color: colors.primaryText
-                            }}>Nutritions</Label>
-                            {this.state.product.nutritions.map(item => (
+                                {/*<Text*/}
+                                {/*style={{fontSize: 16, marginBottom: 16}}>{this.state.product.availabeQuantity} {this.state.product.unit}{this.state.product.availabeQuantity > 1 ? 's' : ''} available</Text>*/}
+                                {/*<Grid >*/}
+                                {/*<Col size={2}>*/}
+                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                {/*<Text style={{fontSize: 15}}>Is Veg</Text>*/}
+                                {/*</View>*/}
+                                {/*</Col>*/}
+                                {/*<Col size={1}><Text style={{fontSize: 16}}>{this.state.product.isVeg}</Text></Col>*/}
+                                {/*</Grid>*/}
+                                {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
+                                {/*<Col size={2}>*/}
+                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                {/*<Text style={{fontSize: 15}}>Brand</Text>*/}
+                                {/*</View>*/}
+                                {/*</Col>*/}
+                                {/*<Col size={1}><Text*/}
+                                {/*style={{fontSize: 16}}>{this.state.product.brand}</Text></Col>*/}
+                                {/*</Grid>*/}
+                                <Label style={{
+                                    borderBottomColor: '#ddd',
+                                    borderBottomWidth: 1,
+                                    color: colors.primaryText
+                                }}>Nutritions</Label>
+                                {this.state.product.nutritions.map(item => (
+                                    <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0}}>
+                                        <Col size={2}>
+                                            <View style={{flex: 1, justifyContent: 'center'}}>
+                                                <Text style={{fontSize: 15}}>{item.label}</Text>
+                                            </View>
+                                        </Col>
+                                        <Col size={2}>
+                                            <View style={{flex: 1, justifyContent: 'center'}}>
+                                                <Text style={{fontSize: 15}}>{item.value}</Text>
+                                            </View>
+                                        </Col>
+                                    </Grid>
+                                ))}
+                                {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
+                                {/*<Col size={2}>*/}
+                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                {/*<Text style={{fontSize: 15}}>Color</Text>*/}
+                                {/*</View>*/}
+                                {/*</Col>*/}
+                                {/*{this.state.product.colors ?*/}
+                                {/*<Col size={1}>*/}
+                                {/*<Picker*/}
+                                {/*mode="dropdown"*/}
+                                {/*placeholder="Select a color"*/}
+                                {/*note={true}*/}
+                                {/*selectedValue={this.state.selectedColor}*/}
+                                {/*onValueChange={(color) => this.setState({selectedColor: color})}*/}
+                                {/*>*/}
+                                {/*{this.renderColors(this.state.product.colors)}*/}
+                                {/*</Picker>*/}
+                                {/*</Col> : null}*/}
+                                {/*</Grid>*/}
+                                {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
+                                {/*<Col size={2}>*/}
+                                {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                {/*<Text style={{fontSize: 15}}>Size</Text>*/}
+                                {/*</View>*/}
+                                {/*</Col>*/}
+                                {/*{this.state.product.sizes ?*/}
+                                {/*<Col size={1}>*/}
+                                {/*<Picker*/}
+                                {/*mode="dropdown"*/}
+                                {/*placeholder="Select a size"*/}
+                                {/*note={true}*/}
+                                {/*selectedValue={this.state.selectedSize}*/}
+                                {/*onValueChange={(size) => this.setState({selectedSize: size})}*/}
+                                {/*>*/}
+                                {/*{this.renderSize(this.state.product.sizes)}*/}
+                                {/*</Picker>*/}
+                                {/*</Col> : null}*/}
+                                {/*</Grid>*/}
                                 <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0}}>
                                     <Col size={2}>
                                         <View style={{flex: 1, justifyContent: 'center'}}>
-                                            <Text style={{fontSize: 15}}>{item.label}</Text>
+                                            <Text style={{fontSize: 15}}>Select Quantity</Text>
                                         </View>
                                     </Col>
-                                    <Col size={2}>
-                                        <View style={{flex: 1, justifyContent: 'center'}}>
-                                            <Text style={{fontSize: 15}}>{item.value}</Text>
+
+                                    <Col size={1}>
+                                        <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <Button block icon transparent
+                                                    onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>
+                                                <FIcon name='minus' size={24} style={{color: colors.appLayout}}/>
+                                            </Button>
+                                            <View style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                paddingLeft: 20,
+                                                paddingRight: 20
+                                            }}>
+                                                <Text style={{fontSize: 18}}>{this.state.quantity}</Text>
+                                            </View>
+                                            <Button block icon transparent
+                                                    onPress={() => this.setState({quantity: this.state.quantity + 1})}>
+                                                <FIcon style={{color: colors.appLayout}} size={24} name='plus'/>
+                                            </Button>
                                         </View>
                                     </Col>
                                 </Grid>
-                            ))}
-                            {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
-                            {/*<Col size={2}>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text style={{fontSize: 15}}>Color</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*{this.state.product.colors ?*/}
-                            {/*<Col size={1}>*/}
-                            {/*<Picker*/}
-                            {/*mode="dropdown"*/}
-                            {/*placeholder="Select a color"*/}
-                            {/*note={true}*/}
-                            {/*selectedValue={this.state.selectedColor}*/}
-                            {/*onValueChange={(color) => this.setState({selectedColor: color})}*/}
-                            {/*>*/}
-                            {/*{this.renderColors(this.state.product.colors)}*/}
-                            {/*</Picker>*/}
-                            {/*</Col> : null}*/}
-                            {/*</Grid>*/}
-                            {/*<Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>*/}
-                            {/*<Col size={2}>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text style={{fontSize: 15}}>Size</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*{this.state.product.sizes ?*/}
-                            {/*<Col size={1}>*/}
-                            {/*<Picker*/}
-                            {/*mode="dropdown"*/}
-                            {/*placeholder="Select a size"*/}
-                            {/*note={true}*/}
-                            {/*selectedValue={this.state.selectedSize}*/}
-                            {/*onValueChange={(size) => this.setState({selectedSize: size})}*/}
-                            {/*>*/}
-                            {/*{this.renderSize(this.state.product.sizes)}*/}
-                            {/*</Picker>*/}
-                            {/*</Col> : null}*/}
-                            {/*</Grid>*/}
-                            <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0}}>
-                                <Col size={2}>
-                                    <View style={{flex: 1, justifyContent: 'center'}}>
-                                        <Text style={{fontSize: 15}}>Select Quantity</Text>
-                                    </View>
-                                </Col>
 
-                                <Col size={1}>
-                                    <View style={{flex: 1, flexDirection: 'row'}}>
-                                        <Button block icon transparent
-                                                onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>
-                                            <FIcon name='minus' size={24} style={{color: colors.appLayout}}/>
-                                        </Button>
-                                        <View style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            paddingLeft: 20,
-                                            paddingRight: 20
-                                        }}>
-                                            <Text style={{fontSize: 18}}>{this.state.quantity}</Text>
-                                        </View>
-                                        <Button block icon transparent
-                                                onPress={() => this.setState({quantity: this.state.quantity + 1})}>
-                                            <FIcon style={{color: colors.appLayout}} size={24} name='plus'/>
-                                        </Button>
-                                    </View>
-                                </Col>
-                            </Grid>
-                            <Grid style={{marginTop: 15}}>
+                            </View>
+                            <View style={{padding: 16, marginTop: 7, backgroundColor: '#fff'}}>
+                                <Text style={{marginBottom: 5, color: '#8E8E8E', marginBottom: 10}}>Description</Text>
+                                {/*<NBText>*/}
+                                {/*{this.state.product.content}*/}
+                                {/*</NBText>*/}
+                                <AutoHeightWebView
+                                    // default width is the width of screen
+                                    // if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35
+                                    style={{
+                                        width: viewportWidth - 33,
+                                        marginHorizontal: 15,
+                                        marginVertical: 20
+                                    }}
+
+                                    customStyle={''}
+
+                                    onSizeUpdated={size => console.log(size.height)}
+
+
+                                    source={{html: this.state.product.content || " "}}
+
+                                />
+                            </View>
+                            <View style={{marginTop: 7}}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    fontWeight: 'bold',
+                                    padding: 15,
+                                    backgroundColor: '#fff',
+                                    borderBottomColor: '#ddd',
+                                    borderBottomWidth: 1
+                                }}>Similar items</Text>
+                                <FlatList style={styles.mainContainer}
+                                          data={this.state.similarProducts}
+                                          keyExtracter={(item, index) => item._id}
+                                          horizontal={false}
+                                          numColumns={2}
+                                          renderItem={(item, index) => this._renderProduct(item, index)}
+                                />
+                            </View>
+                        </Content>
+                        <Footer style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingHorizontal: 5
+                        }}>
+                            <Grid>
                                 <Col size={2}>
                                     <Button block onPress={this.addToCart}
                                             style={[customStyle.buttonPrimary, {marginRight: 5}]}>
@@ -429,53 +478,16 @@ class ProductDetailEF extends Component {
                                     <Button block icon transparent
                                         // onPress={this.addToCart.bind(this)}
                                             style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
-                                       <FIcon name={'phone'} size={24} color={colors.primary}/>
+                                        <FIcon name={'phone'} size={24} color={colors.primary}/>
                                     </Button>
                                 </Col>
                             </Grid>
-                        </View>
-                        <View style={{padding: 16, marginTop: 7, backgroundColor: '#fff'}}>
-                            <Text style={{marginBottom: 5, color: '#8E8E8E', marginBottom: 10}}>Description</Text>
-                            {/*<NBText>*/}
-                            {/*{this.state.product.content}*/}
-                            {/*</NBText>*/}
-                            <AutoHeightWebView
-                                // default width is the width of screen
-                                // if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35
-                                style={{
-                                    width: viewportWidth - 33,
-                                    marginHorizontal: 15,
-                                    marginVertical: 20
-                                }}
-
-                                customStyle={''}
-
-                                onSizeUpdated={size => console.log(size.height)}
-
-
-                                source={{html: this.state.product.content || " "}}
-
-                            />
-                        </View>
-                        <View style={{marginTop: 7}}>
-                            <Text style={{
-                                fontSize: 15,
-                                fontWeight: 'bold',
-                                padding: 15,
-                                backgroundColor: '#fff',
-                                borderBottomColor: '#ddd',
-                                borderBottomWidth: 1
-                            }}>Similar items</Text>
-                            <FlatList style={styles.mainContainer}
-                                      data={this.state.similarProducts}
-                                      keyExtracter={(item, index) => item._id}
-                                      horizontal={false}
-                                      numColumns={2}
-                                      renderItem={(item, index) => this._renderProduct(item, index)}
-                            />
-                        </View>
-                    </Content>
-                    : <Spinner/>}
+                        </Footer>
+                    </>
+                    :
+                    <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                        <Spinner color={colors.primary}/>
+                    </View>}
                 {/* <Footer>
                         <Button block onPress={this.addToCart.bind(this)}
                                 style={{backgroundColor: colors.appLayout, marginRight: 10}}>
@@ -494,7 +506,7 @@ class ProductDetailEF extends Component {
         return (
             <TouchableWithoutFeedback
                 key={index}
-                onPress={() => goToRoute(this.props.componentId,'ImageGallery', {
+                onPress={() => goToRoute(this.props.componentId, 'ImageGallery', {
                     images: this.state.product.images,
                     position: parseInt(index)
                 })}
@@ -540,16 +552,16 @@ class ProductDetailEF extends Component {
         return size;
     }
 
-     addToCart=async() =>{
+    addToCart = async () => {
         var product = this.state.product;
         // product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
         // product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
         product['orderQuantity'] = this.state.quantity;
-       // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
+        // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
         let cartList = await AsyncStorage.getItem('myCart');
-        let cartItem={
-            id:product._id,
-            orderQuantity:product.orderQuantity
+        let cartItem = {
+            id: product._id,
+            orderQuantity: product.orderQuantity
         }
         if (cartList) {
             cartList = JSON.parse(cartList);
@@ -567,13 +579,13 @@ class ProductDetailEF extends Component {
         else {
             cartList.push(cartItem);
         }
-         ToastAndroid.showWithGravityAndOffset(
-             'Product added to your cart !',
-             ToastAndroid.LONG,
-             ToastAndroid.TOP,
-             0,
-             50,
-         );
+        ToastAndroid.showWithGravityAndOffset(
+            'Product added to your cart !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
         AsyncStorage.setItem('myCart', JSON.stringify(cartList));
     }
 
@@ -588,9 +600,11 @@ class ProductDetailEF extends Component {
         else {
             wishList = [productId];
         }
-        let index=wishList.findIndex(item=>{return item==productId});
-        if(index>-1)
-            wishList.splice(index,1);
+        let index = wishList.findIndex(item => {
+            return item == productId
+        });
+        if (index > -1)
+            wishList.splice(index, 1);
         else
             wishList.push(productId);
 
@@ -603,6 +617,7 @@ class ProductDetailEF extends Component {
             50,
         );
     }
+
     search(array, object) {
         for (var i = 0; i < array.length; i++)
             if (JSON.stringify(array[i]) === JSON.stringify(object))
@@ -637,4 +652,4 @@ export default Meteor.withTracker((props) => {
         Products: Meteor.collection('products').find({_id: {$ne: Id}}),
         Product: Meteor.collection('products').findOne({_id: Id})
     };
-})( ProductDetailEF);
+})(ProductDetailEF);

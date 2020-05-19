@@ -8,6 +8,7 @@ import {LoginManager} from "react-native-fbsdk";
 import {onLoginFinished} from "../lib/FBlogin";
 import {Navigation} from "react-native-navigation";
 import {backToRoot, navigateToRoutefromSideMenu, goToRoute, goBack} from "../Navigation";
+import {EventRegister} from "react-native-event-listeners";
 
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
@@ -118,6 +119,7 @@ class SignIn extends Component {
                         console.log("Resulton LogedIN:" + Meteor.getData()._tokenIdSaved);
                         AsyncStorage.setItem(USER_TOKEN_KEY,  Meteor.getData()._tokenIdSaved );
                         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
+                        EventRegister.emit('siggnedIn',true)
                         this.setState({
                             isLogged: true
                         });

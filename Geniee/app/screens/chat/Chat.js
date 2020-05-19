@@ -343,13 +343,14 @@ class Chat extends Component {
                     barStyle='light-content'
                 />
                 <Header searchBar rounded style={{backgroundColor: colors.appLayout}}>
-                    <Left>
+                    <Left style={{flexDirection:'row'}}>
                         <Button onPress={() => {
                             goBack(this.props.componentId)
                         }} transparent>
                             <Icon name='arrow-left' color='white' size={25}/>
                         </Button>
-
+                        <Thumbnail square small style={{borderRadius:5,margin:7}}
+                                   source={channel.user.profileImage ? {uri: getProfileImage(channel.user.profileImage)} : require('../../images/user-icon.png')}/>
 
                     </Left>
                     <Body>
@@ -360,10 +361,9 @@ class Chat extends Component {
                         {channel.service.title||""}
                     </Text>
                     </Body>
-                    <Right style={{margin: 7}}>
-                        <Thumbnail square small style={{borderRadius:5}}
-                            source={channel.user.profileImage ? {uri: getProfileImage(channel.user.profileImage)} : require('../../images/user-icon.png')}/>
-                    </Right>
+                    {/*<Left style={{margin: 7}}>*/}
+
+                    {/*</Left>*/}
                 </Header>
                 <View style={styles.content}>
                     <FlatList

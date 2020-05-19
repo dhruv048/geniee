@@ -54,6 +54,8 @@ class CartEF extends Component {
                     const cartItem=cartList.find(item=>item.id==product._id);
                     console.log(cartItem,product)
                     product.orderQuantity=cartItem.orderQuantity;
+                    product.color=cartItem.color;
+                    product.size=cartItem.size;
                     product.finalPrice=Math.round(product.price -(product.discount? (product.price * (product.discount / 100)) :0));
                 });
                 this.setState({cartItems: res.result});
@@ -172,9 +174,13 @@ class CartEF extends Component {
                     </Text>
                     <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>Rs. {item.finalPrice} <Text style={{fontWeight: 'normal', fontSize: 13}}>{item.orderQuantity > 1 ? "x " + item.orderQuantity : null}</Text></Text>
                     {item.productOwner==ProductOwner.EAT_FIT?
-                    <Text style={{color: '#8E8E8E', fontSize: 14}}>{item.isVeg?"Veg":"Non-Veg"}</Text>:null}
-                    {/*<Text style={{color: '#8E8E8E', fontSize: 13}}>Color: {item.color}</Text>*/}
-                    {/*<Text style={{color: '#8E8E8E', fontSize: 13}}>Size: {item.size}</Text>*/}
+                    <Text style={{color: '#8E8E8E', fontSize: 14}}>{item.isVeg?"Veg":"Non-Veg"}</Text>:
+                        <>
+                            {item.color?
+                    <Text style={{color: '#8E8E8E', fontSize: 13}}>Color: {item.color}</Text>:null}
+                            {item.size?
+                    <Text style={{color: '#8E8E8E', fontSize: 13}}>Size: {item.size}</Text>:null}
+                    </>}
                 </Body>
                 <Right style={{paddingRight: 5}}>
                     <Button transparent onPress={() => this.removeItemPressed(data.item)}>

@@ -33,7 +33,8 @@ if (Meteor.isServer) {
                     });
                 }
                 catch(e){
-                    res.writeHead(500);
+                   // res.writeHead(500);
+                    console.log(e.message)
                     res.end(e.message);
                 }
 

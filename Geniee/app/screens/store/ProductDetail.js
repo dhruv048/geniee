@@ -22,7 +22,7 @@ import {
     Item,
     Grid,
     Col,
-    Text as NBText, Spinner, Button
+    Text as NBText, Spinner, Button, Footer, Picker
 } from 'native-base';
 import FIcon from "react-native-vector-icons/Feather";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
@@ -172,6 +172,7 @@ class ProductDetail extends Component {
 
                 </View>
                 {this.state.product ?
+                    <>
                     <Content>
                         <Carousel
                             data={this.state.product.images}
@@ -229,44 +230,7 @@ class ProductDetail extends Component {
                                     </Col>
                                     : null}
                             </Grid>
-                            {/*<Grid style={{marginTop: 15}}>*/}
-                            {/*<Col>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text>Color:</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*{this.state.product.colors?*/}
-                            {/*<Col size={3}>*/}
-                            {/*<Picker*/}
-                            {/*mode="dropdown"*/}
-                            {/*placeholder="Select a color"*/}
-                            {/*note={true}*/}
-                            {/*selectedValue={this.state.selectedColor}*/}
-                            {/*onValueChange={(color) => this.setState({selectedColor: color})}*/}
-                            {/*>*/}
-                            {/*{this.renderColors(this.state.product.colors)}*/}
-                            {/*</Picker>*/}
-                            {/*</Col>:null}*/}
-                            {/*</Grid>*/}
-                            {/*<Grid>*/}
-                            {/*<Col>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text>Size:</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*{this.state.product.sizes?*/}
-                            {/*<Col size={3}>*/}
-                            {/*<Picker*/}
-                            {/*mode="dropdown"*/}
-                            {/*placeholder="Select a size"*/}
-                            {/*note={true}*/}
-                            {/*selectedValue={this.state.selectedSize}*/}
-                            {/*onValueChange={(size) => this.setState({selectedSize: size})}*/}
-                            {/*>*/}
-                            {/*{this.renderSize(this.state.product.sizes)}*/}
-                            {/*</Picker>*/}
-                            {/*</Col>:null}*/}
-                            {/*</Grid>*/}
+
                             <Grid>
                                 <Col size={2}>
                                     <View style={{flex: 1, justifyContent: 'center'}}>
@@ -340,57 +304,37 @@ class ProductDetail extends Component {
                                     </Col>
                                 </Grid> : null}
 
-                            <Grid style={{marginTop: 15}}>
-                                <Col size={2}>
-                                    <Button block onPress={this.addToCart}
-                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
-                                        <Text style={customStyle.buttonPrimaryText}>Add to Cart</Text>
-                                    </Button>
-                                </Col>
-                                <Col size={2}>
-                                    <Button block onPress={this.OrderNow.bind(this)}
-                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
-                                        <Text style={customStyle.buttonPrimaryText}>Order Now</Text>
-                                    </Button>
-                                </Col>
-                                <Col size={1}>
-                                    <Button block icon transparent
-                                        // onPress={this.addToCart.bind(this)}
-                                            style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
-                                        <FIcon name={'phone'} size={24} color={colors.primary}/>
-                                    </Button>
-                                </Col>
+
+
+                            <Grid>
+                            <Col size={2}>
+                            <View style={{flex: 1, justifyContent: 'center'}}>
+                            <Text>Select Quantity:</Text>
+                            </View>
+                            </Col>
+
+                            <Col size={2}>
+                            <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Button block icon transparent
+                            onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>
+                            <NBIcon name='ios-remove' style={{color: colors.appLayout}}/>
+                            </Button>
+                            <View style={{
+                            flex: 4,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingLeft: 30,
+                            paddingRight: 30
+                            }}>
+                            <Text style={{fontSize: 18}}>{this.state.quantity}</Text>
+                            </View>
+                            <Button block icon transparent
+                            onPress={() => this.setState({quantity: this.state.quantity < this.state.product.availabeQuantity? this.state.quantity+ 1 : this.state.product.availabeQuantity})}>
+                            <NBIcon style={{color: colors.appLayout}} name='ios-add'/>
+                            </Button>
+                            </View>
+                            </Col>
                             </Grid>
-
-                            {/*<Grid>*/}
-                            {/*<Col size={2}>*/}
-                            {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
-                            {/*<Text>Select Quantity:</Text>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-
-                            {/*<Col size={2}>*/}
-                            {/*<View style={{flex: 1, flexDirection: 'row'}}>*/}
-                            {/*<Button block icon transparent*/}
-                            {/*onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>*/}
-                            {/*<Icon name='ios-remove' style={{color: colors.appLayout}}/>*/}
-                            {/*</Button>*/}
-                            {/*<View style={{*/}
-                            {/*flex: 4,*/}
-                            {/*justifyContent: 'center',*/}
-                            {/*alignItems: 'center',*/}
-                            {/*paddingLeft: 30,*/}
-                            {/*paddingRight: 30*/}
-                            {/*}}>*/}
-                            {/*<Text style={{fontSize: 18}}>{this.state.quantity}</Text>*/}
-                            {/*</View>*/}
-                            {/*<Button block icon transparent*/}
-                            {/*onPress={() => this.setState({quantity: this.state.quantity + 1})}>*/}
-                            {/*<Icon style={{color: colors.appLayout}} name='ios-add'/>*/}
-                            {/*</Button>*/}
-                            {/*</View>*/}
-                            {/*</Col>*/}
-                            {/*</Grid>*/}
                             {/*<Grid style={{marginTop: 15}}>*/}
                             {/*<Col size={3}>*/}
                             {/*<Button block onPress={this.addToCart.bind(this)}*/}
@@ -405,6 +349,45 @@ class ProductDetail extends Component {
                             {/*</Button>*/}
                             {/*</Col>*/}
                             {/*</Grid>*/}
+                            {this.state.product.colors.length>0?
+                            <Grid style={{marginTop: 15}}>
+                                <Col size={2}>
+                                    <View style={{flex: 1, justifyContent: 'center'}}>
+                                        <Text>Color:</Text>
+                                    </View>
+                                </Col>
+
+                                    <Col size={2}>
+                                        <Picker
+                                            mode="dropdown"
+                                            placeholder="Select a color"
+                                            note={true}
+                                            selectedValue={this.state.selectedColor}
+                                            onValueChange={(color) => this.setState({selectedColor: color})}
+                                        >
+                                            {this.renderColors(this.state.product.colors)}
+                                        </Picker>
+                                    </Col>
+                            </Grid>:null}
+                            {this.state.product.sizes?
+                            <Grid>
+                                <Col size={2}>
+                                    <View style={{flex: 1, justifyContent: 'center'}}>
+                                        <Text>Size:</Text>
+                                    </View>
+                                </Col>
+                                    <Col size={2}>
+                                        <Picker
+                                            mode="dropdown"
+                                            placeholder="Select a size"
+                                            note={true}
+                                            selectedValue={this.state.selectedSize}
+                                            onValueChange={(size) => this.setState({selectedSize: size})}
+                                        >
+                                            {this.renderSize(this.state.product.sizes)}
+                                        </Picker>
+                                    </Col>
+                            </Grid>:null}
                             <View style={{
                                 marginTop: 15,
                                 padding: 10,
@@ -443,7 +426,34 @@ class ProductDetail extends Component {
                             />
                         </View>
                     </Content>
-                    : <Spinner/>}
+                        <Footer style={{backgroundColor:'white', justifyContent:'center', alignItems:'center', paddingHorizontal:5}}>
+                            <Grid>
+                                <Col size={2}>
+                                    <Button block onPress={this.addToCart}
+                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
+                                        <Text style={customStyle.buttonPrimaryText}>Add to Cart</Text>
+                                    </Button>
+                                </Col>
+                                <Col size={2}>
+                                    <Button block onPress={this.OrderNow.bind(this)}
+                                            style={[customStyle.buttonPrimary, {marginRight: 5}]}>
+                                        <Text style={customStyle.buttonPrimaryText}>Order Now</Text>
+                                    </Button>
+                                </Col>
+                                <Col size={1}>
+                                    <Button block icon transparent
+                                        // onPress={this.addToCart.bind(this)}
+                                            style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
+                                        <FIcon name={'phone'} size={24} color={colors.primary}/>
+                                    </Button>
+                                </Col>
+                            </Grid>
+                        </Footer>
+                        </>
+                    :
+                    <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <Spinner color={colors.primary}/>
+                    </View>}
             </Container>
         );
     }
@@ -480,7 +490,7 @@ class ProductDetail extends Component {
 
     renderColors(colorsss) {
         let colors = [];
-        colorsss = colors.includes(',') ? colorsss.split(',') : [colorsss];
+      //  colorsss = colors.includes(',') ? colorsss.split(',') : [colorsss];
         colorsss.map((color, i) => {
             colors.push(
                 <Item key={i} label={color} value={color}/>
@@ -491,7 +501,7 @@ class ProductDetail extends Component {
 
     renderSize(sizess) {
         let size = [];
-        sizess = sizess.includes(',') ? sizess.split(',') : [sizess];
+       // sizess = sizess.includes(',') ? sizess.split(',') : [sizess];
         sizess.map((s, i) => {
             size.push(
                 <Item key={i} label={s} value={s}/>
@@ -530,14 +540,16 @@ class ProductDetail extends Component {
 
     addToCart=async() =>{
         var product = this.state.product;
-        // product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
-        // product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
+        product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
+        product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
         product['orderQuantity'] = this.state.quantity;
         // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
         let cartList = await AsyncStorage.getItem('myCart');
         let cartItem={
             id:product._id,
-            orderQuantity:product.orderQuantity
+            orderQuantity:product.orderQuantity,
+            color:product.color,
+            size:product.size
         }
         if (cartList) {
             cartList = JSON.parse(cartList);
@@ -595,6 +607,8 @@ class ProductDetail extends Component {
     OrderNow() {
         let product = this.state.product;
         product['orderQuantity'] = this.state.quantity;
+        product['color'] = this.state.selectedColor ? this.state.selectedColor : this.state.product.colors[0];
+        product['size'] = this.state.selectedSize ? this.state.selectedSize : this.state.product.sizes[0];
         product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.discount ? (this.state.product.price * (this.state.product.discount / 100)):0));
         goToRoute(this.props.componentId,'CheckoutEF', {'productOrder': product});
     }

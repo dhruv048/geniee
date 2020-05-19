@@ -26,20 +26,30 @@ class SideMenu extends PureComponent {
     }
 
     async componentDidMount() {
-        let Token=await AsyncStorage.getItem(USER_TOKEN_KEY)
+        let Token=await AsyncStorage.getItem(USER_TOKEN_KEY);
+        let loggedUser=await AsyncStorage.getItem("loggedUser");
+        loggedUser=loggedUser?  JSON.parse(loggedUser) : null;
         Navigation.events().bindComponent(this);
-        this.setState({isLogged: Token ? true : false, user: this.props.loggedUser})
+        this.setState({isLogged: Token ? true : false, user: this.props.loggedUser ? this.props.loggedUser :loggedUser})
         this.listener = EventRegister.addEventListener('routeChanged', (data) => {
             console.log('routeChanged', data)
             this.setState({
                 currentRoute: data
             })
-        })
+        });
+
+        this.listener = EventRegister.addEventListener('siggnedIn', (data) => {
+            console.log('siggnedIn', data)
+            this.setState({
+                isLogged: true,
+                user:this.props.loggedUser
+            })
+        });
     }
 
     componentWillReceiveProps(newProps) {
-        this.setState({isLogged: newProps.loggedUser ? true : false})
-       // if (newProps.loggedUser)
+      //  this.setState({isLogged: newProps.loggedUser ? true : false})
+        if (newProps.loggedUser)
             this.setState({user: newProps.loggedUser})
     }
 
@@ -57,6 +67,8 @@ class SideMenu extends PureComponent {
                         if (!err) {
                             console.log('logout');
                             AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                            AsyncStorage.setItem('loggedUser', '');
+                            this.setState({isLogged: false,user:''})
                             navigateToRoutefromSideMenu(this.props.componentId, 'Dashboard');
                         }
                         else
