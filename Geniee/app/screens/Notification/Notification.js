@@ -51,10 +51,13 @@ class Notification extends Component {
                     goToRoute(this.props.componentId, "ProductDetailEF", {Id: item.navigateId});
                 else
                     goToRoute(this.props.componentId, "ProductDetail", {Id: item.navigateId});
+                break;
             case NotificationTypes.ADD_SERVICE:
                 goToRoute(this.props.componentId, "ServiceDetail", {Id: item.navigateId});
+                break;
             case NotificationTypes.RATE_SERVICE:
                 goToRoute(this.props.componentId, "ServiceRatings", {Id: item.navigateId});
+                break;
         }
     }
     NotificationMarkAsRead = (item) => {
@@ -330,7 +333,7 @@ class Notification extends Component {
                     <Left>
                         <Button onPress={() => goBack(this.props.componentId)
                         } transparent>
-                            <Icon name='arrow-left' color='white' size={24}/>
+                            <Icon name='x' color='white' size={24}/>
                         </Button>
                     </Left>
                     <Body>

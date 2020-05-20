@@ -1,5 +1,17 @@
 import React, {Fragment} from "react";
-import {View, StyleSheet, ToastAndroid, TouchableOpacity, Image, Modal, StatusBar, TextInput,SafeAreaView,ScrollView,BackHandler} from "react-native";
+import {
+    View,
+    StyleSheet,
+    ToastAndroid,
+    TouchableOpacity,
+    Image,
+    Modal,
+    StatusBar,
+    TextInput,
+    SafeAreaView,
+    ScrollView,
+    BackHandler
+} from "react-native";
 import Autocomplete from 'native-base-autocomplete';
 import {colors} from "../../config/styles";
 import {
@@ -23,10 +35,13 @@ import Meteor from "../../react-native-meteor";
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import LocationPicker from "../../components/LocationPicker";
-import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
+import {backToRoot, goToRoute, navigateToRoutefromSideMenu,goBack} from "../../Navigation";
 import CogMenu from "../../components/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
+import settings from "../../config/settings";
 import ImageResizer from 'react-native-image-resizer';
+import AsyncStorage from '@react-native-community/async-storage';
+
 const RNFS = require("react-native-fs");
 
 
@@ -388,34 +403,64 @@ class AddService extends React.PureComponent {
             price: null,
             unit: null,
             webLink: '',
-            pickLocation:false,
+            pickLocation: false,
         };
 
         this.categories = []
 
     }
 
-    componentDidMount() {
-        Meteor.subscribe('categories-list', () => {
-            let MaiCategories = Meteor.collection('MainCategories').find();
-            MaiCategories.forEach(item => {
-                this.categories = this.categories.concat(item.subCategories);
-            })
+   async componentDidMount() {
+
+        let MainCategories=await AsyncStorage.getItem("Categories");
+        if(MainCategories) {
+            MainCategories = JSON.parse(MainCategories);
+        }
+        else{
+            MainCategories = Meteor.collection('MainCategories').find();
+        }
+       MainCategories.forEach(item => {
+            this.categories = this.categories.concat(item.subCategories);
         });
         Navigation.events().bindComponent(this);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+        this.fillEditForm();
     }
 
+    fillEditForm=()=> {
+        let _serviceToEdit = this.props.Service;
+        //  console.log(_serviceToEdit,this.categories)
+        if (_serviceToEdit) {
+            let selectedCategory = this.categories.find(item => {
+                return item.subCatId == _serviceToEdit.categoryId
+            });
+            this.setState({
+                query: selectedCategory.subCategory,
+                selectedCategory: selectedCategory,
+                title: _serviceToEdit.title,
+                homeDelivery: _serviceToEdit.homeDelivery,
+                radius: _serviceToEdit.radius,
+                description: _serviceToEdit.description,
+                location: _serviceToEdit.location,
+                contact: _serviceToEdit.contact,
+                price: _serviceToEdit.price,
+                unit: _serviceToEdit.unit,
+                webLink: _serviceToEdit.website,
+                avatarSource: {uri: settings.IMAGE_URL + _serviceToEdit.coverImage},
+            })
+        }
+    }
 
-    handleBackButton(){
+    handleBackButton() {
         // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
         backToRoot(this.props.componentId);
         return true;
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress');
     }
+
     _handleImageUpload = (selected) => {
         this.setModalVisible(false);
         if (selected === 0) {
@@ -424,9 +469,9 @@ class AddService extends React.PureComponent {
                 height: 720,
                 cropping: true,
                 includeBase64: true,
-                compressImageMaxWidth:1440,
-                compressImageMaxHeight:720,
-                compressImageQuality:0.8
+                compressImageMaxWidth: 1440,
+                compressImageMaxHeight: 720,
+                compressImageQuality: 0.8
             }).then(image => {
                 console.log(image);
                 this._onImageChange(image)
@@ -438,9 +483,9 @@ class AddService extends React.PureComponent {
                 height: 720,
                 cropping: true,
                 includeBase64: true,
-                compressImageMaxWidth:1440,
-                compressImageMaxHeight:720,
-                compressImageQuality:0.8
+                compressImageMaxWidth: 1440,
+                compressImageMaxHeight: 720,
+                compressImageQuality: 0.8
             }).then(image => {
                 console.log(image);
                 this._onImageChange(image)
@@ -448,9 +493,9 @@ class AddService extends React.PureComponent {
         }
     };
     _onImageChange = (image) => {
-        const compressFormat='JPEG';
-        const newWidth= image.width > 1440 ? 1440 : image.width;
-        const newHeight=image.height > 2960 ? 2960 : image.width;
+        const compressFormat = 'JPEG';
+        const newWidth = image.width > 1440 ? 1440 : image.width;
+        const newHeight = image.height > 2960 ? 2960 : image.width;
         console.log(image);
         // ImageResizer.createResizedImage(image.path, newWidth, newHeight, compressFormat, 80).then((response) => {
         //     response.mime="image/jpeg";
@@ -476,10 +521,10 @@ class AddService extends React.PureComponent {
         // });
 
         this.setState({
-                     avatarSource: {uri: `data:${image.mime};base64,${image.data}`},
-                     // avatarSource:{ uri:  response.uri },
-                      Image:image
-                });
+            avatarSource: {uri: `data:${image.mime};base64,${image.data}`},
+            // avatarSource:{ uri:  response.uri },
+            Image: image
+        });
     }
     _updateHomeDelivery = () => {
         let current = this.state.homeDelivery;
@@ -489,36 +534,80 @@ class AddService extends React.PureComponent {
     };
     _callSaveServiceMethod = (service) => {
         service.Image = this.state.Image;
-        service.owner=Meteor.userId();
-        Meteor.call('addNewService', service, (err, res) => {
-            if (err) {
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-                console.log(err.reason);
-            } else {
-                // hack because react-native-meteor doesn't login right away after sign in
-                console.log('Reslut from addNewService' + res);
-                this.setState({
-                    query: '',
-                    selectedCategory: null,
-                    title: '',
-                    homeDelivery: false,
-                    radius: 0,
-                    description: '',
-                    location: '',
-                    contact: '',
-                    price: null,
-                    unit: null,
-                    webLink: ''
-                });
-                navigateToRoutefromSideMenu(this.props.componentId,'MyServices');
-            }
-        });
+        let _service = this.props.Service;
+        if (_service) {
+            service.coverImage = _service.coverImage;
+            Meteor.call("updateService", _service._id, service, (err, res) => {
+                if (err) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        err.reason,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    console.log(err.reason);
+                } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Service Updated Successfully!!",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    // hack because react-native-meteor doesn't login right away after sign in
+                    console.log('Reslut from addNewService' + res);
+                    this.setState({
+                        query: '',
+                        selectedCategory: null,
+                        title: '',
+                        homeDelivery: false,
+                        radius: 0,
+                        description: '',
+                        location: '',
+                        contact: '',
+                        price: null,
+                        unit: null,
+                        webLink: ''
+                    });
+                  //  navigateToRoutefromSideMenu(this.props.componentId, 'MyServices');
+                    goBack(this.props.componentId);
+                }
+            });
+        }
+        else {
+            service.owner = Meteor.userId();
+            Meteor.call('addNewService', service, (err, res) => {
+                if (err) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        err.reason,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    console.log(err.reason);
+                } else {
+                    // hack because react-native-meteor doesn't login right away after sign in
+                    console.log('Reslut from addNewService' + res);
+                    this.setState({
+                        query: '',
+                        selectedCategory: null,
+                        title: '',
+                        homeDelivery: false,
+                        radius: 0,
+                        description: '',
+                        location: '',
+                        contact: '',
+                        price: null,
+                        unit: null,
+                        webLink: ''
+                    });
+                    navigateToRoutefromSideMenu(this.props.componentId, 'MyServices');
+                }
+            });
+
+        }
 
     };
     _saveService = () => {
@@ -578,14 +667,15 @@ class AddService extends React.PureComponent {
             location: data
         })
     }
-    handleOnLocationSelect(location){
+
+    handleOnLocationSelect(location) {
         console.log(location);
-        this.setState({location:location,pickLocation:false})
+        this.setState({location: location, pickLocation: false})
     }
 
-    closePickLocation(){
+    closePickLocation() {
         console.log('method Called')
-        this.setState({pickLocation:false})
+        this.setState({pickLocation: false})
     }
 
     setModalVisible(visible) {
@@ -603,7 +693,7 @@ class AddService extends React.PureComponent {
     }
 
     render() {
-        const {query, selectedCategory,location} = this.state;
+        const {query, selectedCategory, location} = this.state;
         const categories = this._findCategory(query);
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
@@ -615,9 +705,9 @@ class AddService extends React.PureComponent {
                 <Header style={{backgroundColor: '#094c6b'}}>
                     <Left>
                         {/*<Button transparent onPress={() => {*/}
-                            {/*this.props.navigation.openDrawer()*/}
+                        {/*this.props.navigation.openDrawer()*/}
                         {/*}}>*/}
-                            {/*<Icon name="md-more" style={{fontWeight: '500', fontSize: 35}}/>*/}
+                        {/*<Icon name="md-more" style={{fontWeight: '500', fontSize: 35}}/>*/}
                         {/*</Button>*/}
                         <CogMenu componentId={this.props.componentId}/>
                     </Left>
@@ -687,10 +777,10 @@ class AddService extends React.PureComponent {
                                         style={styles.autosuggestCont}
                                         onPress={() => (
                                             console.log(cat),
-                                            this.setState({
-                                                query: cat.subCategory,
-                                                selectedCategory: cat
-                                            })
+                                                this.setState({
+                                                    query: cat.subCategory,
+                                                    selectedCategory: cat
+                                                })
                                         )}
                                     >
                                         <Text style={styles.autosuggesText}>{cat.subCategory}</Text>
@@ -704,6 +794,7 @@ class AddService extends React.PureComponent {
                                        underlineColorAndroid='rgba(0,0,0,0)'
                                        onSubmitEditing={() => this.title.focus()}
                                        onChangeText={(title) => this.setState({title})}
+                                       value={this.state.title}
                             />
                             <Textarea rowSpan={3} placeholder="Description (*)"
                                       style={styles.inputTextarea}
@@ -711,6 +802,7 @@ class AddService extends React.PureComponent {
                                       underlineColorAndroid='red'
                                 //onSubmitEditing={() => this.contactNumber.focus()}
                                       onChangeText={(description) => this.setState({description})}
+                                      value={this.state.description}
                             />
                             {/*<Input disabled*/}
                             {/*style={styles.inputText}*/}
@@ -722,25 +814,25 @@ class AddService extends React.PureComponent {
                             {/*/>*/}
 
                             {/*<GooglePlaceSearchBox*/}
-                                {/*onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true*/}
-                                    {/*console.log(data, details);*/}
-                                    {/*this.handleLocation(details)*/}
-                                {/*}}*/}
-                                {/*placeholder={'Enter Address'}*/}
-                                {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
-                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                {/*styles={GooglePlaceSerachStyle}*/}
+                            {/*onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true*/}
+                            {/*console.log(data, details);*/}
+                            {/*this.handleLocation(details)*/}
+                            {/*}}*/}
+                            {/*placeholder={'Enter Address'}*/}
+                            {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                            {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                            {/*styles={GooglePlaceSerachStyle}*/}
                             {/*/>*/}
 
 
                             <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                        placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                        style={styles.inputBox}
-                                    //   onBlur={()=>this.setState({pickLocation:true})}
-                                       onFocus={()=>this.setState({pickLocation:true})}
+                                //   onBlur={()=>this.setState({pickLocation:true})}
+                                       onFocus={() => this.setState({pickLocation: true})}
                                        placeholder='Location'
-                                       value={location?location.formatted_address:''}
-                                    //   onChangeText={(radius) => this.setState({radius})}
+                                       value={location ? location.formatted_address : ''}
+                                //   onChangeText={(radius) => this.setState({radius})}
                             />
 
                             <TextInput underlineColorAndroid='rgba(0,0,0,0)'
@@ -749,6 +841,7 @@ class AddService extends React.PureComponent {
                                        placeholder='Radius for Service Area in KiloMeter (*)'
                                        keyboardType='phone-pad'
                                        onChangeText={(radius) => this.setState({radius})}
+                                       value={this.state.radius}
                             />
 
 
@@ -758,6 +851,7 @@ class AddService extends React.PureComponent {
                                            style={styles.inputBoxMultiField}
                                            placeholder='Unit'
                                            onChangeText={(unit) => this.setState({unit})}
+                                           value={this.state.unit}
                                 />
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
@@ -765,18 +859,19 @@ class AddService extends React.PureComponent {
                                            placeholder='Price per Unit'
                                            keyboardType='phone-pad'
                                            onChangeText={(price) => this.setState({price})}
+                                           value={this.state.price}
                                 />
                             </View>
 
                             <View style={styles.multiField}>
-
-
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputBoxMultiField}
                                            placeholder='Contact No (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(contact) => this.setState({contact})}
+                                           value={this.state.contact}
+
                                 />
 
                                 <View style={styles.chkView}><CheckBox style={{marginEnd: 20}}
@@ -792,6 +887,7 @@ class AddService extends React.PureComponent {
                                        style={styles.inputBox}
                                        placeholder='Website'
                                        onChangeText={(webLink) => this.setState({webLink})}
+                                       value={this.state.webLink}
                             />
                             <View style={styles.buttonView}>
                                 <Button
@@ -859,7 +955,7 @@ class AddService extends React.PureComponent {
                 <LocationPicker
                     close={this.closePickLocation.bind(this)}
                     onLocationSelect={this.handleOnLocationSelect.bind(this)}
-                    modalVisible={this.state.pickLocation} />
+                    modalVisible={this.state.pickLocation}/>
             </Container>
         );
     }

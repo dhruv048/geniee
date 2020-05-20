@@ -26,7 +26,7 @@ import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
 import {colors} from "../../config/styles";
 import {variables, customStyle} from '../../config/styles';
-import {PaymentType, TransactionTypes,OrderStatus} from "../../config/settings";
+import {PaymentType, TransactionTypes, OrderStatus} from "../../config/settings";
 import DeviceInfo from 'react-native-device-info'
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
 
@@ -52,7 +52,7 @@ class CheckoutEF extends Component {
     }
 
     updateTotal(cartItems) {
-       // console.log(cartItems);
+        // console.log(cartItems);
         var total = 0;
         cartItems.map((item) => {
             total += parseFloat(item.finalPrice) * parseInt(item.orderQuantity);
@@ -60,9 +60,9 @@ class CheckoutEF extends Component {
         });
     }
 
-    componentWillReceiveProps(newProps){
-        const singleProduct=this.props.productOrder;
-        if(!singleProduct) {
+    componentWillReceiveProps(newProps) {
+        const singleProduct = this.props.productOrder;
+        if (!singleProduct) {
             this.setState({cartItems: newProps.cartItems});
             this.updateTotal(newProps.cartItems);
         }
@@ -72,12 +72,13 @@ class CheckoutEF extends Component {
     getdeviceId = () => {
         //Getting the Unique Id from here
         var id = DeviceInfo.getUniqueId();
-        console.log('uniqueId',id)
-       return id;
+        console.log('uniqueId', id)
+        return id;
     };
+
     componentDidMount() {
-        const singleProduct=this.props.productOrder;
-        if(singleProduct) {
+        const singleProduct = this.props.productOrder;
+        if (singleProduct) {
             // const cartItem={
             //     product: singleProduct,
             //
@@ -85,14 +86,14 @@ class CheckoutEF extends Component {
             //     "type": 0,
             //     "addDate": new Date(new Date().toUTCString()),
             // }
-            singleProduct.addDate= new Date(new Date().toUTCString());
-            singleProduct.type= 0;
+            singleProduct.addDate = new Date(new Date().toUTCString());
+            singleProduct.type = 0;
             this.setState({
                 cartItems: [singleProduct]
             });
             this.updateTotal([singleProduct]);
         }
-        else{
+        else {
             //var total = 0;
             // this.setState({cartItems:this.props.cartItems});
             //this.updateTotal(this.props.cartItems);
@@ -111,7 +112,7 @@ class CheckoutEF extends Component {
     }
 
     getCartItems = async () => {
-        let products=[];
+        let products = [];
         let cartList = await AsyncStorage.getItem('myCart');
         if (cartList) {
             cartList = JSON.parse(cartList);
@@ -134,9 +135,9 @@ class CheckoutEF extends Component {
                     const cartItem = cartList.find(item => item.id == product._id);
                     console.log(cartItem, product)
                     product.orderQuantity = cartItem.orderQuantity;
-                    product.size=cartItem.size;
-                    product.color=cartItem.color;
-                    product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)):0));
+                    product.size = cartItem.size;
+                    product.color = cartItem.color;
+                    product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0));
                 });
                 this.setState({cartItems: res.result});
                 this.updateTotal(res.result);
@@ -184,19 +185,22 @@ class CheckoutEF extends Component {
                         <Text style={{marginTop: 15, fontSize: 18}}>Shipping information</Text>
                         <View style={styles.formGroup}>
                             <Label style={styles.formLabel}>Full name</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({name: text})}
-                            value={this.state.name} placeholderTextColor="#687373"/>
-                                
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({name: text})}
+                                       value={this.state.name} placeholderTextColor="#687373"/>
+
                         </View>
                         <View style={styles.formGroup}>
                             <Label style={styles.formLabel}>Email address</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({email: text})}
-                                   value={this.state.email} placeholderTextColor="#687373"/>
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({email: text})}
+                                       value={this.state.email} placeholderTextColor="#687373"/>
                         </View>
                         <View style={styles.formGroup}>
                             <Label style={{fontSize: 15, color: '#2E2E2E', marginBottom: 5}}>Phone number</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({phone: text})}
-                                   value={this.state.phone} placeholderTextColor="#687373"/>
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({phone: text})}
+                                       value={this.state.phone} placeholderTextColor="#687373"/>
                         </View>
                         {/*<Item regular style={{marginTop: 7}}>*/}
                         {/*<Input placeholder='Country' onChangeText={(text) => this.setState({country: text})}*/}
@@ -204,23 +208,27 @@ class CheckoutEF extends Component {
                         {/*</Item>*/}
                         <View style={styles.formGroup}>
                             <Label style={styles.formLabel}>Address</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({address: text})}
-                                   value={this.state.address} placeholderTextColor="#687373"/>
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({address: text})}
+                                       value={this.state.address} placeholderTextColor="#687373"/>
                         </View>
                         <View style={styles.formGroup}>
                             <Label style={styles.formLabel}>City</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({city: text})}
-                                   value={this.state.city} placeholderTextColor="#687373"/>
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({city: text})}
+                                       value={this.state.city} placeholderTextColor="#687373"/>
                         </View>
                         <View style={styles.formGroup}>
                             <Label style={styles.formLabel}>Postcode</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({postcode: text})}
-                                   value={this.state.postcode} placeholderTextColor="#687373"/>
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({postcode: text})}
+                                       value={this.state.postcode} placeholderTextColor="#687373"/>
                         </View>
                         <View style={styles.formGroup}>
                             <Label style={styles.formLabel}>Note</Label>
-                            <TextInput style={styles.formInput} placeholder='' onChangeText={(text) => this.setState({note: text})}
-                                   value={this.state.note} placeholderTextColor="#687373"/>
+                            <TextInput style={styles.formInput} placeholder=''
+                                       onChangeText={(text) => this.setState({note: text})}
+                                       value={this.state.note} placeholderTextColor="#687373"/>
                         </View>
                     </View>
                     <Text style={{marginTop: 15, fontSize: 18}}>Your order</Text>
@@ -232,7 +240,7 @@ class CheckoutEF extends Component {
                                 _keyExtractor={(item, index) => {
                                     return item._id
                                 }}
-                            /> 
+                            />
                         </List>
                         <View style={styles.line}/>
                         <Grid style={{paddingLeft: 10, paddingRight: 10, marginTop: 7}}>
@@ -298,21 +306,29 @@ class CheckoutEF extends Component {
                 key={data.item._id}
                 style={{marginLeft: 0}}
             >
-                <Body style={{paddingLeft: 10, flex:4}}>
+                <Body style={{paddingLeft: 10, flex: 4}}>
                 <Text style={{fontSize: 18}}>
                     {item.orderQuantity > 1 ? item.orderQuantity + "x " : null}
                     {item.title}
                 </Text>
                 <Text style={{fontSize: 15, fontStyle: 'italic'}}>Price: Rs. {item.finalPrice}</Text>
-                <View style={{flexDirection:'row'}}>
-                {item.color?
-                <Text style={{fontSize: 14, fontStyle: 'italic'}}>Color: {item.color}</Text>:null}
-                {item.size?
-                <Text style={{fontSize: 14, fontStyle: 'italic', marginLeft:item.color? 10:0 }}>Size: {item.size}</Text>:null}
+                <View style={{flexDirection: 'row'}}>
+                    {item.color ?
+                        <Text style={{fontSize: 14, fontStyle: 'italic'}}>Color: {item.color}</Text> : null}
+                    {item.size ?
+                        <Text style={{
+                            fontSize: 14,
+                            fontStyle: 'italic',
+                            marginLeft: item.color ? 10 : 0
+                        }}>Size: {item.size}</Text> : null}
                 </View>
                 </Body>
-                <Right style={{flex:2}}>
-                    <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 10}}>Rs. {item.finalPrice*item.orderQuantity}</Text>
+                <Right style={{flex: 2}}>
+                    <Text style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        marginBottom: 10
+                    }}>Rs. {item.finalPrice * item.orderQuantity}</Text>
                 </Right>
             </ListItem>
         );
@@ -321,73 +337,80 @@ class CheckoutEF extends Component {
     checkout = () => {
 
         Alert.alert(
-            'Proceed?',
+            'Confirm Checkout?',
             'Are you sure, you want to Checkout?',
             [
                 {
-                    text: 'Yes Checkout', onPress: () =>  {}
+                    text: 'Yes Checkout', onPress: () => {
+
+                        //debugger;
+                        // console.log(this.state);
+                        const {name, email, phone, address, city, postcode, note, total, paymentType} = this.state;
+                        let items = [];
+                        if (!name || !phone || !address || !city) {
+                            Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
+                            return true;
+                        }
+                        let cartItems = this.state.cartItems;
+                        try {
+                            cartItems.forEach(item => {
+                                let product = {
+                                    productOwner: item.productOwner,
+                                    productId: item._id,
+                                    title: item.title,
+                                    price: item.price,
+                                    isVeg: item.isVeg,
+                                    finalPrice: item.finalPrice,
+                                    discount: item.discount,
+                                    unit: item.unit,
+                                    quantity: item.orderQuantity,
+                                    category: item.category || '',
+                                    service: item.service || '',
+                                    serviceOwner: item.serviceOwner || '',
+                                    productImage: item.images[0],
+                                    status: OrderStatus.ORDER_REQUESTED
+                                    // color: item.product.color,
+                                    // size: item.product.size,
+                                };
+                                items.push(product);
+                            });
+                        }
+                        catch (e) {
+                            console.log(e.message)
+                        }
+                        let Item = {
+                            contact: {
+                                name: name,
+                                email: email,
+                                phone: phone,
+                                address: address,
+                                city: city,
+                                postcode: postcode,
+                                note: note
+                            },
+                            totalPrice: total,
+                            items: items,
+                            deviceId: this.getdeviceId(),
+                            PaymentType: paymentType
+                        };
+                        this._performOrder(Item);
+                    }
                 },
-                {text: 'Cancel', onPress: () =>{ return} }
+                {
+                    text: 'Cancel', onPress: () => {
+                        return
+                    }
+                }
             ],
             {cancelable: false}
         );
 
-        //debugger;
-        // console.log(this.state);
-        const {name, email, phone, address, city, postcode, note, total, paymentType} = this.state;
-        let items = [];
-        if(!name || !phone || !address || !city){
-            Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
-            return true;
-        }
-        let cartItems = this.state.cartItems;
-        try {
-            cartItems.forEach(item => {
-                let product = {
-                    productOwner:item.productOwner,
-                    productId: item._id,
-                    title: item.title,
-                    price: item.price,
-                    isVeg:item.isVeg,
-                    finalPrice: item.finalPrice,
-                    discount: item.discount,
-                    unit: item.unit,
-                    quantity: item.orderQuantity,
-                    category: item.category || '',
-                    service: item.service || '',
-                    serviceOwner: item.serviceOwner || '',
-                    productImage: item.images[0],
-                    status:OrderStatus.ORDER_REQUESTED
-                    // color: item.product.color,
-                    // size: item.product.size,
-                };
-                items.push(product);
-            });
-        }
-        catch (e) {
-            console.log(e.message)
-        }
-        let Item = {
-            contact: {
-                name: name,
-                email: email,
-                phone: phone,
-                address: address,
-                city: city,
-                postcode: postcode,
-                note: note
-            },
-            totalPrice: total,
-            items: items,
-            deviceId:this.getdeviceId(),
-            PaymentType: paymentType
-        };
-        this._performOrder(Item);
+
     }
 
     _performOrder = async (Item) => {
         console.log(Item);
-        const singleProduct=this.props.productOrder;
+        const singleProduct = this.props.productOrder;
         Meteor.call('addOrder', Item, async (err, res) => {
             if (err) {
                 console.log(err.reason);
@@ -456,9 +479,9 @@ class CheckoutEF extends Component {
                     }
                     else {
                         if (!singleProduct) {
-                          //  AsyncStorage.setItem('myCart', JSON.stringify([]));
-                            navigateToRoutefromSideMenu(this.props.componentId,'Orders');
-                        }else{
+                            //  AsyncStorage.setItem('myCart', JSON.stringify([]));
+                            navigateToRoutefromSideMenu(this.props.componentId, 'Orders');
+                        } else {
 
                             goBack(this.props.componentId);
                         }
@@ -478,68 +501,61 @@ class CheckoutEF extends Component {
         });
 
 
-
-
-
-
-
-
-
-      //
-      //
-      //
-      //   const {paymentType, total} = this.state;
-      //   if (paymentType == PaymentType.ESEWA) {
-      //       let response = await this._esewaPay(total.toString(), Item.items[0].title, Meteor.userId());
-      //       if (response.resultCode == -1) {
-      //           const actualData = JSON.parse(response.data)
-      //           console.log(actualData);
-      //           if (actualData.transactionDetails.status == "COMPLETE") {
-      //               ToastAndroid.showWithGravityAndOffset(
-      //                   actualData.message.successMessage,
-      //                   ToastAndroid.LONG,
-      //                   ToastAndroid.TOP,
-      //                   0,
-      //                   80,
-      //               );
-      //           }
-      //           Item.esewaDetail = actualData;
-      //       }
-      //       else {
-      //           ToastAndroid.showWithGravityAndOffset(
-      //               response.data,
-      //               ToastAndroid.LONG,
-      //               ToastAndroid.TOP,
-      //               0,
-      //               80,
-      //           );
-      //           return 0;
-      //       }
-      //   }
-      //   console.log(Item);
-      //   Meteor.call('addOrder', Item, 0, (err, res) => {
-      //       if (err) {
-      //           console.log(err.reason);
-      //       } else {
-      //           // let item = {
-      //           //     orderId: res.result,
-      //           //     PaymentType: PaymentType,
-      //           //     esewaDetail: Item.esewaDetail,
-      //           //     transactionType: TransactionTypes.SHOPPING
-      //           // };
-      //           //
-      //           // Meteor.call('SaveTransactions', item, (err, res) => {
-      //           //     if (err) {
-      //           //         console.log(err.reason);
-      //           //     }
-      //           //     else {
-      //           //
-      //           //     }
-      //           // })
-      //       }
-      //   })
-      // //  goToRoute(this.props.componentId,'OrderList');
-      //   goBack(this.props.componentId);
+        //
+        //
+        //
+        //   const {paymentType, total} = this.state;
+        //   if (paymentType == PaymentType.ESEWA) {
+        //       let response = await this._esewaPay(total.toString(), Item.items[0].title, Meteor.userId());
+        //       if (response.resultCode == -1) {
+        //           const actualData = JSON.parse(response.data)
+        //           console.log(actualData);
+        //           if (actualData.transactionDetails.status == "COMPLETE") {
+        //               ToastAndroid.showWithGravityAndOffset(
+        //                   actualData.message.successMessage,
+        //                   ToastAndroid.LONG,
+        //                   ToastAndroid.TOP,
+        //                   0,
+        //                   80,
+        //               );
+        //           }
+        //           Item.esewaDetail = actualData;
+        //       }
+        //       else {
+        //           ToastAndroid.showWithGravityAndOffset(
+        //               response.data,
+        //               ToastAndroid.LONG,
+        //               ToastAndroid.TOP,
+        //               0,
+        //               80,
+        //           );
+        //           return 0;
+        //       }
+        //   }
+        //   console.log(Item);
+        //   Meteor.call('addOrder', Item, 0, (err, res) => {
+        //       if (err) {
+        //           console.log(err.reason);
+        //       } else {
+        //           // let item = {
+        //           //     orderId: res.result,
+        //           //     PaymentType: PaymentType,
+        //           //     esewaDetail: Item.esewaDetail,
+        //           //     transactionType: TransactionTypes.SHOPPING
+        //           // };
+        //           //
+        //           // Meteor.call('SaveTransactions', item, (err, res) => {
+        //           //     if (err) {
+        //           //         console.log(err.reason);
+        //           //     }
+        //           //     else {
+        //           //
+        //           //     }
+        //           // })
+        //       }
+        //   })
+        // //  goToRoute(this.props.componentId,'OrderList');
+        //   goBack(this.props.componentId);
     };
     _esewaPay = async (Amount, Product, Id) => {
         // const response = await NativeModules.RNEsewa.makePayment(Amount, Product, Id, 'http://medidocnepal.com').then(function (res) {
@@ -568,7 +584,13 @@ const styles = {
         fontSize: 15, color: '#2E2E2E', marginBottom: 5
     },
     formInput: {
-        height: 48, backgroundColor: '#f4f4f4', borderColor: '#ddd', borderWidth: 1, padding: 10, borderRadius: 4, fontSize: 16
+        height: 48,
+        backgroundColor: '#f4f4f4',
+        borderColor: '#ddd',
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 4,
+        fontSize: 16
     },
     invoice: {
         paddingLeft: 20,

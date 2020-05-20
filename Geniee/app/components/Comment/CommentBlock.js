@@ -16,7 +16,7 @@ const CommentBlock = (props) => {
                     <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>{props.name}</Text>
                     {props.rating ?
                         <Rating
-                            imageSize={20}
+                            imageSize={15}
                             readonly
                             startingValue={props.rating}
                             style={{alignSelf: 'flex-start'}}

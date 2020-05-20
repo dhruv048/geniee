@@ -83,7 +83,7 @@ class OrderDetailOut extends Component {
         var left = (
             <Left style={{flex: 1}}>
                 <Button onPress={() => goBack(this.props.componentId)} transparent>
-                    <Icon name='x' size={24} color={'white'}/>
+                    <Icon name='arrow-left' size={24} color={'white'}/>
                 </Button>
             </Left>
         );
@@ -93,8 +93,8 @@ class OrderDetailOut extends Component {
                 <Content style={styles.content}>
 
                     <View style={{ flexDirection: 'column', alignItems: 'center', paddingVertical: 20, paddingHorizontal: 20}}>
-                        <Image height='293' width='229'
-                               source={require('../../images/verified.png')}/>
+                        {/*<Image height='293' width='229'*/}
+                               {/*source={require('../../images/verified.png')}/>*/}
                         <Text style={{fontSize: 18, marginBottom: 5, marginTop: 22}}>Order ID: {order._id || "0000145"}</Text>
 
                         <Text style={{fontSize: 16, color: '#8E8E8E', marginBottom: 10}}>Payment

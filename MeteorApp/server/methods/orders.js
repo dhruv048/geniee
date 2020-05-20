@@ -21,12 +21,12 @@ Meteor.methods({
                 if (item.productOwner === ProductOwner.EAT_FIT) {
                     product = await EFProducts.findOne({_id: item.productId});
                     EFItems.push(item);
-                    EFTotal = EFTotal + item.finalPrice;
+                    EFTotal = EFTotal + (item.finalPrice* item.quantity);
                 }
                 else {
                     product = await Products.findOne({_id: item.productId});
                     RegularItems.push(item)
-                    RTotal = RTotal + item.finalPrice;
+                    RTotal = RTotal + (item.finalPrice*item.quantity);
                 }
 
                 if (product.productOwner !== ProductOwner.EAT_FIT) {

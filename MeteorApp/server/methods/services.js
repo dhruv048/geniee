@@ -4,6 +4,17 @@ import {Ratings} from "../../lib/collections/genieeRepair/ratings";
 import {EFProducts} from "../../lib/collections/eatFit/efProducts";
 import {ProductOwner,NotificationTypes} from "../../lib/utils";
 
+
+const removeProductsByServiceId=(Id)=>{
+    let _products=Products.find({service:Id}).fetch();
+    _products.foreach(_product=>{
+        Products.remove(_product._id);
+        _product.images.foreach(item => {
+            ServiceImage.remove(item);
+        })
+    })
+}
+
 Meteor.methods({
 
     'addNewService': (serviceInfo) => {
@@ -119,6 +130,62 @@ Meteor.methods({
         }
     },
 
+    'updateService':(servId,serviceInfo)=>{
+        let Id = moment().format('DDMMYYx');
+        let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
+        if (!serviceInfo.Category.subCatId) {
+            MainCategories.update(
+                {catId: "0"},
+                {
+                    $addToSet:
+                        {
+                            subCategories: {subCatId: CategoryId, subCategory: serviceInfo.Category.subCategory}
+                        }
+                }
+            )
+        }
+        let location = {
+            geometry: {
+                coordinates: [serviceInfo.location.geometry.location.lng, serviceInfo.location.geometry.location.lat],
+                type: 'Point',
+                location: {
+                    lat: serviceInfo.location.geometry.location.lat,
+                    lng: serviceInfo.location.geometry.location.lng
+                }
+            },
+            formatted_address: serviceInfo.location.formatted_address,
+        }
+        //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
+        serviceInfo.location = location;
+        if (serviceInfo.Image) {
+            ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
+                {
+                    fileName: serviceInfo.Image.modificationDate + '.JPEG',
+                    type: serviceInfo.Image.mime
+                },
+                (err, res) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                    else {
+                        console.log(res._id)
+                        ServiceImage.remove(serviceInfo.coverImage);
+                        serviceInfo.updatedAt = new Date(new Date().toUTCString());
+                        serviceInfo.coverImage = res._id;
+                        serviceInfo.categoryId = CategoryId;
+                        serviceInfo.Image = null;
+                        Service.update({_id:servId},{$set:serviceInfo});
+                    }
+                }, proceedAfterUpload = true)
+        }
+        else {
+            serviceInfo.updatedAt = new Date(new Date().toUTCString());
+            serviceInfo.categoryId = CategoryId;
+            serviceInfo.Image = null;
+            Service.update({_id:servId},{$set:serviceInfo});
+        }
+    },
+
     'addCategory': (name) => {
         console.log('addCategory:::=>>>');
         var currentUserId = Meteor.userId();
@@ -178,6 +245,9 @@ Meteor.methods({
             throw new Meteor.Error(401, "Permission Denied");
         }
     },
+
+
+
 
     'updateCallCount': function () {
         try {
@@ -665,9 +735,17 @@ Meteor.methods({
     'removeService':(Id)=>{
         let _service=Service.findOne(Id);
         Service.remove(Id);
-        Products.remove({service:Id});
+        removeProductsByServiceId(Id);
         ServiceImage.remove(_service.coverImage);
+    },
+
+    'removeProduct':(Id)=> {
+        let _product = Products.findOne(Id);
+        Products.remove(Id);
+        _product.images.foreach(item => {
+            ServiceImage.remove(item);
+        })
     }
 
-
 })
+

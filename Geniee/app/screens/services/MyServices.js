@@ -271,29 +271,30 @@ class MyServices extends Component {
     openDrawer() {
         this.drawer._root.open();
     }
-    fetchData=()=>{
-        Meteor.call('getMyServices',(err,res)=>{
-            console.log(err,res)
-            if(!err){
-                if(res.result.length>0) {
-                 //   this.skip = this.skip + this.limit;
-                   // this.arrayholder = this.arrayholder.concat(res.result);
-                    this.setState({data:res.result});
-                    this.arrayholder=res.result;
+
+    fetchData = () => {
+        Meteor.call('getMyServices', (err, res) => {
+            console.log(err, res)
+            if (!err) {
+                if (res.result.length > 0) {
+                    //   this.skip = this.skip + this.limit;
+                    // this.arrayholder = this.arrayholder.concat(res.result);
+                    this.setState({data: res.result});
+                    this.arrayholder = res.result;
                 }
                 this.setState({loading: false});
             }
         })
     };
 
-    removeService=(_service)=>{
+    removeService = (_service) => {
         Alert.alert(
             'Remove Service',
             `Do you want to remove service '${_service.title}'? All the products under service will also be removed`,
             [
                 {
-                    text: 'Yes Remove', onPress: () => Meteor.call('removeService',_service._id,(err,res)=>{
-                        if(!err){
+                    text: 'Yes Remove', onPress: () => Meteor.call('removeService', _service._id, (err, res) => {
+                        if (!err) {
                             ToastAndroid.showWithGravityAndOffset(
                                 "Removed Successfully",
                                 ToastAndroid.SHORT,
@@ -302,9 +303,9 @@ class MyServices extends Component {
                                 50,
                             );
                         }
-                        else{
+                        else {
                             ToastAndroid.showWithGravityAndOffset(
-                               err.reason,
+                                err.reason,
                                 ToastAndroid.SHORT,
                                 ToastAndroid.BOTTOM,
                                 0,
@@ -313,14 +314,22 @@ class MyServices extends Component {
                         }
                     })
                 },
-                {text: 'Cancel', onPress: () => {return true;}}
+                {
+                    text: 'Cancel', onPress: () => {
+                        return true;
+                    }
+                }
             ],
             {cancelable: false}
         );
     }
 
+    editService=(serv)=>{
+        goToRoute(this.props.componentId,"AddService",{Service:serv});
+    }
+
     _getListItem = (data) => {
-        rowData = data.item;
+        let rowData = data.item;
         return (
             <View key={data.item._id} style={styles.serviceList}>
                 <TouchableWithoutFeedback onPress={() => {
@@ -344,7 +353,9 @@ class MyServices extends Component {
                             <Text note
                                   style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text> : null}
                         {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
-                        <TouchableOpacity onPress={()=>goToRoute(this.props.componentId, 'ServiceRatings', {Id:rowData._id})} style={styles.serviceAction}>
+                        <TouchableOpacity
+                            onPress={() => goToRoute(this.props.componentId, 'ServiceRatings', {Id: rowData._id})}
+                            style={styles.serviceAction}>
                             <StarRating
                                 starRate={rowData.Rating.avgRate}/>
                         </TouchableOpacity>
@@ -361,19 +372,22 @@ class MyServices extends Component {
 
                         <Right style={{flex: 0}}>
                             <TouchableOpacity
-                            style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}
-                            onPress={() => {
-                            }}>
-                            <Menu
-                            ref={ref => (this[`menu${rowData._id}`] = ref)}
-                            button={
-                            <Button transparent onPress={() => this[`menu${rowData._id}`].show()}>
-                            <Icon name={'more-vertical'} size={20} color={colors.primary}/>
-                            </Button>}>
-                            <MenuItem onPress={() => {
-                            this[`menu${rowData._id}`].hide(), this.removeService(rowData)
-                            }}>Remove Service</MenuItem>
-                            </Menu>
+                                style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}
+                                onPress={() => {
+                                }}>
+                                <Menu
+                                    ref={ref => (this[`menu${rowData._id}`] = ref)}
+                                    button={
+                                        <Button transparent onPress={() => this[`menu${rowData._id}`].show()}>
+                                            <Icon name={'more-vertical'} size={20} color={colors.primary}/>
+                                        </Button>}>
+                                    <MenuItem onPress={() => {
+                                        this[`menu${rowData._id}`].hide(), this.editService(rowData)
+                                    }}>Edit Service</MenuItem>
+                                    <MenuItem onPress={() => {
+                                        this[`menu${rowData._id}`].hide(), this.removeService(rowData)
+                                    }}>Remove Service</MenuItem>
+                                </Menu>
                             </TouchableOpacity>
                         </Right>
 
@@ -390,7 +404,7 @@ class MyServices extends Component {
                       data={this.state.data}
                       renderItem={this._getListItem}
                       initialNumToRender={15}
-                    //  onEndReached={(distance) => this._onEndReached(distance)}
+                //  onEndReached={(distance) => this._onEndReached(distance)}
                       onEndReachedThreshold={0.1}
                       ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
                       keyExtractor={(item, index) => index.toString()}
@@ -460,7 +474,7 @@ class MyServices extends Component {
         return (
             <Container style={{backgroundColor: colors.appBackground}}>
 
-                <Header  androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />
@@ -491,18 +505,18 @@ class MyServices extends Component {
 
                     </Item>
                     {/*<Item style={{height: 40, flex: 2, marginLeft: 4}}>*/}
-                        {/*<Picker*/}
-                            {/*mode="dropdown"*/}
-                            {/*iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}*/}
-                            {/*style={{color: '#ffffff'}}*/}
-                            {/*note={false}*/}
-                            {/*selectedValue={this.state.selected}*/}
-                            {/*onValueChange={this.onValueChange.bind(this)}*/}
-                        {/*>*/}
-                            {/*<Picker.Item label="All" value="all"/>*/}
-                            {/*<Picker.Item label="Starred" value="starred"/>*/}
-                            {/*<Picker.Item label="My Location" value="myLocation"/>*/}
-                        {/*</Picker>*/}
+                    {/*<Picker*/}
+                    {/*mode="dropdown"*/}
+                    {/*iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}*/}
+                    {/*style={{color: '#ffffff'}}*/}
+                    {/*note={false}*/}
+                    {/*selectedValue={this.state.selected}*/}
+                    {/*onValueChange={this.onValueChange.bind(this)}*/}
+                    {/*>*/}
+                    {/*<Picker.Item label="All" value="all"/>*/}
+                    {/*<Picker.Item label="Starred" value="starred"/>*/}
+                    {/*<Picker.Item label="My Location" value="myLocation"/>*/}
+                    {/*</Picker>*/}
                     {/*</Item>*/}
                     </Body>
                     {/*<Right>*/}
@@ -630,8 +644,8 @@ const styles = StyleSheet.create({
 });
 
 export default Meteor.withTracker((props) => {
-   // Meteor.subscribe('myServices');
+    // Meteor.subscribe('myServices');
     return {
-       // myServices: Meteor.collection('service').find()
+        // myServices: Meteor.collection('service').find()
     }
 })(MyServices);

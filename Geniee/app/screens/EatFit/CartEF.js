@@ -165,22 +165,23 @@ class CartEF extends Component {
                 last={this.state.cartItems.length === index + 1}
                 onPress={() => this.itemClicked(item)}
             >
-                <Thumbnail square style={{width: 100, height: 100}}
+                <Thumbnail square style={{width: 80, height: 80}}
                            source={{uri: settings.IMAGE_URL + item.images[0]}}/>
                 <Body style={{paddingLeft: 16}}>
-                    <Text style={{fontSize: 16}} numberOfLines={2}>
-                        {/* {item.orderQuantity > 1 ? item.orderQuantity + "x " : null} */}
+                    <Text style={{fontSize: 18, fontWeight:'bold'}} numberOfLines={2}>
                         {item.title}
+                         {item.orderQuantity > 1 ?  " x " +item.orderQuantity : null}
                     </Text>
-                    <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>Rs. {item.finalPrice} <Text style={{fontWeight: 'normal', fontSize: 13}}>{item.orderQuantity > 1 ? "x " + item.orderQuantity : null}</Text></Text>
+                    {/*<Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>Rs. {item.finalPrice} <Text style={{fontWeight: 'normal', fontSize: 13}}>{item.orderQuantity > 1 ? " x " + item.orderQuantity : null}</Text></Text>*/}
+                    <Text style={{fontSize: 15, fontWeight: '300', marginBottom: 5}}>Price: Rs. {item.finalPrice}</Text>
                     {item.productOwner==ProductOwner.EAT_FIT?
                     <Text style={{color: '#8E8E8E', fontSize: 14}}>{item.isVeg?"Veg":"Non-Veg"}</Text>:
-                        <>
+                            <View style={{flexDirection:'row'}}>
                             {item.color?
                     <Text style={{color: '#8E8E8E', fontSize: 13}}>Color: {item.color}</Text>:null}
                             {item.size?
-                    <Text style={{color: '#8E8E8E', fontSize: 13}}>Size: {item.size}</Text>:null}
-                    </>}
+                    <Text style={{color: '#8E8E8E', fontSize: 13 ,marginLeft:item.color? 10:0 }}>Size: {item.size}</Text>:null}
+                            </View>}
                 </Body>
                 <Right style={{paddingRight: 5}}>
                     <Button transparent onPress={() => this.removeItemPressed(data.item)}>

@@ -138,9 +138,14 @@ class Dashboard extends Component {
     }
 
     async componentDidMount() {
+        let MainCategories= await AsyncStorage.getItem("Categories");
+        if(MainCategories) {
+            MainCategories = JSON.parse(MainCategories);
+            this.setState({categories: MainCategories, loading: false});
+            this.arrayholder = this.props.categories ? this.props.categories : MainCategories;
+        }
         SplashScreen.hide();
         Navigation.events().bindComponent(this);
-        Meteor.subscribe('categories-list');
         Meteor.subscribe('aggChatChannels');
         if(this.props.notificationCount.length>0)
             this.setState({notificationCount:this.props.notificationCount[0].totalCount})
@@ -177,8 +182,6 @@ class Dashboard extends Component {
         } else {
             console.log("Location permission denied")
         }
-        this.setState({categories: this.props.categories ? this.props.categories : [], loading: false})
-        this.arrayholder = this.props.categories ? this.props.categories : [];
         this.watchID = Geolocation.watchPosition(
             (position) => {
                 console.log(position);
@@ -200,14 +203,25 @@ class Dashboard extends Component {
             .catch(e => {
                 console.log(e)
             });
+
+        //Store All Catefories
+        Meteor.subscribe('categories-list', () => {
+            let MaiCategories = this.props.categories;
+            //console.log(MainCategories)
+            this.setState({categories: MaiCategories, loading: false});
+            this.arrayholder = this.props.categories ? this.props.categories : MaiCategories;
+            AsyncStorage.setItem("Categories",JSON.stringify(MainCategories))
+        });
+
     }
 
     componentWillReceiveProps(newProps) {
         const oldProps = this.props
-        if (oldProps.categories !== newProps.categories) {
+        if (oldProps.categories.length !== newProps.categories.length) {
             this.setState({categories: newProps.categories, loading: false})
             this.arrayholder = newProps.categories;
-            this._search(this.currentSearch)
+            this._search(this.currentSearch);
+            AsyncStorage.setItem("Categories",JSON.stringify(newProps.categories))
         }
         if(newProps.notificationCount.length>0 && newProps.notificationCount[0].totalCount!=this.state.notificationCount)
             this.setState({notificationCount:newProps.notificationCount[0].totalCount})
@@ -565,7 +579,7 @@ class Dashboard extends Component {
                                 <Icon name='heart' style={{fontSize: 24, color: 'white'}}/>
                                 {this.state.wishList.length > 0 ?
                                     <Badge
-                                        style={{position: 'absolute', height: 18}}>
+                                        style={{position: 'absolute', height: 18, right:0}}>
                                         <Text style={{
                                             fontSize: 10,
                                             fontWeight: '100',
@@ -578,7 +592,7 @@ class Dashboard extends Component {
                                 <NBIcon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
                                 {this.state.totalCount > 0 ?
                                     <Badge
-                                        style={{position: 'absolute', height: 18}}>
+                                        style={{position: 'absolute', height: 18, right:0}}>
                                         <Text style={{
                                             fontSize: 10,
                                             fontWeight: '100',
@@ -587,10 +601,10 @@ class Dashboard extends Component {
                                         }}>{this.state.totalCount}</Text></Badge> : null}
                             </Button>
                             <Button onPress={() => goToRoute(this.props.componentId, 'Notification')} transparent>
-                                <NBIcon name='ios-notifications' style={{fontSize: 27, color: 'white'}}/>
+                                <NBIcon name='ios-notifications' style={{fontSize: 29, color: 'white'}}/>
                                 {this.state.notificationCount > 0 ?
                                     <Badge
-                                        style={{position: 'absolute', height: 18}}>
+                                        style={{position: 'absolute', height: 18, right:0}}>
                                         <Text style={{
                                             fontSize: 10,
                                             fontWeight: '100',

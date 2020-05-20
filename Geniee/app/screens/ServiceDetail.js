@@ -203,6 +203,44 @@ class ServiceDetail extends Component {
         })
     }
 
+    removeProduct=(_product)=>{
+        Alert.alert(
+            'Remove Product',
+            `Do you want to remove product '${_product.title}'?`,
+            [
+                {
+                    text: 'Yes Remove', onPress: () =>
+        Meteor.call('removeProduct',_product._id,(err,res)=>{
+            if (!err) {
+                ToastAndroid.showWithGravityAndOffset(
+                    "Removed Successfully",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.BOTTOM,
+                    0,
+                    50,
+                );
+            }
+            else {
+                ToastAndroid.showWithGravityAndOffset(
+                    err.reason,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.BOTTOM,
+                    0,
+                    50,
+                );
+            }
+        })
+                },
+                {
+                    text: 'Cancel', onPress: () => {
+                        return true;
+                    }
+                }
+            ],
+            {cancelable: false}
+        );
+    }
+
     clickEventListener() {
         Alert.alert("Success", "Product has beed added to cart")
     }
@@ -234,6 +272,10 @@ class ServiceDetail extends Component {
             <View style={{width:'50%'}}>
             <TouchableOpacity onPress={()=>this.navigateToRoute("ProductDetail", {'data':item})} style={styles.containerStyle}>
             <Product key={item._id} product={item}   />
+                {item.serviceOwner==Meteor._userIdSaved?
+                <Button transparent onPress={()=> this.removeProduct(item)} style={{position:'absolute', top:0,right:-5}}>
+                    <Icon name={'ios-remove-circle'} style={{fontSize:25,color:colors.danger }}/>
+                </Button>:null}
             </TouchableOpacity>
             </View>
         )

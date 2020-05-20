@@ -31,21 +31,21 @@ if (Meteor.isServer) {
                     res.writeHead(200, {
                         'Content-Type': files[0].metadata.mime,
                     });
+
+                    /** return response */
+                    readstream.pipe(res);
                 }
                 catch(e){
                    // res.writeHead(500);
                     console.log(e.message)
                     res.end(e.message);
                 }
-
-                /** return response */
-                readstream.pipe(res);
             });
 
         }
         catch (e) {
             console.log(e.message);
-            res.writeHead(500);
+        //    res.writeHead(500);
             res.end(e.message);
         }
     }),
@@ -78,7 +78,7 @@ if (Meteor.isServer) {
             }
             catch (e) {
                 console.log(e.message);
-                res.writeHead(500);
+                //res.writeHead(500);
                 res.end(e.message);
             }
         }),
