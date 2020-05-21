@@ -23,6 +23,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {CogMenu} from "../../components/CogMenu/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
+import AsyncStorage from '@react-native-community/async-storage';
+import settings from "../../config/settings";
 
 
 
@@ -50,13 +52,64 @@ class AddProduct extends React.PureComponent {
             images:[],
             qty:''
         };
-
-         
+         this.myServices=[];
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         Navigation.events().bindComponent(this);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+        let myServices = await AsyncStorage.getItem('myServices');
+        console.log(myServices)
+        this.myServices=JSON.parse(myServices);
+        this.fillEditForm();
+    };
+
+    fillEditForm=()=>{
+        let _product=this.props.Product;
+        if(_product) {
+            let _serv=this.myServices.find(serv=>{return serv._id==_product.service});
+            let colorss="";
+            _product.colors.forEach((item,i)=>{
+                if(i==0)
+                    colorss=colorss+item;
+                else
+                    colorss=colorss+";"+item;
+            });
+            let sizess="";
+            _product.sizes.forEach((item,i)=>{
+                if(i==0)
+                    sizess=sizess+item;
+                else
+                    sizess=sizess+";"+item;
+            });
+
+            let imgs=[];
+            _product.images.forEach(item=>{
+                let image={
+                    _id:item,
+                    uri:settings.IMAGE_URL+item
+                };
+                imgs.push(image)
+            })
+
+            this.setState({
+                query: _serv.title,
+                selectedService: _serv,
+                title: _product.title,
+                homeDelivery: _product.homeDelivery,
+                radius: _product.radius.toString(),
+                description: _product.description,
+                location: _product.location,
+                contact: _product.contact,
+                price: _product.price.toString(),
+                unit: _product.unit,
+                webLink: _product.website,
+                colors: colorss,
+                sizes: sizess,
+                qty: _product.qty.toString(),
+                images: imgs
+            });
+        }
     }
 
     handleBackButton(){
@@ -202,7 +255,7 @@ class AddProduct extends React.PureComponent {
             return [];
         }
 
-        const myServices = this.props.myServices;
+        const myServices = this.myServices;
         const regex = new RegExp(`${query.trim()}`, 'i');
         return myServices.filter(ser => ser.title.search(regex) >= 0);
     }
@@ -210,10 +263,10 @@ class AddProduct extends React.PureComponent {
         var data = data.item;
         return (
             <View key={index}>
-                        <View  style={[styles.containerStyle]}>
-                            <Image style={{flex: 1, alignSelf: 'stretch', width: undefined, height: undefined,resizeMode:'cover'}}
-                                   source={{uri:data.uri}}/>
-                        </View>
+                <View  style={[styles.containerStyle]}>
+                    <Image style={{flex: 1, alignSelf: 'stretch', width: undefined, height: undefined,resizeMode:'cover'}}
+                           source={{uri:data.uri}}/>
+                </View>
             </View>
 
         )
@@ -240,7 +293,7 @@ class AddProduct extends React.PureComponent {
                     </Left>
 
                     <Body>
-                    <Text style={styles.screenHeader}>Add Product</Text>
+                    <Text style={styles.screenHeader}>{this.props.Product? "Update Product":"Add Product"}</Text>
                     </Body>
                 </Header>
                 <Content>
@@ -382,7 +435,7 @@ class AddProduct extends React.PureComponent {
                                 <Button
                                     style={styles.button}
                                     onPress={this._saveService}>
-                                    <Text style={styles.buttonText}> Save </Text>
+                                    <Text style={styles.buttonText}> {this.props.Product?"Update":"Save"} </Text>
                                 </Button>
                             </View>
 
@@ -808,7 +861,6 @@ const styles = StyleSheet.create({
 });
 export {styles};
 export default Meteor.createContainer(() => {
-    Meteor.subscribe('myServices');
     return {
         categories: Meteor.collection('categories').find(),
         myServices: Meteor.collection('service').find()

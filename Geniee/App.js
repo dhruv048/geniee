@@ -53,6 +53,14 @@ class App extends Component {
                     //AsyncStorage.setItem('loggedUser', JSON.stringify(Meteor.collection('userDetails').findOne({_id:  Meteor._userIdSaved})));
                     AsyncStorage.setItem('loggedUser', JSON.stringify(Meteor.user()));
                 // }
+            //Store own Services
+            Meteor.call('geOwnServiceList', (err,res)=>{
+                if(!err){
+                    console.log('myServices',res)
+                    AsyncStorage.setItem('myServices',JSON.stringify(res))
+                }
+            })
+
             });
         goToDashboard();
     }

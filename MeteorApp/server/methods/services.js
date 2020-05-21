@@ -383,6 +383,8 @@ Meteor.methods({
             productInfo.createdBy = currentUserId;
             productInfo.qty = parseInt(productInfo.qty);
             productInfo.availabeQuantity = parseInt(productInfo.qty);
+            productInfo.price = parseInt(productInfo.price);
+            productInfo.discount = parseInt(productInfo.discount);
             productInfo.createDate = new Date(new Date().toUTCString());
             let _service = Service.findOne({_id:productInfo.service})
             let imageIds = [];
@@ -700,9 +702,10 @@ Meteor.methods({
         // };
         //  return Category.find().fetch();
         return Async.runSync(function (done) {
+            let loggedUser= Meteor.userId()||"NA";
             aggregate([
                 {
-                   $match:{owner:Meteor.userId()}
+                   $match:{owner:loggedUser}
                 },
                 {$lookup: categoryLookup},
                 {$lookup: ServiceRatings},
@@ -717,6 +720,16 @@ Meteor.methods({
                 done(err, doc);
             });
         });
+    },
+
+    'getMyProducts':()=>{
+        let loggedUser= Meteor.userId()||"NA";
+        return Products.find({serviceOwner:loggedUser},{sort:{createDate:-1}}).fetch();
+    },
+
+    'geOwnServiceList':()=>{
+        let loggedUser= Meteor.userId()||"NA";
+        return Service.find({owner:loggedUser},{sort:{createDate:-1},fields: { _id: 1, title: 1,owner:1 }}).fetch();
     },
 
     'updateServiceViewCount':(serviceId)=>{

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, AsyncStorage, FlatList, Image} from 'react-native';
+import {Alert, AsyncStorage, FlatList, ToastAndroid} from 'react-native';
 import {
     Container,
     Content,
@@ -9,12 +9,8 @@ import {
     Left,
     Right,
     Body,
-    Title,
-    List,
     ListItem,
     Thumbnail,
-    Grid,
-    Col,
     Footer
 } from 'native-base';
 
@@ -211,6 +207,13 @@ class CartEF extends Component {
                             this.cartList.splice(idx,1);
                             AsyncStorage.setItem('myCart', JSON.stringify(this.cartList));
                         }
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Removed Successfully!!',
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            80,
+                        );
                         // Meteor.call('removeCartItem', item._id, (err) => {
                         //     if (err) {
                         //         console.log(err.reason);
@@ -236,6 +239,13 @@ class CartEF extends Component {
                         this.cartList=[];
                         this.getCartItems([]);
                         AsyncStorage.setItem('myCart', JSON.stringify([]));
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Your Cart is Empty now!!',
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            80,
+                        );
                     }
                 }
             ]

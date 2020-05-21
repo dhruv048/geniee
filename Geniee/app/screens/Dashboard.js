@@ -213,6 +213,7 @@ class Dashboard extends Component {
             AsyncStorage.setItem("Categories",JSON.stringify(MainCategories))
         });
 
+
     }
 
     componentWillReceiveProps(newProps) {

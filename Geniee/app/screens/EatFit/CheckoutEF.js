@@ -476,13 +476,27 @@ class CheckoutEF extends Component {
                         //     );
                         //     return 0;
                         // }
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Order Made Successfully!!',
+                            ToastAndroid.SHORT,
+                            ToastAndroid.BOTTOM,
+                            0,
+                            50,
+                        );
+
                     }
                     else {
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Order Made Successfully!!',
+                            ToastAndroid.SHORT,
+                            ToastAndroid.BOTTOM,
+                            0,
+                            50,
+                        );
                         if (!singleProduct) {
                             //  AsyncStorage.setItem('myCart', JSON.stringify([]));
                             navigateToRoutefromSideMenu(this.props.componentId, 'Orders');
                         } else {
-
                             goBack(this.props.componentId);
                         }
                     }

@@ -571,6 +571,12 @@ class AddService extends React.PureComponent {
                         webLink: ''
                     });
                   //  navigateToRoutefromSideMenu(this.props.componentId, 'MyServices');
+                    //Store own Services
+                    Meteor.call('geOwnServiceList', (err,res)=>{
+                        if(!err){
+                            AsyncStorage.setItem('myServices', res)
+                        }
+                    });
                     goBack(this.props.componentId);
                 }
             });
@@ -713,7 +719,7 @@ class AddService extends React.PureComponent {
                     </Left>
 
                     <Body>
-                    <Text style={styles.screenHeader}>Add Service</Text>
+                    <Text style={styles.screenHeader}>{this.props.Service?"Update service":"New Service"}</Text>
                     </Body>
                     {/*<Right>
                         <Button transparent onPress={() => navigate('Home')}>
@@ -893,7 +899,7 @@ class AddService extends React.PureComponent {
                                 <Button
                                     style={styles.button}
                                     onPress={this._saveService}>
-                                    <Text style={styles.buttonText}> Save </Text>
+                                    <Text style={styles.buttonText}>{this.props.Service?"Update":"Save"} </Text>
                                 </Button></View>
 
                             <View style={{marginTop: 22}}>
