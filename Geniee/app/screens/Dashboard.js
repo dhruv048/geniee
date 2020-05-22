@@ -467,7 +467,7 @@ class Dashboard extends Component {
     _getListItem = (data) => {
         let rowData = data.item;
         let distance;
-        if (rowData.location)
+        if (rowData.location && rowData.location.geometry)
             distance = MyFunctions.calculateDistance(this.region.latitude, this.region.longitude, rowData.location.geometry.location.lat, rowData.location.geometry.location.lng);
         console.log(distance);
         return (

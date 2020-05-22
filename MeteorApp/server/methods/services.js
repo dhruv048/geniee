@@ -470,6 +470,78 @@ Meteor.methods({
         }
     },
 
+    'updateProduct':(Id,productInfo)=> {
+        productInfo.qty = parseInt(productInfo.qty);
+        productInfo.availabeQuantity = parseInt(productInfo.qty);
+        productInfo.price = parseInt(productInfo.price);
+        productInfo.discount = parseInt(productInfo.discount);
+        productInfo.updateDate = new Date(new Date().toUTCString());
+        let imageIds = [];
+        if (productInfo.images) {
+            productInfo.images.forEach(image => {
+                let Id = moment().format('DDMMYYx');
+                if (!image.hasOwnProperty("_id")) {
+                    ServiceImage.write(new Buffer(image.data, 'base64'),
+                        {
+                            fileName: image.name,
+                            type: image.type
+                        },
+                        (err, res) => {
+                            if (err) {
+                                console.log('error', err)
+                            }
+                            else {
+                                console.log('res:', res._id);
+                                imageIds.push(res._id);
+                                if (productInfo.images.length === imageIds.length) {
+                                    productInfo.images = imageIds;
+                                    console.log('insert')
+                                    let pId = Products.update({_id: Id}, {$set: {productInfo}});
+                                    // try {
+                                    //     FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
+                                    //         Id: pId,
+                                    //         navigate: "true",
+                                    //         route: "ProductDetail",
+                                    //         image: productInfo.images[0],
+                                    //         icon: _service.coverImage
+                                    //     })
+                                    // } catch (e) {
+                                    //     throw new Meteor.Error(403, e.message);
+                                    // }
+                                    // const notification = {
+                                    //     title: `New Product by- ${_service.title}`,
+                                    //     description: productInfo.title,
+                                    //     owner: _service.owner,
+                                    //     navigateId: pId,
+                                    //     productOwner: ProductOwner.REGULAR_USERS,
+                                    //     receiver: [],
+                                    //     removedBy: [],
+                                    //     type: NotificationTypes.ADD_PRODUCT
+                                    // };
+                                    // Meteor.call('addNotification', notification);
+                                    return pId;
+                                }
+                            }
+                        }, proceedAfterUpload = true)
+                }
+                else {
+                    imageIds.push(image._id);
+                    if (productInfo.images.length === imageIds.length) {
+                        productInfo.images = imageIds;
+                        console.log('insert')
+                        let pId = Products.update({_id: Id}, {$set: {productInfo}});
+                        return pId;
+                    }
+                }
+            })
+        }
+        else {
+            productInfo.images = [];
+            let pId = Products.update({_id: Id}, {$set: {productInfo}});
+            return pId;
+        }
+    },
+
     'getSingleService': (Id) => {
         //   return Service.findOne(Id);
 

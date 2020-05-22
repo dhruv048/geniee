@@ -94,7 +94,7 @@ class OrderDetailIn extends Component {
                     }
                     else {
                         console.log('success. ', ress);
-                        let  _order=res.result
+                        let  _order=ress.result
                         let items = _order.items.filter(item => {
                             return item.serviceOwner == this.loggedUser._id
                         });

@@ -239,24 +239,24 @@ class ProductDetail extends Component {
                                 </Col>
                                 <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.availabeQuantity}</Text></Col>
                             </Grid>
-                            {this.state.product.colors ?
-                                <Grid>
-                                    <Col size={2}>
-                                        <View style={{flex: 1, justifyContent: 'center'}}>
-                                            <Text>Available Colors:</Text>
-                                        </View>
-                                    </Col>
-                                    <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.colors}</Text></Col>
-                                </Grid> : null}
-                            {this.state.product.sizes ?
-                                <Grid>
-                                    <Col size={2}>
-                                        <View style={{flex: 1, justifyContent: 'center'}}>
-                                            <Text>Available Size:</Text>
-                                        </View>
-                                    </Col>
-                                    <Col size={2}><Text style={{fontSize: 16}}>{this.state.product.sizes}</Text></Col>
-                                </Grid> : null}
+                            {/*{this.state.product.colors ?*/}
+                                {/*<Grid>*/}
+                                    {/*<Col size={2}>*/}
+                                        {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                            {/*<Text>Available Colors:</Text>*/}
+                                        {/*</View>*/}
+                                    {/*</Col>*/}
+                                    {/*<Col size={2}><Text style={{fontSize: 16}}>{this.state.product.colors}</Text></Col>*/}
+                                {/*</Grid> : null}*/}
+                            {/*{this.state.product.sizes ?*/}
+                                {/*<Grid>*/}
+                                    {/*<Col size={2}>*/}
+                                        {/*<View style={{flex: 1, justifyContent: 'center'}}>*/}
+                                            {/*<Text>Available Size:</Text>*/}
+                                        {/*</View>*/}
+                                    {/*</Col>*/}
+                                    {/*<Col size={2}><Text style={{fontSize: 16}}>{this.state.product.sizes}</Text></Col>*/}
+                                {/*</Grid> : null}*/}
                             {this.state.product.contact ?
                                 <Grid>
                                     <Col size={2}>
@@ -349,7 +349,7 @@ class ProductDetail extends Component {
                             {/*</Button>*/}
                             {/*</Col>*/}
                             {/*</Grid>*/}
-                            {this.state.product.colors.length>0?
+                            {this.state.product.colors && this.state.product.colors.length>0?
                             <Grid style={{marginTop: 15}}>
                                 <Col size={2}>
                                     <View style={{flex: 1, justifyContent: 'center'}}>

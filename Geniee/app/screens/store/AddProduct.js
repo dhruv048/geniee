@@ -14,7 +14,24 @@ import {
 } from "react-native";
 import Autocomplete from 'native-base-autocomplete';
 import {colors} from "../../config/styles";
-import {Container, Content, Text, Item, Icon, Input, ListItem, Textarea, CheckBox, Button, Picker, Header, Left, Body, Right} from 'native-base';
+import {
+    Container,
+    Content,
+    Text,
+    Item,
+    Icon,
+    Input,
+    ListItem,
+    Textarea,
+    CheckBox,
+    Button,
+    Picker,
+    Header,
+    Left,
+    Body,
+    Right,
+    Footer
+} from 'native-base';
 import Meteor from "../../react-native-meteor";
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import ActionSheet from 'react-native-actionsheet';
@@ -25,7 +42,7 @@ import {Navigation} from "react-native-navigation/lib/dist/index";
 import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
 import AsyncStorage from '@react-native-community/async-storage';
 import settings from "../../config/settings";
-
+import FIcon from 'react-native-vector-icons/Feather';
 
 
 
@@ -47,6 +64,7 @@ class AddProduct extends React.PureComponent {
             modalVisible: false,
             Image: null,
             price: null,
+            discount: null,
             unit: null,
             webLink:'',
             images:[],
@@ -97,11 +115,12 @@ class AddProduct extends React.PureComponent {
                 selectedService: _serv,
                 title: _product.title,
                 homeDelivery: _product.homeDelivery,
-                radius: _product.radius.toString(),
+                radius: _product.radius?_product.radius.toString():"",
                 description: _product.description,
                 location: _product.location,
                 contact: _product.contact,
-                price: _product.price.toString(),
+                price: _product.price?_product.price.toString():"",
+                discount: _product.discount?_product.discount.toString():"",
                 unit: _product.unit,
                 webLink: _product.website,
                 colors: colorss,
@@ -160,7 +179,22 @@ class AddProduct extends React.PureComponent {
         }).catch(e => {
             alert(e);
         });
-    }
+    };
+
+    removeImage=(image)=>{
+        let images=[...this.state.images];
+        let index=images.indexOf(image);
+        console.log(index,image)
+        if(index !== -1){
+            images.splice(index,1);
+            console.log(images)
+            this.setState({images:images});
+            if(images.hasOwnProperty("_id")){
+
+                // TO DO Remove from Server
+            }
+        }
+}
     _updateHomeDelivery = () => {
         let current = this.state.homeDelivery;
         this.setState(
@@ -169,43 +203,84 @@ class AddProduct extends React.PureComponent {
     };
     _callSaveServiceMethod = (product) => {
         product.image = this.state.image;
-        Meteor.call('addNewProduct', product, (err, res) => {
-            if (err) {
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-                console.log(err.reason);
-            } else {
-                // hack because react-native-meteor doesn't login right away after sign in
-                console.log('Reslut from addNewService' + res);
-                this.setState({
-                    query: '',
-                    selectedService: null,
-                    title: '',
-                    homeDelivery: false,
-                    radius: 0,
-                    description: '',
-                    location: '',
-                    contact: '',
-                    price: null,
-                    unit: null,
-                    webLink:'',
-                    colors:'',
-                    sizes:'',
-                    qty:'',
-                    images:[],
-                });
-                goToRoute(this.props.componentId,'MyServices');
-            }
-        });
+        let _product=this.props.Product;
+        if(_product){
+            Meteor.call('updateProduct', _product._id,product, (err, res) => {
+                if (err) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        err.reason,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    console.log(err.reason);
+                } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Updated Successfully!!",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    // hack because react-native-meteor doesn't login right away after sign in
+                    console.log('Reslut from addNewService' + res);
+                    this.resetForm();
+                    goBack(this.props.componentId);
+                }
+            });
+        }
+        else {
+            Meteor.call('addNewProduct', product, (err, res) => {
+                if (err) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        err.reason,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    console.log(err.reason);
+                } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Added Product Successfully!!",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    // hack because react-native-meteor doesn't login right away after sign in
+                    console.log('Reslut from addNewService' + res);
+                   this.resetForm();
+                    goToRoute(this.props.componentId, "MyProducts");
+                }
+            });
+        }
 
     };
+
+    resetForm(){
+        this.setState({
+            query: '',
+            selectedService: null,
+            title: '',
+            homeDelivery: false,
+            radius: 0,
+            description: '',
+            location: '',
+            contact: '',
+            price: null,
+            discount: null,
+            unit: null,
+            webLink: '',
+            colors: '',
+            sizes: '',
+            qty: '',
+            images: [],
+        });
+    }
     _saveService = () => {
-        const {title, description, radius, contact, homeDelivery, selectedService, images, price, unit, location, webLink, colors, sizes, qty} = this.state;
+        const {title, description, radius, contact, homeDelivery, selectedService, images, price,discount, unit, location, webLink, colors, sizes, qty} = this.state;
         let product = {
             title: title,
             description: description,
@@ -215,6 +290,7 @@ class AddProduct extends React.PureComponent {
             //  coverImage: null,
             homeDelivery: homeDelivery,
             price: price,
+            discount: discount,
             unit: unit,
             website: webLink,
             sizes: sizes ? (sizes.includes(';') ? sizes.split(';') : [sizes]) : [],
@@ -260,13 +336,17 @@ class AddProduct extends React.PureComponent {
         return myServices.filter(ser => ser.title.search(regex) >= 0);
     }
     _getListItem = (data, index) => {
-        var data = data.item;
+        let item = data.item;
         return (
             <View key={index}>
                 <View  style={[styles.containerStyle]}>
                     <Image style={{flex: 1, alignSelf: 'stretch', width: undefined, height: undefined,resizeMode:'cover'}}
-                           source={{uri:data.uri}}/>
+                           source={{uri:item.uri}}/>
+                    <Button onPress={()=>this.removeImage(item)} transparent style={{position:'absolute', top:-15,right:-5}}>
+                        <FIcon name='x-circle' size={20} color={colors.danger}/>
+                    </Button>
                 </View>
+
             </View>
 
         )
@@ -338,6 +418,7 @@ class AddProduct extends React.PureComponent {
                                        underlineColorAndroid='rgba(0,0,0,0)'
                                        onSubmitEditing={() => this.title.focus()}
                                        onChangeText={(title) => this.setState({title})}
+                                       value={this.state.title}
                             />
                             <Textarea rowSpan={3} placeholder="Description (*)"
                                       style={styles.inputTextarea}
@@ -345,71 +426,84 @@ class AddProduct extends React.PureComponent {
                                       underlineColorAndroid='red'
                                 //onSubmitEditing={() => this.contactNumber.focus()}
                                       onChangeText={(description) => this.setState({description})}
+                                      value={this.state.description}
                             />
 
+
                             <View style={styles.multiField}>
-                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                       style={styles.inputBoxMultiField}
-                                       placeholder='Radius KiloMeter (*)'
-                                       keyboardType='phone-pad'
-                                       onChangeText={(radius) => this.setState({radius})}
-                            />
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputBoxMultiField}
                                            placeholder='Available Qty'
                                            keyboardType='phone-pad'
                                            onChangeText={(qty) => this.setState({qty})}
+                                           value={this.state.qty}
                                 />
-                            </View>
-
-
-                            <View style={styles.multiField}>
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputBoxMultiField}
                                            placeholder='Unit'
                                            onChangeText={(unit) => this.setState({unit})}
+                                           value={this.state.unit}
                                 />
+
+                            </View>
+                            <View style={styles.multiField}>
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputBoxMultiField}
                                            placeholder='Price per Unit'
                                            keyboardType='phone-pad'
                                            onChangeText={(price) => this.setState({price})}
+                                           value={this.state.price}
                                 />
-                            </View>
-                            <Textarea rowSpan={2} placeholder="Colors"
-                                      style={styles.inputTextarea}
-                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                      underlineColorAndroid='red'
-                                //onSubmitEditing={() => this.contactNumber.focus()}
-                                      onChangeText={(colors) => this.setState({colors})}
-                            />
-                            <Textarea rowSpan={2} placeholder="Sizes Available"
-                                      style={styles.inputTextarea}
-                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                      underlineColorAndroid='red'
-                                //onSubmitEditing={() => this.contactNumber.focus()}
-                                      onChangeText={(sizes) => this.setState({sizes})}
-                            />
-                            <View style={styles.multiField}>
-
-
                                 <TextInput underlineColorAndroid='rgba(0,0,0,0)'
                                            placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
                                            style={styles.inputBoxMultiField}
-                                           placeholder='Contact No (*)'
+                                           placeholder='Discount in %'
                                            keyboardType='phone-pad'
-                                           onChangeText={(contact) => this.setState({contact})}
+                                           onChangeText={(discount) => this.setState({discount})}
+                                           value={this.state.discount}
                                 />
 
+                            </View>
+                            <View style={styles.multiField}>
+                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                           style={styles.inputBoxMultiField}
+                                           placeholder='Radius in K.M (*)'
+                                           keyboardType='phone-pad'
+                                           onChangeText={(radius) => this.setState({radius})}
+                                           value={this.state.radius}
+                                />
                                 <View style={styles.chkView}><CheckBox style={{marginEnd:20}} checked={this.state.homeDelivery}
                                                                        onPress={this._updateHomeDelivery}/>
                                     <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text></View>
-
                             </View>
+                            <Textarea rowSpan={2} placeholder="Colors seperated ;"
+                                      style={styles.inputTextarea}
+                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                      underlineColorAndroid='red'
+
+                                      onChangeText={(colors) => this.setState({colors})}
+                                      value={this.state.colors}
+                            />
+                            <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
+                                      style={styles.inputTextarea}
+                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                      underlineColorAndroid='red'
+                                      onChangeText={(sizes) => this.setState({sizes})}
+                                      value={this.state.sizes}
+                            />
+
+                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       style={styles.inputBox}
+                                       placeholder='Contact No (*)'
+                                       keyboardType='phone-pad'
+                                       onChangeText={(contact) => this.setState({contact})}
+                                       value={this.state.contact}
+                            />
 
 
                             <TextInput underlineColorAndroid='rgba(0,0,0,0)'
@@ -417,27 +511,22 @@ class AddProduct extends React.PureComponent {
                                        style={styles.inputBox}
                                        placeholder='Website'
                                        onChangeText={(webLink) => this.setState({webLink})}
+                                       value={this.state.webLink}
                             />
                             <FlatList style={styles.mainContainer}
                                       data={this.state.images}
                                       renderItem={this._getListItem}
-                                      keyExtracter={(item, index) =>inde.toString()}
+                                      keyExtracter={(item, index) =>index.toString()}
                                       horizontal={false}
                                       numColumns={2}
                             />
                             <Button
                                 style={styles.button}
                                 onPress={()=>this.ActionSheet.show()}>
-                                <Text style={styles.buttonText}> Upload Image </Text>
+                                <Icon name={'ios-add'} color={'white'}/>
+                                <Text style={styles.buttonText}>Upload Image </Text>
                             </Button>
-                            <View style={styles.buttonView}>
 
-                                <Button
-                                    style={styles.button}
-                                    onPress={this._saveService}>
-                                    <Text style={styles.buttonText}> {this.props.Product?"Update":"Save"} </Text>
-                                </Button>
-                            </View>
 
                             <View style={{marginTop: 22}}>
                                 <Modal
@@ -495,6 +584,15 @@ class AddProduct extends React.PureComponent {
                         }}
                     />
                 </Content>
+                <Footer style={{backgroundColor:colors.appBackground, alignItems:'center'}}>
+                    {/*<View style={styles.buttonView}>*/}
+                        <Button
+                            style={styles.button}
+                            onPress={this._saveService}>
+                            <Text style={styles.buttonText}> {this.props.Product?"Update":"Save"} </Text>
+                        </Button>
+                    {/*</View>*/}
+                </Footer>
             </Container>
         );
     }
