@@ -2,9 +2,10 @@ import {Meteor} from "meteor/meteor";
 import {Accounts} from "meteor/accounts-base";
 import FacebookOAuthInit from "./oauth-facebook";
 import {FIREBASE_MESSAGING} from './API/fire-base-admin';
+
 const path = require('path')
 
-process.env.MAIL_URL = "smtps://roshanshah.011:roshanshah.110@smtp.gmail.com:465";
+process.env.MAIL_URL = "smtps://genieeinfo:icmjzpofzjbsywvy@smtp.gmail.com:465";
 var admin = require("firebase-admin");
 var serviceAccount = process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json') : process.env.PWD + '/private/geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json';
 
@@ -13,7 +14,7 @@ Meteor.startup(function () {
     // Initialize firebase admin
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-     //   databaseURL: ""
+        //   databaseURL: ""
     });
 
 
@@ -22,6 +23,66 @@ Meteor.startup(function () {
 
     FacebookOAuthInit();
     Future = Npm.require('fibers/future');
+
+
+    Accounts.config({sendVerificationEmail: true});
+    Accounts.emailTemplates.siteName = 'Geniee';
+    Accounts.emailTemplates.from = 'Info@Geniee<genieeinfo@gmail.com>';
+
+
+    Accounts.validateLoginAttempt((options) => {
+        if (!options.allowed) {
+            // console.log(options);
+            return false;
+        }
+        try {
+            let methodName = options.methodName;
+            let methodtYPE = options.type;
+            let methodArguments = options.methodArguments[1];
+
+            if (methodtYPE == 'password') {
+                if (!options.user.emails[0].verified)
+                    throw new Meteor.Error('', 'You Email has not yet verified. Please check your email.');
+
+                // if (methodArguments) {
+                //     if (methodName == "login" && methodArguments.hasOwnProperty("isVisitor")) {
+                //         if (methodArguments.isVisitor) {
+                //             if (options.user.profile.role !== userType.VISITOR)
+                //                 throw new Meteor.Error('', 'UnAuthorized');
+                //         }
+                //         else {
+                //             if (options.user.profile.role == userType.VISITOR)
+                //                 throw new Meteor.Error('', 'UnAuthorized');
+                //         }
+                //     }
+                // }
+                //
+                // if ([userType.HOSPITAL, userType.CLINIC, userType.LAB].includes(options.user.profile.role)) {
+                //     let subscription = options.user.profile.subscription;
+                //     let count = 0;
+                //     if (options.user.services.hasOwnProperty('resume') && options.user.services.resume.loginTokens) {
+                //         count = count + options.user.services.resume.loginTokens.length;
+                //     }
+                //     // if(options.user.services.hasOwnProperty('facebook')){
+                //     //     count=count+1;
+                //     // }
+                //     console.log(count);
+                //     if (count < subscription.USERLOGIN)
+                //         return true;
+                //     else {
+                //         throw new Meteor.Error('', 'You have reached maximum login!! please Log Out from other devices');
+                //     }
+                // }
+            }
+            return true;
+        }
+        catch (e) {
+            console.log(e.message)
+            throw new Meteor.Error('', e.reason);
+        }
+    });
+
+
     // chck if there is Super Admin, If not create one.
     if (Meteor.users.find().count() === 0) {
         if (!!Meteor.settings.private.defaultAccount) {
@@ -30,7 +91,7 @@ Meteor.startup(function () {
                 username: Meteor.settings.private.defaultAccount.username,
                 email: Meteor.settings.private.defaultAccount.email,
                 createdAt: new Date(),
-                createdBy:"SuperAdmin",
+                createdBy: "SuperAdmin",
                 profile: {
                     role: 2,
                     name: "Roshan",
@@ -40,34 +101,35 @@ Meteor.startup(function () {
         } else {
             console.log('No default user!  Please invoke meteor with a settings file.');
         }
-    };
-    if(!Meteor.users.findOne({'profile.role':111})){
+    }
+    ;
+    if (!Meteor.users.findOne({'profile.role': 111})) {
         if (!!Meteor.settings.private.GRAccount) {
-        Accounts.createUser({
-            password: Meteor.settings.private.GRAccount.password,
-            username: Meteor.settings.private.GRAccount.username,
-            email: Meteor.settings.private.GRAccount.email,
-            createdAt: new Date(),
-            createdBy:"SuperAdmin",
-            profile: {
-                role: 111,
-                name: "Geniee Repair",
-                contactNo: "9858974585",
-            }
-        });
+            Accounts.createUser({
+                password: Meteor.settings.private.GRAccount.password,
+                username: Meteor.settings.private.GRAccount.username,
+                email: Meteor.settings.private.GRAccount.email,
+                createdAt: new Date(),
+                createdBy: "SuperAdmin",
+                profile: {
+                    role: 111,
+                    name: "Geniee Repair",
+                    contactNo: "9858974585",
+                }
+            });
         } else {
             console.log('No GRAccount user!  Please invoke meteor with a settings file.');
         }
     }
 
-    if(!Meteor.users.findOne({'profile.role':222})){
+    if (!Meteor.users.findOne({'profile.role': 222})) {
         if (!!Meteor.settings.private.EFAccount) {
             Accounts.createUser({
                 password: Meteor.settings.private.EFAccount.password,
                 username: Meteor.settings.private.EFAccount.username,
                 email: Meteor.settings.private.EFAccount.email,
                 createdAt: new Date(),
-                createdBy:"SuperAdmin",
+                createdBy: "SuperAdmin",
                 profile: {
                     role: 222,
                     name: "Eat Fit",
@@ -90,98 +152,100 @@ Meteor.startup(function () {
     //     )
     // }
 
-    if(MainCategories.find().count()<1){
+    if (MainCategories.find().count() < 1) {
 
-        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"? Assets.absoluteFilePath('csvFiles/newCategories.csv') : process.env.PWD + '/private/csvFiles/newCategories.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/newCategories.csv') : process.env.PWD + '/private/csvFiles/newCategories.csv', {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
-           //  console.log(line);
-            line.subCategories=[];
+            //  console.log(line);
+            line.subCategories = [];
             MainCategories.insert(line);
 
         }));
-       // var categories= Meteor.settings.public.categories;
-       // console.log(categories)
-       // categories.forEach(item=>{
-       //      let cat ={
-       //          catId:item[0],
-       //          mainCategory:item[1],
-       //          icon:item[2],
-       //          subCategories:[]
-       //      }
-       //      console.log(cat)
-       //      MainCategories.insert(cat);
-       //  });
+        // var categories= Meteor.settings.public.categories;
+        // console.log(categories)
+        // categories.forEach(item=>{
+        //      let cat ={
+        //          catId:item[0],
+        //          mainCategory:item[1],
+        //          icon:item[2],
+        //          subCategories:[]
+        //      }
+        //      console.log(cat)
+        //      MainCategories.insert(cat);
+        //  });
 
-        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/subcategories.csv') :process.env.PWD + '/private/csvFiles/subcategories.csv'), {
+        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/subcategories.csv') : process.env.PWD + '/private/csvFiles/subcategories.csv'), {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
             console.log(line);
-            var data={
-                subCatId:line.subCatId,
-                subCategory:line.subCategory
+            var data = {
+                subCatId: line.subCatId,
+                subCategory: line.subCategory
             }
-            MainCategories.update({catId:line.parentId
-            },{
-                $addToSet:{subCategories:data}
+            MainCategories.update({
+                catId: line.parentId
+            }, {
+                $addToSet: {subCategories: data}
             })
         }));
-        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/emergency.csv') :process.env.PWD + '/private/csvFiles/emergency.csv'), {
+        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/emergency.csv') : process.env.PWD + '/private/csvFiles/emergency.csv'), {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
             console.log(line);
-            var data={
-                subCatId:line.subCatId,
-                subCategory:line.subCategory
+            var data = {
+                subCatId: line.subCatId,
+                subCategory: line.subCategory
             }
-            MainCategories.update({catId:19
-            },{
-                $addToSet:{subCategories:data}
+            MainCategories.update({
+                catId: 19
+            }, {
+                $addToSet: {subCategories: data}
             })
         }));
     }
-    else{
+    else {
 
     }
 
-    if(Service.find().count()<100){
-        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production"?Assets.absoluteFilePath('csvFiles/services.csv') :process.env.PWD + '/private/csvFiles/services.csv', {
+    if (Service.find().count() < 100) {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/services.csv') : process.env.PWD + '/private/csvFiles/services.csv', {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
             console.log(line);
-            var data={
-                title : line.title,
-                description : line.description,
-                contact : line.contact,
-                contact1:line.phone1,
-                fax:line.fax,
-                email:line.email,
-                pobox:line.pobox,
-                isPaid : line.isPaid,
-                location : {
-                    formatted_address :  line.add1+', '+line.city+', '+line.add2,
-                    geometry : (line.lat!=null && line.lat !="NULL" && line.lat!=undefined && line.lat!='')? {
-                        location : {
-                            lat :parseFloat(line.lat),
-                            lng :parseFloat(line.lng)
+            var data = {
+                title: line.title,
+                description: line.description,
+                contact: line.contact,
+                contact1: line.phone1,
+                fax: line.fax,
+                email: line.email,
+                pobox: line.pobox,
+                isPaid: line.isPaid,
+                location: {
+                    formatted_address: line.add1 + ', ' + line.city + ', ' + line.add2,
+                    geometry: (line.lat != null && line.lat != "NULL" && line.lat != undefined && line.lat != '') ? {
+                        location: {
+                            lat: parseFloat(line.lat),
+                            lng: parseFloat(line.lng)
                         },
-                        type:'Point',
-                        coordinates:[parseFloat(line.lng),parseFloat(line.lat)]
+                        type: 'Point',
+                        coordinates: [parseFloat(line.lng), parseFloat(line.lat)]
                     } : null,
-                    website : line.webpage
+                    website: line.webpage
                 },
-                radius : null,
-                coverImage : null,
-                homeDelivery : false,
-                categoryId : line.subCatId,
-                createdAt : new Date(),
-                createdBy : null,
-                ratings : [{count : 0}],
-                website : line.webpage,
+                radius: null,
+                coverImage: null,
+                homeDelivery: false,
+                categoryId: line.subCatId,
+                createdAt: new Date(),
+                createdBy: null,
+                ratings: [{count: 0}],
+                website: line.webpage,
 
             };
             Service.insert(data);
@@ -192,7 +256,7 @@ Meteor.startup(function () {
         "description": "text",
     });
     Service._ensureIndex({
-        "location.geometry" : "2dsphere"
+        "location.geometry": "2dsphere"
     })
 
     Products._ensureIndex({
@@ -203,7 +267,7 @@ Meteor.startup(function () {
         "mainCategory": "text",
         "subCategories.subCategory": "text",
     })
-   // Accounts.ensureIndex( { "profile.location" : "2dsphere" })
+    // Accounts.ensureIndex( { "profile.location" : "2dsphere" })
 });
 
 

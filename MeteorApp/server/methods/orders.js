@@ -228,7 +228,7 @@ Meteor.methods({
             // }
             // else {
             let prod = await Products.findOne({_id: item.productId});
-            if (product.serviceOwner === userId) {
+            if (prod.serviceOwner === userId) {
                 await  Products.update({_id: item.productId}, {
                     $set: {
                         'availabeQuantity': prod.availabeQuantity + item.quantity

@@ -68,7 +68,7 @@ class SignIn extends Component {
         return valid;
     };
 
-    _loginFacabook = () => {
+    _loginFacabook = (componentId,needReturn) => {
         console.log('loginFB')
         // try {
           //  LoginManager.logInWithPermissions(["email", "user_location", "user_birthday","public_profile"]).then(function (result) {
@@ -82,7 +82,7 @@ class SignIn extends Component {
                         result.grantedPermissions.toString()
                     );
                     Keyboard.dismiss();
-                    onLoginFinished(result);
+                    onLoginFinished(result,componentId,needReturn);
 
                 }
             }).catch(function (error) {
@@ -119,11 +119,23 @@ class SignIn extends Component {
                         console.log("Resulton LogedIN:" + Meteor.getData()._tokenIdSaved);
                         AsyncStorage.setItem(USER_TOKEN_KEY,  Meteor.getData()._tokenIdSaved );
                         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
-                        EventRegister.emit('siggnedIn',true)
+                        EventRegister.emit('siggnedIn',true);
+                        ToastAndroid.showWithGravityAndOffset(
+                            "Logged In Successfully",
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            50,
+                        );
                         this.setState({
                             isLogged: true
                         });
-                        backToRoot(this.props.componentId);
+                        if(this.props.needReturn){
+                            goBack(this.props.componentId)
+                        }
+                        else {
+                            backToRoot(this.props.componentId);
+                        }
                     }
                 }.bind(this));
                 // Meteor.call('login',{data: {email: email, password:hashPassword(password), type:'meteor'}}, (err, result) => {
@@ -202,7 +214,7 @@ class SignIn extends Component {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={[styles.button,{backgroundColor:'#3b5998'}]} onPress={this._loginFacabook}>
+                        <TouchableOpacity style={[styles.button,{backgroundColor:'#3b5998'}]} onPress={()=>this._loginFacabook(this.props.componentId,this.props.needReturn)}>
                             <Text style={styles.buttonText}>
                                 <Icon name='facebook' size={20}
                                       style={{alignSelf: 'flex-start', color: 'white'}}/> Facebook Login</Text>

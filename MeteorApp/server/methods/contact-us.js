@@ -17,7 +17,7 @@ Meteor.methods({
             try {
                 Email.send({
                     to: contactUSInfo.email,
-                    from: "roshanshah.011@gmail.com",
+                    from: "Geniee",
                     bcc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
                     subject: "Contact Me from:" + contactUSInfo.name,
                     html: "<label>Phone:</label> " + contactUSInfo.phone + "<br> <label>emaill : </label>" + contactUSInfo.email + "<br>" + contactUSInfo.message,

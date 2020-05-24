@@ -1,4 +1,4 @@
-<template name="PrivacyPolicy">
+export const privacyPolicy={content:`
 <strong>Privacy Policy</strong> <p>
     Geniee built the Geniee app as
     a Free app. This SERVICE is provided by
@@ -104,5 +104,4 @@
 </p> <p>This policy is effective as of 2020-05-16</p> <p><strong>Contact Us</strong></p> <p>
     If you have any questions or suggestions about our
     Privacy Policy, do not hesitate to contact us at genieeinfo@gmail.com.
-</p>
-</template>
+</p>`};

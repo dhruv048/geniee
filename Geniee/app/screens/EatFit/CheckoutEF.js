@@ -29,7 +29,8 @@ import {variables, customStyle} from '../../config/styles';
 import {PaymentType, TransactionTypes, OrderStatus} from "../../config/settings";
 import DeviceInfo from 'react-native-device-info'
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
-
+import settings from "../../config/settings";
+import Loading from "../../components/Loading/Loading";
 
 class CheckoutEF extends Component {
     constructor(props) {
@@ -47,7 +48,8 @@ class CheckoutEF extends Component {
             city: '',
             postcode: '',
             note: '',
-            paymentType: PaymentType.CASH
+            paymentType: PaymentType.CASH,
+            loading:false,
         };
     }
 
@@ -286,7 +288,7 @@ class CheckoutEF extends Component {
                     </View>
                     <View style={{marginTop: 10, marginBottom: 10, paddingBottom: 7}}>
                         <Button onPress={() => {
-                            this.checkout()
+                            this.proceedCheckOut()
                         }} style={{backgroundColor: colors.appLayout}} block
                                 iconLeft>
                             <Icon name='ios-card'/>
@@ -294,6 +296,8 @@ class CheckoutEF extends Component {
                         </Button>
                     </View>
                 </Content>
+                {this.state.loading?
+                <Loading/>:null}
             </Container>
         );
     }
@@ -334,8 +338,43 @@ class CheckoutEF extends Component {
         );
     }
 
-    checkout = () => {
+    proceedCheckOut = async() => {
+        const {name, email, phone, address, city, postcode, note, total, paymentType} = this.state;
+        let items = [];
+        if (!name || !phone || !address || !city || !email) {
+            Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
+            return true;
+        }
+        const userToken=await AsyncStorage.getItem(settings.USER_TOKEN_KEY);
+        if(userToken){
+            this.checkout()
+        }
+        else {
+            Alert.alert(
+                'You are not Logged In?',
+                'Are you sure, you want to continue without Logged In? You will be not able to manage or see your orders from other devices. We suggest to log in before making orders.',
+                [
+                    {
+                        text: 'Continue without Log In', onPress: () => {
+                            this.checkout();
+                        }
+                    }
+                    , {
+                    text: 'Log In Now'
+                    ,
+                    onPress: () => {
+                        goToRoute(this.props.componentId, 'SignIn', {needReturn: true}
+                        )
+                    }
+                }],
+                {
+                    cancelable: false
+                }
+            );
+        }
+    }
 
+    checkout = () => {
         Alert.alert(
             'Confirm Checkout?',
             'Are you sure, you want to Checkout?',
@@ -404,14 +443,14 @@ class CheckoutEF extends Component {
             ],
             {cancelable: false}
         );
-
-
     }
 
     _performOrder = async (Item) => {
         console.log(Item);
         const singleProduct = this.props.productOrder;
+        this.setState({loading:true});
         Meteor.call('addOrder', Item, async (err, res) => {
+            this.setState({loading:false});
             if (err) {
                 console.log(err.reason);
                 ToastAndroid.showWithGravityAndOffset(

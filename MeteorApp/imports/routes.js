@@ -500,26 +500,6 @@ clientRoutes.route('/terms', {
 });
 
 
-clientRoutes.route('/news-all', {
-    name: 'News',
-    action() {
-        BlazeLayout.render('Client_Layout', {main: 'News_All'});
-        document.title = "Geniee-Admin News";
-    },
-    triggersEnter: [function (context, redirect) {
-
-    }]
-});
-
-clientRoutes.notFound = {
-    name: '404',
-    action() {
-        BlazeLayout.render('Client_Layout', {main: 'notFound'});
-        document.title = "Geniee-Admin 404";
-    },
-};
-
-
 clientRoutes.route('/', {
     name: 'dashboard',
     action: function () {
@@ -532,9 +512,10 @@ clientRoutes.route('/', {
 });
 
 
-clientRoutes.route('/#/verify-email/:token', {
+clientRoutes.route('/verify-email/:token', {
     name: 'dashboard',
     action: function () {
+        BlazeLayout.render('ClientMainLayout', {main: 'verifyEmail'})
         var token = FlowRouter.getParam("token");
         console.log(token);
         Meteor.call('verifyAccount', token, function (err, res) {
@@ -543,7 +524,7 @@ clientRoutes.route('/#/verify-email/:token', {
             }
             else {
                 console.log(res);
-                BlazeLayout.render('main_Layout', {main: 'verifyEmail'})
+                BlazeLayout.render('ClientMainLayout', {main: 'verifyEmail'})
             }
         });
 
@@ -555,7 +536,7 @@ clientRoutes.route('/#/verify-email/:token', {
 clientRoutes.route('/verified', {
     name: 'dashboard',
     action: function () {
-        BlazeLayout.render('main_Layout', {main: 'emailVerifySuccess'})
+        BlazeLayout.render('ClientMainLayout', {main: 'emailVerifySuccess'})
     }
 });
 clientRoutes.route("/article/:articleId", {

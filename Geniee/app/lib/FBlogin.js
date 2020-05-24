@@ -1,14 +1,15 @@
-import React, { AsyncStorage } from 'react-native';
+import React, { ToastAndroid } from 'react-native';
 import { AccessToken } from 'react-native-fbsdk';
 import Meteor from '../react-native-meteor';
 import {MyFunctions} from "../lib/MyFunctions";
 import {goToDashboard,goBack} from "../Navigation";
 import {EventRegister} from "react-native-event-listeners";
+import AsyncStorage from '@react-native-community/async-storage';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
 
-export const loginWithTokens = (compId) => {
+export const loginWithTokens = (compId,needReturn) => {
     const Data = Meteor.getData();
     AccessToken.getCurrentAccessToken()
         .then((res) => {
@@ -23,18 +24,30 @@ export const loginWithTokens = (compId) => {
                         Meteor._loginWithToken(result.token)
                         EventRegister.emit('siggnedIn',true)
                        // MyFunctions._saveDeviceUniqueId();
-                        goToDashboard();
-                       // goBack(compId)
+                        ToastAndroid.showWithGravityAndOffset(
+                            "Logged In Successfully",
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            50,
+                        );
+                        if(needReturn){
+                            goBack(compId);
+                        }
+                        else {
+                            goToDashboard();
+                        }
+
                     };
                 });
             }
         })
 };
 
-export const onLoginFinished = (result,compId) => {
+export const onLoginFinished = (result,compId,needReturn) => {
     if (result.isCancelled) {
         console.log('login cancelled');
     } else {
-        loginWithTokens(compId);
+        loginWithTokens(compId,needReturn);
     }
 };

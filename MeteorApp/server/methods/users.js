@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-
+import {Random} from 'meteor/random';
 Meteor.methods({
 
     'registerUser': (userInfo) => {
@@ -12,7 +12,7 @@ Meteor.methods({
             createdBy = user.profile.createdBy
         }
         try {
-            Accounts.createUser({
+           let userId= Accounts.createUser({
                 password: userInfo.password,
                 username: userInfo.contact,
                 email: userInfo.email,
@@ -38,11 +38,47 @@ Meteor.methods({
 
     'signUpUser': (userInfo) => {
         try {
-            Accounts.createUser(userInfo);
+            let userId =Accounts.createUser(userInfo);
+            if (userId) {
+                // Accounts.sendVerificationEmail(userId);
+                let user = Meteor.users.findOne({_id: userId});
+                var token = Random.secret();
+                var tokenRecord = {
+                    token: token,
+                    address: user.emails[0].address,
+                    when: new Date(),
+                };
+                //Update User's token info the user
+                Meteor.users.update(
+                    {_id: userId},
+                    {$push: {'services.email.verificationTokens': tokenRecord}}
+                    , function (err) {
+                        let url = Meteor.absoluteUrl() + 'verify-email/' + token;
+                        Email.send({
+                            to: userInfo.email,
+                            from: "Geniee",
+                            cc: "",
+                            bcc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
+                            subject: "Activate your account now!",
+                            html: `<h4>Dear ${user.profile.name},</h4><br>
+                <p>Thank you very much for signing up with Geniee.</p><br>
+                    <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
+                    <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
+                    Regards, <br/>
+                    Geniee`,
+                        }, function (err) {
+                            if (err != null) {
+                                console.log(err.messsage);
+                            }
+                        });
+                    });
+
+                return userId;
+            }
         }
         catch (e) {
             console.log(e.message);
-            throw new Meteor.Error(401, e.message);
+            throw new Meteor.Error(500, e.reason);
 
         }
     },
@@ -121,10 +157,10 @@ Meteor.methods({
 
         return Email.send({
             to: email,
-            from: "contact_us@gennie.com",
-            cc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
-            subject: "Code to set your new Password",
-            html: "Pleas use code to Set New Password : " + token,
+            from: "Geniee",
+            bcc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
+            subject: "Password Reset Code:"+token,
+            html: "Please use code to Set New Password : " + token,
         }, function (err) {
             if (err != null) {
                 console.log(err.messsage);
@@ -154,6 +190,28 @@ Meteor.methods({
             Meteor.users.update({_id: loggedUser._id}, {
                 $set: {devices: devices}
             });
+        }
+    },
+
+    'verifyAccount': async (code) => {
+
+        // check(code, String)
+        const user = await Meteor.users.findOne({'services.email.verificationTokens': {$elemMatch: {token: code}}});
+
+        if (user) {
+            Meteor.users.update(
+                {_id: user._id},
+                {
+                    $set: {
+                        'services.email.verificationTokens': [],
+                        'emails.0.verified': true
+                    }
+                }
+            )
+            return true;
+        }
+        else {
+            throw new Meteor.Error(401, "couldn't verify Token");
         }
     },
 

@@ -1,5 +1,6 @@
-<template name="TermsAndConditions">
-    <strong>Terms &amp; Conditions</strong> <p>
+export const TermsCondition = {
+    content: `
+ <strong>Terms &amp; Conditions</strong> <p>
         By downloading or using the app, these terms will
         automatically apply to you – you should make sure therefore
         that you read them carefully before using the app. You’re not
@@ -99,5 +100,15 @@
     </p> <p><strong>Contact Us</strong></p> <p>
         If you have any questions or suggestions about our
         Terms and Conditions, do not hesitate to contact us
-    at  genieeinfo@gmail.com.</p>
-</template>
+    at  genieeinfo@gmail.com.</p>`
+}
+
+export const cancellationPolicy = {
+    content: '<p>This policy is available to approved members of MediDoc platform for an in-person consultation.</p>\n' +
+    '<p>1. To claim the refund, the user can cancel the consultation at least 4 hours before the consultation time confirmed by MediDoc.</p>\n' +
+    '<p>2. You will not be able to cancel before less than FOUR Hrs from appointment time.</p>\n' +
+    '<p>3. You can re-schedule your appointment according to the availability of the doctor but no cancellation will be allowed on re-schedule of an appointment.</p>\n' +
+    '<p>4. If the doctor is unavailable then the user can cancel the consultation and is entitled to a full refund.</p>\n' +
+    '<p>5. If cancellation Exceed more than 3 times –account automatically move to unverified user and user cannot take any action about their account. They have to contact MediDoc support phone number for further use.</p>\n' +
+    '<p>To cancel or claim your refund, write an email to support@medidocnepal.com or call+9779818492210 or from the patient dashboard.</p>'
+}

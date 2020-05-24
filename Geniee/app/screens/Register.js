@@ -9,20 +9,55 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     ToastAndroid,
-    Picker
+    Dimensions, Modal, ScrollView
 } from 'react-native';
-
+import {CheckBox} from 'native-base'
 import {RadioGroup} from 'react-native-btr';
-
+import Icon from 'react-native-vector-icons/Feather';
 import Meteor from '../react-native-meteor';
 import Logo from '../components/Logo/Logo';
-import {colors} from '../config/styles';
+import {colors, customStyle, variables} from '../config/styles';
 import {userType} from '../config/settings';
-import {Container, Content, Item} from 'native-base';
+import {Button, Container, Content, Item, Label} from 'native-base';
 import LocationPicker from "../components/LocationPicker";
 import {goBack, goToRoute} from "../Navigation";
-
+import AutoHeightWebView from 'react-native-autoheight-webview';
+import {privacyPolicy} from "../lib/PrivacyPolicy";
+import {TermsCondition} from "../lib/Terms&Condition";
 class Register extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.mounted = false;
+        this.state = {
+            termsChecked:false,
+            name: '',
+            email: '',
+            contact: '',
+            password: '',
+            location: null,
+            confirmPassword: '',
+            confirmPasswordVisible: false,
+            userType: null,
+            isLogged: Meteor.user() ? true : null,
+            pickLocation:false,
+            privacyModal: false,
+            termsModal: false,
+            radioButtons: [
+                {
+                    label: 'User',
+                    value: userType.NORMAL,
+                    checked: true,
+                },
+                {
+                    label: 'Service Provider',
+                    value: userType.SERVICE_PROVIDER
+                }
+            ]
+        };
+    }
+
     validInput = (overrideConfirm) => {
         const {email, password, confirmPassword, confirmPasswordVisible} = this.state;
         let valid = true;
@@ -100,78 +135,72 @@ class Register extends Component {
             else {
                 let selectedItem = this.state.radioButtons.find(e => e.checked == true);
                 selectedItem = selectedItem ? selectedItem.value : this.state.radioButtons[0].value;
-                let user = {
-                    password: password,
-                    username: contact,
-                    email: email,
-                    createdAt: new Date(),
-                    //createdBy: new Date(),
-                    profile: {
-                        role: selectedItem,
-                        name: capitalzeFirstLetter(name),
-                        contactNo: contact,
-                        profileImage: null,
-                        location: location,
-                        primaryEmail:email,
-                        email:email
-                    }
-                };
-                Meteor.call('signUpUser', user, (err, res) => {
-                    if (err) {
-                        console.log(err.reason);
-                        ToastAndroid.showWithGravityAndOffset(
-                            err.reason,
-                            ToastAndroid.LONG,
-                            ToastAndroid.TOP,
-                            0,
-                            50,
-                        );
-                    } else {
-                        // hack because react-native-meteor doesn't login right away after sign in
-                        console.log('Reslut from register' + res);
-                        ToastAndroid.showWithGravityAndOffset(
-                            'Registered Successfully',
-                            ToastAndroid.LONG,
-                            ToastAndroid.TOP,
-                            0,
-                            50,
-                        );
-                        //  this.handleSignIn();
-                       goToRoute(this.props.componentId,'SignIn');
-                    }
-                });
+
+                if(this.state.termsChecked) {
+
+                    let user = {
+                        password: password,
+                        username: contact,
+                        email: email,
+                        createdAt: new Date(),
+                        //createdBy: new Date(),
+                        profile: {
+                            role: selectedItem,
+                            name: capitalzeFirstLetter(name),
+                            contactNo: contact,
+                            profileImage: null,
+                            location: location,
+                            primaryEmail: email,
+                            email: email,
+                        }
+                    };
+                    Meteor.call('signUpUser', user, (err, res) => {
+                        if (err) {
+                            console.log(err.reason);
+                            ToastAndroid.showWithGravityAndOffset(
+                                err.reason,
+                                ToastAndroid.LONG,
+                                ToastAndroid.TOP,
+                                0,
+                                50,
+                            );
+                        } else {
+                            // hack because react-native-meteor doesn't login right away after sign in
+                            console.log('Reslut from register' + res);
+                            ToastAndroid.showWithGravityAndOffset(
+                                'Registered Successfully',
+                                ToastAndroid.LONG,
+                                ToastAndroid.TOP,
+                                0,
+                                50,
+                            );
+                            //  this.handleSignIn();
+                            goToRoute(this.props.componentId, 'SignIn');
+                        }
+                    });
+                }
+                else{
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Please read & accept Terms & Conditions.',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
             }
         }
+    };
+
+    updateUsersAgreeStatus=()=>{
+        let termsChecked=this.state.termsChecked;
+        console.log('termsChecked:', termsChecked)
+        termsChecked=!termsChecked
+        this.setState({termsChecked})
+        console.log(termsChecked)
     }
 
-    constructor(props) {
-        super(props);
 
-        this.mounted = false;
-        this.state = {
-            name: '',
-            email: '',
-            contact: '',
-            password: '',
-            location: null,
-            confirmPassword: '',
-            confirmPasswordVisible: false,
-            userType: null,
-            isLogged: Meteor.user() ? true : null,
-            pickLocation:false,
-            radioButtons: [
-                {
-                    label: 'User',
-                    value: userType.NORMAL,
-                    checked: true,
-                },
-                {
-                    label: 'Service Provider',
-                    value: userType.SERVICE_PROVIDER
-                }
-            ]
-        };
-    }
 
     componentWillMount() {
         this.mounted = true;
@@ -309,6 +338,28 @@ class Register extends Component {
                                 {/*onPress={radioButtons => this.setState({radioButtons})}*/}
                                 {/*/>*/}
                                 {/*</View>*/}
+                                <View style={{
+                                    paddingTop: 16,
+                                    paddingBottom: 16,
+                                    paddingLeft: 30,
+                                    paddingRight: 30,
+                                    alignItems:'center',
+                                    justifyContent:'center',
+                                    textAlign: 'center',
+                                    color: '#8E8E8E',
+                                    flexDirection: 'row',
+                                    flexWrap: 'wrap',
+                                }}>
+                                    <TouchableOpacity transparent onPress={()=>this.updateUsersAgreeStatus()}>
+                                    <CheckBox checked={this.state.termsChecked} color={variables.checkboxActive} />
+                                    </TouchableOpacity>
+                                    <Text  style={{marginLeft:15, color:colors.gray_200}}>I agree & accept Geniee's </Text>
+                                    <Text style={{color: colors.primaryText}} onPress={() => {
+                                        this.setState({termsModal: true})
+                                    }}>Terms of Service</Text><Text note> & </Text>
+                                    <Text  style={{color: colors.primaryText}} onPress={() => {
+                                        this.setState({privacyModal: true})}}>Privacy Policy.</Text>
+                                </View>
 
                                 <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
                                     <Text style={styles.buttonText}>Register</Text>
@@ -322,14 +373,130 @@ class Register extends Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
+
                     </TouchableWithoutFeedback>
+
+
+                    {/*PRIVACY POLICY MODAL START */}
+                    <Modal style={customStyle.modal}
+                           animationType="slide"
+                        // transparent={true}
+                           visible={this.state.privacyModal}
+                           onRequestClose={() => {
+                               this.setState({privacyModal: false})
+                           }}>
+                        <View style={customStyle.modalDialog}>
+                            <View style={customStyle.modalHeader}>
+                                <Button transparent onPress={() => this.setState({privacyModal: false})}>
+                                    <Icon name={'x'} size={24} color={'#2E2E2E'}/></Button>
+                                {/*<Button onPress={() => this.setState({languageModal: false})} transparent*/}
+                                {/*style={customStyle.buttonOutlinePrimary}>*/}
+                                {/*<Text style={customStyle.buttonOutlinePrimaryText}>Save</Text>*/}
+                                {/*</Button>*/}
+                                <View style={[customStyle.modalTitleHolder, {marginLeft: 30}]}>
+                                    <Text style={customStyle.modalTitle}>Privacy Policy</Text>
+                                    <Text note></Text>
+                                </View>
+                            </View>
+
+                            <ScrollView style={customStyle.modalScrollView}>
+                                <View style={{paddingBottom: 30}}>
+                                    {/*<View style={customStyle.sectionHeader}>*/}
+                                    {/*/!*<Text style={customStyle.sectionHeaderTitle}>Select Languages</Text>*!/*/}
+                                    {/*</View>*/}
+
+                                    <AutoHeightWebView
+                                        // default width is the width of screen
+                                        // if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35
+                                        style={{width: Dimensions.get('window').width - 60, margin: 10, marginTop: 10}}
+                                        //  customScript={`document.body.style.background = 'white';`}
+                                        // add custom CSS to the page's <head>
+                                        customStyle={''}
+                                        // either height or width updated will trigger this
+                                        onSizeUpdated={size => console.log(size.height)}
+
+                                        //use local or remote files
+                                        //to add local files:
+                                        //add baseUrl/files... to android/app/src/assets/ on android
+                                        //add baseUrl/files... to project root on iOS
+                                        // baseUrl now contained by source
+                                        // 'web/' by default on iOS
+                                        // 'file:///android_asset/web/' by default on Android
+                                        // or uri
+                                        source={{html: privacyPolicy.content}}
+                                        // disables zoom on ios (true by default)
+                                        //   zoomable={true}
+                                        // scalesPageToFit={true}
+                                    />
+                                </View>
+                            </ScrollView>
+                        </View>
+                    </Modal>
+                    {/* PRIVACY POLICY MODAL STOP */}
+
+
+                    {/*TERMS&CONDITION MODAL START */}
+                    <Modal style={customStyle.modal}
+                           animationType="slide"
+                        // transparent={true}
+                           visible={this.state.termsModal}
+                           onRequestClose={() => {
+                               this.setState({termsModal: false})
+                           }}>
+                        <View style={customStyle.modalDialog}>
+                            <View style={customStyle.modalHeader}>
+                                <Button transparent onPress={() => this.setState({termsModal: false})}>
+                                    <Icon name={'x'} size={24} color={'#2E2E2E'}/></Button>
+                                {/*<Button onPress={() => this.setState({languageModal: false})} transparent*/}
+                                {/*style={customStyle.buttonOutlinePrimary}>*/}
+                                {/*<Text style={customStyle.buttonOutlinePrimaryText}>Save</Text>*/}
+                                {/*</Button>*/}
+                                <View style={[customStyle.modalTitleHolder, {marginLeft: 30}]}>
+                                    <Text style={customStyle.modalTitle}>Terms and Condition</Text>
+                                    <Text note></Text>
+                                </View>
+                            </View>
+
+                            <ScrollView style={customStyle.modalScrollView}>
+                                <View style={{paddingBottom: 30}}>
+                                    {/*<View style={customStyle.sectionHeader}>*/}
+                                    {/*/!*<Text style={customStyle.sectionHeaderTitle}>Select Languages</Text>*!/*/}
+                                    {/*</View>*/}
+
+                                    <AutoHeightWebView
+                                        // default width is the width of screen
+                                        // if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35
+                                        style={{width: Dimensions.get('window').width - 60, margin: 10, marginTop: 10}}
+                                        //  customScript={`document.body.style.background = 'white';`}
+                                        // add custom CSS to the page's <head>
+                                        customStyle={''}
+                                        // either height or width updated will trigger this
+                                        onSizeUpdated={size => console.log(size.height)}
+
+                                        //use local or remote files
+                                        //to add local files:
+                                        //add baseUrl/files... to android/app/src/assets/ on android
+                                        //add baseUrl/files... to project root on iOS
+                                        // baseUrl now contained by source
+                                        // 'web/' by default on iOS
+                                        // 'file:///android_asset/web/' by default on Android
+                                        // or uri
+                                        source={{html: TermsCondition.content}}
+                                        // disables zoom on ios (true by default)
+                                        //   zoomable={true}
+                                        // scalesPageToFit={true}
+                                    />
+                                </View>
+                            </ScrollView>
+                        </View>
+                    </Modal>
+                    {/* TERMS&CONDITION MODAL STOP */}
                 </Content>
                 <LocationPicker
                     close={this.closePickLocation.bind(this)}
                     onLocationSelect={this.handleOnLocationSelect.bind(this)}
                     modalVisible={this.state.pickLocation} />
-            </Container>
-        )
+            </Container>)
             ;
 
     }
