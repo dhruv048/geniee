@@ -41,6 +41,7 @@ import {Navigation} from "react-native-navigation/lib/dist/index";
 import settings from "../../config/settings";
 import ImageResizer from 'react-native-image-resizer';
 import AsyncStorage from '@react-native-community/async-storage';
+import Loading from "../../components/Loading";
 
 const RNFS = require("react-native-fs");
 
@@ -404,10 +405,9 @@ class AddService extends React.PureComponent {
             unit: null,
             webLink: '',
             pickLocation: false,
+            loading:false,
         };
-
         this.categories = []
-
     }
 
    async componentDidMount() {
@@ -535,9 +535,11 @@ class AddService extends React.PureComponent {
     _callSaveServiceMethod = (service) => {
         service.Image = this.state.Image;
         let _service = this.props.Service;
+        this.setState({loading:true});
         if (_service) {
             service.coverImage = _service.coverImage;
             Meteor.call("updateService", _service._id, service, (err, res) => {
+                this.setState({loading:false});
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -582,6 +584,7 @@ class AddService extends React.PureComponent {
             });
         }
         else {
+            this.setState({loading:false});
             service.owner = Meteor.userId();
             Meteor.call('addNewService', service, (err, res) => {
                 if (err) {
@@ -962,6 +965,8 @@ class AddService extends React.PureComponent {
                     close={this.closePickLocation.bind(this)}
                     onLocationSelect={this.handleOnLocationSelect.bind(this)}
                     modalVisible={this.state.pickLocation}/>
+                {this.state.loading?
+                    <Loading/>:null}
             </Container>
         );
     }

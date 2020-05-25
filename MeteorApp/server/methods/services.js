@@ -2,12 +2,12 @@ import {Meteor} from 'meteor/meteor';
 import {FIREBASE_MESSAGING} from '../API/fire-base-admin';
 import {Ratings} from "../../lib/collections/genieeRepair/ratings";
 import {EFProducts} from "../../lib/collections/eatFit/efProducts";
-import {ProductOwner,NotificationTypes} from "../../lib/utils";
+import {ProductOwner, NotificationTypes} from "../../lib/utils";
 
 
-const removeProductsByServiceId=(Id)=>{
-    let _products=Products.find({service:Id}).fetch();
-    _products.foreach(_product=>{
+const removeProductsByServiceId = (Id) => {
+    let _products = Products.find({service: Id}).fetch();
+    _products.foreach(_product => {
         Products.remove(_product._id);
         _product.images.foreach(item => {
             ServiceImage.remove(item);
@@ -47,7 +47,7 @@ Meteor.methods({
             }
             //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
             serviceInfo.location = location;
-            let Owner=Meteor.users.findOne({_id:serviceInfo.owner});
+            let Owner = Meteor.users.findOne({_id: serviceInfo.owner});
             if (serviceInfo.Image) {
                 ServiceImage.write(new Buffer(serviceInfo.Image.data, 'base64'),
                     {
@@ -73,21 +73,21 @@ Meteor.methods({
                                     navigate: "true",
                                     route: "ServiceDetail",
                                     image: serviceInfo.coverImage,
-                                    icon:Owner.profile.profileImage?Owner.profile.profileImage:""
+                                    icon: Owner.profile.profileImage ? Owner.profile.profileImage : ""
                                 })
                             } catch (e) {
                                 throw new Meteor.Error(403, e.message);
                             }
-                            const notification={
-                                title:`New Service by- ${Owner.profile.name}`,
+                            const notification = {
+                                title: `New Service by- ${Owner.profile.name}`,
                                 description: serviceInfo.title,
                                 owner: serviceInfo.owner,
                                 navigateId: res,
-                                receiver:[],
-                                removedBy:[],
+                                receiver: [],
+                                removedBy: [],
                                 type: NotificationTypes.ADD_SERVICE
                             };
-                            Meteor.call('addNotification',notification);
+                            Meteor.call('addNotification', notification);
                             return res;
                         }
                     }, proceedAfterUpload = true)
@@ -109,16 +109,16 @@ Meteor.methods({
                 } catch (e) {
                     throw new Meteor.Error(403, e.message);
                 }
-                const notification={
-                    title:`New Service by- ${Owner.profile.name}`,
+                const notification = {
+                    title: `New Service by- ${Owner.profile.name}`,
                     description: serviceInfo.title,
                     owner: serviceInfo.owner,
                     navigateId: res,
-                    receiver:[],
-                    removedBy:[],
+                    receiver: [],
+                    removedBy: [],
                     type: NotificationTypes.ADD_SERVICE
                 };
-                Meteor.call('addNotification',notification);
+                Meteor.call('addNotification', notification);
                 return res;
             }
 
@@ -130,7 +130,7 @@ Meteor.methods({
         }
     },
 
-    'updateService':(servId,serviceInfo)=>{
+    'updateService': (servId, serviceInfo) => {
         let Id = moment().format('DDMMYYx');
         let CategoryId = serviceInfo.Category.subCatId !== null ? serviceInfo.Category.subCatId : Id;
         if (!serviceInfo.Category.subCatId) {
@@ -174,7 +174,7 @@ Meteor.methods({
                         serviceInfo.coverImage = res._id;
                         serviceInfo.categoryId = CategoryId;
                         serviceInfo.Image = null;
-                        Service.update({_id:servId},{$set:serviceInfo});
+                        Service.update({_id: servId}, {$set: serviceInfo});
                     }
                 }, proceedAfterUpload = true)
         }
@@ -182,7 +182,7 @@ Meteor.methods({
             serviceInfo.updatedAt = new Date(new Date().toUTCString());
             serviceInfo.categoryId = CategoryId;
             serviceInfo.Image = null;
-            Service.update({_id:servId},{$set:serviceInfo});
+            Service.update({_id: servId}, {$set: serviceInfo});
         }
     },
 
@@ -247,8 +247,6 @@ Meteor.methods({
     },
 
 
-
-
     'updateCallCount': function () {
         try {
 
@@ -288,7 +286,7 @@ Meteor.methods({
     'updateRating': function (Id, rating) {
         try {
             let user = Meteor.user();
-             const service = Service.findOne({_id: Id});
+            const service = Service.findOne({_id: Id});
 
             let Rating = {
                 serviceId: Id,
@@ -301,23 +299,23 @@ Meteor.methods({
                 $set: Rating
             });
 
-            const notification={
-                title:`Rating provided by- ${user.profile.name}`,
+            const notification = {
+                title: `Rating provided by- ${user.profile.name}`,
                 description: service.title,
                 owner: user._id,
                 navigateId: Id,
-                receiver:[service.owner],
-                removedBy:[],
+                receiver: [service.owner],
+                removedBy: [],
                 type: NotificationTypes.RATE_SERVICE
             };
-            Meteor.call('addNotification',notification);
-            const tokens= Meteor.users.findOne({_id:service.owner}).devices || [];
-            FIREBASE_MESSAGING.notificationToList(tokens,'New Service Review',`${user.profile.name} has reviewd your service '${service.title}. "${rating.comment}"`,{
+            Meteor.call('addNotification', notification);
+            const tokens = Meteor.users.findOne({_id: service.owner}).devices || [];
+            FIREBASE_MESSAGING.notificationToList(tokens, 'New Service Review', `${user.profile.name} has reviewd your service '${service.title}. "${rating.comment}"`, {
                 Id: Id,
                 navigate: "true",
                 route: "ServiceRatings",
-                image:service.coverImage||"",
-                icon:user.profile.profileImage||""
+                image: service.coverImage || "",
+                icon: user.profile.profileImage || ""
             })
         }
         catch (err) {
@@ -331,11 +329,11 @@ Meteor.methods({
     },
 
 
-    'getRatings':(servId,skip)=>{
+    'getRatings': (servId, skip) => {
         let _skip = skip ? skip : 0;
         const collection = Ratings.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const pipeline= [
+        const pipeline = [
             {$match: {serviceId: servId}},
             {
                 "$lookup": {
@@ -364,7 +362,7 @@ Meteor.methods({
                     "RatedBy.profile.profileImage": 1
                 }
             }
-        ] ;
+        ];
         return Async.runSync(function (done) {
             aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
                 if (doc) {
@@ -378,7 +376,7 @@ Meteor.methods({
     'addNewProduct': (productInfo) => {
         try {
             console.log('addNewProducr:::=>>>');
-            productInfo.productOwner=ProductOwner.REGULAR_USERS;
+            productInfo.productOwner = ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId;
             productInfo.qty = parseInt(productInfo.qty);
@@ -386,15 +384,15 @@ Meteor.methods({
             productInfo.price = parseInt(productInfo.price);
             productInfo.discount = parseInt(productInfo.discount);
             productInfo.createDate = new Date(new Date().toUTCString());
-            let _service = Service.findOne({_id:productInfo.service})
+            let _service = Service.findOne({_id: productInfo.service})
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
-                    let Id = moment().format('DDMMYYx');
+                    let Id = moment().format('DDMMYYx') + "." + image.mime.substr(image.mime.indexOf('/') + 1);
                     ServiceImage.write(new Buffer(image.data, 'base64'),
                         {
-                            fileName: image.name,
-                            type: image.type
+                            fileName: Id,
+                            type: image.mime,
                         },
                         (err, res) => {
                             if (err) {
@@ -406,39 +404,39 @@ Meteor.methods({
                                 if (productInfo.images.length === imageIds.length) {
                                     productInfo.images = imageIds;
                                     console.log('insert')
-                                    let pId= Products.insert(productInfo);
+                                    let pId = Products.insert(productInfo);
                                     try {
                                         FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
                                             Id: pId,
                                             navigate: "true",
                                             route: "ProductDetail",
-                                            image: productInfo.images[0],
-                                            icon:_service.coverImage
+                                            image: productInfo.images[0] || "",
+                                            icon: _service.coverImage || ""
                                         })
                                     } catch (e) {
                                         throw new Meteor.Error(403, e.message);
                                     }
-                                    const notification={
-                                        title:`New Product by- ${_service.title}`,
+                                    const notification = {
+                                        title: `New Product by- ${_service.title}`,
                                         description: productInfo.title,
                                         owner: _service.owner,
                                         navigateId: pId,
-                                        productOwner:ProductOwner.REGULAR_USERS,
-                                        receiver:[],
-                                        removedBy:[],
+                                        productOwner: ProductOwner.REGULAR_USERS,
+                                        receiver: [],
+                                        removedBy: [],
                                         type: NotificationTypes.ADD_PRODUCT
                                     };
-                                    Meteor.call('addNotification',notification);
+                                    Meteor.call('addNotification', notification);
                                     return pId;
                                 }
                             }
-                        }, proceedAfterUpload = true)
+                        }, proceedAfterUpload = true);
                 })
             }
             else {
                 productInfo.images = [];
                 console.log('insert');
-                let pId= Products.insert(productInfo);
+                let pId = Products.insert(productInfo);
                 try {
                     FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
                         Id: pId,
@@ -448,17 +446,17 @@ Meteor.methods({
                 } catch (e) {
                     throw new Meteor.Error(403, e.message);
                 }
-                const notification={
-                    title:`New Product by- ${_service.title}`,
+                const notification = {
+                    title: `New Product by- ${_service.title}`,
                     description: productInfo.title,
                     owner: _service.owner,
                     navigateId: pId,
-                    productOwner:ProductOwner.REGULAR_USERS,
-                    receiver:[],
-                    removedBy:[],
+                    productOwner: ProductOwner.REGULAR_USERS,
+                    receiver: [],
+                    removedBy: [],
                     type: NotificationTypes.ADD_PRODUCT
                 };
-                Meteor.call('addNotification',notification);
+                Meteor.call('addNotification', notification);
                 return pId;
             }
 
@@ -470,76 +468,111 @@ Meteor.methods({
         }
     },
 
-    'updateProduct':(Id,productInfo)=> {
+    'updateProduct': (productId, productInfo, imagesToRemove) => {
         productInfo.qty = parseInt(productInfo.qty);
         productInfo.availabeQuantity = parseInt(productInfo.qty);
         productInfo.price = parseInt(productInfo.price);
         productInfo.discount = parseInt(productInfo.discount);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
-        if (productInfo.images) {
-            productInfo.images.forEach(image => {
-                let Id = moment().format('DDMMYYx');
-                if (!image.hasOwnProperty("_id")) {
-                    ServiceImage.write(new Buffer(image.data, 'base64'),
-                        {
-                            fileName: image.name,
-                            type: image.type
-                        },
-                        (err, res) => {
-                            if (err) {
-                                console.log('error', err)
-                            }
-                            else {
-                                console.log('res:', res._id);
-                                imageIds.push(res._id);
-                                if (productInfo.images.length === imageIds.length) {
-                                    productInfo.images = imageIds;
-                                    console.log('insert')
-                                    let pId = Products.update({_id: Id}, {$set: {productInfo}});
-                                    // try {
-                                    //     FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - ${_service.title}`, productInfo.title, {
-                                    //         Id: pId,
-                                    //         navigate: "true",
-                                    //         route: "ProductDetail",
-                                    //         image: productInfo.images[0],
-                                    //         icon: _service.coverImage
-                                    //     })
-                                    // } catch (e) {
-                                    //     throw new Meteor.Error(403, e.message);
-                                    // }
-                                    // const notification = {
-                                    //     title: `New Product by- ${_service.title}`,
-                                    //     description: productInfo.title,
-                                    //     owner: _service.owner,
-                                    //     navigateId: pId,
-                                    //     productOwner: ProductOwner.REGULAR_USERS,
-                                    //     receiver: [],
-                                    //     removedBy: [],
-                                    //     type: NotificationTypes.ADD_PRODUCT
-                                    // };
-                                    // Meteor.call('addNotification', notification);
-                                    return pId;
-                                }
-                            }
-                        }, proceedAfterUpload = true)
-                }
-                else {
-                    imageIds.push(image._id);
-                    if (productInfo.images.length === imageIds.length) {
-                        productInfo.images = imageIds;
-                        console.log('insert')
-                        let pId = Products.update({_id: Id}, {$set: {productInfo}});
-                        return pId;
-                    }
-                }
-            })
+        if (productInfo.images.length < 1) {
+            console.log('imagesToRemove', imagesToRemove)
+            Products.update({_id: productId}, {$set: productInfo}, (err, res) => {
+                ServiceImage.remove({_id: {$in: imagesToRemove}});
+            });
+            return;
         }
-        else {
-            productInfo.images = [];
-            let pId = Products.update({_id: Id}, {$set: {productInfo}});
-            return pId;
-        }
+        productInfo.images.forEach(image => {
+            if (!image.hasOwnProperty("_id")) {
+                let Id = moment().format('DDMMYYx') + "." + image.mime.substr(image.mime.indexOf('/') + 1);
+                ServiceImage.write(new Buffer(image.data, 'base64'),
+                    {
+                        fileName: Id,
+                        type: image.mime
+                    },
+                    (err, res) => {
+                        if (err) {
+                            console.log('error', err)
+                        }
+                        else {
+                            let imageId = res._id;
+                            console.log('res:', imageId);
+                            imageIds.push(imageId);
+                            if (productInfo.images.length == imageIds.length) {
+                                productInfo.images = imageIds;
+                                console.log('update',Id, imageIds)
+                                Products.update({_id: productId}, {
+                                    $set:productInfo
+                                        // $set: {
+                                        //     title: productInfo.title,
+                                        //     description: productInfo.description,
+                                        //     contact: productInfo.contact,
+                                        //     radius: productInfo.radius,
+                                        //     homeDelivery: productInfo.homeDelivery,
+                                        //     price: productInfo.price,
+                                        //     discount: productInfo.discount,
+                                        //     unit: productInfo.unit,
+                                        //     website: productInfo.unit,
+                                        //     sizes: productInfo.unit,
+                                        //     colors: productInfo.unit,
+                                        //     qty: productInfo.qty,
+                                        //     images: imageIds,
+                                        //     service: productInfo.service,
+                                        //     serviceOwner: productInfo.serviceOwner,
+                                        //     availabeQuantity: productInfo.availabeQuantity,
+                                        //     updateDate: productInfo.updateDate
+                                        // }
+                                    },
+                                    (err, res) => {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                        else {
+                                            ServiceImage.remove({_id: {$in: imagesToRemove}});
+                                            return res;
+                                        }
+                                    }
+                                );
+                            }
+                        }
+                    },
+                    proceedAfterUpload = true
+                )
+            }
+            else {
+                imageIds.push(image._id);
+                if (productInfo.images.length == imageIds.length) {
+                    productInfo.images = imageIds;
+                    console.log('update existing')
+                    Products.update({_id: productId}, {
+                        $set: {
+                            title: productInfo.title,
+                            description: productInfo.description,
+                            contact: productInfo.contact,
+                            radius: productInfo.radius,
+                            homeDelivery: productInfo.homeDelivery,
+                            price: productInfo.price,
+                            discount: productInfo.discount,
+                            unit: productInfo.unit,
+                            website: productInfo.unit,
+                            sizes: productInfo.unit,
+                            colors: productInfo.unit,
+                            qty: productInfo.qty,
+                            images: imageIds,
+                            service: productInfo.service,
+                            serviceOwner: productInfo.serviceOwner,
+                            availabeQuantity: productInfo.availabeQuantity,
+                            updateDate: productInfo.updateDate
+                        }
+                    }, (err, res) => {
+                        ServiceImage.remove({_id: {$in: imagesToRemove}});
+                        return res;
+                    });
+
+                }
+            }
+        })
+
     },
 
     'getSingleService': (Id) => {
@@ -720,7 +753,7 @@ Meteor.methods({
         });
     },
 
-    'getMyServices':()=>{
+    'getMyServices': () => {
         const collection = Service.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
         const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
@@ -774,10 +807,10 @@ Meteor.methods({
         // };
         //  return Category.find().fetch();
         return Async.runSync(function (done) {
-            let loggedUser= Meteor.userId()||"NA";
+            let loggedUser = Meteor.userId() || "NA";
             aggregate([
                 {
-                   $match:{owner:loggedUser}
+                    $match: {owner: loggedUser}
                 },
                 {$lookup: categoryLookup},
                 {$lookup: ServiceRatings},
@@ -794,19 +827,22 @@ Meteor.methods({
         });
     },
 
-    'getMyProducts':()=>{
-        let loggedUser= Meteor.userId()||"NA";
-        return Products.find({serviceOwner:loggedUser},{sort:{createDate:-1}}).fetch();
+    'getMyProducts': () => {
+        let loggedUser = Meteor.userId() || "NA";
+        return Products.find({serviceOwner: loggedUser}, {sort: {createDate: -1}}).fetch();
     },
 
-    'geOwnServiceList':()=>{
-        let loggedUser= Meteor.userId()||"NA";
-        return Service.find({owner:loggedUser},{sort:{createDate:-1},fields: { _id: 1, title: 1,owner:1 }}).fetch();
+    'geOwnServiceList': () => {
+        let loggedUser = Meteor.userId() || "NA";
+        return Service.find({owner: loggedUser}, {
+            sort: {createDate: -1},
+            fields: {_id: 1, title: 1, owner: 1}
+        }).fetch();
     },
 
-    'updateServiceViewCount':(serviceId)=>{
-        let _service=Service.findOne(serviceId);
-        if(_service) {
+    'updateServiceViewCount': (serviceId) => {
+        let _service = Service.findOne(serviceId);
+        if (_service) {
             let views = _service.views || 0;
             Service.update({_id: serviceId}, {
                 $set: {
@@ -817,14 +853,14 @@ Meteor.methods({
     },
 
 
-    'removeService':(Id)=>{
-        let _service=Service.findOne(Id);
+    'removeService': (Id) => {
+        let _service = Service.findOne(Id);
         Service.remove(Id);
         removeProductsByServiceId(Id);
         ServiceImage.remove(_service.coverImage);
     },
 
-    'removeProduct':(Id)=> {
+    'removeProduct': (Id) => {
         let _product = Products.findOne(Id);
         Products.remove(Id);
         _product.images.foreach(item => {

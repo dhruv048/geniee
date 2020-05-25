@@ -39,10 +39,11 @@ import ActionSheet from 'react-native-actionsheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import {CogMenu} from "../../components/CogMenu/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
-import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../../Navigation";
+import {backToRoot, goToRoute, goBack} from "../../Navigation";
 import AsyncStorage from '@react-native-community/async-storage';
 import settings from "../../config/settings";
 import FIcon from 'react-native-vector-icons/Feather';
+import Loading from '../../components/Loading';
 
 
 
@@ -68,9 +69,11 @@ class AddProduct extends React.PureComponent {
             unit: null,
             webLink:'',
             images:[],
-            qty:''
+            qty:'',
+            loading:false,
         };
          this.myServices=[];
+         this.imagesToRemove=[];
     }
 
     async componentDidMount() {
@@ -187,11 +190,9 @@ class AddProduct extends React.PureComponent {
         console.log(index,image)
         if(index !== -1){
             images.splice(index,1);
-            console.log(images)
             this.setState({images:images});
-            if(images.hasOwnProperty("_id")){
-
-                // TO DO Remove from Server
+            if(image.hasOwnProperty("_id")){
+                this.imagesToRemove.push(image._id);
             }
         }
 }
@@ -202,10 +203,12 @@ class AddProduct extends React.PureComponent {
         )
     };
     _callSaveServiceMethod = (product) => {
-        product.image = this.state.image;
+        product.images = this.state.images;
         let _product=this.props.Product;
+        this.setState({loading:true});
         if(_product){
-            Meteor.call('updateProduct', _product._id,product, (err, res) => {
+            Meteor.call('updateProduct', _product._id,product, this.imagesToRemove,(err, res) => {
+                this.setState({loading:false});
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -232,6 +235,7 @@ class AddProduct extends React.PureComponent {
         }
         else {
             Meteor.call('addNewProduct', product, (err, res) => {
+                this.setState({loading:false});
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -593,7 +597,10 @@ class AddProduct extends React.PureComponent {
                         </Button>
                     {/*</View>*/}
                 </Footer>
+                {this.state.loading?
+                    <Loading/>:null}
             </Container>
+
         );
     }
 }

@@ -41,6 +41,7 @@ Template.Create_Product.onCreated = () => {
     Session.set("files", []);
 };
 Template.Create_Product.rendered = () => {
+    Session.set("files", []);
     // $('#img-upload').cropper({
     //     aspectRatio: 16 / 9,
     //     zoomable:true,
@@ -191,6 +192,7 @@ Template.Create_Product.events({
                     $(".summernote").summernote("code", "");
                     $('#img-upload').attr('src', '');
                     filee = [];
+                    Session.set("files", []);
                     FlowRouter.go('/admin/product/' + productID);
                 }
             });
@@ -206,7 +208,9 @@ Template.Create_Product.events({
                     $(".summernote").summernote("code", "");
                     $('#img-upload').attr('src', '');
                     filee = [];
+                    Session.set("files", []);
                     FlowRouter.go('/admin/products');
+
 
                 }
             });

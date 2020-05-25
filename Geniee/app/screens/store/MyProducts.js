@@ -145,7 +145,7 @@ class MyProducts extends Component {
             <View style={styles.col}>
                 <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': item._id,data:item})} style={styles.containerStyle}>
                     <Product key={item._id} product={item}/>
-                        <Button transparent onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
+                        <Button transparent style={{height:40,width:40}} onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
                             {/*<Icon name={'ios-menu'} style={{fontSize:25,color:colors.danger }}/>*/}
                             <Menu
                                 ref={ref => (this[`menu${item._id}`] = ref)}

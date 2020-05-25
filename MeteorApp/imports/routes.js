@@ -72,9 +72,9 @@ adminRoutes.route('/', {
         }
     },
     triggersEnter: [function (context, redirect) {
-        Meteor.subscribe('all_users');
-        Meteor.subscribe('all_products');
-        Meteor.subscribe("all_Q&A");
+        // Meteor.subscribe('all_users');
+        // Meteor.subscribe('all_products');
+        // Meteor.subscribe("all_Q&A");
     }]
 });
 

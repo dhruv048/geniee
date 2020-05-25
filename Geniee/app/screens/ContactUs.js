@@ -5,7 +5,7 @@ import {colors} from '../config/styles';
 import {Header,Left,Body,Text,Container,Button,Textarea, Title, Icon} from 'native-base';
 import CogMenu from "../components/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
-import {backToRoot, navigateToRoutefromSideMenu} from "../Navigation";
+import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 //import Icon from 'react-native-vector-icons/Feather'
 
 const window = Dimensions.get('window');
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         //alignItems: 'center',
     //},
     errorText: {
-        color: colors.errorText,
+        color: colors.danger,
         fontSize: 14,
         marginBottom: 14,
     },
@@ -138,18 +138,21 @@ class ContactUs extends Component {
         BackHandler.removeEventListener('hardwareBackPress');
     }
     handleError = (error) => {
-        if (this.mounted) {
+        console.log('handleError')
             this.setState({error});
-        }
     }
 
     validInput = () => {
         const {name, email, message, contact} = this.state;
         let valid = true;
 
-        if (contact.length === 0 || message.length === 0 || name.length === 0 || email.length == 0) {
+        if (!contact.length || !message|| !name || !email) {
             this.handleError('Please Enter all the information.');
             valid = false;
+        }
+        else{
+            this.handleError('');
+            valid = true;
         }
 
         if (valid) {
@@ -160,6 +163,7 @@ class ContactUs extends Component {
 
 
     handleContactUS = () => {
+        console.log('handleContactUS')
         const {name, email, message, contact} = this.state;
         if (this.validInput()) {
             let contactInfo = {
@@ -173,7 +177,7 @@ class ContactUs extends Component {
                     this.handleError(err.reason);
                 } else {
                     Alert.alert("DONE", "We will Contact you shortly!!");
-                    this.props.navigation.navigate('Home');
+                    goToRoute('Dashboard');
                 }
             });
         }
@@ -241,7 +245,7 @@ class ContactUs extends Component {
                                     selectionColor='#ffffff'
                                     underlineColorAndroid='rgba(0,0,0,0)'
                                     //onSubmitEditing={() => this.contactNumber.focus()}
-                                    onChangeText={(description) => this.setState({description})}
+                                    onChangeText={(message) => this.setState({message})}
                     /></View>
 
                         {/*<Item floatingLabel>
@@ -273,7 +277,7 @@ class ContactUs extends Component {
                         </View>
                     
                         <View>
-                                <TouchableOpacity  style={styles.button}  onPress={this.handleContactUS}>
+                                <TouchableOpacity  style={styles.button}  onPress={()=>this.handleContactUS()}>
                                     <Text style={styles.buttonText}>SEND</Text>
                                 </TouchableOpacity>
                             </View>

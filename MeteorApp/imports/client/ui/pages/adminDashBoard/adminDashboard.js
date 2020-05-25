@@ -1,4 +1,8 @@
 
+Template.dashboard.onRendered(()=>{
+    Meteor.subscribe('all_users');
+    Meteor.subscribe('all_products');
+});
 
 Template.dashboard.helpers({
     users: () => {

@@ -22,6 +22,7 @@ if (Meteor.isServer) {
 
                 try {
                     /** create read stream */
+                    console.log(req.params.id,files[0])
                     var readstream = gfs.createReadStream({
                         filename: files[0].filename,
                     });
