@@ -3,31 +3,24 @@ import Meteor from '../react-native-meteor';
 import {
     StyleSheet, BackHandler,
     Dimensions, Animated,
-    StatusBar,
     View, ToastAndroid,
     TouchableOpacity,
-    ActivityIndicator,
     FlatList, PermissionsAndroid, Image, TouchableWithoutFeedback
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Geolocation from 'react-native-geolocation-service';
 import {
-    Header,
-    Container,
-    Content,
-    Item,
-    Body,
-    Left,
-    Button,
-    Right,
-    Text,
-    Input,
-    ListItem,
-    Thumbnail, Badge, Icon as NBIcon
+    Header,    Container,
+    Content,    Item,
+    Body,    Left,
+    Button,    Right,
+    Text,    Input,
+    ListItem,    Thumbnail, Badge, Icon as NBIcon, Spinner
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {colors, customStyle} from '../config/styles';
+import {colors, customStyle, variables} from '../config/styles';
 import {Navigation} from 'react-native-navigation';
+
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from "../config/settings";
 import StarRating from "../components/StarRating/StarRating";
@@ -38,6 +31,7 @@ import SplashScreen from "react-native-splash-screen";
 import firebase from "react-native-firebase";
 import AsyncStorage from "@react-native-community/async-storage";
 import {goToRoute} from "../Navigation";
+import {getProfileImage} from "../config/settings";
 
 let isDashBoard = true;
 
@@ -56,19 +50,33 @@ class Dashboard extends Component {
             query: '',
             pickLocation: false,
             backClickCount: 0,
-            wishList:0,
-            totalCount:0,
-            notificationCount:0
+            wishList: 0,
+            totalCount: 0,
+            notificationCount: 0,
+            nearByservice: []
         };
         this.arrayholder;
         this.currentSearch = '';
         this.region = {
-            latitude: '',
-            longitude: '',
+            latitude: 27.712020,
+            longitude: 85.312950,
         };
         this.granted;
         this.watchID;
         this.springValue = new Animated.Value(100);
+
+        this.partners = [
+            {
+                title: "",
+                imgSource: require("../images/baadshah_logo.jpg"),
+                onPress: this.gotoBB,
+            },
+            {
+                title: "EAT-FIT",
+                imgSource: require("../images/EF2.jpg"),
+                onPress: this.gotoEatFit,
+            },
+        ]
 
         //this.onClick = this.onClick.bind(this);
     }
@@ -87,8 +95,8 @@ class Dashboard extends Component {
 
 
     handleBackButton = () => {
+        console.log('back handle from dashboard')
         if (isDashBoard) {
-            console.log('called')
             const {screen, navigator} = this.props;
             console.log(screen, navigator, this.props);
             this.state.backClickCount == 1 ? BackHandler.exitApp() : this._spring();
@@ -138,8 +146,8 @@ class Dashboard extends Component {
     }
 
     async componentDidMount() {
-        let MainCategories= await AsyncStorage.getItem("Categories");
-        if(MainCategories) {
+        let MainCategories = await AsyncStorage.getItem("Categories");
+        if (MainCategories) {
             MainCategories = JSON.parse(MainCategories);
             this.setState({categories: MainCategories, loading: false});
             this.arrayholder = this.props.categories ? this.props.categories : MainCategories;
@@ -147,8 +155,8 @@ class Dashboard extends Component {
         SplashScreen.hide();
         Navigation.events().bindComponent(this);
         Meteor.subscribe('aggChatChannels');
-        if(this.props.notificationCount.length>0)
-            this.setState({notificationCount:this.props.notificationCount[0].totalCount})
+        if (this.props.notificationCount.length > 0)
+            this.setState({notificationCount: this.props.notificationCount[0].totalCount})
         Meteor.call('getActiveAdvertises', (err, res) => {
             // console.log("banners",err, res)
             if (!err) {
@@ -172,6 +180,8 @@ class Dashboard extends Component {
                         longitude: position.coords.longitude
                     }
                     this.region = region;
+                    //Get Nearby services
+                    this._fetchNearByServices();
                 },
                 (error) => {
                     // See error code charts below.
@@ -198,11 +208,14 @@ class Dashboard extends Component {
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
         );
 
-
         this.messageListener()
             .catch(e => {
                 console.log(e)
             });
+
+
+        //Get Nearby services
+        this._fetchNearByServices();
 
         //Store All Catefories
         Meteor.subscribe('categories-list', () => {
@@ -210,10 +223,28 @@ class Dashboard extends Component {
             //console.log(MainCategories)
             this.setState({categories: MaiCategories, loading: false});
             this.arrayholder = this.props.categories ? this.props.categories : MaiCategories;
-            AsyncStorage.setItem("Categories",JSON.stringify(MainCategories))
+            AsyncStorage.setItem("Categories", JSON.stringify(MainCategories))
         });
 
 
+    }
+
+    _fetchNearByServices = () => {
+        const data = {
+            skip: 0,
+            limit: 10,
+            coords: [this.region.longitude, this.region.latitude],
+            subCatIds: null
+        };
+        Meteor.call('getServicesNearBy', data, (err, res) => {
+            console.log(err, res);
+            this.setState({loading: false})
+            if (!err) {
+                // if (res.result.length > 0) {
+                    this.setState({nearByservice: res.result});
+                // }
+            }
+        });
     }
 
     componentWillReceiveProps(newProps) {
@@ -222,10 +253,10 @@ class Dashboard extends Component {
             this.setState({categories: newProps.categories, loading: false})
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch);
-            AsyncStorage.setItem("Categories",JSON.stringify(newProps.categories))
+            AsyncStorage.setItem("Categories", JSON.stringify(newProps.categories))
         }
-        if(newProps.notificationCount.length>0 && newProps.notificationCount[0].totalCount!=this.state.notificationCount)
-            this.setState({notificationCount:newProps.notificationCount[0].totalCount})
+        if (newProps.notificationCount.length > 0 && newProps.notificationCount[0].totalCount != this.state.notificationCount)
+            this.setState({notificationCount: newProps.notificationCount[0].totalCount})
     }
 
     componentWillUnmount() {
@@ -282,7 +313,7 @@ class Dashboard extends Component {
         }
     }
 
-  async  componentDidAppear() {
+    async componentDidAppear() {
         isDashBoard = true;
         let wishList = await AsyncStorage.getItem('myWhishList');
         if (wishList)
@@ -563,15 +594,14 @@ class Dashboard extends Component {
         const {showSearchBar} = this.state;
         return (
             <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
-
                 {showSearchBar == false ? (
                     <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                         <Left style={{flex: 1}}>
-                            <CogMenu componentId={this.props.componentId}/>
+                            {/*<CogMenu componentId={this.props.componentId}/>*/}
                         </Left>
                         {/*<Body>*/}
                         {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
-                            {/*Home*/}
+                        {/*Home*/}
                         {/*</Text>*/}
                         {/*</Body>*/}
 
@@ -580,7 +610,7 @@ class Dashboard extends Component {
                                 <Icon name='heart' style={{fontSize: 24, color: 'white'}}/>
                                 {this.state.wishList.length > 0 ?
                                     <Badge
-                                        style={{position: 'absolute', height: 18, right:0}}>
+                                        style={{position: 'absolute', height: 18, right: 0}}>
                                         <Text style={{
                                             fontSize: 10,
                                             fontWeight: '100',
@@ -593,7 +623,7 @@ class Dashboard extends Component {
                                 <NBIcon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
                                 {this.state.totalCount > 0 ?
                                     <Badge
-                                        style={{position: 'absolute', height: 18, right:0}}>
+                                        style={{position: 'absolute', height: 18, right: 0}}>
                                         <Text style={{
                                             fontSize: 10,
                                             fontWeight: '100',
@@ -605,7 +635,7 @@ class Dashboard extends Component {
                                 <NBIcon name='ios-notifications' style={{fontSize: 29, color: 'white'}}/>
                                 {this.state.notificationCount > 0 ?
                                     <Badge
-                                        style={{position: 'absolute', height: 18, right:0}}>
+                                        style={{position: 'absolute', height: 18, right: 0}}>
                                         <Text style={{
                                             fontSize: 10,
                                             fontWeight: '100',
@@ -613,48 +643,252 @@ class Dashboard extends Component {
                                             lineHeight: 18
                                         }}>{this.state.notificationCount}</Text></Badge> : null}
                             </Button>
-                            <Button transparent onPress={this.handleOnPress}>
-                                <Icon name={'search'} size={25} color={'white'}/></Button>
+                            {/*<Button transparent onPress={this.handleOnPress}>*/}
+                            {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
                         </Right>
                     </Header>
                 ) : (
-                    <Header searchBar rounded androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+                    <Header searchBar rounded androidStatusBarColor={colors.statusBar}
+                            style={{backgroundColor: '#094c6b'}}>
                         {/*<Left style={{flex: 1}}>*/}
-                            {/*/!*<Button transparent onPress={() => {*!/*/}
-                            {/*/!*this.props.navigation.openDrawer()*!/*/}
-                            {/*/!*}}>*!/*/}
-                            {/*/!*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*!/*/}
-                            {/*<CogMenu componentId={this.props.componentId}/>*/}
+                        {/*/!*<Button transparent onPress={() => {*!/*/}
+                        {/*/!*this.props.navigation.openDrawer()*!/*/}
+                        {/*/!*}}>*!/*/}
+                        {/*/!*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*!/*/}
+                        {/*<CogMenu componentId={this.props.componentId}/>*/}
                         {/*</Left>*/}
                         {/*<Body style={{flexDirection: 'row', flex: 6}}>*/}
 
 
-                        <Item style={{height: 40, width: '95%', paddingLeft:10}}>
+                        <Item style={{height: 40, width: '95%', paddingLeft: 10}}>
                             {/*<CogMenu componentId={this.props.componentId}/>*/}
                             {/*{!this.state.query ?*/}
-                                {/*<Icon style={styles.activeTabIcon} name='search' size={15}/> : null}*/}
+                            {/*<Icon style={styles.activeTabIcon} name='search' size={15}/> : null}*/}
 
                             <Icon name='search' size={15} color={colors.primary}/>
                             <Input placeholder="Search..." style={styles.searchInput}
-                                    placeholderTextColor={colors.primaryText}
-                                   // selectionColor='#ffffff'
+                                   placeholderTextColor={colors.primaryText}
+                                // selectionColor='#ffffff'
                                    onChangeText={(searchText) => {
                                        this._search(searchText), this.setState({query: searchText})
                                    }}
                                    autoCorrect={false}
                             />
                             {/*<Right>*/}
-                                <Button style={{paddingHorizontal:5}} transparent onPress={this.handleOnPressUnset}>
-                                    <NBIcon name={'close'} size={25} style={{color:colors.primary}}/></Button>
-                        {/*</Right>*/}
+                            <Button style={{paddingHorizontal: 5}} transparent onPress={this.handleOnPressUnset}>
+                                <NBIcon name={'close'} size={25} style={{color: colors.primary}}/></Button>
+                            {/*</Right>*/}
                         </Item>
                         {/*</Body>*/}
                     </Header>
                 )}
 
 
-                {this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}
+                {/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
                 <Content style={{width: '100%', flex: 1,}}>
+                    <Item rounded search boadered style={{
+                        backgroundColor: 'white',
+                        marginLeft: 10,
+                        marginRight: 10,
+                        marginVertical: 20,
+                        height: 45
+                    }}>
+                        <Icon style={{
+                            paddingHorizontal: 20,
+                            fontSize: this.state.query ? 20 : 15,
+                            color: this.state.query ? colors.primary : ''
+                        }} name={"search"}/>
+                        <Input
+                            style={{fontFamily: 'Roboto',}}
+                            placeholder={"Make your wish.."}
+                            underlineColorAndroid='rgba(0,0,0,0)'
+                            onChangeText={(searchText) => {
+                                this.setState({query: searchText})
+                            }}
+                        />
+                    </Item>
+
+
+                    {/*NEARBY SERVICE PROVIDERS LIST START*/}
+                    {this.state.nearByservice.length>0 ?
+                    <View style={styles.block}>
+                        <View style={styles.blockHeader}>
+                            <Text style={styles.blockTitle}>Services/Stores Nearby</Text>
+                            <Button transparent
+                                    onPress={() => goToRoute(this.props.componentId, "ServiceList",{Region:this.region})}>
+                                <Text
+                                    style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>
+                        </View>
+                            <FlatList
+                                contentContainerStyle={{paddingHorizontal: 10, paddingBottom: 15}}
+                                data={this.state.nearByservice}
+                                horizontal={true}
+                                _keyExtractor={(item, index) => index.toString()}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({item, index}) =>
+
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            goToRoute(this.props.componentId, 'ServiceDetail', {
+                                                'Id': item._id,
+                                            })
+                                        }}>
+                                        <View key={item._id}
+                                              style={{
+                                                  backgroundColor: 'white',
+                                                  marginHorizontal: 5,
+                                                  width: 200,
+                                                  borderRadius: 4,
+                                                  flexDirection: 'column',
+                                                  alignItems: 'center',
+                                                  paddingHorizontal: 10,
+                                                  paddingBottom: 15
+                                              }}>
+
+                                            <Thumbnail style={{
+                                                width: 200,
+                                                height: 80,
+                                                marginBottom: 10,
+                                                borderTopLeftRadius: 4,
+                                                borderTopRightRadius: 4,
+                                                resizeMode: 'cover'
+                                            }}
+                                                       square
+                                                       source={item.coverImage ? {uri: settings.IMAGE_URL + item.coverImage} : require('../images/no-image.png')}/>
+
+                                            <View style={{flexDirection: 'row'}}>
+
+                                                <View style={{flex: 2,width:'100%', alignItems: 'center', justifyContent: 'center',}}>
+                                                    <Thumbnail style={{borderRadius: 2,}} square small source={item.Owner.profile.profileImage? {uri:getProfileImage(item.Owner.profile.profileImage)}:require('../images/user-icon.png')}/>
+                                                    {/*<Text note>{item.Owner.profile.name}</Text>*/}
+                                                    <View style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}>
+                                                        <Text>
+                                                            {item.hasOwnProperty('ratings') ? Math.round(item.Rating.avgRate) : 0}
+                                                        </Text>
+                                                        <Text>
+                                                            <Icon name={'star'} size={16}
+                                                                  color={colors.warning}/></Text>
+                                                    </View>
+                                                </View>
+                                                <View style={{borderColor: colors.appBackground,borderLeftWidth:1}} />
+                                                <View style={{flex: 7, alignItems:'center', marginLeft:5}}>
+                                                    <Text style={styles.cardTitle}
+                                                          numberOfLines={1}>{item.title}</Text>
+                                                    {item.Category?
+                                                    <View style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <Text>
+                                                            <Icon name={'tag'} size={16}
+                                                                  color={colors.gray_200}/></Text>
+                                                        <Text note style={{marginLeft:5}}>
+                                                            {item.Category.subCategory||""}
+                                                        </Text>
+
+                                                    </View>:null}
+                                                    {/*<Text note style={styles.cardNote}*/}
+                                                          {/*numberOfLines={1}>{item.location.formatted_address}</Text>*/}
+                                                    <View style={{
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'space-around',
+                                                        width: '100%'
+                                                    }}>
+                                                        <View style={{alignItem: 'center', flexDirection: 'row'}}>
+                                                            {/*<Icon name={'location-arrow'} size={18}*/}
+                                                            {/*color={colors.gray_200}/>*/}
+                                                            <Text note>{Math.round(item.dist.calculated * 100) / 100} K.M</Text>
+                                                        </View>
+                                                        {/*{item.Category?*/}
+                                                        {/*<View style={{*/}
+                                                            {/*flexDirection: 'row',*/}
+                                                            {/*alignItems: 'center',*/}
+                                                            {/*justifyContent: 'center',*/}
+                                                        {/*}}>*/}
+                                                            {/*<Text>*/}
+                                                                {/*<Icon name={'tag'} size={16}*/}
+                                                                      {/*color={colors.warning}/></Text>*/}
+                                                            {/*<Text note>*/}
+                                                                {/*{item.Category.subCategory}*/}
+                                                            {/*</Text>*/}
+
+                                                        {/*</View>:null}*/}
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
+                            />
+                    </View>
+                        : null}
+
+                    {/*NEARBY SERVICE PROVIDERS LIST END*/}
+
+
+                    {/*SPECIAL RESTURANT LISTING START*/}
+                    <View style={styles.block}>
+                        <View style={styles.blockHeader}>
+                            <Text style={styles.blockTitle}>Hungry? Order delicious foods now.</Text>
+                            {/*<Button onPress={() => {*/}
+                            {/*this.props.navigation.navigate('Shopping')*/}
+                            {/*}} transparent style={customStyle.buttonOutlinePrimary}>*/}
+                            {/*<Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
+                        </View>
+                        <View style={[styles.blockBody, {marginTop: 10, marginBottom: 15, padding: 0}]}>
+                            <FlatList
+                                contentContainerStyle={{paddingHorizontal: 10}}
+                                data={this.partners}
+                                horizontal={true}
+                                _keyExtractor={(item, index) => index.toString()}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({item, index}) =>
+
+                                    <View key={item._id} style={[styles.card, {
+                                        marginHorizontal: 5,
+                                        width: 200
+                                    }]}>
+                                        <TouchableOpacity onPress={item.onPress}>
+                                            <View>
+                                                <Image onPress={() => item.onPress} source={item.imgSource}
+                                                       style={{
+                                                           flex: 1,
+                                                           height: 100,
+                                                           width: '100%',
+                                                           resizeMode: 'cover',
+                                                           margin: 5
+                                                       }}/>
+                                                {item.title ?
+                                                    <View style={{
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        position: 'absolute'
+                                                    }}>
+                                                        <Text style={{
+                                                            color: 'white',
+                                                            fontWeight: '500',
+                                                            fontSize: 30
+                                                        }}>{item.title}</Text>
+                                                    </View> : null}
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
+                            />
+                        </View>
+                    </View>
+
+                    {/*SPECIAL RESTURANT LISTING END*/}
+
+
                     {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate('PickLocation')}>*/}
                     {/*<TouchableOpacity onPress={()=>this.setState({pickLocation:true})}>*/}
                     {/*<View>*/}
@@ -670,94 +904,60 @@ class Dashboard extends Component {
                     {/*<ScrollView style={{viewportWidth: '100%', flex: 1}}>*/}
                     {this.state.searchMode == false ?
                         <View>
-                            <TouchableOpacity onPress={() => this.gotoBB()}>
-                                <View>
-                                    <Image onPress={() => this.gotoBB()} source={require("../images/baadshah_logo.jpg")}
-                                           style={{
-                                               flex: 1,
-                                               height: 130,
-                                               width: viewportWidth - 10,
-                                               resizeMode: 'cover',
-                                               margin: 5
-                                           }}/>
-                                    {/*<View style={{*/}
-                                    {/*top: 0,*/}
-                                    {/*left: 0,*/}
-                                    {/*right: 0,*/}
-                                    {/*bottom: 0,*/}
-                                    {/*justifyContent: 'center',*/}
-                                    {/*alignItems: 'center',*/}
-                                    {/*position: 'absolute'*/}
-                                    {/*}}>*/}
-                                    {/*<Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>BAADSHAH-BIRYANI</Text>*/}
-                                    {/*</View>*/}
-                                </View>
-                            </TouchableOpacity>
-                            {this.state.Adds.length > 0 ?
-                                <View style={{
-                                    minHeight: Math.round(viewportWidth * 0.29),
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    <Carousel
-                                        ref={(c) => {
-                                            this._carousel = c;
-                                        }}
-                                        data={this.state.Adds}
-                                        renderItem={this._renderItem}
-                                        sliderWidth={viewportWidth}
-                                        itemWidth={viewportWidth}
-                                        //  slideStyle={{ viewportWidth: viewportWidth }}
-                                        inactiveSlideOpacity={1}
-                                        inactiveSlideScale={1}
-                                        autoplay={true}
-                                        loop={true}
-                                    />
-
-                                </View> : null}
-                            <TouchableOpacity onPress={() => this.gotoEatFit()}>
-                                <View>
-                                    <Image onPress={() => this.gotoEatFit()} source={require("../images/EF2.jpg")}
-                                           style={{
-                                               flex: 1,
-                                               height: 120,
-                                               width: viewportWidth - 10,
-                                               resizeMode: 'cover',
-                                               margin: 5
-                                           }}/>
-                                    <View style={{
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        position: 'absolute'
-                                    }}>
-                                        <Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>EAT-FIT</Text>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-
-                            {/*<View key="id" style={styles.containerStyle}>*/}
-                            {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate("CategoriesEF")}>*/}
-                            {/*<Body>*/}
-                            {/*<Icon name={'apple'} size={20} style={styles.catIcon}/>*/}
-                            {/*</Body>*/}
-
-                            {/*<Text style={{*/}
-                            {/*textAlign: 'center',*/}
-                            {/*fontWeight: 'bold',*/}
-                            {/*color: '#ffffff'*/}
-                            {/*}}>EAT FIT</Text>*/}
-                            {/*</TouchableOpacity>*/}
+                            {/*<TouchableOpacity onPress={() => this.gotoBB()}>*/}
+                            {/*<View>*/}
+                            {/*<Image onPress={() => this.gotoBB()} source={require("../images/baadshah_logo.jpg")}*/}
+                            {/*style={{*/}
+                            {/*flex: 1,*/}
+                            {/*height: 130,*/}
+                            {/*width: viewportWidth - 10,*/}
+                            {/*resizeMode: 'cover',*/}
+                            {/*margin: 5*/}
+                            {/*}}/>*/}
+                            {/*/!*<View style={{*!/*/}
+                            {/*/!*top: 0,*!/*/}
+                            {/*/!*left: 0,*!/*/}
+                            {/*/!*right: 0,*!/*/}
+                            {/*/!*bottom: 0,*!/*/}
+                            {/*/!*justifyContent: 'center',*!/*/}
+                            {/*/!*alignItems: 'center',*!/*/}
+                            {/*/!*position: 'absolute'*!/*/}
+                            {/*/!*}}>*!/*/}
+                            {/*/!*<Text style={{color: 'white', fontWeight: '500', fontSize: 30}}>BAADSHAH-BIRYANI</Text>*!/*/}
+                            {/*/!*</View>*!/*/}
                             {/*</View>*/}
-                            <FlatList style={styles.mainContainer}
-                                      data={this.props.categories}
-                                      numColumns={3}
-                                      renderItem={this.renderItem}
-                                      keyExtractor={item => item._id}
-                            />
+                            {/*</TouchableOpacity>*/}
+                            <View style={styles.block}>
+                                {this.state.Adds.length > 0 ?
+                                    <View style={{
+                                        minHeight: Math.round(viewportWidth * 0.29),
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <Carousel
+                                            ref={(c) => {
+                                                this._carousel = c;
+                                            }}
+                                            data={this.state.Adds}
+                                            renderItem={this._renderItem}
+                                            sliderWidth={viewportWidth - 20}
+                                            itemWidth={viewportWidth - 20}
+                                            //  slideStyle={{ viewportWidth: viewportWidth }}
+                                            inactiveSlideOpacity={1}
+                                            inactiveSlideScale={1}
+                                            autoplay={true}
+                                            loop={true}
+                                        />
+
+                                    </View> : null}
+                            </View>
+
+                            {/*<FlatList style={styles.mainContainer}*/}
+                                      {/*data={this.props.categories}*/}
+                                      {/*numColumns={3}*/}
+                                      {/*renderItem={this.renderItem}*/}
+                                      {/*keyExtractor={item => item._id}*/}
+                            {/*/>*/}
                         </View> :
                         <View>
                             <View style={{alignItems: 'center', marginHorizontal: 30}}>
@@ -896,7 +1096,7 @@ const styles = StyleSheet.create({
     },
 
     searchInput: {
-       // color: '#ffffff',
+        // color: '#ffffff',
         borderTopWidth: 0,
         borderRightWidth: 0,
         borderLeftWidth: 0,
@@ -913,6 +1113,69 @@ const styles = StyleSheet.create({
         width: (viewportWidth / 2) - 10,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    block: {},
+    blockHeader: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // borderBottomWidth: 1,
+        borderColor: '#E2E2E2',
+        paddingHorizontal: 15,
+        //  backgroundColor:'white'
+    },
+    blockTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        fontFamily: 'Roboto',
+        color: colors.primary,
+    },
+    blockBody: {
+        padding: 15,
+        paddingTop: 0
+    },
+    card: {
+        overflow: 'hidden',
+        borderRadius: 4,
+        flexGrow: 1,
+        backgroundColor: 'white',
+    },
+    cardWrapper: {},
+    cardBody: {
+        alignItems: 'flex-start',
+        padding: 10
+    },
+    cardItemCenter: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'column'
+    },
+    cardIcon: {
+        paddingVertical: 20,
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        flex: 1
+    },
+    cardImage: {
+        width: '100%',
+        flexGrow: 1,
+        paddingVertical: 10
+    },
+    cardText: {
+        padding: 10
+    },
+    cardTitle: {
+        color: variables.gray_100,
+        fontSize: 15,
+        marginBottom: 3,
+        fontFamily: 'Roboto',
+    },
+    cardNote: {
+        marginBottom: 5
     },
 })
 export default Meteor.withTracker(() => {

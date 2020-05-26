@@ -229,11 +229,10 @@ class MyServices extends Component {
         //     data: this.props.myServices, loading: false
         // })
         // this.arrayholder = this.props.myServices;
-        Navigation.events().bindComponent(this);
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonMyService.bind(this));
     }
 
     handleBackButtonMyService() {
+        console.log('handlebackpress from My Services..')
         if (this.isDisplaying) {
             console.log('handlebackpress..')
             // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
@@ -243,7 +242,7 @@ class MyServices extends Component {
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress');
+
     }
 
     // componentWillReceiveProps(newProps) {
@@ -257,11 +256,15 @@ class MyServices extends Component {
 
     componentDidAppear() {
         this.isDisplaying = true;
+        Navigation.events().bindComponent(this);
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonMyService.bind(this));
+
         this.fetchData()
     }
 
     componentDidDisappear() {
         this.isDisplaying = false;
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonMyService.bind(this));
     }
 
     closeDrawer() {

@@ -678,6 +678,7 @@ Meteor.methods({
         const collection = Service.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
         const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
+        const defaultUser = {'id': '000', 'profile':{'name': '','profileImage': null}} ;
         const categoryLookup = {
             from: "MainCategories",
             let: {catId: "$categoryId"},
@@ -693,7 +694,12 @@ Meteor.methods({
             ],
             "as": "categories"
         };
-
+        const OwnerLookup = {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users"
+        };
         const ServiceRatings = {
             from: "ratings",
             let: {serviceId: "$_id"},
@@ -717,7 +723,13 @@ Meteor.methods({
                     if: {"$eq": ["$servRatings", []]}, then: defaultRating, else: {$arrayElemAt: ["$servRatings", 0]}
                 }
             },
+            Owner:{
+                $cond: {
+                    if: {"$eq": ["$users", []]}, then: defaultUser, else: {$arrayElemAt: ["$users", 0]}
+                }
+            },
             category: {$arrayElemAt: ['$categories', 0]}
+
         };
         // const project = {
         //     _id: 1,
@@ -727,19 +739,21 @@ Meteor.methods({
         //     description: 1,
         // };
         //  return Category.find().fetch();
+        const query=obj.subCatIds? {categoryId: {$in: obj.subCatIds}}:{};
         return Async.runSync(function (done) {
             aggregate([
                 {
                     $geoNear: {
                         near: {type: "Point", coordinates: obj.coords},
                         distanceField: "dist.calculated",
-                        query: {categoryId: {$in: obj.subCatIds}},
+                        query:query,
                         spherical: true,
                         distanceMultiplier: 0.001
                     }
                 },
                 {$lookup: categoryLookup},
                 {$lookup: ServiceRatings},
+                {$lookup: OwnerLookup},
                 {$addFields: addValues},
                 {$limit: obj.skip + obj.limit},
                 {$skip: obj.skip},

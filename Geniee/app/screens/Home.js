@@ -203,6 +203,7 @@ class Home extends Component {
         this.watchID;
         this.granted = false;
         this.isDisplaying=false;
+        this.fetchData= this.fetchData.bind(this)
     }
 
 
@@ -223,7 +224,7 @@ class Home extends Component {
             console.log("You can use locations ")
             Geolocation.getCurrentPosition(
                 (position) => {
-                  //  console.log(position);
+                    console.log(position);
                     let region = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
@@ -259,7 +260,11 @@ class Home extends Component {
             },
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
         );
-        this.fetchData(0,this.limit);
+
+        if(this.props.Region){
+            this.region=this.props.Region;
+        }
+        this.fetchData(this.region);
 
         // this.setState({
         //     data: this.props.categories, loading: false
@@ -293,12 +298,13 @@ class Home extends Component {
     }
 
 
-    fetchData=()=>{
+    fetchData=(region)=>{
+        console.log(this.region)
         const data={
             skip:this.skip,
             limit: this.limit,
-            coords: [this.region.longitude, this.region.latitude],
-            subCatIds: this.props.Id
+            coords: [this.region.longitude ?this.region.longitude: 85.312950, this.region.latitude?this.region.latitude:27.712020],
+            subCatIds: this.props.Id ? this.props.Id: null
         };
         this.lastSkip=this.skip;
         this.setState({loading:true})
