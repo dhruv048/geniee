@@ -47,7 +47,7 @@ export default class LocationPicker extends PureComponent {
 
     async componentDidMount() {
         await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
-            console.log(result);  // would be "granted"
+          //  console.log(result);  // would be "granted"
             this.granted = result;
         }).catch(error => {
                 console.log('error',error)
@@ -56,7 +56,7 @@ export default class LocationPicker extends PureComponent {
         if (this.granted) {
             Geolocation.getCurrentPosition(
                 (position) => {
-                    console.log(position);
+                 //   console.log(position);
                     let region ={
                         latitude: 27.712020,
                         longitude: 85.312950,
@@ -78,7 +78,7 @@ export default class LocationPicker extends PureComponent {
         }
         this.watchID = Geolocation.watchPosition(
             (position) => {
-                console.log(position);
+              //  console.log(position);
                 let region ={
                     latitude: 27.712020,
                     longitude: 85.312950,

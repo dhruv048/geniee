@@ -10,10 +10,10 @@ import {
     TextInput,
     SafeAreaView,
     ScrollView,
-    BackHandler
+    BackHandler, FlatList
 } from "react-native";
 import Autocomplete from 'native-base-autocomplete';
-import {colors} from "../../config/styles";
+import {colors, customStyle} from "../../config/styles";
 import {
     Container,
     Content,
@@ -32,7 +32,7 @@ import {
 } from 'native-base';
 import ActionSheet from 'react-native-actionsheet';
 import Meteor from "../../react-native-meteor";
-//import ImagePicker from 'react-native-image-picker';
+import FIcon from "react-native-vector-icons/Feather";
 import ImagePicker from 'react-native-image-crop-picker';
 import LocationPicker from "../../components/LocationPicker";
 import {backToRoot, goToRoute, navigateToRoutefromSideMenu,goBack} from "../../Navigation";
@@ -42,6 +42,7 @@ import settings from "../../config/settings";
 import ImageResizer from 'react-native-image-resizer';
 import AsyncStorage from '@react-native-community/async-storage';
 import Loading from "../../components/Loading";
+import _ from "lodash";
 
 const RNFS = require("react-native-fs");
 
@@ -390,7 +391,7 @@ class AddService extends React.PureComponent {
         this.mounted = false;
         this.state = {
             query: '',
-            selectedCategory: null,
+            selectedCategory: {subCategory:""},
             title: '',
             homeDelivery: false,
             radius: 0,
@@ -406,8 +407,10 @@ class AddService extends React.PureComponent {
             webLink: '',
             pickLocation: false,
             loading:false,
+            categoryModal:'',
         };
-        this.categories = []
+        this.categories = [];
+        this._debouncedFindCategory = _.debounce(this._findCategory, 100);
     }
 
    async componentDidMount() {
@@ -422,6 +425,7 @@ class AddService extends React.PureComponent {
        MainCategories.forEach(item => {
             this.categories = this.categories.concat(item.subCategories);
         });
+        this.setState({categories:this.categories})
         Navigation.events().bindComponent(this);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         this.fillEditForm();
@@ -693,18 +697,19 @@ class AddService extends React.PureComponent {
 
     _findCategory(query) {
         if (query === '') {
-            return [];
+            this.setState({categories: this.categories})
         }
 
-        const categories = this.categories;
+        let categories = this.categories;
         const regex = new RegExp(`${query.trim()}`, 'i');
-        return categories.filter(category => category.subCategory.search(regex) >= 0);
+        categories= categories.filter(category => category.subCategory.search(regex) >= 0);
+        this.setState({categories})
     }
 
     render() {
         const {query, selectedCategory, location} = this.state;
-        const categories = this._findCategory(query);
-        const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
+        // const categories = this._findCategory(query);
+        // const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={styles.container}>
                 <StatusBar
@@ -768,34 +773,44 @@ class AddService extends React.PureComponent {
                                         />}
                                 </TouchableOpacity>
                             </View>
-                            <View underlineColorAndroid='rgba(0,0,0,0)'
-                                  style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>
-                                <Autocomplete
-                                    autoCapitalize="none"
-                                    style={styles.inputBoxAC}
-                                    autoCorrect={false}
-                                    data={categories.length === 1 && comp(query, categories[0].subCategory)
-                                        ? [] : categories}
-                                    defaultValue={query}
-                                    hideResults={selectedCategory && selectedCategory.subCategory === query}
-                                    onChangeText={text => this.setState({query: text})}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholder="Enter Category's name (*)"
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    renderItem={cat => <View style={{maxHeight: 200}}><ScrollView style={{flexGrow: 0}}><TouchableOpacity
-                                        style={styles.autosuggestCont}
-                                        onPress={() => (
-                                            console.log(cat),
-                                                this.setState({
-                                                    query: cat.subCategory,
-                                                    selectedCategory: cat
-                                                })
-                                        )}
-                                    >
-                                        <Text style={styles.autosuggesText}>{cat.subCategory}</Text>
-                                    </TouchableOpacity></ScrollView></View>}
-                                />
-                            </View>
+                            {/*<View underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                  {/*style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>*/}
+                                {/*<Autocomplete*/}
+                                    {/*autoCapitalize="none"*/}
+                                    {/*style={styles.inputBoxAC}*/}
+                                    {/*autoCorrect={false}*/}
+                                    {/*data={categories.length === 1 && comp(query, categories[0].subCategory)*/}
+                                        {/*? [] : categories}*/}
+                                    {/*defaultValue={query}*/}
+                                    {/*hideResults={selectedCategory && selectedCategory.subCategory === query}*/}
+                                    {/*onChangeText={text => this.setState({query: text})}*/}
+                                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                    {/*placeholder="Enter Category's name (*)"*/}
+                                    {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                    {/*renderItem={cat => <View style={{maxHeight: 200}}><ScrollView style={{flexGrow: 0}}><TouchableOpacity*/}
+                                        {/*style={styles.autosuggestCont}*/}
+                                        {/*onPress={() => (*/}
+                                            {/*console.log(cat),*/}
+                                                {/*this.setState({*/}
+                                                    {/*query: cat.subCategory,*/}
+                                                    {/*selectedCategory: cat*/}
+                                                {/*})*/}
+                                        {/*)}*/}
+                                    {/*>*/}
+                                        {/*<Text style={styles.autosuggesText}>{cat.subCategory}</Text>*/}
+                                    {/*</TouchableOpacity></ScrollView></View>}*/}
+                                {/*/>*/}
+                            {/*</View>*/}
+
+                            <TextInput placeholder='Category (*)'
+                                       style={styles.inputBox}
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       underlineColorAndroid='rgba(0,0,0,0)'
+                                       onSubmitEditing={() => this.title.focus()}
+                                       onKeyPress={() => this.setState({categoryModal:true})}
+                                       onKeyFocus={() => this.setState({categoryModal:true})}
+                                       value={this.state.selectedCategory.subCategory}
+                            />
 
                             <TextInput placeholder='Title (*)'
                                        style={styles.inputBox}
@@ -967,6 +982,62 @@ class AddService extends React.PureComponent {
                     modalVisible={this.state.pickLocation}/>
                 {this.state.loading?
                     <Loading/>:null}
+
+                {/* SELCT SERVICE MODAL START */}
+                <Modal style={customStyle.modal}
+                    // transparent={true}
+                       visible={this.state.categoryModal}
+                       onRequestClose={() => {
+                           this.setState({categoryModal: false})
+                       }}>
+                    <Header androidStatusBarColor={colors.statusBar}
+                            style={{backgroundColor: colors.appLayout}}>
+                        <Left style={{flex:1}}>
+                            <Button transparent style={{paddingHorizontal: 10}} onPress={() => {
+                                this.setState({categoryModal: false})
+                            }}>
+                                <FIcon name='arrow-left' size={20} color={'white'}/>
+                            </Button>
+                        </Left>
+                        <Body style={{flex:7}}>
+                        <Item rounded search boadered style={{
+                            backgroundColor: 'white',
+                            height: 40}}>
+                            <Input
+                                value={this.state.query}
+                                placeholder="Search.."
+                                onChangeText={(text) => {
+                                    this._debouncedFindCategory(text), this.setState({query: text})
+                                }}/>
+                            {
+                                this.state.query ?
+                                    <Button style={{paddingHorizontal: 10}}
+                                            onPress={() => {
+                                                this.setState({query: ''})
+                                            }} transparent>
+                                        <FIcon name='x' size={20}/>
+                                    </Button> : null
+                            }
+                        </Item>
+                        </Body>
+                    </Header>
+                    <Content padder>
+                        <FlatList
+                            data={this.state.categories}
+                            _keyExtractor={(item, index) => index.toString()}
+                            keyboardShouldPersistTaps='always'
+                            renderItem={({item, index}) =>
+                                <ListItem onPress={() => {
+                                    this.setState({selectedCategory: item, categoryModal: false})
+                                }}>
+                                    <Text>{item.subCategory}</Text>
+                                </ListItem>
+                            }
+                        />
+                    </Content>
+
+                </Modal>
+                {/* SELCT CATEGORY MODAL STOP */}
             </Container>
         );
     }

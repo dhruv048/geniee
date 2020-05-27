@@ -33,6 +33,7 @@ import Profile from "./screens/Profile/Profile";
 import Notification from "./screens/Notification/Notification";
 import ServiceRatings from "./screens/services/ServiceRatings";
 import MyProducts from "./screens/store/MyProducts";
+import SearchResult from "./screens/SearchResult";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -66,6 +67,7 @@ Navigation.registerComponent('ImageGalleryBB', () => ImageGalleryBB);
 Navigation.registerComponent('Profile', () => Profile);
 Navigation.registerComponent('Notification', () => Notification);
 Navigation.registerComponent('ServiceRatings', () => ServiceRatings);
+Navigation.registerComponent('SearchResult', () => SearchResult);
 
 let currentRoute = ''
 

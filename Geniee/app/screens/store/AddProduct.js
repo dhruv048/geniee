@@ -10,10 +10,10 @@ import {
     TextInput,
     FlatList,
     Dimensions,
-    SafeAreaView, ScrollView,BackHandler
+    SafeAreaView, ScrollView, BackHandler
 } from "react-native";
 import Autocomplete from 'native-base-autocomplete';
-import {colors} from "../../config/styles";
+import {colors, customStyle} from "../../config/styles";
 import {
     Container,
     Content,
@@ -33,9 +33,10 @@ import {
     Footer
 } from 'native-base';
 import Meteor from "../../react-native-meteor";
+
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import ActionSheet from 'react-native-actionsheet';
-//import ImagePicker from 'react-native-image-picker';
+import _ from "lodash";
 import ImagePicker from 'react-native-image-crop-picker';
 import {CogMenu} from "../../components/CogMenu/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
@@ -46,14 +47,13 @@ import FIcon from 'react-native-vector-icons/Feather';
 import Loading from '../../components/Loading';
 
 
-
 class AddProduct extends React.PureComponent {
     constructor(props) {
         super(props);
         this.mounted = false;
         this.state = {
             query: '',
-            selectedService: null,
+            selectedService: {_id:'',title:''},
             title: '',
             homeDelivery: false,
             radius: 0,
@@ -67,13 +67,16 @@ class AddProduct extends React.PureComponent {
             price: null,
             discount: null,
             unit: null,
-            webLink:'',
-            images:[],
-            qty:'',
-            loading:false,
+            webLink: '',
+            images: [],
+            qty: '',
+            loading: false,
+            serviceModal: false,
+            myServices:[],
         };
-         this.myServices=[];
-         this.imagesToRemove=[];
+        this.myServices = [];
+        this.imagesToRemove = [];
+        this._debouncedFindCategory = _.debounce(this._findCategory, 100);
     }
 
     async componentDidMount() {
@@ -81,34 +84,37 @@ class AddProduct extends React.PureComponent {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         let myServices = await AsyncStorage.getItem('myServices');
         console.log(myServices)
-        this.myServices=JSON.parse(myServices);
+        this.myServices = JSON.parse(myServices);
+        this.setState({myServices:this.myServices})
         this.fillEditForm();
     };
 
-    fillEditForm=()=>{
-        let _product=this.props.Product;
-        if(_product) {
-            let _serv=this.myServices.find(serv=>{return serv._id==_product.service});
-            let colorss="";
-            _product.colors.forEach((item,i)=>{
-                if(i==0)
-                    colorss=colorss+item;
-                else
-                    colorss=colorss+";"+item;
+    fillEditForm = () => {
+        let _product = this.props.Product;
+        if (_product) {
+            let _serv = this.myServices.find(serv => {
+                return serv._id == _product.service
             });
-            let sizess="";
-            _product.sizes.forEach((item,i)=>{
-                if(i==0)
-                    sizess=sizess+item;
+            let colorss = "";
+            _product.colors.forEach((item, i) => {
+                if (i == 0)
+                    colorss = colorss + item;
                 else
-                    sizess=sizess+";"+item;
+                    colorss = colorss + ";" + item;
+            });
+            let sizess = "";
+            _product.sizes.forEach((item, i) => {
+                if (i == 0)
+                    sizess = sizess + item;
+                else
+                    sizess = sizess + ";" + item;
             });
 
-            let imgs=[];
-            _product.images.forEach(item=>{
-                let image={
-                    _id:item,
-                    uri:settings.IMAGE_URL+item
+            let imgs = [];
+            _product.images.forEach(item => {
+                let image = {
+                    _id: item,
+                    uri: settings.IMAGE_URL + item
                 };
                 imgs.push(image)
             })
@@ -118,12 +124,12 @@ class AddProduct extends React.PureComponent {
                 selectedService: _serv,
                 title: _product.title,
                 homeDelivery: _product.homeDelivery,
-                radius: _product.radius?_product.radius.toString():"",
+                radius: _product.radius ? _product.radius.toString() : "",
                 description: _product.description,
                 location: _product.location,
                 contact: _product.contact,
-                price: _product.price?_product.price.toString():"",
-                discount: _product.discount?_product.discount.toString():"",
+                price: _product.price ? _product.price.toString() : "",
+                discount: _product.discount ? _product.discount.toString() : "",
                 unit: _product.unit,
                 webLink: _product.website,
                 colors: colorss,
@@ -134,14 +140,14 @@ class AddProduct extends React.PureComponent {
         }
     }
 
-    handleBackButton(){
+    handleBackButton() {
         console.log('handlebackpress')
         // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
         backToRoot(this.props.componentId);
         return true;
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress');
     }
 
@@ -150,9 +156,9 @@ class AddProduct extends React.PureComponent {
         if (selected === 0) {
             ImagePicker.openCamera({
                 includeBase64: true,
-                compressImageMaxWidth:1440,
-                compressImageMaxHeight:2560,
-                compressImageQuality:0.8
+                compressImageMaxWidth: 1440,
+                compressImageMaxHeight: 2560,
+                compressImageQuality: 0.8
             }).then(image => {
                 console.log(image);
                 this._onImageChange(image)
@@ -161,9 +167,9 @@ class AddProduct extends React.PureComponent {
         else if (selected === 1) {
             ImagePicker.openPicker({
                 includeBase64: true,
-                compressImageMaxWidth:1440,
-                compressImageMaxHeight:2560,
-                compressImageQuality:0.8
+                compressImageMaxWidth: 1440,
+                compressImageMaxHeight: 2560,
+                compressImageQuality: 0.8
             }).then(image => {
                 console.log(image);
                 this._onImageChange(image)
@@ -171,10 +177,10 @@ class AddProduct extends React.PureComponent {
         }
     };
     _onImageChange = (image) => {
-        image.uri=`data:${image.mime};base64,${image.data}`;
+        image.uri = `data:${image.mime};base64,${image.data}`;
         console.log(image);
         this.setState(prevState => ({
-            images: [...prevState.images, image ]
+            images: [...prevState.images, image]
         }))
 
         ImagePicker.clean().then(() => {
@@ -184,18 +190,18 @@ class AddProduct extends React.PureComponent {
         });
     };
 
-    removeImage=(image)=>{
-        let images=[...this.state.images];
-        let index=images.indexOf(image);
-        console.log(index,image)
-        if(index !== -1){
-            images.splice(index,1);
-            this.setState({images:images});
-            if(image.hasOwnProperty("_id")){
+    removeImage = (image) => {
+        let images = [...this.state.images];
+        let index = images.indexOf(image);
+        console.log(index, image)
+        if (index !== -1) {
+            images.splice(index, 1);
+            this.setState({images: images});
+            if (image.hasOwnProperty("_id")) {
                 this.imagesToRemove.push(image._id);
             }
         }
-}
+    }
     _updateHomeDelivery = () => {
         let current = this.state.homeDelivery;
         this.setState(
@@ -204,11 +210,11 @@ class AddProduct extends React.PureComponent {
     };
     _callSaveServiceMethod = (product) => {
         product.images = this.state.images;
-        let _product=this.props.Product;
-        this.setState({loading:true});
-        if(_product){
-            Meteor.call('updateProduct', _product._id,product, this.imagesToRemove,(err, res) => {
-                this.setState({loading:false});
+        let _product = this.props.Product;
+        this.setState({loading: true});
+        if (_product) {
+            Meteor.call('updateProduct', _product._id, product, this.imagesToRemove, (err, res) => {
+                this.setState({loading: false});
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -235,7 +241,7 @@ class AddProduct extends React.PureComponent {
         }
         else {
             Meteor.call('addNewProduct', product, (err, res) => {
-                this.setState({loading:false});
+                this.setState({loading: false});
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -255,7 +261,7 @@ class AddProduct extends React.PureComponent {
                     );
                     // hack because react-native-meteor doesn't login right away after sign in
                     console.log('Reslut from addNewService' + res);
-                   this.resetForm();
+                    this.resetForm();
                     goToRoute(this.props.componentId, "MyProducts");
                 }
             });
@@ -263,7 +269,7 @@ class AddProduct extends React.PureComponent {
 
     };
 
-    resetForm(){
+    resetForm() {
         this.setState({
             query: '',
             selectedService: null,
@@ -283,8 +289,9 @@ class AddProduct extends React.PureComponent {
             images: [],
         });
     }
+
     _saveService = () => {
-        const {title, description, radius, contact, homeDelivery, selectedService, images, price,discount, unit, location, webLink, colors, sizes, qty} = this.state;
+        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, location, webLink, colors, sizes, qty} = this.state;
         let product = {
             title: title,
             description: description,
@@ -300,11 +307,11 @@ class AddProduct extends React.PureComponent {
             sizes: sizes ? (sizes.includes(';') ? sizes.split(';') : [sizes]) : [],
             colors: colors ? (colors.includes(';') ? colors.split(';') : [colors]) : [],
             qty: qty,
-            images:images,
-            service:selectedService._id,
-            serviceOwner:selectedService.owner
+            images: images,
+            service: selectedService._id,
+            serviceOwner: selectedService.owner
         };
-        if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 ||  !selectedService) {
+        if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !selectedService) {
             ToastAndroid.showWithGravityAndOffset(
                 'Please Enter all the fields with *.',
                 ToastAndroid.LONG,
@@ -330,23 +337,33 @@ class AddProduct extends React.PureComponent {
         this.setState({modalVisible: visible});
     }
 
-    _findCategory(query) {
+    _findCategory=(query)=> {
+        console.log("_findCategory","query")
         if (query === '') {
-            return [];
+            this.setState({myServices:this.myServices});
         }
 
-        const myServices = this.myServices;
+        let myServices =[...this.myServices];
         const regex = new RegExp(`${query.trim()}`, 'i');
-        return myServices.filter(ser => ser.title.search(regex) >= 0);
+         myServices= myServices.filter(ser => ser.title.search(regex) >= 0);
+        this.setState({myServices:myServices});
     }
+
     _getListItem = (data, index) => {
         let item = data.item;
         return (
             <View key={index}>
-                <View  style={[styles.containerStyle]}>
-                    <Image style={{flex: 1, alignSelf: 'stretch', width: undefined, height: undefined,resizeMode:'cover'}}
-                           source={{uri:item.uri}}/>
-                    <Button onPress={()=>this.removeImage(item)} transparent style={{position:'absolute', top:-15,right:-5}}>
+                <View style={[styles.containerStyle]}>
+                    <Image style={{
+                        flex: 1,
+                        alignSelf: 'stretch',
+                        width: undefined,
+                        height: undefined,
+                        resizeMode: 'cover'
+                    }}
+                           source={{uri: item.uri}}/>
+                    <Button onPress={() => this.removeImage(item)} transparent
+                            style={{position: 'absolute', top: -15, right: -5}}>
                         <FIcon name='x-circle' size={20} color={colors.danger}/>
                     </Button>
                 </View>
@@ -355,10 +372,11 @@ class AddProduct extends React.PureComponent {
 
         )
     };
+
     render() {
         const {query, selectedService} = this.state;
-        const myServices = this._findCategory(query);
-        const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
+        // const myServices = this._findCategory(query);
+        // const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
 
         return (
             <Container style={styles.container}>
@@ -366,18 +384,18 @@ class AddProduct extends React.PureComponent {
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'
                 />
-                <Header style={{backgroundColor: '#094c6b'}}>
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor:colors.appLayout}}>
                     <Left>
                         {/*<Button transparent onPress={() => {*/}
-                            {/*this.props.navigation.openDrawer()*/}
+                        {/*this.props.navigation.openDrawer()*/}
                         {/*}}>*/}
-                            {/*<Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>*/}
+                        {/*<Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>*/}
                         {/*</Button>*/}
-                        <CogMenu componentId={this.props.componentId} />
+                        <CogMenu componentId={this.props.componentId}/>
                     </Left>
 
                     <Body>
-                    <Text style={styles.screenHeader}>{this.props.Product? "Update Product":"Add Product"}</Text>
+                    <Text style={styles.screenHeader}>{this.props.Product ? "Update Product" : "Add Product"}</Text>
                     </Body>
                 </Header>
                 <Content>
@@ -385,37 +403,46 @@ class AddProduct extends React.PureComponent {
 
                     <Fragment>
                         <SafeAreaView style={styles.sb85086c9} keyboardShouldPersistTaps='always'>
-                            <View underlineColorAndroid='rgba(0,0,0,0)'
-                                  style={{width:'100%',minHeight:40,  marginVertical: 5, justifyContent: `center`}}>
-                                <Autocomplete
-                                    autoCapitalize="none"
-                                    style={styles.inputBoxAC}
-                                    autoCorrect={false}
-                                    data={myServices.length === 1 && comp(query, myServices[0].title)
-                                        ? [] : myServices}
-                                    defaultValue={query}
-                                    hideResults={selectedService && selectedService.title === query}
-                                    onChangeText={text => this.setState({query: text})}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    placeholder="Enter Service Name (*)"
-                                    placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                    renderItem={ser => <View style={{maxHeight:200}}>
-                                        <ScrollView style={{flexGrow: 0}}>
-                                        <TouchableOpacity
-                                        style={styles.autosuggestCont}
-                                        onPress={() => (
-                                            this.setState({
-                                                query: ser.title,
-                                                selectedService: ser
-                                            })
-                                        )}
-                                    >
-                                        <Text style={styles.autosuggesText}>{ser.title}</Text>
-                                    </TouchableOpacity>
-                                        </ScrollView></View>}
-                                />
-                            </View>
+                            {/*<View underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                  {/*style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>*/}
+                                {/*<Autocomplete*/}
+                                    {/*autoCapitalize="none"*/}
+                                    {/*style={styles.inputBoxAC}*/}
+                                    {/*autoCorrect={false}*/}
+                                    {/*data={myServices.length === 1 && comp(query, myServices[0].title)*/}
+                                        {/*? [] : myServices}*/}
+                                    {/*defaultValue={query}*/}
+                                    {/*hideResults={selectedService && selectedService.title === query}*/}
+                                    {/*onChangeText={text => this.setState({query: text})}*/}
+                                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                    {/*placeholder="Enter Service Name (*)"*/}
+                                    {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                    {/*renderItem={ser => <View style={{maxHeight: 200}}>*/}
+                                        {/*<ScrollView style={{flexGrow: 0}}>*/}
+                                            {/*<TouchableOpacity*/}
+                                                {/*style={styles.autosuggestCont}*/}
+                                                {/*onPress={() => (*/}
+                                                    {/*this.setState({*/}
+                                                        {/*query: ser.title,*/}
+                                                        {/*selectedService: ser*/}
+                                                    {/*})*/}
+                                                {/*)}*/}
+                                            {/*>*/}
+                                                {/*<Text style={styles.autosuggesText}>{ser.title}</Text>*/}
+                                            {/*</TouchableOpacity>*/}
+                                        {/*</ScrollView></View>}*/}
+                                {/*/>*/}
+                            {/*</View>*/}
 
+                            <TextInput placeholder='Service (*)'
+                                       style={styles.inputBox}
+                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                       underlineColorAndroid='rgba(0,0,0,0)'
+                                       onSubmitEditing={() => this.title.focus()}
+                                       onKeyPress={()=>this.setState({serviceModal:true})}
+                                       onFocus={()=>this.setState({serviceModal:true})}
+                                       value={this.state.selectedService.title}
+                            />
                             <TextInput placeholder='Title (*)'
                                        style={styles.inputBox}
                                        placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
@@ -480,7 +507,8 @@ class AddProduct extends React.PureComponent {
                                            onChangeText={(radius) => this.setState({radius})}
                                            value={this.state.radius}
                                 />
-                                <View style={styles.chkView}><CheckBox style={{marginEnd:20}} checked={this.state.homeDelivery}
+                                <View style={styles.chkView}><CheckBox style={{marginEnd: 20}}
+                                                                       checked={this.state.homeDelivery}
                                                                        onPress={this._updateHomeDelivery}/>
                                     <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text></View>
                             </View>
@@ -520,13 +548,13 @@ class AddProduct extends React.PureComponent {
                             <FlatList style={styles.mainContainer}
                                       data={this.state.images}
                                       renderItem={this._getListItem}
-                                      keyExtracter={(item, index) =>index.toString()}
+                                      keyExtracter={(item, index) => index.toString()}
                                       horizontal={false}
                                       numColumns={2}
                             />
                             <Button
                                 style={styles.button}
-                                onPress={()=>this.ActionSheet.show()}>
+                                onPress={() => this.ActionSheet.show()}>
                                 <Icon name={'ios-add'} color={'white'}/>
                                 <Text style={styles.buttonText}>Upload Image </Text>
                             </Button>
@@ -588,31 +616,88 @@ class AddProduct extends React.PureComponent {
                         }}
                     />
                 </Content>
-                <Footer style={{backgroundColor:colors.appBackground, alignItems:'center'}}>
+                <Footer style={{backgroundColor: colors.appBackground, alignItems: 'center'}}>
                     {/*<View style={styles.buttonView}>*/}
-                        <Button
-                            style={styles.button}
-                            onPress={this._saveService}>
-                            <Text style={styles.buttonText}> {this.props.Product?"Update":"Save"} </Text>
-                        </Button>
+                    <Button
+                        style={styles.button}
+                        onPress={this._saveService}>
+                        <Text style={styles.buttonText}> {this.props.Product ? "Update" : "Save"} </Text>
+                    </Button>
                     {/*</View>*/}
                 </Footer>
-                {this.state.loading?
-                    <Loading/>:null}
+                {this.state.loading ?
+                    <Loading/> : null}
+
+                {/* SELCT SERVICE MODAL START */}
+                <Modal style={customStyle.modal}
+                    // transparent={true}
+                       visible={this.state.serviceModal}
+                       onRequestClose={() => {
+                           this.setState({serviceModal: false})
+                       }}>
+                    <Header androidStatusBarColor={colors.statusBar}
+                            style={{backgroundColor: colors.appLayout}}>
+                        <Left style={{flex:1}}>
+                            <Button transparent style={{paddingHorizontal: 10}} onPress={() => {
+                                this.setState({serviceModal: false})
+                            }}>
+                                <FIcon name='arrow-left' size={20} color={'white'}/>
+                            </Button>
+                        </Left>
+                        <Body style={{flex:7}}>
+                        <Item rounded search boadered style={{
+                            backgroundColor: 'white',
+                            height: 40}}>
+                            <Input
+                                value={this.state.query}
+                                placeholder="Search.."
+                                onChangeText={(text) => {
+                                    this._debouncedFindCategory(text), this.setState({query: text})
+                                }}/>
+                            {
+                                this.state.query ?
+                                    <Button style={{paddingHorizontal: 10}}
+                                            onPress={() => {
+                                                this.setState({query: ''})
+                                            }} transparent>
+                                        <FIcon name='x' size={20}/>
+                                    </Button> : null
+                            }
+                        </Item>
+                        </Body>
+                    </Header>
+                    <Content padder>
+                        <FlatList
+                            data={this.state.myServices}
+                            _keyExtractor={(item, index) => index.toString()}
+                            keyboardShouldPersistTaps='always'
+                            renderItem={({item, index}) =>
+                                <ListItem onPress={() => {
+                                    this.setState({selectedService: item, serviceModal: false})
+                                }}>
+                                    <Text>{item.title}</Text>
+                                </ListItem>
+                            }
+                        />
+                    </Content>
+
+                </Modal>
+                {/* SELCT CATEGORY MODAL STOP */}
             </Container>
+
 
         );
     }
 }
 
 AddProduct.defaultProps = {};
-const GooglePlaceSerachStyle={
+const GooglePlaceSerachStyle = {
     textInputContainer: {
         width: '100%',
         backgroundColor: 'rgba(0,0,0,0)',
         borderTopWidth: 0,
         borderBottomWidth: 0,
-        padding:0
+        padding: 0
     },
     //container:{
     //padding:0,
@@ -633,13 +718,13 @@ const GooglePlaceSerachStyle={
         fontSize: 16,
         color: colors.whiteText,
         // marginVertical: 5,
-        height:40,
-        margin:0 ,
-        marginTop:0,
-        marginLeft:0,
-        marginRight:0,
-        paddingTop:0,
-        paddingBottom:0
+        height: 40,
+        margin: 0,
+        marginTop: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        paddingTop: 0,
+        paddingBottom: 0
     },
 
 }
@@ -764,7 +849,7 @@ const styles = StyleSheet.create({
         width: '100%',
         //marginBottom: 4,
         //marginTop: 4,
-        height:50,
+        height: 50,
         maxHeight: 100
     },
     autosuggestionView: {
@@ -774,7 +859,7 @@ const styles = StyleSheet.create({
         padding: 10,
         //paddingLeft: 0,
         width: '100%',
-        backgroundColor: '#ececec',flexGrow:1
+        backgroundColor: '#ececec', flexGrow: 1
     },
     s50325ddf: {
         backgroundColor: `rgba(0, 0, 0, 0.11)`,
@@ -859,9 +944,9 @@ const styles = StyleSheet.create({
         width: '100%',
         //backgroundColor: 'rgba(0,0,0,0)',
         borderTopWidth: 0,
-        borderBottomWidth:0,
-        margin:0,
-        height:60
+        borderBottomWidth: 0,
+        margin: 0,
+        height: 60
     },
     description: {
         fontWeight: 'bold'
@@ -880,7 +965,7 @@ const styles = StyleSheet.create({
         width: `100%`,
         marginBottom: 4,
         marginTop: 4,
-        height:50
+        height: 50
     },
     autosuggestCont: {
         //padding: 10,
@@ -967,7 +1052,7 @@ const styles = StyleSheet.create({
 export {styles};
 export default Meteor.createContainer(() => {
     return {
-        categories: Meteor.collection('categories').find(),
-        myServices: Meteor.collection('service').find()
+       // categories: Meteor.collection('categories').find(),
+      //  myServices: Meteor.collection('service').find()
     }
 }, AddProduct);

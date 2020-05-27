@@ -21,7 +21,7 @@ class MessageCount extends Component {
     }
 
     render() {
-        console.log(this.props.unreadMessages)
+        // console.log(this.props.unreadMessages)
         return (
             <View
                 // style={{position: 'absolute', top:-5,right:-5}}

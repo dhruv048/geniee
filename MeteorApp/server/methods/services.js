@@ -500,9 +500,9 @@ Meteor.methods({
                             imageIds.push(imageId);
                             if (productInfo.images.length == imageIds.length) {
                                 productInfo.images = imageIds;
-                                console.log('update',Id, imageIds)
+                                console.log('update', Id, imageIds)
                                 Products.update({_id: productId}, {
-                                    $set:productInfo
+                                        $set: productInfo
                                         // $set: {
                                         //     title: productInfo.title,
                                         //     description: productInfo.description,
@@ -678,7 +678,7 @@ Meteor.methods({
         const collection = Service.rawCollection()
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
         const defaultRating = {'id': '000', 'avgRate': 0, 'count': 0};
-        const defaultUser = {'id': '000', 'profile':{'name': '','profileImage': null}} ;
+        const defaultUser = {'id': '000', 'profile': {'name': '', 'profileImage': null}};
         const categoryLookup = {
             from: "MainCategories",
             let: {catId: "$categoryId"},
@@ -723,7 +723,7 @@ Meteor.methods({
                     if: {"$eq": ["$servRatings", []]}, then: defaultRating, else: {$arrayElemAt: ["$servRatings", 0]}
                 }
             },
-            Owner:{
+            Owner: {
                 $cond: {
                     if: {"$eq": ["$users", []]}, then: defaultUser, else: {$arrayElemAt: ["$users", 0]}
                 }
@@ -739,14 +739,14 @@ Meteor.methods({
         //     description: 1,
         // };
         //  return Category.find().fetch();
-        const query=obj.subCatIds? {categoryId: {$in: obj.subCatIds}}:{};
+        const query = obj.subCatIds ? {categoryId: {$in: obj.subCatIds}} : {};
         return Async.runSync(function (done) {
             aggregate([
                 {
                     $geoNear: {
                         near: {type: "Point", coordinates: obj.coords},
                         distanceField: "dist.calculated",
-                        query:query,
+                        query: query,
                         spherical: true,
                         distanceMultiplier: 0.001
                     }
@@ -844,6 +844,10 @@ Meteor.methods({
     'getMyProducts': () => {
         let loggedUser = Meteor.userId() || "NA";
         return Products.find({serviceOwner: loggedUser}, {sort: {createDate: -1}}).fetch();
+    },
+
+    getPopularProducts(_skip = 0, _limit = 0) {
+        return Products.find({}, {sort: {views: -1}, skip: _skip, limit: _limit}).fetch();
     },
 
     'geOwnServiceList': () => {
