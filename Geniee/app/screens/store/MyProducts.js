@@ -58,7 +58,7 @@ class MyProducts extends Component {
                 console.log('this is due to error. '+err);
             }
             else{
-                this.setState({Products: res});
+                this.setState({Products: res.result});
             }
         });
         this.setState({

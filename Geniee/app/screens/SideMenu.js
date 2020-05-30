@@ -135,7 +135,7 @@ class SideMenu extends PureComponent {
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Dashboard")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Home</Text>
+                                style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Dashboard</Text>
                         </View>
                     </TouchableNativeFeedback>
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Orders")}>

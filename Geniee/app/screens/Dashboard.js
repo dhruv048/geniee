@@ -67,16 +67,16 @@ class Dashboard extends Component {
         this.springValue = new Animated.Value(100);
 
         this.partners = [
-            {
-                title: "",
-                imgSource: require("../images/baadshah_logo.jpg"),
-                onPress: this.gotoBB,
-            },
-            {
-                title: "EAT-FIT",
-                imgSource: require("../images/EF2.jpg"),
-                onPress: this.gotoEatFit,
-            },
+        {
+            title: "",
+            imgSource: require("../images/baadshah_logo.jpg"),
+            onPress: this.gotoBB,
+        },
+        {
+            title: "EAT-FIT",
+            imgSource: require("../images/EF2.jpg"),
+            onPress: this.gotoEatFit,
+        },
         ]
 
         //this.onClick = this.onClick.bind(this);
@@ -112,7 +112,7 @@ class Dashboard extends Component {
             ToastAndroid.BOTTOM,
             0,
             50,
-        );
+            );
 
         this.setState({backClickCount: 1}, () => {
             Animated.sequence([
@@ -124,7 +124,7 @@ class Dashboard extends Component {
                         duration: 300,
                         useNativeDriver: true,
                     }
-                ),
+                    ),
                 Animated.timing(
                     this.springValue,
                     {
@@ -132,12 +132,12 @@ class Dashboard extends Component {
                         duration: 300,
                         useNativeDriver: true,
                     }
-                ),
+                    ),
 
-            ]).start(() => {
-                this.setState({backClickCount: 0});
+                ]).start(() => {
+                    this.setState({backClickCount: 0});
+                });
             });
-        });
 
     }
 
@@ -149,32 +149,36 @@ class Dashboard extends Component {
     async componentDidMount() {
         let MainCategories = await AsyncStorage.getItem("Categories");
         if (MainCategories) {
+            console.log('MainCategories',MainCategories)
             MainCategories = JSON.parse(MainCategories);
             this.setState({categories: MainCategories, loading: false});
             this.arrayholder = this.props.categories ? this.props.categories : MainCategories;
         }
-        SplashScreen.hide();
-        Navigation.events().bindComponent(this);
-        Meteor.subscribe('aggChatChannels');
-        if (this.props.notificationCount.length > 0)
-            this.setState({notificationCount: this.props.notificationCount[0].totalCount})
-        Meteor.call('getActiveAdvertises', (err, res) => {
+        else{
+           MainCategories=[]; 
+       }
+       SplashScreen.hide();
+       Navigation.events().bindComponent(this);
+       Meteor.subscribe('aggChatChannels');
+       if (this.props.notificationCount.length > 0)
+        this.setState({notificationCount: this.props.notificationCount[0].totalCount})
+    Meteor.call('getActiveAdvertises', (err, res) => {
             // console.log("banners",err, res)
             if (!err) {
                 this.setState({Adds: res});
             }
         });
-        this.granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-                'title': 'Location Permission',
-                'message': 'This App needs access to your location ' +
-                'so we can know where you are.'
-            }
+    this.granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+            'title': 'Location Permission',
+            'message': 'This App needs access to your location ' +
+            'so we can know where you are.'
+        }
         )
-        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
-            Geolocation.getCurrentPosition(
-                (position) => {
+    if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+        Geolocation.getCurrentPosition(
+            (position) => {
                     //  console.log(position);
                     let region = {
                         latitude: position.coords.latitude,
@@ -189,12 +193,12 @@ class Dashboard extends Component {
                     console.log(error.code, error.message);
                 },
                 {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
-            );
-        } else {
-            console.log("Location permission denied")
-        }
-        this.watchID = Geolocation.watchPosition(
-            (position) => {
+                );
+    } else {
+        console.log("Location permission denied")
+    }
+    this.watchID = Geolocation.watchPosition(
+        (position) => {
                 //   console.log(position);
                 let region = {
                     latitude: position.coords.latitude,
@@ -207,12 +211,12 @@ class Dashboard extends Component {
                 console.log(error.code, error.message);
             },
             {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
-        );
+            );
 
-        this.messageListener()
-            .catch(e => {
-                console.log(e)
-            });
+    this.messageListener()
+    .catch(e => {
+        console.log(e)
+    });
 
 
         //Get Nearby services
@@ -220,18 +224,21 @@ class Dashboard extends Component {
 
         //Store All Catefories
         Meteor.subscribe('categories-list', () => {
-            let MaiCategories = this.props.categories;
             //console.log(MainCategories)
-            this.setState({categories: MaiCategories, loading: false});
-            this.arrayholder = this.props.categories ? this.props.categories : MaiCategories;
-            AsyncStorage.setItem("Categories", JSON.stringify(MainCategories))
+            if(this.props.categories.length>0){
+                let MainCategories=this.props.categories;
+                this.setState({categories: MainCategories, loading: false});
+
+                this.arrayholder = MainCategories  
+                AsyncStorage.setItem("Categories", JSON.stringify(MainCategories))
+            }
         });
 
         //Get Popular Products
         Meteor.call("getPopularProducts", 0, 6, (err, res) => {
             if (!err) {
-                //  console.log(res)
-                this.setState({popularProducts: res})
+                console.log(res)
+                this.setState({popularProducts: res.result})
             }
             else {
                 console.log(err)
@@ -295,7 +302,7 @@ class Dashboard extends Component {
             if (notificationOpen.notification.data.navigate) {
                 console.log("subscribe & Navigate");
                 // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-                goToRoute(this.props.componentId, notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
+                    goToRoute(this.props.componentId, notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
                 // });
             }
         });
@@ -425,7 +432,7 @@ class Dashboard extends Component {
         return (
             <View key={item._id} style={styles.containerStyle}>
 
-                <TouchableOpacity onPress={() => this._itemClick(item)}>
+            <TouchableOpacity onPress={() => this._itemClick(item)}>
                     {/*<ImageBackground source={require('../images/bgLogo.png')}
                         style={{justifyContent: 'center', alignItems: 'center', alignSelf: 'stretch'}}
         >
@@ -435,21 +442,21 @@ class Dashboard extends Component {
                             backgroundColor: 'rgba(0,0,0,0.5)',
                             padding: 10
                         }}>*/}
-                    <Body>
-                    <Icon name={item.icon} size={18} style={styles.catIcon}/>
-                    </Body>
+                        <Body>
+                        <Icon name={item.icon} size={18} style={styles.catIcon}/>
+                        </Body>
 
-                    <Text style={{
-                        textAlign: 'center',
-                        fontWeight: '200',
-                        color: colors.appLayout,
-                        fontSize: 10
-                    }}>{item.mainCategory}</Text>
+                        <Text style={{
+                            textAlign: 'center',
+                            fontWeight: '200',
+                            color: colors.appLayout,
+                            fontSize: 10
+                        }}>{item.mainCategory}</Text>
                     {/*</View>
                     </ImageBackground>*/}
-                </TouchableOpacity>
-            </View>
-        )
+                    </TouchableOpacity>
+                    </View>
+                    )
     }
     _getListItem = (data) => {
         let rowData = data.item;
@@ -459,61 +466,61 @@ class Dashboard extends Component {
         console.log(distance);
         return (
             <View key={data.item._id} style={styles.serviceList}>
-                <TouchableWithoutFeedback onPress={() => {
-                    this._handlItemPress(data.item)
-                }}>
-                    <ListItem thumbnail>
-                        <Left>
-                            {rowData.coverImage === null ?
+            <TouchableWithoutFeedback onPress={() => {
+                this._handlItemPress(data.item)
+            }}>
+            <ListItem thumbnail>
+            <Left>
+            {rowData.coverImage === null ?
                                 //   <Thumbnail style={styles.banner} square source={dUser}/> :
                                 null :
                                 <Thumbnail style={styles.banner}
-                                           source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
-                        </Left>
-                        <Body>
-                        <Text numberOfLines={1} style={styles.serviceTitle}>{rowData.title}</Text>
-                        {rowData.location.formatted_address ?
-                            <Text note numberOfLines={1}
-                                  style={styles.serviceAddress}>{rowData.location.formatted_address}</Text> : null}
+                                source={{uri: settings.API_URL + 'images/' + rowData.coverImage}}/>}
+                                </Left>
+                                <Body>
+                                <Text numberOfLines={1} style={styles.serviceTitle}>{rowData.title}</Text>
+                                {rowData.location.formatted_address ?
+                                    <Text note numberOfLines={1}
+                                    style={styles.serviceAddress}>{rowData.location.formatted_address}</Text> : null}
 
-                        {distance ?
-                            <Text note
-                                  style={styles.serviceDist}>{distance} KM</Text> : null}
-                        <View style={styles.serviceAction}>
-                            <StarRating
-                                starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>
+                                    {distance ?
+                                        <Text note
+                                        style={styles.serviceDist}>{distance} KM</Text> : null}
+                                        <View style={styles.serviceAction}>
+                                        <StarRating
+                                        starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>
                             {/*{this.averageRating(rowData.ratings) > 0 ?
                                 <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
                                     <Icon name={'star'}
                                         style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
                                     </Text> : null}*/}
-                        </View>
-                        </Body>
-                        <Right>
-                            {(data.item.contact || data.item.contact1) ?
-                                <Button transparent style={styles.serviceIconBtn} onPress={() => {
-                                    MyFunctions._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
-                                }}>
+                                    </View>
+                                    </Body>
+                                    <Right>
+                                    {(data.item.contact || data.item.contact1) ?
+                                        <Button transparent style={styles.serviceIconBtn} onPress={() => {
+                                            MyFunctions._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
+                                        }}>
                                     {/*<Icon name={'call'} color={'green'}/>*/}
                                     <Icon name={'phone'} size={20} style={styles.catIcon}/>
-                                </Button>
-                                : null}
+                                    </Button>
+                                    : null}
 
-                        </Right>
+                                    </Right>
 
-                    </ListItem>
-                </TouchableWithoutFeedback>
-            </View>
-        )
+                                    </ListItem>
+                                    </TouchableWithoutFeedback>
+                                    </View>
+                                    )
     }
 
     _renderItem({item, index}) {
         return (
             <View key={index} style={{}}>
-                <Thumbnail square style={{width: '100%', height: Math.round(viewportWidth * 0.29), resizeMode: 'cover'}}
-                           source={{uri: settings.IMAGE_URL + item.src}}/>
+            <Thumbnail square style={{width: '100%', height: Math.round(viewportWidth * 0.29), resizeMode: 'cover'}}
+            source={{uri: settings.IMAGE_URL + item.src}}/>
             </View>
-        );
+            );
     }
 
     _handleProductPress = (pro) => {
@@ -533,67 +540,80 @@ class Dashboard extends Component {
         let item = data.item;
         return (
             <TouchableOpacity onPress={() => this._handleProductPress(item)}
-                              style={styles.productContainerStyle}>
-                {/*<Product key={item._id} product={item}/>*/}
-                <Card key={item._id} style={customStyle.Card}>
-                    <CardItem cardBody style={{width: '100%'}}>
+            style={styles.productContainerStyle}>
+        {/*<Product key={item._id} product={item}/>*/}
+        <Card key={item._id} style={customStyle.Card}>
+        <CardItem cardBody style={{width: '100%'}}>
 
-                        <Image source={{uri: settings.IMAGE_URL + item.images[0]}}
-                               style={{flex: 1, width: undefined, height: 70, resizeMode: 'cover'}}/>
-                        <View style={{
-                            position: 'absolute',
-                            top: 5,
-                            left: 5,
-                            right: 5,
-                            bottom: 5,
-                            borderWidth: 1,
-                            borderColor: 'rgba(253, 253, 253, 0.2)'
-                        }}>
-                            {item.discount ?
-                                <View style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    right: 0,
-                                    backgroundColor: colors.primary,
-                                    opacity: 1,
-                                    borderRadius: 5,
-                                    textAlign: 'center',
-                                    padding: 2
-                                }}>
-                                    <Text style={{fontSize: 8, color: 'white'}}>{item.discount}% off</Text>
-                                </View>
-                                : null}
-                        </View>
+        <Image source={{uri: settings.IMAGE_URL + item.images[0]}}
+        style={{flex: 1, width: undefined, height: 70, resizeMode: 'cover'}}/>
+        <View style={{
+            position: 'absolute',
+            top: 5,
+            left: 5,
+            right: 5,
+            bottom: 5,
+            borderWidth: 1,
+            borderColor: 'rgba(253, 253, 253, 0.2)'
+        }}>
+        {item.discount ?
+            <View style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                backgroundColor: colors.primary,
+                opacity: 1,
+                borderRadius: 5,
+                textAlign: 'center',
+                padding: 2
+            }}>
+            <Text style={{fontSize: 8, color: 'white'}}>{item.discount}% off</Text>
+            </View>
+            : null}
+            </View>
 
-                    </CardItem>
-                    <CardItem style={{paddingTop: 0, paddingHorizontal:2}}>
-                        <Button style={{flex: 1, paddingLeft: 0, paddingRight: 0, paddingBottom: 0, paddingTop: 0}}
-                                transparent
-                                onPress={() => {
-                                }}
-                        >
-                            <Body>
-                            <Text
-                                style={{fontSize: 12, color: colors.primaryText}}
-                                numberOfLines={1}
-                            >{item.title}</Text>
-                            <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
+            </CardItem>
+            <CardItem style={{paddingTop: 0, paddingHorizontal:2}}>
+            <Button style={{flex: 1, paddingLeft: 0, paddingRight: 0, paddingBottom: 0, paddingTop: 0}}
+            transparent
+            onPress={() => {
+            }}
+            >
+            <Body>
+            <Text
+            style={{fontSize: 12, color: colors.primaryText}}
+            numberOfLines={1}
+            >{item.title}</Text>
+            <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+            }}>
+            <Text>
+            <Icon name={'home'} size={10}
+            color={colors.gray_200}/></Text>
+            <Text numberOfLines={1} note style={{fontSize: 12, marginLeft:3}}>
+            {item.Service.title || ""}
+            </Text>
 
-                                <Text note style={{
-                                    fontSize: 10,
-                                    paddingLeft: 2,
-                                    paddingRight: 2,
-                                    zIndex: 1000,
-                                    backgroundColor: '#fdfdfd'
-                                }}>Rs. {item.price}</Text>
-                            </View>
-                            </Body>
-                        </Button>
-                    </CardItem>
-                </Card>
+            </View>
+            <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
+
+            <Text note style={{
+                fontSize: 10,
+                paddingLeft: 2,
+                paddingRight: 2,
+                zIndex: 1000,
+                backgroundColor: '#fdfdfd'
+            }}>Rs. {item.price}</Text>
+            </View>
+
+            </Body>
+            </Button>
+            </CardItem>
+            </Card>
 
             </TouchableOpacity>
-        )
+            )
     }
 
     closePickLocation() {
@@ -606,348 +626,348 @@ class Dashboard extends Component {
 
         return (
             <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
-                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
-                    <Left style={{flex: 1}}>
-                        <CogMenu componentId={this.props.componentId}/>
-                    </Left>
-                    {/*<Body>*/}
-                    {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
-                    {/*Home*/}
-                    {/*</Text>*/}
-                    {/*</Body>*/}
+            <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+            <Left style={{flex: 1}}>
+            <CogMenu componentId={this.props.componentId}/>
+            </Left>
+        {/*<Body>*/}
+    {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
+{/*Home*/}
+{/*</Text>*/}
+{/*</Body>*/}
 
-                    <Right style={{flex: 1, marginRight: 5}}>
-                        <Button onPress={() => goToRoute(this.props.componentId, 'WishListEF')} transparent>
-                            <Icon name='heart' style={{fontSize: 24, color: 'white'}}/>
-                            {this.state.wishList.length > 0 ?
-                                <Badge
-                                    style={{position: 'absolute', height: 18, right: 0}}>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '100',
-                                        color: 'white',
-                                        lineHeight: 18
-                                    }}>{this.state.wishList.length}</Text></Badge>
-                                : null}
-                        </Button>
-                        <Button onPress={() => goToRoute(this.props.componentId, 'CartEF')} transparent>
-                            <NBIcon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
-                            {this.state.totalCount > 0 ?
-                                <Badge
-                                    style={{position: 'absolute', height: 18, right: 0}}>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '100',
-                                        color: 'white',
-                                        lineHeight: 18
-                                    }}>{this.state.totalCount}</Text></Badge> : null}
-                        </Button>
-                        <Button onPress={() => goToRoute(this.props.componentId, 'Notification')} transparent>
-                            <NBIcon name='ios-notifications' style={{fontSize: 29, color: 'white'}}/>
-                            {this.state.notificationCount > 0 ?
-                                <Badge
-                                    style={{position: 'absolute', height: 18, right: 0}}>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '100',
-                                        color: 'white',
-                                        lineHeight: 18
-                                    }}>{this.state.notificationCount}</Text></Badge> : null}
-                        </Button>
-                        {/*<Button transparent onPress={this.handleOnPress}>*/}
-                        {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
-                    </Right>
-                </Header>
-                {/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
-                <Content style={{width: '100%', flex: 1, paddingHorizontal: 10}}>
-                    <Item rounded search boadered style={{
-                        backgroundColor: 'white',
-                        marginLeft: 10,
-                        marginRight: 10,
-                        marginVertical: 20,
-                        height: 40
-                    }}>
-                        <Button transparent disabled={this.state.query.length < 3} onPress={this._search.bind(this)}>
-                            <Icon style={{
-                                paddingHorizontal: 20,
-                                fontSize: this.state.query.length > 2 ? 20 : 15,
-                                color: this.state.query.length > 2 ? colors.primary : ''
-                            }} name={"search"}/></Button>
-                        <Input
-                            style={{fontFamily: 'Roboto',}}
-                            placeholder={"Search your wish.."}
-                            underlineColorAndroid='rgba(0,0,0,0)'
-                            onChangeText={(searchText) => {
-                                this.setState({query: searchText})
-                            }}
-                        />
-                    </Item>
-
-
-                    {/*NEARBY SERVICE PROVIDERS LIST START*/}
-                    {this.state.nearByservice.length > 0 ?
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Services/Stores Nearby</Text>
-                                <Button transparent
-                                        onPress={() => goToRoute(this.props.componentId, "ServiceList", {Region: this.region})}>
-                                    <Text
-                                        style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
-                                data={this.state.nearByservice}
-                                horizontal={true}
-                                _keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({item, index}) =>
-
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            goToRoute(this.props.componentId, 'ServiceDetail', {
-                                                'Id': item,
-                                            })
-                                        }}>
-                                        <View key={item._id}
-                                              style={{
-                                                  backgroundColor: 'white',
-                                                  marginHorizontal: 5,
-                                                  width: 180,
-                                                  borderRadius: 4,
-                                                  flexDirection: 'column',
-                                                  alignItems: 'center',
-                                                  paddingHorizontal: 10,
-                                                  paddingBottom: 15
-                                              }}>
-
-                                            <Thumbnail style={{
-                                                width: 180,
-                                                height: 80,
-                                                marginBottom: 10,
-                                                borderTopLeftRadius: 4,
-                                                borderTopRightRadius: 4,
-                                                resizeMode: 'cover'
-                                            }}
-                                                       square
-                                                       source={item.coverImage ? {uri: settings.IMAGE_URL + item.coverImage} : require('../images/no-image.png')}/>
-
-                                            <View style={{flexDirection: 'row'}}>
-
-                                                <View style={{
-                                                    flex: 2,
-                                                    width: '100%',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}>
-                                                    <Thumbnail style={{borderRadius: 2,}} square small
-                                                               source={item.Owner.profile.profileImage ? {uri: getProfileImage(item.Owner.profile.profileImage)} : require('../images/user-icon.png')}/>
-                                                    {/*<Text note>{item.Owner.profile.name}</Text>*/}
-                                                    <View style={{
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                    }}>
-                                                        <Text>
-                                                            {item.hasOwnProperty('ratings') ? Math.round(item.Rating.avgRate) : 0}
-                                                        </Text>
-                                                        <Text>
-                                                            <Icon name={'star'} size={16}
-                                                                  color={colors.warning}/></Text>
-                                                    </View>
-                                                </View>
-                                                <View style={{borderColor: colors.appBackground, borderLeftWidth: 1}}/>
-                                                <View style={{flex: 7, alignItems: 'center', marginLeft: 5}}>
-                                                    <Text style={styles.cardTitle}
-                                                          numberOfLines={1}>{item.title}</Text>
-                                                    {item.Category ?
-                                                        <View style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center',
-                                                        }}>
-                                                            <Text>
-                                                                <Icon name={'tag'} size={16}
-                                                                      color={colors.gray_200}/></Text>
-                                                            <Text note style={{marginLeft: 5}}>
-                                                                {item.Category.subCategory || ""}
-                                                            </Text>
-
-                                                        </View> : null}
-                                                    {/*<Text note style={styles.cardNote}*/}
-                                                    {/*numberOfLines={1}>{item.location.formatted_address}</Text>*/}
-                                                    <View style={{
-                                                        flexDirection: 'row',
-                                                        justifyContent: 'space-around',
-                                                        width: '100%'
-                                                    }}>
-                                                        <View style={{alignItem: 'center', flexDirection: 'row'}}>
-                                                            {/*<Icon name={'location-arrow'} size={18}*/}
-                                                            {/*color={colors.gray_200}/>*/}
-                                                            <Text
-                                                                note>{Math.round(item.dist.calculated * 100) / 100} K.M</Text>
-                                                        </View>
-                                                        {/*{item.Category?*/}
-                                                        {/*<View style={{*/}
-                                                        {/*flexDirection: 'row',*/}
-                                                        {/*alignItems: 'center',*/}
-                                                        {/*justifyContent: 'center',*/}
-                                                        {/*}}>*/}
-                                                        {/*<Text>*/}
-                                                        {/*<Icon name={'tag'} size={16}*/}
-                                                        {/*color={colors.warning}/></Text>*/}
-                                                        {/*<Text note>*/}
-                                                        {/*{item.Category.subCategory}*/}
-                                                        {/*</Text>*/}
-
-                                                        {/*</View>:null}*/}
-                                                    </View>
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                }
-                            />
-                        </View>
-                        : null}
-
-                    {/*NEARBY SERVICE PROVIDERS LIST END*/}
+<Right style={{flex: 1, marginRight: 5}}>
+<Button onPress={() => goToRoute(this.props.componentId, 'WishListEF')} transparent>
+<Icon name='heart' style={{fontSize: 24, color: 'white'}}/>
+{this.state.wishList.length > 0 ?
+    <Badge
+    style={{position: 'absolute', height: 18, right: 0}}>
+    <Text style={{
+        fontSize: 10,
+        fontWeight: '100',
+        color: 'white',
+        lineHeight: 18
+    }}>{this.state.wishList.length}</Text></Badge>
+    : null}
+    </Button>
+    <Button onPress={() => goToRoute(this.props.componentId, 'CartEF')} transparent>
+    <NBIcon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
+    {this.state.totalCount > 0 ?
+        <Badge
+        style={{position: 'absolute', height: 18, right: 0}}>
+        <Text style={{
+            fontSize: 10,
+            fontWeight: '100',
+            color: 'white',
+            lineHeight: 18
+        }}>{this.state.totalCount}</Text></Badge> : null}
+        </Button>
+        <Button onPress={() => goToRoute(this.props.componentId, 'Notification')} transparent>
+        <NBIcon name='ios-notifications' style={{fontSize: 29, color: 'white'}}/>
+        {this.state.notificationCount > 0 ?
+            <Badge
+            style={{position: 'absolute', height: 18, right: 0}}>
+            <Text style={{
+                fontSize: 10,
+                fontWeight: '100',
+                color: 'white',
+                lineHeight: 18
+            }}>{this.state.notificationCount}</Text></Badge> : null}
+            </Button>
+        {/*<Button transparent onPress={this.handleOnPress}>*/}
+    {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
+    </Right>
+    </Header>
+{/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
+<Content style={{width: '100%', flex: 1, paddingHorizontal: 10}}>
+<Item rounded search boadered style={{
+    backgroundColor: 'white',
+    marginLeft: 10,
+    marginRight: 10,
+    marginVertical: 20,
+    height: 40,
+}}>
+<Button transparent disabled={this.state.query.length < 3} onPress={this._search.bind(this)}>
+<Icon style={{
+    paddingHorizontal: 20,
+    fontSize: this.state.query.length > 2 ? 20 : 15,
+    color: this.state.query.length > 2 ? colors.primary : ''
+}} name={"search"}/></Button>
+<Input
+style={{fontFamily: 'Roboto',}}
+placeholder={"Search your wish.."}
+underlineColorAndroid='rgba(0,0,0,0)'
+onChangeText={(searchText) => {
+    this.setState({query: searchText})
+}}
+/>
+</Item>
 
 
-                    {/*SPECIAL RESTURANT LISTING START*/}
-                    <View style={styles.block}>
-                        <View style={styles.blockHeader}>
-                            <Text style={styles.blockTitle}>Hungry? Order delicious foods now.</Text>
-                            {/*<Button onPress={() => {*/}
-                            {/*this.props.navigation.navigate('Shopping')*/}
-                            {/*}} transparent style={customStyle.buttonOutlinePrimary}>*/}
-                            {/*<Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
-                        </View>
-                        <View style={[styles.blockBody, {marginTop: 10, marginBottom: 15, padding: 0}]}>
-                            <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
-                                data={this.partners}
-                                horizontal={true}
-                                _keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({item, index}) =>
+{/*NEARBY SERVICE PROVIDERS LIST START*/}
+{this.state.nearByservice.length > 0 ?
+    <View style={styles.block}>
+    <View style={styles.blockHeader}>
+    <Text style={styles.blockTitle}>Services/Stores Nearby</Text>
+    <Button transparent
+    onPress={() => goToRoute(this.props.componentId, "ServiceList", {Region: this.region})}>
+    <Text
+    style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>
+    </View>
+    <FlatList
+    contentContainerStyle={{paddingBottom: 15}}
+    data={this.state.nearByservice}
+    horizontal={true}
+    _keyExtractor={(item, index) => index.toString()}
+    showsHorizontalScrollIndicator={false}
+    renderItem={({item, index}) =>
 
-                                    <View key={item._id} style={[styles.card, {
-                                        marginHorizontal: 5,
-                                        width: 200
-                                    }]}>
-                                        <TouchableOpacity onPress={item.onPress}>
-                                            <View>
-                                                <Image onPress={() => item.onPress} source={item.imgSource}
-                                                       style={{
-                                                           flex: 1,
-                                                           height: 100,
-                                                           width: '100%',
-                                                           resizeMode: 'cover',
-                                                           margin: 5
-                                                       }}/>
-                                                {item.title ?
-                                                    <View style={{
-                                                        top: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        bottom: 0,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        position: 'absolute'
-                                                    }}>
-                                                        <Text style={{
-                                                            color: 'white',
-                                                            fontWeight: '500',
-                                                            fontSize: 30
-                                                        }}>{item.title}</Text>
-                                                    </View> : null}
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                }
-                            />
-                        </View>
-                    </View>
+    <TouchableOpacity
+    onPress={() => {
+        goToRoute(this.props.componentId, 'ServiceDetail', {
+            'Id': item,
+        })
+    }}>
+    <View key={item._id}
+    style={{
+      backgroundColor: 'white',
+      marginHorizontal: 5,
+      width: 180,
+      borderRadius: 4,
+      flexDirection: 'column',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+      paddingBottom: 15
+  }}>
 
-                    {/*SPECIAL RESTURANT LISTING END*/}
+  <Thumbnail style={{
+    width: 180,
+    height: 80,
+    marginBottom: 10,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    resizeMode: 'cover'
+}}
+square
+source={item.coverImage ? {uri: settings.IMAGE_URL + item.coverImage} : require('../images/no-image.png')}/>
+
+<View style={{flexDirection: 'row'}}>
+
+<View style={{
+    flex: 2,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+}}>
+<Thumbnail style={{borderRadius: 2,}} square small
+source={item.Owner.profile.profileImage ? {uri: getProfileImage(item.Owner.profile.profileImage)} : require('../images/user-icon.png')}/>
+{/*<Text note>{item.Owner.profile.name}</Text>*/}
+<View style={{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+}}>
+<Text>
+{item.hasOwnProperty('ratings') ? Math.round(item.Rating.avgRate) : 0}
+</Text>
+<Text>
+<Icon name={'star'} size={16}
+color={colors.warning}/></Text>
+</View>
+</View>
+<View style={{borderColor: colors.appBackground, borderLeftWidth: 1}}/>
+<View style={{flex: 7, alignItems: 'center', marginLeft: 5}}>
+<Text style={styles.cardTitle}
+numberOfLines={1}>{item.title}</Text>
+{item.Category ?
+    <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+    }}>
+    <Text>
+    <Icon name={'tag'} size={16}
+    color={colors.gray_200}/></Text>
+    <Text note style={{marginLeft: 5}}>
+    {item.Category.subCategory || ""}
+    </Text>
+
+    </View> : null}
+{/*<Text note style={styles.cardNote}*/}
+{/*numberOfLines={1}>{item.location.formatted_address}</Text>*/}
+<View style={{
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%'
+}}>
+<View style={{alignItem: 'center', flexDirection: 'row'}}>
+{/*<Icon name={'location-arrow'} size={18}*/}
+{/*color={colors.gray_200}/>*/}
+<Text
+note>{Math.round(item.dist.calculated * 100) / 100} K.M</Text>
+</View>
+{/*{item.Category?*/}
+{/*<View style={{*/}
+{/*flexDirection: 'row',*/}
+{/*alignItems: 'center',*/}
+{/*justifyContent: 'center',*/}
+{/*}}>*/}
+{/*<Text>*/}
+{/*<Icon name={'tag'} size={16}*/}
+{/*color={colors.warning}/></Text>*/}
+{/*<Text note>*/}
+{/*{item.Category.subCategory}*/}
+{/*</Text>*/}
+
+{/*</View>:null}*/}
+</View>
+</View>
+</View>
+</View>
+</TouchableOpacity>
+}
+/>
+</View>
+: null}
+
+{/*NEARBY SERVICE PROVIDERS LIST END*/}
 
 
-                    <View style={[styles.block, {marginVertical: 20}]}>
-                        {this.state.Adds.length > 0 ?
-                            <View style={{
-                                minHeight: Math.round(viewportWidth * 0.29),
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}>
-                                <Carousel
-                                    ref={(c) => {
-                                        this._carousel = c;
-                                    }}
-                                    data={this.state.Adds}
-                                    renderItem={this._renderItem}
-                                    sliderWidth={viewportWidth - 20}
-                                    itemWidth={viewportWidth - 20}
+{/*SPECIAL RESTURANT LISTING START*/}
+<View style={styles.block}>
+<View style={styles.blockHeader}>
+<Text style={styles.blockTitle}>Hungry? Order delicious foods now.</Text>
+{/*<Button onPress={() => {*/}
+{/*this.props.navigation.navigate('Shopping')*/}
+{/*}} transparent style={customStyle.buttonOutlinePrimary}>*/}
+{/*<Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
+</View>
+<View style={[styles.blockBody, {marginTop: 10, marginBottom: 15, padding: 0}]}>
+<FlatList
+contentContainerStyle={{paddingBottom: 15}}
+data={this.partners}
+horizontal={true}
+_keyExtractor={(item, index) => index.toString()}
+showsHorizontalScrollIndicator={false}
+renderItem={({item, index}) =>
+
+<View key={item._id} style={[styles.card, {
+    marginHorizontal: 5,
+    width: 200
+}]}>
+<TouchableOpacity onPress={item.onPress}>
+<View>
+<Image onPress={() => item.onPress} source={item.imgSource}
+style={{
+   flex: 1,
+   height: 100,
+   width: '100%',
+   resizeMode: 'cover',
+   margin: 5
+}}/>
+{item.title ?
+    <View style={{
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute'
+    }}>
+    <Text style={{
+        color: 'white',
+        fontWeight: '500',
+        fontSize: 30
+    }}>{item.title}</Text>
+    </View> : null}
+    </View>
+    </TouchableOpacity>
+    </View>
+}
+/>
+</View>
+</View>
+
+{/*SPECIAL RESTURANT LISTING END*/}
+
+
+<View style={[styles.block, {marginVertical: 20}]}>
+{this.state.Adds.length > 0 ?
+    <View style={{
+        minHeight: Math.round(viewportWidth * 0.29),
+        justifyContent: 'center',
+        alignItems: 'center'
+    }}>
+    <Carousel
+    ref={(c) => {
+        this._carousel = c;
+    }}
+    data={this.state.Adds}
+    renderItem={this._renderItem}
+    sliderWidth={viewportWidth - 20}
+    itemWidth={viewportWidth - 20}
                                     //  slideStyle={{ viewportWidth: viewportWidth }}
                                     inactiveSlideOpacity={1}
                                     inactiveSlideScale={1}
                                     autoplay={true}
                                     loop={true}
-                                />
+                                    />
 
-                            </View> : null}
-                    </View>
+                                    </View> : null}
+                                    </View>
 
-                    {/*POPULAR PRODUCTS LIST START*/}
-                    {this.state.popularProducts.length > 0 ?
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular Products</Text>
-                                <Button transparent
-                                        onPress={() => goToRoute(this.props.componentId, "MyProducts", {Region: this.region})}>
+                                {/*POPULAR PRODUCTS LIST START*/}
+                                {this.state.popularProducts.length > 0 ?
+                                    <View style={styles.block}>
+                                    <View style={styles.blockHeader}>
+                                    <Text style={styles.blockTitle}>Popular Products</Text>
+                                    <Button transparent
+                                    onPress={() => goToRoute(this.props.componentId, "AllProducts", {Region: this.region})}>
                                     <Text
-                                        style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
-                                data={this.state.popularProducts}
-                                horizontal={false}
-                                _keyExtractor={(item, index) => index.toString()}
+                                    style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>
+                                    </View>
+                                    <FlatList
+                                    contentContainerStyle={{paddingBottom: 15}}
+                                    data={this.state.popularProducts}
+                                    horizontal={false}
+                                // _keyExtractor={(item, index) => index.toString()}
                                 showsHorizontalScrollIndicator={false}
                                 numColumns={3}
                                 renderItem={(item, index) => this._renderProduct(item, index)}
-                            />
-                        </View>
-                        : null}
+                                />
+                                </View>
+                                : null}
 
-                    {/*POPULAR PRODUCTS LIST LIST END*/}
+                            {/*POPULAR PRODUCTS LIST LIST END*/}
 
-                    {/*CATEGORIES LIST START*/}
-                    {this.state.categories.length > 0 ?
-                        <View style={styles.block}>
+                        {/*CATEGORIES LIST START*/}
+                        {this.state.categories.length > 0 ?
+                            <View style={styles.block}>
                             <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Availble Categories</Text>
-                                {/*<Button transparent*/}
-                                        {/*onPress={() => goToRoute(this.props.componentId, "MyProducts", {Region: this.region})}>*/}
-                                    {/*<Text*/}
-                                        {/*style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{paddingBottom: 15, marginTop:10}}
-                                data={this.state.categories}
-                                horizontal={true}
-                                _keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={ this.renderItem}
-                            />
-                        </View>
-                        : null}
+                            <Text style={styles.blockTitle}>Availble Categories</Text>
+                        {/*<Button transparent*/}
+                    {/*onPress={() => goToRoute(this.props.componentId, "MyProducts", {Region: this.region})}>*/}
+                {/*<Text*/}
+            {/*style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
+            </View>
+            <FlatList
+            contentContainerStyle={{paddingBottom: 15, marginTop:10}}
+            data={this.state.categories}
+            horizontal={true}
+            _keyExtractor={(item, index) => index.toString()}
+            showsHorizontalScrollIndicator={false}
+            renderItem={ this.renderItem}
+            />
+            </View>
+            : null}
 
-                    {/*CATEGORIES LIST LIST END*/}
+        {/*CATEGORIES LIST LIST END*/}
 
 
-                </Content>
-            </Container>
+        </Content>
+        </Container>
         )
-    }
+}
 }
 
 const styles = StyleSheet.create({
@@ -966,7 +986,7 @@ const styles = StyleSheet.create({
         //elevation: 5,
         width: viewportWidth/4,
         marginHorizontal: 5,
-        height: 80,
+        height: 90,
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center'

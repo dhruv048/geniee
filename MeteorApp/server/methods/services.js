@@ -841,14 +841,75 @@ Meteor.methods({
         });
     },
 
-    'getMyProducts': () => {
-        let loggedUser = Meteor.userId() || "NA";
-        return Products.find({serviceOwner: loggedUser}, {sort: {createDate: -1}}).fetch();
+    // 'getMyProducts': () => {
+    //     let loggedUser = Meteor.userId() || "NA";
+    //     return Products.find({serviceOwner: loggedUser}, {sort: {createDate: -1}}).fetch();
+    // },
+
+    // getPopularProducts(_skip = 0, _limit = 0) {
+    //     return Products.find({}, {sort: {views: -1}, skip: _skip, limit: _limit}).fetch();
+    // },
+
+    getPopularProducts(_skip = 0, _limit = 0){
+        const collection = Products.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+
+        const OwnerLookup = {
+            from: "service",
+            localField: "service",
+            foreignField: "_id",
+            as: "services"
+        };
+        const addValues = {
+            Service: {$arrayElemAt: ["$services", 0]}
+        };
+        return Async.runSync(function (done) {
+            aggregate([
+                {$sort: {views: -1}},
+                {$lookup: OwnerLookup},
+                {$addFields: addValues},
+                {$limit: _skip+_limit},
+                {$skip: _skip},
+            ], {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
     },
 
-    getPopularProducts(_skip = 0, _limit = 0) {
-        return Products.find({}, {sort: {views: -1}, skip: _skip, limit: _limit}).fetch();
-    },
+    getMyProducts(){
+        let loggedUser = Meteor.userId() || "NA";
+        const collection = Products.rawCollection()
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+
+        const OwnerLookup = {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users"
+        };
+        const addValues = {
+            Owner: {$arrayElemAt: ["$users", 0]}
+            };
+        return Async.runSync(function (done) {
+            aggregate([
+                {
+                    $match: {serviceOwner: loggedUser}
+                },
+                {$lookup: OwnerLookup},
+                {$addFields: addValues},
+                {$sort: {createDate: -1}}
+            ], {cursor: {}}).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+},
+
 
     'geOwnServiceList': () => {
         let loggedUser = Meteor.userId() || "NA";

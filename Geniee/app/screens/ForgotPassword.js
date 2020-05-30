@@ -6,6 +6,9 @@ import { hashPassword } from '../react-native-meteor/lib/utils';
 import {colors} from "../config/styles";
 import {navigateToRoutefromSideMenu} from "../Navigation";
 import {Navigation} from "react-native-navigation";
+import {goBack} from '../Navigation';
+import AsyncStorage from "@react-native-community/async-storage";
+
 //import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 class ForgotPassword extends Component {
@@ -38,6 +41,16 @@ class ForgotPassword extends Component {
     }
 
     _forgotPassword = () => {
+      if(!this.state.email){
+         ToastAndroid.showWithGravityAndOffset(
+                        'Plaese enter email',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+         return;
+      }
         console.log('sds');
         try {
             Meteor.call('forgotPasswordCustom',this.state.email, (err,res) => {
@@ -58,8 +71,8 @@ class ForgotPassword extends Component {
                         0,
                         50,
                     );
-
-                  this.setState({  setPassWord:true});
+                     AsyncStorage.setItem("Forgot_pss_email", this.state.email);
+                  this.setState({  setPassWord:true,email:''});
                 }
             });
         }
@@ -69,7 +82,8 @@ class ForgotPassword extends Component {
         }
     }
 
-    _setNewPassword=()=>{
+    _setNewPassword=async()=>{
+       let email = await  AsyncStorage.getItem("Forgot_pss_email");
         const {token,password,confirmPassword} = this.state;
         if(token && password && confirmPassword){
            if(password!==confirmPassword)
@@ -83,7 +97,8 @@ class ForgotPassword extends Component {
                );
            }
            else{
-               Meteor.Accounts.resetPassword(token,password,(err,res)=>{
+               // Meteor.Accounts.resetPassword(token,password,(err,res)=>{
+                Meteor.call('setPasswordCustom',email,token,password, (err,res)=>{
                    if(!err){
                        ToastAndroid.showWithGravityAndOffset(
                            'Password Reset Successfully!!' ,
@@ -93,11 +108,11 @@ class ForgotPassword extends Component {
                            50,
                        );
                        this.setState({  setPassWord:false});
-                       this.props.navigation.navigate('AuthLoading');
+                       goBack(this.this.props.componentId);
                    }
                    else{
                        ToastAndroid.showWithGravityAndOffset(
-                           err.message,
+                           err.reason,
                            ToastAndroid.LONG,
                            ToastAndroid.TOP,
                            0,
@@ -123,11 +138,7 @@ class ForgotPassword extends Component {
         return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <Container style={styles.container}>
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header style={{backgroundColor: '#094c6b'}}>
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     <Left>
                         <Button transparent onPress={()=>{navigateToRoutefromSideMenu(this.props.componentId,'Dashboard')}}>
                             <Icon style={{color: '#ffffff'}} name="arrow-back" />

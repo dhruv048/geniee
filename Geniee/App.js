@@ -103,17 +103,17 @@ class App extends Component {
             const {title, body} = notification;
             // this.showAlert(title, body);
             console.log('onNotification', notification)
-            // if (notification.data.title == "REMOVE_AUTH_TOKEN") {
-            //     try {
-            //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
-            //         Meteor.logout();
-            //         goToRoute(this.props.componentId'Auth');
-            //     }
-            //     catch (e) {
-            //         console.log(e.message)
-            //         goToRoute(this.props.componentId'Auth');
-            //     }
-            // }
+            if (notification.data.title == "REMOVE_AUTH_TOKEN") {
+                try {
+                    AsyncStorage.setItem(settings.USER_TOKEN_KEY, '');
+                    Meteor.logout();
+                   // goToRoute(this.props.componentId,'Auth');
+                }
+                catch (e) {
+                    console.log(e.message)
+                  //  goToRoute(this.props.componentId,'Auth');
+                }
+            }
             const channelId = new firebase.notifications.Android.Channel("Default", "Default", firebase.notifications.Android.Importance.High);
             firebase.notifications().android.createChannel(channelId);
 

@@ -34,6 +34,7 @@ import Notification from "./screens/Notification/Notification";
 import ServiceRatings from "./screens/services/ServiceRatings";
 import MyProducts from "./screens/store/MyProducts";
 import SearchResult from "./screens/SearchResult";
+import AllProducts from "./screens/store/AllProducts";
 
 Navigation.registerComponent('Dashboard', () => Dashboard);
 Navigation.registerComponent('SideMenu', () => SideMenu);
@@ -58,6 +59,7 @@ Navigation.registerComponent('ProductsEF', () => ProductsEF);
 Navigation.registerComponent('ProductDetailEF', () => ProductDetailEF);
 Navigation.registerComponent('ProductsBB', () => ProductsBB);
 Navigation.registerComponent('ProductDetailBB', () => ProductDetailBB);
+Navigation.registerComponent('AllProducts', () => AllProducts);
 Navigation.registerComponent('ContactUs', () => ContactUs);
 Navigation.registerComponent('ForgotPassword', () => ForgotPassword);
 Navigation.registerComponent('SignIn', () => SignIn);

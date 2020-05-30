@@ -12,12 +12,12 @@ Meteor.methods({
             createdBy = user.profile.createdBy
         }
         try {
-           let userId= Accounts.createUser({
-                password: userInfo.password,
-                username: userInfo.contact,
-                email: userInfo.email,
-                createdAt: new Date(),
-                profile: {
+         let userId= Accounts.createUser({
+            password: userInfo.password,
+            username: userInfo.contact,
+            email: userInfo.email,
+            createdAt: new Date(),
+            profile: {
                     // role: userInfo.role,
                     role: user.profile.role === 2 ? 1 : 0,
                     // profileimage: null,
@@ -28,18 +28,18 @@ Meteor.methods({
                     email: userInfo.email
                 }
             });
-        }
-        catch (e) {
-            console.log(e.message);
-            throw new Meteor.Error(401, e.message);
+     }
+     catch (e) {
+        console.log(e.message);
+        throw new Meteor.Error(401, e.message);
 
-        }
-    },
+    }
+},
 
-    'signUpUser': (userInfo) => {
-        try {
-            let userId =Accounts.createUser(userInfo);
-            if (userId) {
+'signUpUser': (userInfo) => {
+    try {
+        let userId =Accounts.createUser(userInfo);
+        if (userId) {
                 // Accounts.sendVerificationEmail(userId);
                 let user = Meteor.users.findOne({_id: userId});
                 var token = Random.secret();
@@ -61,11 +61,11 @@ Meteor.methods({
                             bcc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
                             subject: "Activate your account now!",
                             html: `<h4>Dear ${user.profile.name},</h4><br>
-                <p>Thank you very much for signing up with Geniee.</p><br>
-                    <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
-                    <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
-                    Regards, <br/>
-                    Geniee`,
+                            <p>Thank you very much for signing up with Geniee.</p><br>
+                            <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
+                            <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
+                            Regards, <br/>
+                            Geniee`,
                         }, function (err) {
                             if (err != null) {
                                 console.log(err.messsage);
@@ -129,14 +129,14 @@ Meteor.methods({
         console.log(email)
         let user = Accounts.findUserByEmail(email);
         // try {
-        if (!user) {
-            throw new Meteor.Error("User not found");
-        }
+            if (!user) {
+                throw new Meteor.Error("User not found");
+            }
 
-        const emails = pluckAddresses(user.emails);
-        const caseSensitiveEmail = emails.find(
-            email => email.toLowerCase() === email.toLowerCase()
-        );
+            const emails = pluckAddresses(user.emails);
+            const caseSensitiveEmail = emails.find(
+                email => email.toLowerCase() === email.toLowerCase()
+                );
         // const {email: realEmail, userr, token} =
         //  Accounts.generateResetToken(user._id, email, 'resetPassword');
         const token = randomNum().toString();
@@ -174,6 +174,39 @@ Meteor.methods({
 
     },
 
+    'setPasswordCustom': (email, Token, newPassword) => {
+        try {
+            let user = Accounts.findUserByEmail(email);
+            if (user && user.services.password.reset.token === Token) {
+                try {
+                    Accounts.setPassword(user._id, newPassword);
+                    Meteor.users.update({_id: user._id}, {
+                        $set: {
+                            'services.resume.loginTokens': [],
+                            'services.password.reset': ''
+                        }
+                    }, (err, res) => {
+                        if (!err) {
+                            FIREBASE_MESSAGING.sendTokenRefreshedMessage(user._id);
+                            return 1;
+                        }
+                        else {
+                            throw new Meteor.Error(500, err.reason);
+                        }
+                    });
+                }
+                catch (e) {
+                    throw new Meteor.Error(500, e.message);
+                }
+            }
+            else {
+                throw new Meteor.Error(404, 'Invalid Token!!');
+            }
+        }
+        catch (e) {
+            throw new Meteor.Error(401, 'Something went wrong. Please send request for new code.');
+        }
+    },
 
     'addDeviceUniqueId': (uniqueId) => {
         Meteor.users.update({_id: Meteor.userId()}, {
@@ -207,7 +240,7 @@ Meteor.methods({
                         'emails.0.verified': true
                     }
                 }
-            )
+                )
             return true;
         }
         else {
@@ -226,7 +259,7 @@ Meteor.methods({
                     'profile.contactNo': profile.contactNo
                 }
             }
-        )
+            )
     }
 });
 const pluckAddresses = (emails = []) => emails.map(email => email.address);
