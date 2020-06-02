@@ -1,7 +1,7 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent,Fragment} from 'react';
 import {Body, Container, Content, Header, Icon, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
-import {StatusBar, StyleSheet, Alert, TouchableNativeFeedback, View, Image, TouchableOpacity} from "react-native";
+import {StatusBar, StyleSheet, Alert, TouchableNativeFeedback, View, Image, TouchableOpacity,SafeAreaView} from "react-native";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 import ContactUs from "./ContactUs";
@@ -93,9 +93,10 @@ class SideMenu extends PureComponent {
 
     render() {
         return (
-            <Container>
+            <Fragment>
+            <SafeAreaView style={{ flex: 0,   }} />
                 <Header androidStatusBarColor={colors.statusBar}
-                        style={{height: 220, backgroundColor: colors.inputBackground}}>
+                        style={{height: 220, backgroundColor: colors.appLayout}} >
                     <Body style={{justifyContent: 'center', alignItems: 'center'}}>
                     {this.state.user ?
                         <TouchableOpacity onPress={this.navigateToRoute.bind(this,'Profile')}>
@@ -131,7 +132,7 @@ class SideMenu extends PureComponent {
 
 
                 </Header>
-                <Content style={{flex: 1, marginTop: 1}}>
+                <Content style={{flex: 1, marginTop: 1, backgroundColor:'white'}}>
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Dashboard")}>
                         <View style={[style.screenStyle]}>
                             <Text
@@ -218,7 +219,7 @@ class SideMenu extends PureComponent {
                     {/*</View>*/}
 
                 </Content>
-            </Container>
+            </Fragment>
         )
     }
 }

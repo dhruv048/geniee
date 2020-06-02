@@ -1,7 +1,8 @@
 MeteorApp/node_modules/
 MeteorApp/.deploy/
 .idea/
-SApp/ios
-SApp/node_modules/
-SApp/app/config/settings.js
-SApp/package-lock.json
+Geniee/ios
+Geniee/node_modules/
+Geniee/app/config/settings.js
+Geniee/package-lock.json
+Geniee/android/app/build/
