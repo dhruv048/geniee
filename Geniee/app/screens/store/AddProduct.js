@@ -20,7 +20,6 @@ import {
     Text,
     Item,
     Icon,
-    Input,
     ListItem,
     Textarea,
     CheckBox,
@@ -45,7 +44,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import settings from "../../config/settings";
 import FIcon from 'react-native-vector-icons/Feather';
 import Loading from '../../components/Loading';
-
+import {
+  GalioProvider,
+  Input,
+  Button as GButton,
+  Radio,
+  Text as GText,Checkbox
+} from 'galio-framework';
+import {customGalioTheme} from '../../config/themes';
 
 class AddProduct extends React.PureComponent {
     constructor(props) {
@@ -363,8 +369,8 @@ class AddProduct extends React.PureComponent {
                     }}
                            source={{uri: item.uri}}/>
                     <Button onPress={() => this.removeImage(item)} transparent
-                            style={{position: 'absolute', top: -15, right: -5}}>
-                        <FIcon name='x-circle' size={20} color={colors.danger}/>
+                            style={{position: 'absolute', top: -12, right: 0}}>
+                        <FIcon name='x-circle' style={{backgroundColor:'white',top:0}} size={20} color={colors.danger}/>
                     </Button>
                 </View>
 
@@ -379,6 +385,7 @@ class AddProduct extends React.PureComponent {
         // const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
 
         return (
+               <GalioProvider theme={customGalioTheme}>
             <Container style={styles.container}>
                 <StatusBar
                     backgroundColor={colors.statusBar}
@@ -402,7 +409,7 @@ class AddProduct extends React.PureComponent {
 
 
                     <Fragment>
-                        <SafeAreaView style={styles.sb85086c9} keyboardShouldPersistTaps='always'>
+                        <SafeAreaView style={styles.formContainer} keyboardShouldPersistTaps='always'>
                             {/*<View underlineColorAndroid='rgba(0,0,0,0)'*/}
                                   {/*style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>*/}
                                 {/*<Autocomplete*/}
@@ -434,19 +441,17 @@ class AddProduct extends React.PureComponent {
                                 {/*/>*/}
                             {/*</View>*/}
 
-                            <TextInput placeholder='Service (*)'
-                                       style={styles.inputBox}
-                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                       underlineColorAndroid='rgba(0,0,0,0)'
+                            <Input
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
+                   placeholder='Service (*)'
                                        onSubmitEditing={() => this.title.focus()}
                                        onKeyPress={()=>this.setState({serviceModal:true})}
                                        onFocus={()=>this.setState({serviceModal:true})}
                                        value={this.state.selectedService.title}
                             />
-                            <TextInput placeholder='Title (*)'
-                                       style={styles.inputBox}
-                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                       underlineColorAndroid='rgba(0,0,0,0)'
+                            <Input
+                  color={customGalioTheme.COLORS.INPUT_TEXT} 
+                  placeholder='Title (*)'
                                        onSubmitEditing={() => this.title.focus()}
                                        onChangeText={(title) => this.setState({title})}
                                        value={this.state.title}
@@ -462,55 +467,64 @@ class AddProduct extends React.PureComponent {
 
 
                             <View style={styles.multiField}>
-                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputBoxMultiField}
+                             <View style={{flex:1,marginRight:5}} >
+                                <Input
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Available Qty'
                                            keyboardType='phone-pad'
                                            onChangeText={(qty) => this.setState({qty})}
                                            value={this.state.qty}
                                 />
-                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputBoxMultiField}
+                                </View>
+                                  <View style={{flex:1,marginLeft:5}}>
+                                <Input
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Unit'
                                            onChangeText={(unit) => this.setState({unit})}
                                            value={this.state.unit}
                                 />
-
+</View>
                             </View>
                             <View style={styles.multiField}>
-                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputBoxMultiField}
+                             <View style={{flex:1,marginRight:5}} >
+                                <Input
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Price per Unit'
                                            keyboardType='phone-pad'
                                            onChangeText={(price) => this.setState({price})}
                                            value={this.state.price}
                                 />
-                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputBoxMultiField}
+                                </View>
+                                 <View style={{flex:1,marginLeft:5}}>
+                                <Input
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Discount in %'
                                            keyboardType='phone-pad'
                                            onChangeText={(discount) => this.setState({discount})}
                                            value={this.state.discount}
                                 />
-
+</View>
                             </View>
                             <View style={styles.multiField}>
-                                <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                           placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                           style={styles.inputBoxMultiField}
+                             <View style={{flex:1,marginRight:5}} >
+                                <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Radius in K.M (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(radius) => this.setState({radius})}
                                            value={this.state.radius}
                                 />
-                                <View style={styles.chkView}><CheckBox style={{marginEnd: 20}}
+                                </View>
+                                <View style={styles.chkView}>
+<Checkbox
+                      label=""
+                        initialValue={this.state.homeDelivery}
+                        color="primary"
+                        onChange={() => this._updateHomeDelivery}
+                      />
+                              {/*  <CheckBox style={{marginEnd: 20}}
                                                                        checked={this.state.homeDelivery}
-                                                                       onPress={this._updateHomeDelivery}/>
-                                    <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>{'Home Delivery'}</Text></View>
+                                                                       onPress={this._updateHomeDelivery}/>*/}
+                                    <Text style={{color: 'rgba(0, 0, 0, 0.44)', marginLeft:5}}>{'Home Delivery'}</Text></View>
                             </View>
                             <Textarea rowSpan={2} placeholder="Colors seperated ;"
                                       style={styles.inputTextarea}
@@ -528,9 +542,7 @@ class AddProduct extends React.PureComponent {
                                       value={this.state.sizes}
                             />
 
-                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                       style={styles.inputBox}
+                            <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Contact No (*)'
                                        keyboardType='phone-pad'
                                        onChangeText={(contact) => this.setState({contact})}
@@ -538,26 +550,18 @@ class AddProduct extends React.PureComponent {
                             />
 
 
-                            <TextInput underlineColorAndroid='rgba(0,0,0,0)'
-                                       placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                       style={styles.inputBox}
+                            <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Website'
                                        onChangeText={(webLink) => this.setState({webLink})}
                                        value={this.state.webLink}
                             />
-                            <FlatList style={styles.mainContainer}
-                                      data={this.state.images}
-                                      renderItem={this._getListItem}
-                                      keyExtracter={(item, index) => index.toString()}
-                                      horizontal={false}
-                                      numColumns={2}
-                            />
-                            <Button
+                            
+                          {/*}  <Button
                                 style={styles.button}
                                 onPress={() => this.ActionSheet.show()}>
                                 <Icon name={'ios-add'} color={'white'}/>
                                 <Text style={styles.buttonText}>Upload Image </Text>
-                            </Button>
+                            </Button>*/}
 
 
                             <View style={{marginTop: 22}}>
@@ -603,6 +607,24 @@ class AddProduct extends React.PureComponent {
                                 </Modal>
                             </View>
                         </SafeAreaView>
+                        <FlatList style={styles.mainContainer}
+                                      data={this.state.images}
+                                      renderItem={this._getListItem}
+                                      keyExtracter={(item, index) => index.toString()}
+                                      horizontal={false}
+                                      numColumns={2}
+                            />
+
+
+                             <GButton
+                             size="small"
+                  onPress={()=>this.ActionSheet.show()}
+                  style={{ marginVertical: 20,alignSelf
+                    :'center'}}
+                  loading={this.state.loading}
+                  disabled={this.state.loading}>
+                 Upload Image
+                </GButton>
                     </Fragment>
                     <ActionSheet
                         ref={o => this.ActionSheet = o}
@@ -616,14 +638,21 @@ class AddProduct extends React.PureComponent {
                         }}
                     />
                 </Content>
-                <Footer style={{backgroundColor: colors.appBackground, alignItems: 'center'}}>
-                    {/*<View style={styles.buttonView}>*/}
+                <Footer style={{backgroundColor: colors.appBackground, alignItems: 'center',paddingHorizontal:10,height:50}}>
+                    {/*<View style={styles.buttonView}>
                     <Button
                         style={styles.button}
                         onPress={this._saveService}>
                         <Text style={styles.buttonText}> {this.props.Product ? "Update" : "Save"} </Text>
                     </Button>
-                    {/*</View>*/}
+                </View>*/}
+                 <GButton
+                  onPress={this._saveService}
+                  style={{width: '100%', marginVertical: 20}}
+                  loading={this.state.loading}
+                  disabled={this.state.loading}>
+                 {this.props.Product ? "Update" : "Save"} 
+                </GButton>
                 </Footer>
                 {this.state.loading ?
                     <Loading/> : null}
@@ -684,7 +713,7 @@ class AddProduct extends React.PureComponent {
                 </Modal>
                 {/* SELCT CATEGORY MODAL STOP */}
             </Container>
-
+            </GalioProvider>
 
         );
     }
@@ -730,6 +759,13 @@ const GooglePlaceSerachStyle = {
 }
 
 const styles = StyleSheet.create({
+     formContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    flex: 1,
+    // width: '100%',
+  },
     screenHeader: {
         fontSize: 20,
         fontFamily: `Source Sans Pro`,
@@ -830,13 +866,16 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     inputTextarea: {
-        width: '100%',
-        backgroundColor: colors.inputBackground,
-        borderRadius: 10,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        color: colors.whiteText,
-        marginVertical: 5,
+        flexDirection: 'row',
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
+    borderWidth: customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
+    borderColor: customGalioTheme.COLORS.PLACEHOLDER,
+    paddingHorizontal: 16,
+    fontSize: customGalioTheme.SIZES.INPUT_TEXT,
+    color: customGalioTheme.COLORS.INPUT_TEXT,
+    marginVertical: 5,
     },
     autocompleteOptions: {
         backgroundColor: `rgba(243, 247, 255, 1)`,
@@ -979,9 +1018,9 @@ const styles = StyleSheet.create({
     },
     multiField: {
         flexDirection: 'row',
-        flexGrow: 1,
-        alignItems: 'flex-end',
-        justifyContent: 'center'
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-around',
     },
     inputBoxMultiField: {
         width: '48%',

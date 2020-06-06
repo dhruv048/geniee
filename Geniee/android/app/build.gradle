@@ -131,8 +131,8 @@ android {
         applicationId "com.geniee"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "1.0.13"
+        versionCode 16
+        versionName "1.0.15"
         // Enabling multidex support.
         multiDexEnabled true
     }

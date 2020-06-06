@@ -7,6 +7,8 @@ import CogMenu from "../components/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {backToRoot, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 //import Icon from 'react-native-vector-icons/Feather'
+import {GalioProvider, Input, Button as GButton} from 'galio-framework';
+import {customGalioTheme} from '../config/themes';
 
 const window = Dimensions.get('window');
 
@@ -27,7 +29,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%'
+        width: '100%',
     },
     inputBox: {
         flexDirection: 'row',
@@ -43,12 +45,15 @@ const styles = StyleSheet.create({
     inputTextarea: {
         flexDirection: 'row',
         width: '100%',
-        backgroundColor: colors.inputBackground,
-        borderRadius: 10,
+        backgroundColor: 'white',
+        borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
+        borderWidth:customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
+        borderColor:customGalioTheme.COLORS.PLACEHOLDER,
         paddingHorizontal: 16,
-        fontSize: 16,
-        color: colors.whiteText,
+        fontSize: customGalioTheme.SIZES.INPUT_TEXT,
+        color: customGalioTheme.COLORS.INPUT_TEXT,
         marginVertical: 5,
+
     },
     button: {
         width: '100%',
@@ -118,6 +123,7 @@ class ContactUs extends Component {
             contact: '',
             message: '',
             error: null,
+            loading:false,
         };
     }
 
@@ -172,7 +178,9 @@ class ContactUs extends Component {
                 email: email,
                 message: message
             };
+            this.setState({loading:true});
             Meteor.call('addContactUsMessage', contactInfo, (err, result) => {
+                this.setState({loading:false});
                 if (err) {
                     this.handleError(err.reason);
                 } else {
@@ -186,7 +194,9 @@ class ContactUs extends Component {
     render() {
 
         return (
+              <GalioProvider theme={customGalioTheme}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
             <Container style={styles.container}>
                 <StatusBar
                     backgroundColor={colors.statusBar}
@@ -212,36 +222,32 @@ class ContactUs extends Component {
                         </Text>
                     {/*</View>*/}
 
-                    <View><TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
+                    <View><Input
+                      color={customGalioTheme.COLORS.INPUT_TEXT}
                                    placeholder='Full name'
                                    placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
                                    onChangeText={(name) => this.setState({name})}
-                    /></View>
+                    />
 
-                    <View><TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
+                    <Input
+                      color={customGalioTheme.COLORS.INPUT_TEXT}
                                    placeholder='Email address'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
                                    keyboardType='email-address'
                                    onChangeText={(email) => this.setState({email})}
                                    textContentType={'emailAddress'}
-                    /></View>
+                    />
 
-                    <View><TextInput style={styles.inputBox}
-                                   underlineColorAndroid='rgba(0,0,0,0)'
+                   <Input
+                      color={customGalioTheme.COLORS.INPUT_TEXT}
                                    placeholder='Phone No.'
-                                   placeholderTextColor='#ffffff'
-                                   selectionColor='#ffffff'
                                    keyboardType='phone-pad'
                                    onChangeText={(contact) => this.setState({contact})}
-                    /></View>
+                    />
 
-                    <View><Textarea rowSpan={3} placeholder="Description (*)"
+                    <Textarea rowSpan={4} placeholder="Description (*)"
+
                                     style={styles.inputTextarea}
-                                    placeholderTextColor='#ffffff'
+                                    placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                     selectionColor='#ffffff'
                                     underlineColorAndroid='rgba(0,0,0,0)'
                                     //onSubmitEditing={() => this.contactNumber.focus()}
@@ -277,9 +283,19 @@ class ContactUs extends Component {
                         </View>
                     
                         <View>
-                                <TouchableOpacity  style={styles.button}  onPress={()=>this.handleContactUS()}>
+
+                         <GButton
+                      onPress={() => {
+                        this.handleContactUS();
+                      }}
+                      style={{width: '100%', marginVertical: 20}}
+                      loading={this.state.loading}
+                      disabled={this.state.loading}>
+                      Send
+                    </GButton>
+                             {/*}   <TouchableOpacity  style={styles.button}  onPress={()=>this.handleContactUS()}>
                                     <Text style={styles.buttonText}>SEND</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity>*/}
                             </View>
                     
                     {/*<View style={styles.buttons}>
@@ -299,8 +315,9 @@ class ContactUs extends Component {
                 
             </Container>
             </TouchableWithoutFeedback>
+              </GalioProvider>
         );
     }
 }
 
-export default ContactUs;
+export default (ContactUs);

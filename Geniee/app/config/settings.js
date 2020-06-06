@@ -62,6 +62,12 @@ export const ProductOwner = {
     BAADSHAH_BIRYANI:2,
 };
 
+export const BusinessType = {
+    SERVICE_PROVIDER:0,
+    PRODUCTS_GOODS_SELLER:1,
+    RESTURANT:2,
+};
+
 export const NotificationTypes = {
     ADD_SERVICE:0,
     ADD_PRODUCT:1,
