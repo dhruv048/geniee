@@ -18,7 +18,7 @@ import {
     Footer,
     FooterTab,
     Row, Grid
-} from 'native-base'
+} from 'native-base';
 import Meteor from "../react-native-meteor";
 import settings from "../config/settings";
 import userImage from '../images/Image.png';
@@ -31,7 +31,7 @@ import {goToChat, goToRoute} from "../Navigation";
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import CogMenu from "../components/CogMenu";
 import {Navigation} from 'react-native-navigation';
-
+import {goBack} from "../Navigation";
 import Product from "../components/Store/Product";
 import MyFunctions from "../lib/MyFunctions";
 import ServiceRatings from "./services/ServiceRatings";
@@ -272,12 +272,12 @@ class ServiceDetail extends Component {
                 />
                 <Header style={{backgroundColor: '#094c6b'}}>
                     <Left>
-                        {/*<Button transparent onPress={() => {*/}
-                            {/*this.props.navigation.openDrawer()*/}
-                        {/*}}>*/}
-                            {/*<Icon name="md-more" style={{fontWeight: '500', fontSize: 35}}/>*/}
-                        {/*</Button>*/}
-                        <CogMenu componentId={this.props.componentId}/>
+                       <Button transparent onPress={() => {
+                            goBack(this.props.componentId)
+                        }}>
+                            <Icon name="arrow-back" style={{fontWeight: '500', fontSize: 24}}/>
+                        </Button>
+                        {/* <CogMenu componentId={this.props.componentId}/> */}
                     </Left>
 
                     <Body>

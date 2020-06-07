@@ -29,7 +29,7 @@ import {
     Left,
     Body,
     Right,
-    Footer
+    Footer,Spinner
 } from 'native-base';
 import Meteor from "../../react-native-meteor";
 
@@ -79,6 +79,7 @@ class AddProduct extends React.PureComponent {
             loading: false,
             serviceModal: false,
             myServices:[],
+            imageLoad:false,
         };
         this.myServices = [];
         this.imagesToRemove = [];
@@ -171,6 +172,7 @@ class AddProduct extends React.PureComponent {
             });
         }
         else if (selected === 1) {
+            this.setState({imageLoad:true})
             ImagePicker.openPicker({
                 includeBase64: true,
                 compressImageMaxWidth: 1440,
@@ -188,7 +190,7 @@ class AddProduct extends React.PureComponent {
         this.setState(prevState => ({
             images: [...prevState.images, image]
         }))
-
+this.setState({imageLoad:false})
         ImagePicker.clean().then(() => {
             console.log('removed all tmp images from tmp directory');
         }).catch(e => {
@@ -612,9 +614,14 @@ class AddProduct extends React.PureComponent {
                                       renderItem={this._getListItem}
                                       keyExtracter={(item, index) => index.toString()}
                                       horizontal={false}
-                                      numColumns={2}
-                            />
+                                      numColumns={2}/>
+      {this.state.imageLoad?                     
+ <View key={'123'}>
+                <View style={[styles.containerStyle]}>
+                    <Spinner color={colors.appLayout} size='large'/>
+                </View>
 
+            </View>:null}
 
                              <GButton
                              size="small"
@@ -654,8 +661,6 @@ class AddProduct extends React.PureComponent {
                  {this.props.Product ? "Update" : "Save"} 
                 </GButton>
                 </Footer>
-                {this.state.loading ?
-                    <Loading/> : null}
 
                 {/* SELCT SERVICE MODAL START */}
                 <Modal style={customStyle.modal}

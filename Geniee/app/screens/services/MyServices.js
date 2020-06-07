@@ -225,6 +225,7 @@ class MyServices extends Component {
 
 
     async componentDidMount() {
+         this.fetchData()
         // this.setState({
         //     data: this.props.myServices, loading: false
         // })
@@ -258,7 +259,6 @@ class MyServices extends Component {
         this.isDisplaying = true;
         Navigation.events().bindComponent(this);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonMyService.bind(this));
-
         this.fetchData()
     }
 

@@ -355,7 +355,7 @@ class CheckoutEF extends Component {
                 'Are you sure, you want to continue without Logged In? You will be not able to manage or see your orders from other devices. We suggest to log in before making orders.',
                 [
                     {
-                        text: 'Continue without Log In', onPress: () => {
+                        text: 'Continue', onPress: () => {
                             this.checkout();
                         }
                     }

@@ -142,7 +142,7 @@ class Notification extends Component {
     };
     _renderEarly = (data) => {
         let item = data.item;
-        console.log(item)
+        // console.log(item)
         if (item.type == NotificationTypes.MESSAGE_RECEIVED)
             item.Message = (MyFunctions.decryptData(item.description))
         return (
@@ -248,7 +248,7 @@ class Notification extends Component {
     _handleEndReach = (data) => {
         if (!this.loadMore) {
             this.loadMore = true;
-            console.log(data)
+            // console.log(data)
             Meteor.subscribe('notificationWithLimit', this.skip, () => {
                 this.skip = this.skip + 20;
                 this.loadMore = false;
@@ -301,6 +301,13 @@ class Notification extends Component {
         }
 
     }
+    clearAll=()=>{
+        console.log("clearAll")
+        const deviceId = DeviceInfo.getUniqueId();
+        Meteor.call('removeAllNotification',deviceId,(err,res)=>{
+            console.log(err,res)
+        });
+    }
 
     _onViewChange = (info) => {
         const loggedUser = Meteor.userId();
@@ -340,13 +347,12 @@ class Notification extends Component {
                     <Title>Notification</Title>
                     </Body>
                     <Right/>
-                    {/*<Right>*/}
-                    {/*<Button onPress={() => {*/}
-                    {/*this.setSearch()*/}
-                    {/*}} transparent>*/}
-                    {/*<Icon name='check-square' color='white' size={24}/>*/}
-                    {/*</Button>*/}
-                    {/*</Right>*/}
+                    <Right>
+                   <Button onPress={this.clearAll} transparent>
+                    <Icon name='trash' color='white' size={18}/>
+                    <Text>CLEAR ALL</Text>
+                    </Button>
+                    </Right>
                 </Header>
                 <Content style={styles.content}>
                     {/*{this.state.newNotifications.length > 0 ?*/}

@@ -285,7 +285,8 @@ class Orders extends Component {
                         <View style={[customStyle.Container, {flex: 1}]}>
                             {this.state.ordersToMe && this.state.ordersToMe.length > 0 ?
                                 <FlatList
-                                    data={this.state.ordersToMe}
+                                    data={this.state.ordersToMe.slice().sort(
+                            (a,b) => b.orderDate.getTime() - a.orderDate.getTime())}
                                     renderItem={this._renderItem}
                                     refreshing={this.state.refreshing}
                                     // onRefresh={this._handleRefreshUpcomming.bind(this)}
@@ -308,7 +309,8 @@ class Orders extends Component {
                         <View style={[customStyle.Container, {flex: 1}]}>
                             {this.state.ordersByMe && this.state.ordersByMe.length > 0 ?
                                 <FlatList
-                                    data={this.state.ordersByMe}
+                                    data={this.state.ordersByMe.slice().sort(
+                            (a,b) => b.orderDate.getTime() - a.orderDate.getTime())}
                                     renderItem={this._renderItem}
                                     refreshing={this.state.refreshing}
                                     // onRefresh={this._handleRefreshPrevious.bind(this)}

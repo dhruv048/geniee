@@ -177,7 +177,7 @@ class Dashboard extends Component {
         notificationCount: this.props.notificationCount[0].totalCount,
       });
     Meteor.call('getActiveAdvertises', (err, res) => {
-      // console.log("banners",err, res)
+       console.log("banners",err, res)
       if (!err) {
         this.setState({Adds: res});
       }
@@ -250,7 +250,6 @@ class Dashboard extends Component {
     //Get Popular Products
     Meteor.call('getPopularProducts', 0, 6, (err, res) => {
       if (!err) {
-        console.log(res);
         this.setState({popularProducts: res.result});
       } else {
         console.log(err);
@@ -448,7 +447,6 @@ class Dashboard extends Component {
   };
 
   gotoBB = () => {
-    console.log('Eat-Fit');
     Navigation.push(this.props.componentId, {
       component: {
         name: 'ProductsBB',
@@ -498,7 +496,7 @@ class Dashboard extends Component {
         rowData.location.geometry.location.lat,
         rowData.location.geometry.location.lng,
       );
-    console.log(distance);
+    // console.log(distance);
     return (
       <View key={data.item._id} style={styles.serviceList}>
         <TouchableWithoutFeedback
@@ -507,9 +505,7 @@ class Dashboard extends Component {
           }}>
           <ListItem thumbnail>
             <Left>
-              {rowData.coverImage ===
-              null ? //   <Thumbnail style={styles.banner} square source={dUser}/> :
-              null : (
+              {rowData.coverImage === null ? null : ( //   <Thumbnail style={styles.banner} square source={dUser}/> :
                 <Thumbnail
                   style={styles.banner}
                   source={{
@@ -573,7 +569,7 @@ class Dashboard extends Component {
 
   _renderItem({item, index}) {
     return (
-      <View key={index} style={{}}>
+      <View key={index} style={{flex:1,width:'100%'}}>
         <Thumbnail
           square
           style={{
@@ -719,8 +715,15 @@ class Dashboard extends Component {
     );
   };
 
+  handleKeySearch = e => {
+    console.log(e.nativeEvent)
+    if (e.nativeEvent.key == 'Search') {
+      dismissKeyboard();
+      this._search();
+    }
+  };
   closePickLocation() {
-    console.log('method Called');
+    // console.log('method Called');
     this.setState({pickLocation: false});
   }
 
@@ -838,6 +841,8 @@ class Dashboard extends Component {
               style={{fontFamily: 'Roboto'}}
               placeholder={'Search your wish..'}
               underlineColorAndroid="rgba(0,0,0,0)"
+              returnKeyType="search"
+              onSubmitEditing={this._search}
               onChangeText={searchText => {
                 this.setState({query: searchText});
               }}
@@ -888,7 +893,7 @@ class Dashboard extends Component {
                       style={{
                         backgroundColor: 'white',
                         marginHorizontal: 5,
-                        width: 180,
+                        width: 150,
                         borderRadius: 4,
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -897,7 +902,7 @@ class Dashboard extends Component {
                       }}>
                       <Thumbnail
                         style={{
-                          width: 180,
+                          width: 150,
                           height: 80,
                           marginBottom: 10,
                           borderTopLeftRadius: 4,
@@ -915,13 +920,13 @@ class Dashboard extends Component {
                       <View style={{flexDirection: 'row'}}>
                         <View
                           style={{
-                            flex: 2,
+                            flex: 1,
                             width: '100%',
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}>
                           <Thumbnail
-                            style={{borderRadius: 2}}
+                            style={{borderRadius: 2,height:25,width:25}}
                             square
                             small
                             source={
@@ -946,13 +951,13 @@ class Dashboard extends Component {
                                 ? Math.round(item.Rating.avgRate)
                                 : 0}
                             </Text>
-                            <Text>
+                           
                               <Icon
                                 name={'star'}
-                                size={16}
+                                size={14}
                                 color={colors.warning}
                               />
-                            </Text>
+                          
                           </View>
                         </View>
                         <View
@@ -963,7 +968,7 @@ class Dashboard extends Component {
                         />
                         <View
                           style={{
-                            flex: 7,
+                            flex: 3,
                             alignItems: 'center',
                             marginLeft: 5,
                           }}>
@@ -974,16 +979,15 @@ class Dashboard extends Component {
                             <View
                               style={{
                                 flexDirection: 'row',
-                                alignItems: 'center',
+                                alignItems: 'center',justifyContent:'center'
                               }}>
-                              <Text>
                                 <Icon
                                   name={'tag'}
-                                  size={16}
+                                  size={10}
                                   color={colors.gray_200}
                                 />
-                              </Text>
-                              <Text note style={{marginLeft: 5}}>
+                             
+                              <Text noOfLines={1} note style={{marginLeft: 5, fontSize:12}}>
                                 {item.Category.subCategory || ''}
                               </Text>
                             </View>
@@ -1003,9 +1007,9 @@ class Dashboard extends Component {
                               }}>
                               {/*<Icon name={'location-arrow'} size={18}*/}
                               {/*color={colors.gray_200}/>*/}
-                              <Text note>
+                              <Text note style={{fontSize:12}}>
                                 {Math.round(item.dist.calculated * 100) / 100}{' '}
-                                K.M
+                                K.M away
                               </Text>
                             </View>
                             {/*{item.Category?*/}
@@ -1117,6 +1121,7 @@ class Dashboard extends Component {
                   minHeight: Math.round(viewportWidth * 0.29),
                   justifyContent: 'center',
                   alignItems: 'center',
+                  width:'100%'
                 }}>
                 <Carousel
                   ref={c => {

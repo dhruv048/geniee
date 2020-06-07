@@ -558,7 +558,7 @@ class ProductDetail extends Component {
             cartList = [];
         }
         let index = cartList.findIndex(item => {
-            return item.id == product.id
+            return item.id == product._id
         });
         if (index > -1) {
             cartList.splice(index, 1);

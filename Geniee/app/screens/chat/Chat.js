@@ -29,7 +29,7 @@ class Chat extends Component {
         let Message = message.messageData;
         if (message.from != loggedUser)
             return (
-                <View key={message._id} style={{marginRight: '20%', marginLeft: '1%',marginTop:5, width:'79%', flexDirection: 'row'}}>
+                <View key={message._id} style={{marginRight: '20%', marginLeft: '1%',marginTop:5, maxWidth:'79%', alignSelf:'flex-start'}}>
                     <View style={{  backgroundColor: '#e6e6e6',padding: 5, borderRadius: 8}}>
                     {Message.type === 'text' ?
                         <Text style={{
@@ -40,29 +40,30 @@ class Chat extends Component {
                                 {Message.type.includes('image') ?
                                     <Image style={{
                                         alignSelf: 'flex-start',
-                                        width: 200,
-                                        height: 200,
-                                        resizeMode: 'contain'
+                                        width: 150,
+                                        height: 150,
+                                        resizeMode: 'cover'
                                     }}
-                                           source={{uri: settings.IMAGE_URL+'chatFiles/' + Message.src+'/'+Message.fileName}}/>
+                                           source={{uri: settings.WEB_URL+'api/chatFiles/' + Message.src+'/'+Message.fileName}}/>
                                     :
                                     <Icon style={{alignSelf: 'flex-start'}} name={'file-text'} size={50}/>}
-                                <Text style={{
+                               {/* <Text style={{
                                     alignSelf: 'flex-start',
                                     color: colors.appLayout
-                                }}>{Message.fileName || ''}</Text>
+                                }}>{Message.fileName || ''}</Text>*/}
                             </View>
                             
                         </TouchableOpacity>
                     }
-                    <Text style={{alignSelf: 'flex-end'}}
-                          note>{Moment(message.messageOn).local().format('hh:mm A')}</Text>
-                    </View>
+                   
                     
                 </View>
+                 <Text style={{alignSelf: 'flex-start'}}
+                          note>{Moment(message.messageOn).local().format('hh:mm A')}</Text>
+                    </View>
             )
         else return (
-            <View key={message._id} style={{marginRight: '1%', marginLeft: '20%',marginTop:5, width:'79%', flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
+            <View key={message._id} style={{marginRight: '1%', marginLeft: '20%',marginTop:5, maxWidth:'79%',  flex: 1, alignSelf: 'flex-end'}}>
                 <View style={{  backgroundColor: '#acd1e3',padding: 5, borderRadius: 8}}>
                 {Message.type === 'text' ?
                     <Text style={{alignSelf: 'flex-end'}}>{Message.message}</Text>
@@ -70,16 +71,18 @@ class Chat extends Component {
                     <TouchableOpacity onPress={() => this._showFile(Message, false)}>
                         <View>
                             {Message.type.includes('image') ?
-                                <Image style={{alignSelf: 'flex-end', width: 200, height: 200, resizeMode: 'contain'}}
-                                       source={{uri: settings.IMAGE_URL+'chatFiles/' + Message.src+'/'+Message.fileName}}/>
+                                <Image style={{alignSelf: 'flex-end', width: 150, height: 150, resizeMode: 'cover'}}
+                                       source={{uri: settings.WEB_URL+'api/chatFiles/' + Message.src+'/'+Message.fileName}}/>
                                 :
                                 <Icon style={{alignSelf: 'flex-end'}} name={'file-text'} size={50}/>}
-                            <Text
-                                style={{alignSelf: 'flex-end', color: colors.appLayout}}>{Message.fileName || ''}</Text>
+                          {/*  <Text
+                                style={{alignSelf: 'flex-end', color: colors.appLayout}}>{Message.fileName || ''}</Text> */}
                         </View>
                     </TouchableOpacity>
                 }
-                <View style={{
+               
+                </View>
+                 <View style={{
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -92,8 +95,6 @@ class Chat extends Component {
                         <MaterialIcon name={'done'} size={13} style={{color: '#8E8E8E', marginHorizontal: 5}}/>
                     }
                 </View>
-                </View>
-                
             </View>
 
         )
@@ -286,7 +287,7 @@ class Chat extends Component {
 
 
     componentDidMount() {
-
+        this._handleNotTyping()
     }
 
     componentWillReceiveProps(newProps) {
@@ -434,6 +435,7 @@ class Chat extends Component {
                             }}
                             onFocus={this._handleTyping.bind(this)}
                             onBlur={this._handleNotTyping}
+                            onSubmitEditing={this._handleNotTyping}
                         />
 
                     <View style={{flexDirection: 'row', width: '30%', alignSelf: 'flex-end'}}>
