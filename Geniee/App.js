@@ -21,6 +21,8 @@ import firebase from "react-native-firebase";
 import MyFunctions from "./app/lib/MyFunctions";
 import AsyncStorage from "@react-native-community/async-storage";
 import DeviceInfo from "react-native-device-info";
+import { Provider as PaperProvider } from 'react-native-paper';
+import {customPaperTheme} from "./app/config/themes";
 class App extends Component {
     constructor(props){
         super(props)
@@ -208,9 +210,11 @@ class App extends Component {
     }
     render() {
         return(
+            <PaperProvider theme={customPaperTheme}>
             <Container>
                 <ActivityIndicator size="large" color={colors.primary} />
             </Container>
+            </PaperProvider>
         );
     }
 };

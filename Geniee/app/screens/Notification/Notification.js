@@ -26,7 +26,7 @@ import MyFunctions from "../../lib/MyFunctions";
 import Moment from 'moment';
 import Swipeable from "react-native-gesture-handler/Swipeable";
 // import DropdownAlert from 'react-native-dropdownalert';
-// import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 import Loading from "../../components/Loading/Loading";
 import {goBack, goToRoute} from '../../Navigation';
 import DeviceInfo from "react-native-device-info";
@@ -225,21 +225,16 @@ class Notification extends Component {
                     }}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
                     </Body>
                     <Right style={{flex: 0}}>
-                        {/*<TouchableOpacity*/}
-                        {/*style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}*/}
-                        {/*onPress={() => {*/}
-                        {/*}}>*/}
-                        {/*<Menu*/}
-                        {/*ref={ref => (this[`menu${item._id}`] = ref)}*/}
-                        {/*button={*/}
-                        {/*<Button transparent onPress={() => this[`menu${item._id}`].show()}>*/}
-                        {/*<Icon name={'more-vertical'} size={18} color={variables.gray_200}/>*/}
-                        {/*</Button>}>*/}
-                        {/*<MenuItem onPress={() => {*/}
-                        {/*this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)*/}
-                        {/*}}>Mark as read</MenuItem>*/}
-                        {/*</Menu>*/}
-                        {/*</TouchableOpacity>*/}
+                        <TouchableOpacity style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}>
+                        <Menu ref={ref => (this[`menu${item._id}`] = ref)}
+                        button={
+                        <Button transparent onPress={() => this[`menu${item._id}`].show()}>
+                        <Icon name={'more-vertical'} size={18} color={variables.gray_200}/>
+                        </Button>}>
+                        <MenuItem onPress={() => {this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)}}> Mark as read</MenuItem>
+                        <MenuItem onPress={() => {this[`menu${item._id}`].hide(), this.swipeLeft(item._id)}}> Remove</MenuItem>
+                        </Menu>
+                        </TouchableOpacity>
                     </Right>
                 </View>
             </TouchableOpacity>

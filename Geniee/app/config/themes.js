@@ -1,15 +1,15 @@
-// import {DefaultTheme} from "react-native-paper";
+import {DefaultTheme} from "react-native-paper";
 
 
-// export const customPaperTheme={
-//   ...DefaultTheme,
-//   roundness: 2,
-//   colors: {
-//     ...DefaultTheme.colors,
-//      primary: '#094c6b',
-//      accent: '#094c6b',
-//   },
-// };
+export const customPaperTheme={
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    ...DefaultTheme.colors,
+     primary: '#094c6b',
+     accent: '#094c6b',
+  },
+};
 
 export const customGalioTheme = {
   SIZES:{

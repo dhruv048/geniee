@@ -163,9 +163,7 @@ class Dashboard extends Component {
     if (MainCategories) {
       MainCategories = JSON.parse(MainCategories);
       this.setState({categories: MainCategories, loading: false});
-      this.arrayholder = this.props.categories
-        ? this.props.categories
-        : MainCategories;
+      this.arrayholder = MainCategories;
     } else {
       MainCategories = [];
     }
@@ -177,7 +175,6 @@ class Dashboard extends Component {
         notificationCount: this.props.notificationCount[0].totalCount,
       });
     Meteor.call('getActiveAdvertises', (err, res) => {
-       console.log("banners",err, res)
       if (!err) {
         this.setState({Adds: res});
       }
@@ -265,7 +262,7 @@ class Dashboard extends Component {
       subCatIds: null,
     };
     Meteor.call('getServicesNearBy', data, (err, res) => {
-      // console.log(err, res);
+       console.log(err, res);
       this.setState({loading: false});
       if (!err) {
         this.setState({nearByservice: res.result});
@@ -903,7 +900,7 @@ class Dashboard extends Component {
                       <Thumbnail
                         style={{
                           width: 150,
-                          height: 80,
+                          height: 90,
                           marginBottom: 10,
                           borderTopLeftRadius: 4,
                           borderTopRightRadius: 4,
@@ -975,7 +972,7 @@ class Dashboard extends Component {
                           <Text style={styles.cardTitle} numberOfLines={1}>
                             {item.title}
                           </Text>
-                          {item.Category ? (
+                          {item.category ? (
                             <View
                               style={{
                                 flexDirection: 'row',
@@ -987,8 +984,8 @@ class Dashboard extends Component {
                                   color={colors.gray_200}
                                 />
                              
-                              <Text noOfLines={1} note style={{marginLeft: 5, fontSize:12}}>
-                                {item.Category.subCategory || ''}
+                              <Text numberOfLines={1} note style={{marginLeft: 5, fontSize:12}}>
+                                {item.category.mainCategory || ''}
                               </Text>
                             </View>
                           ) : null}
@@ -1009,7 +1006,7 @@ class Dashboard extends Component {
                               {/*color={colors.gray_200}/>*/}
                               <Text note style={{fontSize:12}}>
                                 {Math.round(item.dist.calculated * 100) / 100}{' '}
-                                K.M away
+                                K.M Away
                               </Text>
                             </View>
                             {/*{item.Category?*/}

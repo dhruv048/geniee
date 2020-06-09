@@ -185,7 +185,7 @@ class ContactUs extends Component {
                     this.handleError(err.reason);
                 } else {
                     Alert.alert("DONE", "We will Contact you shortly!!");
-                    goToRoute('Dashboard');
+                    goToRoute(this.props.componentId,'Dashboard');
                 }
             });
         }
@@ -225,9 +225,7 @@ class ContactUs extends Component {
                     <View><Input
                       color={customGalioTheme.COLORS.INPUT_TEXT}
                                    placeholder='Full name'
-                                   placeholderTextColor='#ffffff'
-                                   onChangeText={(name) => this.setState({name})}
-                    />
+                                   onChangeText={(name) => this.setState({name})} />
 
                     <Input
                       color={customGalioTheme.COLORS.INPUT_TEXT}
@@ -245,7 +243,6 @@ class ContactUs extends Component {
                     />
 
                     <Textarea rowSpan={4} placeholder="Description (*)"
-
                                     style={styles.inputTextarea}
                                     placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                     selectionColor='#ffffff'

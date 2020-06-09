@@ -369,7 +369,7 @@ class ProductDetail extends Component {
                                         </Picker>
                                     </Col>
                             </Grid>:null}
-                            {this.state.product.sizes?
+                            {this.state.product.sizes && this.state.product.sizes.length>0?
                             <Grid>
                                 <Col size={2}>
                                     <View style={{flex: 1, justifyContent: 'center'}}>
