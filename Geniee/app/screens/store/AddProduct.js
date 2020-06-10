@@ -29,7 +29,8 @@ import {
     Left,
     Body,
     Right,
-    Footer,Spinner
+    Footer,Spinner,
+    Input as NBInput
 } from 'native-base';
 import Meteor from "../../react-native-meteor";
 
@@ -280,7 +281,7 @@ this.setState({imageLoad:false})
     resetForm() {
         this.setState({
             query: '',
-            selectedService: null,
+            selectedService: {_id:'',title:''},
             title: '',
             homeDelivery: false,
             radius: 0,
@@ -319,7 +320,7 @@ this.setState({imageLoad:false})
             service: selectedService._id,
             serviceOwner: selectedService.owner
         };
-        if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !selectedService) {
+        if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !selectedService._id) {
             ToastAndroid.showWithGravityAndOffset(
                 'Please Enter all the fields with *.',
                 ToastAndroid.LONG,
@@ -627,9 +628,7 @@ this.setState({imageLoad:false})
                              size="small"
                   onPress={()=>this.ActionSheet.show()}
                   style={{ marginVertical: 20,alignSelf
-                    :'center'}}
-                  loading={this.state.loading}
-                  disabled={this.state.loading}>
+                    :'center'}}>
                  Upload Image
                 </GButton>
                     </Fragment>
@@ -682,7 +681,7 @@ this.setState({imageLoad:false})
                         <Item rounded search boadered style={{
                             backgroundColor: 'white',
                             height: 40}}>
-                            <Input
+                            <NBInput
                                 value={this.state.query}
                                 placeholder="Search.."
                                 onChangeText={(text) => {
@@ -1083,7 +1082,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         marginVertical: 8,
         borderColor: '#808080',
-        elevation: 10,
+        elevation: 2,
         marginHorizontal: 5,
         width: (viewportWidth / 2) - 10,
         height: 100,

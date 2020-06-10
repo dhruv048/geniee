@@ -75,7 +75,7 @@ class SideMenu extends PureComponent {
                             goBack(this.props.componentId)
                     })
                 },
-                {text: 'Cancel', onPress: () => navigateToRoutefromSideMenu(this.props.componentId, 'Dashboardd')}
+                {text: 'Cancel', onPress: () => {}}
             ],
             {cancelable: false}
         );

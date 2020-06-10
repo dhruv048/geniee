@@ -30,7 +30,8 @@ import {
   Left,
   Body,
   Label,
-  Footer
+  Footer,
+  Input as NBInput
 } from 'native-base';
 import ActionSheet from 'react-native-actionsheet';
 import Meteor from '../../react-native-meteor';
@@ -372,7 +373,7 @@ class AddService extends React.PureComponent {
       selectedCategory: {subCategory: ''},
       title: '',
       homeDelivery: false,
-      radius: 0,
+      radius: "0",
       description: '',
       location: null,
       contact: '',
@@ -424,7 +425,7 @@ class AddService extends React.PureComponent {
         selectedCategory: selectedCategory,
         title: _serviceToEdit.title,
         homeDelivery: _serviceToEdit.homeDelivery,
-        radius: _serviceToEdit.radius,
+        radius: _serviceToEdit.radius.toString(),
         description: _serviceToEdit.description,
         location: _serviceToEdit.location,
         contact: _serviceToEdit.contact,
@@ -544,10 +545,10 @@ class AddService extends React.PureComponent {
           console.log('Reslut from addNewService' + res);
           this.setState({
             query: '',
-            selectedCategory: null,
+            selectedCategory: {subCategory: ''},
             title: '',
             homeDelivery: false,
-            radius: 0,
+            radius: "0",
             description: '',
             location: '',
             contact: '',
@@ -567,7 +568,6 @@ class AddService extends React.PureComponent {
         }
       });
     } else {
-      this.setState({loading: false});
       service.owner = Meteor.userId();
       this.setState({loading: true});
       Meteor.call('addNewService', service, (err, res) => {
@@ -586,10 +586,10 @@ class AddService extends React.PureComponent {
           console.log('Reslut from addNewService' + res);
           this.setState({
             query: '',
-            selectedCategory: null,
+            selectedCategory: {subCategory: ''},
             title: '',
             homeDelivery: false,
-            radius: 0,
+            radius: "0",
             description: '',
             location: '',
             contact: '',
@@ -622,7 +622,7 @@ class AddService extends React.PureComponent {
       description: description,
       contact: contact,
       location: location,
-      radius: radius,
+      radius: parseInt(radius),
       coverImage: null,
       homeDelivery: homeDelivery,
       price: price,
@@ -715,7 +715,6 @@ class AddService extends React.PureComponent {
     // const categories = this._findCategory(query);
     // const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
     return (
-      <GalioProvider theme={customGalioTheme}>
         <Container style={styles.container}>
           <Header
             androidStatusBarColor={colors.StatusBar}
@@ -743,6 +742,7 @@ class AddService extends React.PureComponent {
                         </Button>                    
                     </Right>*/}
           </Header>
+           <GalioProvider theme={customGalioTheme}>
           <Content>
             <Fragment>
               {/*<ImageBackground*/}
@@ -896,7 +896,7 @@ class AddService extends React.PureComponent {
                   //   onBlur={()=>this.setState({pickLocation:true})}
                   onFocus={() => this.setState({pickLocation: true})}
                   placeholder="Location"
-                  value={location ? location.formatted_address : ''}
+                  value={location ? location.formatted_address : ""}
                   //   onChangeText={(radius) => this.setState({radius})}
                 />
 
@@ -1019,14 +1019,26 @@ class AddService extends React.PureComponent {
               }}
             />
           </Content>
+         
           <LocationPicker
             close={this.closePickLocation.bind(this)}
             onLocationSelect={this.handleOnLocationSelect.bind(this)}
             modalVisible={this.state.pickLocation}
           />
-          {this.state.loading ? <Loading /> : null}
 
-          {/* SELCT SERVICE MODAL START */}
+        
+           <Footer style={{backgroundColor: colors.appBackground, alignItems: 'center',paddingHorizontal:10,height:50}}>
+               <GButton
+                  onPress={this._saveService}
+                  style={{width: '100%', marginVertical: 20}}
+                  loading={this.state.loading}
+                  disabled={this.state.loading}>
+                  {this.props.Service ? 'Update' : 'Save'}
+                </GButton>
+
+          </Footer>
+            </GalioProvider>
+              {/* SELCT CATEGORY MODAL START */}
           <Modal
             style={customStyle.modal}
             // transparent={true}
@@ -1047,16 +1059,18 @@ class AddService extends React.PureComponent {
                   <FIcon name="arrow-left" size={20} color={'white'} />
                 </Button>
               </Left>
-              <Body style={{flex: 7}}>
-                <Item
+              <Body style={{flex: 7,width:'100%',}}>
+                <Item 
                   rounded
-                  search
+                  searchBar
                   boadered
                   style={{
+                    width:'100%',
                     backgroundColor: 'white',
                     height: 40,
                   }}>
-                  <Input
+                  <NBInput
+                  style={{width:'100%',}}
                     value={this.state.query}
                     placeholder="Search.."
                     onChangeText={text => {
@@ -1097,18 +1111,8 @@ class AddService extends React.PureComponent {
             </Content>
           </Modal>
           {/* SELCT CATEGORY MODAL STOP */}
-           <Footer style={{backgroundColor: colors.appBackground, alignItems: 'center',paddingHorizontal:10,height:50}}>
-               <GButton
-                  onPress={this._saveService}
-                  style={{width: '100%', marginVertical: 20}}
-                  loading={this.state.loading}
-                  disabled={this.state.loading}>
-                  {this.props.Service ? 'Update' : 'Save'}
-                </GButton>
-
-          </Footer>
         </Container>
-      </GalioProvider>
+     
     );
   }
 }

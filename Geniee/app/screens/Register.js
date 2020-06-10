@@ -360,7 +360,7 @@ class Register extends Component {
                     }}>
                     <TouchableOpacity
                       transparent
-                      onPress={() => this.updateUsersAgreeStatus()}>
+                      >
                       <Checkbox
                       label=""
                         initialValue={this.state.termsChecked}
