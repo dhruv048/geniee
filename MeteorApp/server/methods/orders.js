@@ -196,7 +196,7 @@ Meteor.methods({
                 if (err) {
                     return err
                 } else {
-                    if (status == OrderStatus.ORDER_CANCELLED) {
+                    if (status == OrderStatus.ORDER_CANCELLED || status==OrderStatus.ORDER_DECLINED) {
                         resetOrderQty(order.items);
                     }
                     let notification = {

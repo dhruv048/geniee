@@ -33,6 +33,7 @@ import {colors, customStyle} from "../../config/styles";
 import Meteor from "../../react-native-meteor";
 import settings from "../../config/settings";
 import {goToRoute} from "../../Navigation";
+import AutoHeightWebView from 'react-native-autoheight-webview';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -174,6 +175,7 @@ class ProductDetail extends Component {
                 {this.state.product ?
                     <>
                     <Content>
+                    <View style={{flex:1}}>
                         <Carousel
                             data={this.state.product.images}
                             renderItem={this._renderItem}
@@ -185,6 +187,7 @@ class ProductDetail extends Component {
                             onSnapToItem={(index) => this.setState({activeSlide: index})}
                             enableSnap={true}
                         />
+                        </View>
                         <Pagination
                             dotsLength={this.state.product.images.length}
                             activeDotIndex={this.state.activeSlide}
@@ -403,9 +406,26 @@ class ProductDetail extends Component {
                                     marginLeft: 7,
                                     marginBottom: 10
                                 }}/>
-                                <NBText note>
+                               {/* <NBText note>
                                     {this.state.product.description}
-                                </NBText>
+                                </NBText>*/}
+                                 <AutoHeightWebView
+                                    // default width is the width of screen
+                                    // if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35
+                                    style={{
+                                        width: viewportWidth - 33,
+                                        marginHorizontal: 15,
+                                        marginVertical: 20
+                                    }}
+
+                                    customStyle={''}
+
+                                    onSizeUpdated={size => console.log(size.height)}
+
+
+                                    source={{html: this.state.product.description || " "}}
+
+                                />
                             </View>
                         </View>
                         <View style={{marginTop: 15, paddingLeft: 12, paddingRight: 12}}>

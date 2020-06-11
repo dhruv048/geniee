@@ -139,8 +139,56 @@ class OrderDetailOut extends Component {
                     {/*</CardItem>*/}
 
                 </Content>
+                 <View>
+                        {order.status == OrderStatus.ORDER_REQUESTED ?
+                            <Footer style={customStyle.footer}>
+                                <View style={customStyle.row}>
+                                    <View style={customStyle.col}>
+                                        <Button
+                                            block light style={customStyle.buttonLight}
+                                            onPress={this._updateOrderStatus.bind(this, OrderStatus.ORDER_CANCELLED)}>
+                                            <Text uppercase={false} style={customStyle.buttonLightText}>Cancel
+                                                Order</Text>
+                                        </Button>
+                                    </View>
+                                </View>
+                            </Footer> : null}
+                            </View>
             </Container>
         );
+    }
+
+     _updateOrderStatus(status) {
+        Meteor.call('updateOrderStatus', this.state.order._id, status, (err, res) => {
+            if (err)
+                console.log(err)
+            else {
+                ToastAndroid.showWithGravityAndOffset(
+                    'Updated status successfully!!',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    80,
+                );
+                Meteor.call('getSingleOrder', this.state.order._id, (err, ress) => {
+                    if (err) {
+                        console.log('this is due to error. ' + err);
+                    }
+                    else {
+                        console.log('success. ', ress);
+                        let  _order=ress.result
+                        let items = _order.items.filter(item => {
+                            return item.serviceOwner == this.loggedUser._id
+                        });
+                        this._updateTotal(items);
+                        _order.items = items;
+                        this.setState({order: _order})
+                    }
+                });
+
+            }
+
+        })
     }
 
     renderItem(data, i) {
@@ -196,6 +244,13 @@ class OrderDetailOut extends Component {
                         justifyContent: 'center'
                     }]}>
                         <Text style={[customStyle.badgeWarningText,{color:'white'}]}>Cancelled</Text>
+                    </Badge> : null}
+                     {item.status == OrderStatus.ORDER_DECLINED ?
+                            <Badge danger style={[customStyle.badgeDanger, {
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }]}>
+                        <Text style={[customStyle.badgeWarningText,{color:'white'}]}>Declined</Text>
                     </Badge> : null}
                 </Body>
                 <Right style={{flex: 1, alignSelf: "flex-start"}}>

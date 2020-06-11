@@ -509,13 +509,20 @@ this.setState({imageLoad:false})
 </View>
                             </View>
                             <View style={styles.multiField}>
-                             <View style={{flex:1,marginRight:5}} >
-                                <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+                           <View style={{flex:1,marginRight:5}} >
+                               {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Radius in K.M (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(radius) => this.setState({radius})}
                                            value={this.state.radius}
-                                />
+                                />*/}
+ <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+                                       placeholder='Contact No (*)'
+                                       keyboardType='phone-pad'
+                                       onChangeText={(contact) => this.setState({contact})}
+                                       value={this.state.contact}
+                            />
+
                                 </View>
                                 <View style={styles.chkView}>
 <Checkbox
@@ -545,12 +552,12 @@ this.setState({imageLoad:false})
                                       value={this.state.sizes}
                             />
 
-                            <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+                         {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Contact No (*)'
                                        keyboardType='phone-pad'
                                        onChangeText={(contact) => this.setState({contact})}
                                        value={this.state.contact}
-                            />
+                            /> */}
 
 
                             <Input  color={customGalioTheme.COLORS.INPUT_TEXT}

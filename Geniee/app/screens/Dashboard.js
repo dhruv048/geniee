@@ -1077,7 +1077,7 @@ class Dashboard extends Component {
                             height: 100,
                             width: '100%',
                             resizeMode: 'cover',
-                            margin: 5,
+                           // margin: 5,
                           }}
                         />
                         {item.title ? (

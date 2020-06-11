@@ -16,111 +16,142 @@
                             <div class="col-lg-8">
                                 <form role="form" id="productCreateForm">
                                     <div class="form-group">
-                                        <label>Service</label>
-                                        {{> inputAutocomplete settings=settings id="msg" class="form-control"
+                                       <!--  <label>Service</label> -->
+                                        {{> inputAutocomplete settings=settings id="msg" class="form-control" autocomplete="off"
                                         placeholder="Search and select Service"}}
                                     </div>
                                     <div class="form-group">
-                                        <label>Title</label>
+                                        <!-- <label>Title</label> -->
                                         <input type="text" placeholder="Product Title" id="productTitle"
-                                               value="{{Product.title}}" class="form-control"/>
+                                        value="{{Product.title}}" class="form-control"/>
                                     </div>
-                                    <div class="form-group">
+                                  <!--   <div class="form-group">
                                         <label>Description</label>
                                         <textarea rows="6" placeholder="Product Description" class="form-control"
                                                   value="{{Product.description}}" id="productDescription"></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Unit</label>
-                                        <input type="text" placeholder="Unit" id="productUnit"
-                                               value="{{Product.unit}}" class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Price</label>
-                                        <input type="number" placeholder="Price" id="productPrice"
-                                               value="{{Product.price}}" class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Contact No</label>
-                                        <input type="number" placeholder="Contact No" id="productContact"
-                                               value="{{Product.contact}}" class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Total Quantity</label>
-                                        <input type="number" placeholder="Quantity" id="productQuantity"
-                                               value="{{Product.quantity}}" class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Sizes</label>
-                                        <input type="text" placeholder="Sizes seperated by ;" id="productSizes"
-                                               value="{{Product.sizes}}" class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Colors</label>
-                                        <input type="text" placeholder="Colors seperated by ;" id="productColors"
-                                               value="{{Product.colors}}" class="form-control"/>
-                                    </div>
-                                    <!--<div class="form-group">-->
-                                    <!--<label>Doctor</label>-->
-                                    <!--<select class="form-control" name="productOwner" id="productOwner">-->
-                                    <!--{{#each doctors}}-->
-                                    <!--<option {{selected Product.owner this._id}} value="{{this._id}}">-->
-                                    <!--{{profile.name}}-->
-                                    <!--</option>-->
-                                    <!--{{/each}}-->
-                                    <!--</select>-->
-                                    <!--</div>-->
-                                    <div class="form-group">
-                                        <label>Content</label>
-                                        <div class="form-control"
-                                             id="summernote">{{{Product.content}}}
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Upload Image</label>
-                                        {{#each files}}
-                                        <img id="{{index}}" style="max-width: 200px"
-                                             src="{{uri}}"/>
-                                        {{/each}}
-                                        <div class="input-group">
-                                        <span class="input-group-btn">
-                <span class="btn btn-default btn-file">
-                    Browse� <input type="file" id="productCoverImage" multiple>
-                </span>
-            </span>
-                                        </div>
-                                        <!--<input type="text" class="form-control" id="imgName" readonly>-->
-                                    </div>
+                                              </div> -->
+                                              <div class="form-group">
+                                               <div class="row">
+                                                <div class="col">
+                                                    <input type="text" placeholder="Unit" id="productUnit"
+                                                    value="{{Product.unit}}" class="form-control"/>
+                                                </div>
+                                                <div class="col">
+                                                   <input type="number" placeholder="Quantity" id="productQuantity"
+                                                   value="{{Product.quantity}}" class="form-control"/>
+                                               </div>
+                                           </div>
+                                       </div>
 
-                                    <div>
+                                       <div class="form-group">
+                                        <div class="row">
+                                             <div class="col">
+                                            <input type="number" placeholder="Price per Unit" id="productPrice"
+                                            value="{{Product.price}}" class="form-control"/>
+                                        </div>
+                                           <div class="col">
+                                            <input type="number" placeholder="Discount in %" id="productDiscount"
+                                            value="{{Product.discount}}" class="form-control"/>
+                                        </div>
+                                       
                                     </div>
-                                    <button type="submit" class="btn btn-default">Submit Button</button>
-                                    <button type="reset" class="btn btn-default">Reset Button</button>
-                                </form>
-                            </div>
-                            <!-- /.col-lg-6 (nested)-->
-                            <div class="col-lg-6">
+                                </div>
 
-                                <!-- /.col-lg-6 (nested)-->
+
+
+                                    <!--  <div class="form-group">
+                                        <label>Radius in K.M for Service </label>
+                                        <input type="number" placeholder="Price" id="productRadiust"
+                                               value="{{Product.radius}}" class="form-control"/>
+                                           </div> -->
+                                           <div class="form-group">
+
+ <div class="row">
+                                             <div class="col">
+                                          <!--   <label>Contact No</label> -->
+                                            <input type="number" placeholder="Contact No" id="productContact"
+                                            value="{{Product.contact}}" class="form-control"/>
+                                        </div>
+                                         <div class="col">
+                                            <label>
+                                                    <input checked={{Product.homeDelivery}} type="checkbox" id="productHomeDelivery"/>   Home Delivery 
+                                                </label>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div class="form-group">
+                                           <!--  <label>Sizes</label> -->
+                                            <input type="text" placeholder="Sizes seperated by ;" id="productSizes"
+                                            value="{{Product.sizes}}" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">
+                                           <!--  <label>Colors</label> -->
+                                            <input type="text" placeholder="Colors seperated by ;" id="productColors"
+                                            value="{{Product.colors}}" class="form-control"/>
+                                        </div>
+                                       
+
+                                        <!--<div class="form-group">-->
+                                            <!--<label>Doctor</label>-->
+                                            <!--<select class="form-control" name="productOwner" id="productOwner">-->
+                                                <!--{{#each doctors}}-->
+                                                <!--<option {{selected Product.owner this._id}} value="{{this._id}}">-->
+                                                    <!--{{profile.name}}-->
+                                                    <!--</option>-->
+                                                    <!--{{/each}}-->
+                                                    <!--</select>-->
+                                                    <!--</div>-->
+                                                    <div class="form-group">
+                                                        <label>Description</label>
+                                                        <div class="form-control"
+                                                        id="summernote">{{{Product.content}}}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Upload Image</label>
+                                                    {{#each files}}
+                                                    <img id="{{index}}" style="max-width: 200px"
+                                                    src="{{uri}}"/>
+                                                    {{/each}}
+                                                    <div class="input-group">
+                                                        <span class="input-group-btn">
+                                                            <span class="btn btn-default btn-file">
+                                                                Browse� <input type="file" id="productCoverImage" multiple>
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <!--<input type="text" class="form-control" id="imgName" readonly>-->
+                                                </div>
+
+                                                <div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Button</button>
+                                                <button type="reset" class="btn btn-default">Reset Button</button>
+                                            </form>
+                                        </div>
+                                        <!-- /.col-lg-6 (nested)-->
+                                        <div class="col-lg-6">
+
+                                            <!-- /.col-lg-6 (nested)-->
+                                        </div>
+                                        <!-- /.row (nested)-->
+                                    </div>
+                                    <!-- /.panel-body-->
+                                </div>
+                                <!-- /.panel-->
                             </div>
-                            <!-- /.row (nested)-->
+                            <!-- /.col-lg-12-->
                         </div>
-                        <!-- /.panel-body-->
+                        <!-- /.row-->
                     </div>
-                    <!-- /.panel-->
                 </div>
-                <!-- /.col-lg-12-->
-            </div>
-            <!-- /.row-->
-        </div>
-    </div>
-</template>
-<template name="category">
-    <li class="d-flex flex-row align-items-center justify-content-start">
-        <!--<div class="small">-->
-        <!--<img width="30" height="30" src="{{getImage profile.profileImage}}" class="img-profile rounded-circle small"-->
-        <!--alt="{{profile.name}}">-->
-        <!--</div>-->
-       <span>{{title}}</span>
-    </li>
-</template>
+            </template>
+            <template name="category">
+                <li class="d-flex flex-row align-items-center justify-content-start">
+                    <!--<div class="small">-->
+                        <!--<img width="30" height="30" src="{{getImage profile.profileImage}}" class="img-profile rounded-circle small"-->
+                        <!--alt="{{profile.name}}">-->
+                        <!--</div>-->
+                        <span>{{title}}</span>
+                    </li>
+                </template>

@@ -197,6 +197,7 @@ export const OrderStatus = {
     ORDER_DELIVERED: 2,
     ORDER_CONFIRMED: 3,
     ORDER_CANCELLED: 4,
+     ORDER_DECLINED:5,
 };
 
 export const PaymentType = {

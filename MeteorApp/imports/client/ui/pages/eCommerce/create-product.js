@@ -118,10 +118,12 @@ Template.Create_Product.events({
         var quantity = $('#productQuantity').val();
         var sizes = $('#productSizes').val();
         var colors = $('#productColors').val();
+        var radius = $('#productRadiust').val();
         var description = $('#productDescription').val();
-        // var owner = $('#productOwner').val();
+        var discount = $('#productDiscount').val();
         var category = selectedCategory._id;
         var Category = selectedCategory.title;
+         var homeDelivery = $('#productHomeDelivery').is(":checked");
         //$('#content').val($('#editor').html());
         var content = $('#summernote').summernote('code');
 
@@ -133,7 +135,7 @@ Template.Create_Product.events({
             sAlert.error("Please Type Title");
             return;
         }
-        if (description.length < 4) {
+        if (content.length < 4) {
             sAlert.error("Please Type Description");
             return;
         }
@@ -144,7 +146,7 @@ Template.Create_Product.events({
 
         var product = {
             title: title,
-            description: description,
+            description: content,
             images: [],
             service: category,
             serviceOwner: selectedCategory.owner,
@@ -152,6 +154,7 @@ Template.Create_Product.events({
             createBy: Meteor.userId(),
             unit: unit,
             price: price,
+            discount:discount,
             contact: contact,
             qty: quantity,
             sizes: sizes ? (sizes.includes(';') ? sizes.split(';') : [sizes]) : [],

@@ -416,6 +416,7 @@ Meteor.methods({
             productInfo.availabeQuantity = parseInt(productInfo.qty);
             productInfo.price = parseInt(productInfo.price);
             productInfo.discount = parseInt(productInfo.discount);
+              productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
             let _service = Service.findOne({ _id: productInfo.service });
             let imageIds = [];
@@ -525,6 +526,7 @@ Meteor.methods({
         productInfo.availabeQuantity = parseInt(productInfo.qty);
         productInfo.price = parseInt(productInfo.price);
         productInfo.discount = parseInt(productInfo.discount);
+         productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
         if (productInfo.images.length < 1) {
@@ -608,25 +610,7 @@ Meteor.methods({
                     Products.update(
                         { _id: productId },
                         {
-                            $set: {
-                                title: productInfo.title,
-                                description: productInfo.description,
-                                contact: productInfo.contact,
-                                radius: productInfo.radius,
-                                homeDelivery: productInfo.homeDelivery,
-                                price: productInfo.price,
-                                discount: productInfo.discount,
-                                unit: productInfo.unit,
-                                website: productInfo.unit,
-                                sizes: productInfo.unit,
-                                colors: productInfo.unit,
-                                qty: productInfo.qty,
-                                images: imageIds,
-                                service: productInfo.service,
-                                serviceOwner: productInfo.serviceOwner,
-                                availabeQuantity: productInfo.availabeQuantity,
-                                updateDate: productInfo.updateDate,
-                            },
+                            $set: productInfo,
                         },
                         (err, res) => {
                             ServiceImage.remove({

@@ -178,6 +178,14 @@ class OrderDetailIn extends Component {
                             }]}>
                                 <Text style={[customStyle.badgeWarningText, {color: 'white'}]}>Cancelled</Text>
                             </Badge> : null}
+                            {order.items[0].status == OrderStatus.ORDER_DECLINED ?
+                            <Badge danger style={[customStyle.badgeDanger, {
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }]}>
+                                <Text style={[customStyle.badgeWarningText, {color: 'white'}]}>Declined</Text>
+                            </Badge> : null}
                     </View>
                         <Card style={[customStyle.Card]}>
                             <CardItem style={{paddingBottom: 10}}>
@@ -249,7 +257,7 @@ class OrderDetailIn extends Component {
                                     <View style={customStyle.col}>
                                         <Button
                                             block light style={customStyle.buttonLight}
-                                            onPress={this._updateOrderStatus.bind(this, OrderStatus.ORDER_CANCELLED)}>
+                                            onPress={this._updateOrderStatus.bind(this, OrderStatus.ORDER_DECLINED)}>
                                             <Text uppercase={false} style={customStyle.buttonLightText}>Reject
                                                 Order</Text>
                                         </Button>
