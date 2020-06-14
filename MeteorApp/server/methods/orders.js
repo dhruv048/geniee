@@ -1,13 +1,14 @@
-import {Meteor} from 'meteor/meteor';
-import {ProductOwner, OrderStatus} from "../../lib/utils";
-import {EFProducts, EFOrder} from "../../lib/collections/eatFit/efProducts";
-import {ROrder} from "../../lib/collections/orders";
+import { Meteor } from "meteor/meteor";
+import { ProductOwner, OrderStatus } from "../../lib/utils";
+import { EFProducts, EFOrder } from "../../lib/collections/eatFit/efProducts";
+import { ROrder } from "../../lib/collections/orders";
 
 Meteor.methods({
-    'addOrder': (order) => {
+    addOrder: (order) => {
         order.orderDate = new Date(new Date().toUTCString());
         order.owner = Meteor.userId();
         order.status = 0;
+        order.orderId=moment().format("YYMMDDHHmmss");
         let itemsUpdated = [];
         let EFTotal = 0;
         let RTotal = 0;
@@ -19,31 +20,50 @@ Meteor.methods({
 
                 //Seperate items based on Product Owner
                 if (item.productOwner === ProductOwner.EAT_FIT) {
-                    product = await EFProducts.findOne({_id: item.productId});
+                    product = await EFProducts.findOne({ _id: item.productId });
                     EFItems.push(item);
-                    EFTotal = EFTotal + (item.finalPrice* item.quantity);
-                }
-                else {
-                    product = await Products.findOne({_id: item.productId});
-                    RegularItems.push(item)
-                    RTotal = RTotal + (item.finalPrice*item.quantity);
+                    EFTotal = EFTotal + item.finalPrice * item.quantity;
+                } else {
+                    product = await Products.findOne({ _id: item.productId });
+                    RegularItems.push(item);
+                    RTotal = RTotal + item.finalPrice * item.quantity;
                 }
 
                 if (product.productOwner !== ProductOwner.EAT_FIT) {
                     if (product.availabeQuantity >= item.quantity) {
-                        await Products.update({_id: item.productId}, {$set: {'availabeQuantity': product.availabeQuantity - item.quantity}});
+                        await Products.update(
+                            { _id: item.productId },
+                            {
+                                $set: {
+                                    availabeQuantity:
+                                        product.availabeQuantity -
+                                        item.quantity,
+                                },
+                            }
+                        );
                         // if (isOrder === 0) {
                         //     //  await Cart.remove({_id: item.cartItem});
                         // }
                         itemsUpdated.push(item);
-                    }
-                    else {
+                    } else {
                         resetOrderQty(itemsUpdated);
-                        throw new Meteor.Error('', "Insufficient Available Quantity for product:" + item.title + ". Available Quantity=" + product.availabeQuantity + " " + product.unit + ". Please re-adjust quantity");
-                        console.log('No sufficient Available Quantity for product:' + item.title);
+                        throw new Meteor.Error(
+                            "",
+                            "Insufficient Available Quantity for product:" +
+                                item.title +
+                                ". Available Quantity=" +
+                                product.availabeQuantity +
+                                " " +
+                                product.unit +
+                                ". Please re-adjust quantity"
+                        );
+                        console.log(
+                            "No sufficient Available Quantity for product:" +
+                                item.title
+                        );
                     }
                 }
-                console.log('this is index ' + index);
+                console.log("this is index " + index);
                 if (index === order.items.length - 1) {
                     let orderIds = [];
                     let loggedUser = Meteor.user();
@@ -64,12 +84,12 @@ Meteor.methods({
                                 // }
                                 // Meteor.call('addNotification', notification);
                                 //return res;
-                                orderIds.push(res)
+                                orderIds.push(res);
                             } else {
                                 resetOrderQty(itemsUpdated);
                                 return err;
                             }
-                        })
+                        });
                     }
 
                     if (RegularItems.length > 0) {
@@ -89,86 +109,84 @@ Meteor.methods({
                                 // Meteor.call('addNotification', notification);
                                 //return res;
                                 // done(err, res);
-                                orderIds.push(res)
+                                orderIds.push(res);
                             } else {
                                 resetOrderQty(itemsUpdated);
                                 return err;
                             }
-                        })
+                        });
                     }
                     done(null, orderIds);
                 }
             });
-
         });
     },
 
+    removeOrder: (orderIds) => {
+        let EFOrders = EFOrder.find({ _id: { $in: orderIds } }).fetch();
+        let ROrders = ROrder.find({ _id: { $in: orderIds } }).fetch();
 
-    'removeOrder': (orderIds) => {
-        let EFOrders = EFOrder.find({_id: {$in: orderIds}}).fetch();
-        let ROrders = ROrder.find({_id: {$in: orderIds}}).fetch();
-
-        EFOrders.forEach(order => {
+        EFOrders.forEach((order) => {
             //  resetOrderQty(order.items);
-            EFOrder.remove({_id: order._id})
+            EFOrder.remove({ _id: order._id });
         });
 
-        ROrders.forEach(order => {
+        ROrders.forEach((order) => {
             resetOrderQty(order.items);
-            ROrder.remove({_id: order._id})
-        })
+            ROrder.remove({ _id: order._id });
+        });
 
         // const order = Order.findOne({_id: Id})
         // resetOrderQty(order.items);
         // Order.remove({_id: Id})
     },
 
-    'getOrders': (deviceId) => {
+    getOrders: (deviceId) => {
         let userId = Meteor.userId() ? Meteor.userId() : undefined;
         try {
-            let EFOrderss = EFOrder.find({$or: [{owner: userId}, {deviceId: deviceId}]}).fetch();
-            let ROrders = ROrder.find({$or: [{owner: userId}, {deviceId: deviceId}]}).fetch();
+            let EFOrderss = EFOrder.find({
+                $or: [{ owner: userId }, { deviceId: deviceId }],
+            }).fetch();
+            let ROrders = ROrder.find({
+                $or: [{ owner: userId }, { deviceId: deviceId }],
+            }).fetch();
             return Async.runSync(function (done) {
                 done(null, EFOrderss.concat(ROrders));
             });
-
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e.message);
         }
     },
 
-    'getMyOrders': () => {
+    getMyOrders: () => {
         let userId = Meteor.userId();
         try {
-            return ROrder.find({'items.serviceOwner': userId}).fetch();
-        }
-        catch (e) {
+            return ROrder.find({ "items.serviceOwner": userId }).fetch();
+        } catch (e) {
             console.log(e.message);
             //   return new Meteor.Error('',e.reason)
         }
     },
 
     getSingleOrder(id) {
-        const collection = ROrder.rawCollection()
+        const collection = ROrder.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
         const pipeline = [
             {
-                $match:{_id:id},
+                $match: { _id: id },
             },
             {
-                $lookup:
-                    {
-                        from: "service",
-                        localField: "items.service",
-                        foreignField: "_id",
-                        as: "Services"
-                    }
-            }
+                $lookup: {
+                    from: "service",
+                    localField: "items.service",
+                    foreignField: "_id",
+                    as: "Services",
+                },
+            },
         ];
         return Async.runSync(function (done) {
-            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
+            aggregate(pipeline, { cursor: {} }).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
                 }
@@ -176,65 +194,124 @@ Meteor.methods({
             });
         });
 
-       // return ROrder.findOne({_id:id});
+        // return ROrder.findOne({_id:id});
     },
 
-    'updateOrderStatus': (Id, status) => {
+    updateOrderStatus: (Id, status) => {
         let loggedUser = Meteor.user();
-        let order = ROrder.findOne({_id: Id});
-        order.items.forEach(item => {
+        let order = ROrder.findOne({ _id: Id });
+        order.items.forEach((item) => {
             if (item.serviceOwner === loggedUser._id) {
-               item.status=status;
-               item.lastUpdated=new Date(new Date().toUTCString());
+                item.status = status;
+                item.lastUpdated = new Date(new Date().toUTCString());
             }
         });
-
-        ROrder.update({_id: Id},
+        ROrder.update(
+            { _id: Id },
             {
-                $set: {items: order.items,status:status}
-            }, (err, res) => {
+                $set: { items: order.items, status: status },
+            },
+            (err, res) => {
                 if (err) {
-                    return err
+                    return err;
                 } else {
-                    if (status == OrderStatus.ORDER_CANCELLED || status==OrderStatus.ORDER_DECLINED) {
+                    if (
+                        status == OrderStatus.ORDER_CANCELLED ||
+                        status == OrderStatus.ORDER_DECLINED
+                    ) {
                         resetOrderQty(order.items);
                     }
                     let notification = {
-                        title: 'Order Status Change By ' + loggedUser.profile.name,
+                        title:
+                            "Order Status Change By " + loggedUser.profile.name,
                         description: order._id,
                         owner: loggedUser._id,
                         navigateId: order._id,
                         receiver: order.owner,
-                        type: status
-                    }
-                    //  Meteor.call('addNotification', notification);
+                        type: status,
+                        removedBy: [],
+                        seenBy: [],
+                    };
+                    Meteor.call("addNotification", notification);
                 }
-            })
-    },
-}),
-
-
-    resetOrderQty = (Items) => {
-        let userId = Meteor.userId();
-        Items.forEach(async item => {
-
-            // if (item.productOwner === ProductOwner.EAT_FIT) {
-            //     let prod = await EFProducts.findOne({_id: item.productId});
-            //     await  EFProducts.update({_id: item.productId}, {
-            //         $set: {
-            //             'availabeQuantity': prod.availabeQuantity + item.quantity
-            //         }
-            //     })
-            // }
-            // else {
-            let prod = await Products.findOne({_id: item.productId});
-            if (prod.serviceOwner === userId) {
-                await  Products.update({_id: item.productId}, {
-                    $set: {
-                        'availabeQuantity': prod.availabeQuantity + item.quantity
-                    }
-                })
             }
+        );
+    },
+
+    cancelOrder: (Id, productOwner, deviceId) => {
+        console.log(Id, productOwner, deviceId);
+        let loggedUser = Meteor.user() ? Meteor.user() : { _id: null };
+        let success = false;
+        if (productOwner == ProductOwner.EAT_FIT) {
+            EFOrder.update(
+                { _id: Id },
+                { $set: { status: OrderStatus.ORDER_CANCELLED } }
+            );
+        } else {
+            let order = ROrder.findOne({ _id: Id });
+            if (order.deviceId === deviceId || order.owner === loggedUser._id) {
+                order.items.forEach((item) => {
+                    item.status = OrderStatus.ORDER_CANCELLED;
+                    item.lastUpdated = new Date(new Date().toUTCString());
+                });
+            } else {
+                throw new Meteor.Error("", "Un-Authorized");
+            }
+            ROrder.update(
+                { _id: Id },
+                {
+                    $set: {
+                        items: order.items,
+                        status: OrderStatus.ORDER_CANCELLED,
+                    },
+                },
+                (err, res) => {
+                    if (err) {
+                        return err;
+                    } else {
+                        resetOrderQty(order.items);
+                        let notification = {
+                            title:
+                                "Order Cancelled By " + loggedUser.profile.name,
+                            description: Id,
+                            owner: loggedUser._id,
+                            navigateId: order._id,
+                            receiver: order.serviceOwner,
+                            type: status,
+                            removedBy: [],
+                            seenBy: [],
+                        };
+                        Meteor.call("addNotification", notification);
+                    }
+                }
+            );
+        }
+    },
+});
+
+resetOrderQty = (Items) => {
+    let userId = Meteor.userId();
+    Items.forEach(async (item) => {
+        // if (item.productOwner === ProductOwner.EAT_FIT) {
+        //     let prod = await EFProducts.findOne({_id: item.productId});
+        //     await  EFProducts.update({_id: item.productId}, {
+        //         $set: {
+        //             'availabeQuantity': prod.availabeQuantity + item.quantity
+        //         }
+        //     })
         // }
-    })
-    }
+        // else {
+        let prod = await Products.findOne({ _id: item.productId });
+        if (prod.serviceOwner === userId) {
+            await Products.update(
+                { _id: item.productId },
+                {
+                    $set: {
+                        availabeQuantity: prod.availabeQuantity + item.quantity,
+                    },
+                }
+            );
+        }
+        // }
+    });
+};

@@ -32,6 +32,11 @@ export const userType = {
     EAT_FIT:222,
     GENIEE_REPAIR:111
 };
+export const BusinessType = {
+    SERVICE_PROVIDER:0,
+    PRODUCTS_GOODS_SELLER:1,
+    RESTURANT:2,
+};
 
 export const padZeros = (num, size) => {
     var s = num + "";

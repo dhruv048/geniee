@@ -173,7 +173,7 @@ class Orders extends Component {
                             <Col style={{flex: 2}}>
                                 {/* <Thumbnail large
                                         source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSOdoMX4D0Cf_zowYRuqboJkIGBg_lQtnmixZ1YdVkHXin0PIMW'}}/> */}
-                                <Text style={{fontSize: 16}}>Order ID: {order._id || "0000145"}</Text>
+                                <Text style={{fontSize: 16}}>{order.orderId || "0000145"}</Text>
                                 <Text note>{Moment(order.orderDate).format('DD MMM, YYYY')}</Text>
                                 {order.status == OrderStatus.ORDER_REQUESTED ?
                                     <Badge warning style={[customStyle.badgeWarning, {marginTop: 4}]}>
@@ -192,6 +192,10 @@ class Orders extends Component {
                                 {order.status == OrderStatus.ORDER_CANCELLED ?
                                     <Badge danger style={[customStyle.badgeDanger,{marginTop: 4}]}>
                                         <Text style={customStyle.badgeDangerText}>Cancelled</Text>
+                                    </Badge> : null}
+                                    {order.status == OrderStatus.ORDER_DECLINED ?
+                                    <Badge danger style={[customStyle.badgeDanger,{marginTop: 4}]}>
+                                        <Text style={customStyle.badgeDangerText}>Declined</Text>
                                     </Badge> : null}
                             </Col>
                             <Col style={{paddingLeft: 10, flex: 1, alignItems: 'flex-end'}}>

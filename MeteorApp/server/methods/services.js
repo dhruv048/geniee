@@ -1,11 +1,11 @@
-import { Meteor } from "meteor/meteor";
-import { FIREBASE_MESSAGING } from "../API/fire-base-admin";
-import { Ratings } from "../../lib/collections/genieeRepair/ratings";
-import { EFProducts } from "../../lib/collections/eatFit/efProducts";
-import { ProductOwner, NotificationTypes } from "../../lib/utils";
+import {Meteor} from "meteor/meteor";
+import {FIREBASE_MESSAGING} from "../API/fire-base-admin";
+import {Ratings} from "../../lib/collections/genieeRepair/ratings";
+import {EFProducts} from "../../lib/collections/eatFit/efProducts";
+import {ProductOwner, NotificationTypes, BusinessType} from "../../lib/utils";
 
 const removeProductsByServiceId = (Id) => {
-    let _products = Products.find({ service: Id }).fetch();
+    let _products = Products.find({service: Id}).fetch();
     _products.foreach((_product) => {
         Products.remove(_product._id);
         _product.images.foreach((item) => {
@@ -26,7 +26,7 @@ Meteor.methods({
                     : Id;
             if (!serviceInfo.Category.subCatId) {
                 MainCategories.update(
-                    { catId: "0" },
+                    {catId: "0"},
                     {
                         $addToSet: {
                             subCategories: {
@@ -53,7 +53,7 @@ Meteor.methods({
             };
             //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
             serviceInfo.location = location;
-            let Owner = Meteor.users.findOne({ _id: serviceInfo.owner });
+            let Owner = Meteor.users.findOne({_id: serviceInfo.owner});
             if (serviceInfo.Image) {
                 ServiceImage.write(
                     new Buffer(serviceInfo.Image.data, "base64"),
@@ -72,7 +72,7 @@ Meteor.methods({
                             serviceInfo.createdBy = currentUserId;
                             serviceInfo.coverImage = res._id;
                             serviceInfo.categoryId = CategoryId;
-                            serviceInfo.ratings = [{ count: 0 }];
+                            serviceInfo.ratings = [{count: 0}];
                             serviceInfo.Image = null;
                             var res = Service.insert(serviceInfo);
                             try {
@@ -113,7 +113,7 @@ Meteor.methods({
                 serviceInfo.createdBy = currentUserId;
                 serviceInfo.coverImage = null;
                 serviceInfo.categoryId = CategoryId;
-                serviceInfo.ratings = [{ count: 0 }];
+                serviceInfo.ratings = [{count: 0}];
                 serviceInfo.Image = null;
                 var res = Service.insert(serviceInfo);
                 try {
@@ -156,7 +156,7 @@ Meteor.methods({
                 : Id;
         if (!serviceInfo.Category.subCatId) {
             MainCategories.update(
-                { catId: "0" },
+                {catId: "0"},
                 {
                     $addToSet: {
                         subCategories: {
@@ -202,7 +202,7 @@ Meteor.methods({
                         serviceInfo.coverImage = res._id;
                         serviceInfo.categoryId = CategoryId;
                         serviceInfo.Image = null;
-                        Service.update({ _id: servId }, { $set: serviceInfo });
+                        Service.update({_id: servId}, {$set: serviceInfo});
                     }
                 },
                 (proceedAfterUpload = true)
@@ -211,7 +211,7 @@ Meteor.methods({
             serviceInfo.updatedAt = new Date(new Date().toUTCString());
             serviceInfo.categoryId = CategoryId;
             serviceInfo.Image = null;
-            Service.update({ _id: servId }, { $set: serviceInfo });
+            Service.update({_id: servId}, {$set: serviceInfo});
         }
     },
 
@@ -232,14 +232,14 @@ Meteor.methods({
     },
 
     updateCategory: function (category) {
-        var cat = Service.findOne({ _id: category._id });
+        var cat = Service.findOne({_id: category._id});
         if (
             cat.createdBy === Meteor.userId() ||
             Meteor.user().profile.role === 2
         ) {
             try {
                 Category.update(
-                    { _id: category._id },
+                    {_id: category._id},
                     {
                         $set: {
                             title: category.title,
@@ -259,13 +259,13 @@ Meteor.methods({
     },
 
     removeCategory: function (id) {
-        var category = Service.findOne({ _id: id });
+        var category = Service.findOne({_id: id});
         if (
             Meteor.userId() === category.createdBy ||
             Meteor.user().profile.role === 2
         ) {
             try {
-                Category.remove({ _id: id });
+                Category.remove({_id: id});
             } catch (err) {
                 console.log(err.message);
                 throw new Meteor.Error(403, err.message);
@@ -280,7 +280,7 @@ Meteor.methods({
             if (Count.find().count() > 0) {
                 var count = Count.findOne();
                 Count.update(
-                    { _id: count._id },
+                    {_id: count._id},
                     {
                         $set: {
                             callCount: count.callCount + 1,
@@ -288,7 +288,7 @@ Meteor.methods({
                     }
                 );
             } else {
-                Count.insert({ callCount: 1 });
+                Count.insert({callCount: 1});
             }
         } catch (err) {
             console.log(err.message);
@@ -302,7 +302,7 @@ Meteor.methods({
             // this.unblock();
             var searchExp = new RegExp(RexExp.escape(searchText), "i");
             return Service.find({
-                $or: [{ title: searchExp }, { description: searchText }],
+                $or: [{title: searchExp}, {description: searchText}],
             }).fetch();
         } catch (e) {
             console.log("from search" + e.message);
@@ -312,7 +312,7 @@ Meteor.methods({
     updateRating: function (Id, rating) {
         try {
             let user = Meteor.user();
-            const service = Service.findOne({ _id: Id });
+            const service = Service.findOne({_id: Id});
 
             let Rating = {
                 serviceId: Id,
@@ -322,7 +322,7 @@ Meteor.methods({
             };
 
             Ratings.upsert(
-                { ratedBy: user._id, serviceId: Id },
+                {ratedBy: user._id, serviceId: Id},
                 {
                     $set: Rating,
                 }
@@ -339,7 +339,7 @@ Meteor.methods({
             };
             Meteor.call("addNotification", notification);
             const tokens =
-                Meteor.users.findOne({ _id: service.owner }).devices || [];
+                Meteor.users.findOne({_id: service.owner}).devices || [];
             FIREBASE_MESSAGING.notificationToList(
                 tokens,
                 "New Service Review",
@@ -359,7 +359,7 @@ Meteor.methods({
     },
 
     getMyRating: (servId) => {
-        return Ratings.findOne({ serviceId: servId, ratedBy: Meteor.userId() });
+        return Ratings.findOne({serviceId: servId, ratedBy: Meteor.userId()});
     },
 
     getRatings: (servId, skip) => {
@@ -367,7 +367,7 @@ Meteor.methods({
         const collection = Ratings.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
         const pipeline = [
-            { $match: { serviceId: servId } },
+            {$match: {serviceId: servId}},
             {
                 $lookup: {
                     from: "users",
@@ -379,12 +379,12 @@ Meteor.methods({
             },
             {
                 $addFields: {
-                    RatedBy: { $arrayElemAt: ["$Users", 0] },
+                    RatedBy: {$arrayElemAt: ["$Users", 0]},
                 },
             },
-            { $sort: { rateDate: -1 } },
-            { $limit: _skip + 20 },
-            { $skip: _skip },
+            {$sort: {rateDate: -1}},
+            {$limit: _skip + 20},
+            {$skip: _skip},
             {
                 $project: {
                     _id: 1,
@@ -397,7 +397,7 @@ Meteor.methods({
             },
         ];
         return Async.runSync(function (done) {
-            aggregate(pipeline, { cursor: {} }).toArray(function (err, doc) {
+            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
                 }
@@ -416,9 +416,9 @@ Meteor.methods({
             productInfo.availabeQuantity = parseInt(productInfo.qty);
             productInfo.price = parseInt(productInfo.price);
             productInfo.discount = parseInt(productInfo.discount);
-              productInfo.radius = parseInt(productInfo.radius);
+            productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
-            let _service = Service.findOne({ _id: productInfo.service });
+            let _service = Service.findOne({_id: productInfo.service});
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach((image) => {
@@ -455,7 +455,7 @@ Meteor.methods({
                                                 navigate: "true",
                                                 route: "ProductDetail",
                                                 image:
-                                                    productInfo.images[0] || "",
+                                                productInfo.images[0] || "",
                                                 icon: _service.coverImage || "",
                                             }
                                         );
@@ -468,7 +468,7 @@ Meteor.methods({
                                         owner: _service.owner,
                                         navigateId: pId,
                                         productOwner:
-                                            ProductOwner.REGULAR_USERS,
+                                        ProductOwner.REGULAR_USERS,
                                         receiver: [],
                                         removedBy: [],
                                         type: NotificationTypes.ADD_PRODUCT,
@@ -526,16 +526,16 @@ Meteor.methods({
         productInfo.availabeQuantity = parseInt(productInfo.qty);
         productInfo.price = parseInt(productInfo.price);
         productInfo.discount = parseInt(productInfo.discount);
-         productInfo.radius = parseInt(productInfo.radius);
+        productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
         if (productInfo.images.length < 1) {
             console.log("imagesToRemove", imagesToRemove);
             Products.update(
-                { _id: productId },
-                { $set: productInfo },
+                {_id: productId},
+                {$set: productInfo},
                 (err, res) => {
-                    ServiceImage.remove({ _id: { $in: imagesToRemove } });
+                    ServiceImage.remove({_id: {$in: imagesToRemove}});
                 }
             );
             return;
@@ -563,7 +563,7 @@ Meteor.methods({
                                 productInfo.images = imageIds;
                                 console.log("update", Id, imageIds);
                                 Products.update(
-                                    { _id: productId },
+                                    {_id: productId},
                                     {
                                         $set: productInfo,
                                         // $set: {
@@ -591,7 +591,7 @@ Meteor.methods({
                                             console.log(err);
                                         } else {
                                             ServiceImage.remove({
-                                                _id: { $in: imagesToRemove },
+                                                _id: {$in: imagesToRemove},
                                             });
                                             return res;
                                         }
@@ -608,13 +608,13 @@ Meteor.methods({
                     productInfo.images = imageIds;
                     console.log("update existing");
                     Products.update(
-                        { _id: productId },
+                        {_id: productId},
                         {
                             $set: productInfo,
                         },
                         (err, res) => {
                             ServiceImage.remove({
-                                _id: { $in: imagesToRemove },
+                                _id: {$in: imagesToRemove},
                             });
                             return res;
                         }
@@ -629,10 +629,10 @@ Meteor.methods({
 
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = { id: "000", avgRate: 1, count: 0 };
+        const defaultRating = {id: "000", avgRate: 1, count: 0};
         const categoryLookup = {
             from: "MainCategories",
-            let: { catId: "$categoryId" },
+            let: {catId: "$categoryId"},
             pipeline: [
                 {
                     $match: {
@@ -646,17 +646,17 @@ Meteor.methods({
         };
         const ServiceRatings = {
             from: "ratings",
-            let: { serviceId: Id },
+            let: {serviceId: Id},
             pipeline: [
-                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: { $avg: "$rating.count" },
-                        count: { $sum: 1 },
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1},
                     },
                 },
-                { $project: { avgRate: 1, count: 1 } },
+                {$project: {avgRate: 1, count: 1}},
             ],
             as: "servRatings",
         };
@@ -664,12 +664,12 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: { $eq: ["$servRatings", []] },
+                    if: {$eq: ["$servRatings", []]},
                     then: defaultRating,
-                    else: { $arrayElemAt: ["$servRatings", 0] },
+                    else: {$arrayElemAt: ["$servRatings", 0]},
                 },
             },
-            category: { $arrayElemAt: ["$categories", 0] },
+            category: {$arrayElemAt: ["$categories", 0]},
         };
 
         // const project = {
@@ -683,13 +683,13 @@ Meteor.methods({
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    { $match: { _id: Id } },
-                    { $lookup: categoryLookup },
-                    { $lookup: ServiceRatings },
-                    { $addFields: addValues },
+                    {$match: {_id: Id}},
+                    {$lookup: categoryLookup},
+                    {$lookup: ServiceRatings},
+                    {$addFields: addValues},
                     // {$project: project}
                 ],
-                { cursor: {} }
+                {cursor: {}}
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -710,7 +710,7 @@ Meteor.methods({
         if (_product) {
             let views = _product.views || 0;
             Products.update(
-                { _id: productId },
+                {_id: productId},
                 {
                     $set: {
                         views: views + 1,
@@ -721,7 +721,7 @@ Meteor.methods({
     },
 
     getSimilarProduct: (Id) => {
-        let product = Products.findOne({ _id: Id });
+        let product = Products.findOne({_id: Id});
         return Products.find({
             service: product.service,
             _id: {
@@ -733,10 +733,10 @@ Meteor.methods({
     getServicesNearBy: (obj) => {
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = { id: "000", avgRate: 1, count: 0 };
+        const defaultRating = {id: "000", avgRate: 1, count: 0};
         const defaultUser = {
             id: "000",
-            profile: { name: "", profileImage: null },
+            profile: {name: "", profileImage: null},
         };
         // const categoryLookup = {
         //     from: "MainCategories",
@@ -769,17 +769,17 @@ Meteor.methods({
         };
         const ServiceRatings = {
             from: "ratings",
-            let: { serviceId: "$_id" },
+            let: {serviceId: "$_id"},
             pipeline: [
-                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: { $avg: "$rating.count" },
-                        count: { $sum: 1 },
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1},
                     },
                 },
-                { $project: { avgRate: 1, count: 1 } },
+                {$project: {avgRate: 1, count: 1}},
             ],
             as: "servRatings",
         };
@@ -787,19 +787,19 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: { $eq: ["$servRatings", []] },
+                    if: {$eq: ["$servRatings", []]},
                     then: defaultRating,
-                    else: { $arrayElemAt: ["$servRatings", 0] },
+                    else: {$arrayElemAt: ["$servRatings", 0]},
                 },
             },
             Owner: {
                 $cond: {
-                    if: { $eq: ["$users", []] },
+                    if: {$eq: ["$users", []]},
                     then: defaultUser,
-                    else: { $arrayElemAt: ["$users", 0] },
+                    else: {$arrayElemAt: ["$users", 0]},
                 },
             },
-            category: { $arrayElemAt: ["$categories", 0] },
+            category: {$arrayElemAt: ["$categories", 0]},
             subCategories: {
                 $arrayElemAt: ["$categories.subCategories", 0],
             },
@@ -825,14 +825,14 @@ Meteor.methods({
             pbox: 1,
             radius: 1,
             website: 1,
-            coverImage:1,
+            coverImage: 1,
             subCategory: {
                 $arrayElemAt: [
                     {
                         $filter: {
                             input: "$subCategories",
                             as: "item",
-                            cond: { $eq: ["$$item.subCatId", "$categoryId"] },
+                            cond: {$eq: ["$$item.subCatId", "$categoryId"]},
                         },
                     },
                     0,
@@ -841,29 +841,29 @@ Meteor.methods({
         };
         //  return Category.find().fetch();
         const query = obj.subCatIds
-            ? { categoryId: { $in: obj.subCatIds } }
+            ? {categoryId: {$in: obj.subCatIds}}
             : {};
         return Async.runSync(function (done) {
             aggregate(
                 [
                     {
                         $geoNear: {
-                            near: { type: "Point", coordinates: obj.coords },
+                            near: {type: "Point", coordinates: obj.coords},
                             distanceField: "dist.calculated",
                             query: query,
                             spherical: true,
                             distanceMultiplier: 0.001,
                         },
                     },
-                    { $lookup: categoryLookup },
-                    { $lookup: ServiceRatings },
-                    { $lookup: OwnerLookup },
-                    { $addFields: addValues },
-                    { $limit: obj.skip + obj.limit },
-                    { $skip: obj.skip },
+                    {$lookup: categoryLookup},
+                    {$lookup: ServiceRatings},
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+                    {$limit: obj.skip + obj.limit},
+                    {$skip: obj.skip},
                     {$project: project}
                 ],
-                { cursor: {} }
+                {cursor: {}}
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -876,10 +876,10 @@ Meteor.methods({
     getMyServices: () => {
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = { id: "000", avgRate: 1, count: 0 };
+        const defaultRating = {id: "000", avgRate: 1, count: 0};
         const categoryLookup = {
             from: "MainCategories",
-            let: { catId: "$categoryId" },
+            let: {catId: "$categoryId"},
             pipeline: [
                 {
                     $match: {
@@ -894,17 +894,17 @@ Meteor.methods({
 
         const ServiceRatings = {
             from: "ratings",
-            let: { serviceId: "$_id" },
+            let: {serviceId: "$_id"},
             pipeline: [
-                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: { $avg: "$rating.count" },
-                        count: { $sum: 1 },
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1},
                     },
                 },
-                { $project: { avgRate: 1, count: 1 } },
+                {$project: {avgRate: 1, count: 1}},
             ],
             as: "servRatings",
         };
@@ -912,12 +912,12 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: { $eq: ["$servRatings", []] },
+                    if: {$eq: ["$servRatings", []]},
                     then: defaultRating,
-                    else: { $arrayElemAt: ["$servRatings", 0] },
+                    else: {$arrayElemAt: ["$servRatings", 0]},
                 },
             },
-            category: { $arrayElemAt: ["$categories", 0] },
+            category: {$arrayElemAt: ["$categories", 0]},
         };
         // const project = {
         //     _id: 1,
@@ -932,16 +932,16 @@ Meteor.methods({
             aggregate(
                 [
                     {
-                        $match: { owner: loggedUser },
+                        $match: {owner: loggedUser},
                     },
-                    { $lookup: categoryLookup },
-                    { $lookup: ServiceRatings },
-                    { $addFields: addValues },
+                    {$lookup: categoryLookup},
+                    {$lookup: ServiceRatings},
+                    {$addFields: addValues},
                     // {$limit: obj.skip + obj.limit},
                     // {$skip: obj.skip},
                     // {$project: project}
                 ],
-                { cursor: {} }
+                {cursor: {}}
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -971,18 +971,18 @@ Meteor.methods({
             as: "services",
         };
         const addValues = {
-            Service: { $arrayElemAt: ["$services", 0] },
+            Service: {$arrayElemAt: ["$services", 0]},
         };
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    { $sort: { views: -1 } },
-                    { $lookup: OwnerLookup },
-                    { $addFields: addValues },
-                    { $limit: _skip + _limit },
-                    { $skip: _skip },
+                    {$sort: {views: -1}},
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+                    {$limit: _skip + _limit},
+                    {$skip: _skip},
                 ],
-                { cursor: {} }
+                {cursor: {}}
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1004,19 +1004,19 @@ Meteor.methods({
             as: "users",
         };
         const addValues = {
-            Owner: { $arrayElemAt: ["$users", 0] },
+            Owner: {$arrayElemAt: ["$users", 0]},
         };
         return Async.runSync(function (done) {
             aggregate(
                 [
                     {
-                        $match: { serviceOwner: loggedUser },
+                        $match: {serviceOwner: loggedUser},
                     },
-                    { $lookup: OwnerLookup },
-                    { $addFields: addValues },
-                    { $sort: { createDate: -1 } },
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+                    {$sort: {createDate: -1}},
                 ],
-                { cursor: {} }
+                {cursor: {}}
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1029,20 +1029,23 @@ Meteor.methods({
     geOwnServiceList: () => {
         let loggedUser = Meteor.userId() || "NA";
         return Service.find(
-            { owner: loggedUser },
+            {owner: loggedUser},
             {
-                sort: { createDate: -1 },
-                fields: { _id: 1, title: 1, owner: 1 },
+                sort: {createDate: -1},
+                fields: {_id: 1, title: 1, owner: 1},
             }
         ).fetch();
     },
 
+    getPopularResturants: () => {
+        return Service.find({businessType: BusinessType.RESTURANT}, {sort: {views: -1}, limit: 3})
+    },
     updateServiceViewCount: (serviceId) => {
         let _service = Service.findOne(serviceId);
         if (_service) {
             let views = _service.views || 0;
             Service.update(
-                { _id: serviceId },
+                {_id: serviceId},
                 {
                     $set: {
                         views: views + 1,

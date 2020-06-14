@@ -132,7 +132,7 @@ class OrderDetailIn extends Component {
                         {/*<Image height='293' width='229'*/}
                                {/*source={require('../../images/verified.png')}/>*/}
                         <Text style={{fontSize: 18, marginBottom: 5, marginTop: 22}}>Order
-                            ID: {order._id || "0000145"}</Text>
+                            ID: {order.orderId || "0000145"}</Text>
 
                         <Text style={{fontSize: 16, color: '#8E8E8E', marginBottom: 10}}>Payment
                             :{order.PaymentType == PaymentType.CASH ? " Pay on Delivery" : " Paid with Esewa"}</Text>

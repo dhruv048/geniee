@@ -185,6 +185,7 @@ const interceptDownload = function (http, image, versionName) {
 };
 const onAfterRemove = (images) => {
     // Remove corresponding file from GridFS
+    console.log("remove from GridFs",images);
     images.forEach(image => {
         Object.keys(image.versions).forEach(versionName => {
             const _id = (image.versions[versionName].meta || {}).gridFsFileId;
