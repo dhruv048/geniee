@@ -246,8 +246,6 @@ class Dashboard extends Component {
         });
 
 
-        //Get top Resturants
-        console.log('resturants')
         Meteor.call('getPopularResturants', (err, res) => {
             console.log('resturants', err, res)
             if (!err) {
@@ -655,13 +653,13 @@ class Dashboard extends Component {
     };
 
     _renderProduct = (data, index) => {
-        let item = data.item;
+        let item = data;
         return (
             <TouchableOpacity
                 onPress={() => this._handleProductPress(item)}
                 style={styles.productContainerStyle}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <Card key={item._id} style={customStyle.Card}>
+                <View key={item._id} style={customStyle.Card}>
                     <CardItem cardBody style={{width: '100%'}}>
                         <Image
                             source={{uri: settings.IMAGE_URL + item.images[0]}}
@@ -737,7 +735,7 @@ class Dashboard extends Component {
                         </View>
                         </Body>
                     </CardItem>
-                </Card>
+                </View>
             </TouchableOpacity>
         );
     };
@@ -1102,7 +1100,7 @@ class Dashboard extends Component {
                                             },
                                         ]}>
                                         <TouchableOpacity
-                                            onPress={item.onPress ? item.onPress : goToRoute(this.props.componentId, 'ServiceDetail', {Service: item})}>
+                                            onPress={item.hasOwnProperty('onPress') ? item.onPress :{}}>
                                             <View>
                                                 <Image
                                                     onPress={() => item.onPress}
@@ -1194,15 +1192,19 @@ class Dashboard extends Component {
                                     </Text>
                                 </Button>
                             </View>
-                            <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
-                                data={this.state.popularProducts}
-                                horizontal={false}
-                                // _keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                numColumns={3}
-                                renderItem={(item, index) => this._renderProduct(item, index)}
-                            />
+                            {/*<FlatList*/}
+                                {/*contentContainerStyle={{paddingBottom: 15}}*/}
+                                {/*data={this.state.popularProducts}*/}
+                                {/*horizontal={false}*/}
+                                {/*// _keyExtractor={(item, index) => index.toString()}*/}
+                                {/*showsHorizontalScrollIndicator={false}*/}
+                                {/*numColumns={3}*/}
+                                {/*renderItem={(item, index) => this._renderProduct(item, index)}*/}
+                            {/*/>*/}
+
+                            <View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start'}}>
+                                {this.state.popularProducts.map((item)=>this._renderProduct(item))}
+                            </View>
                         </View>
                     ) : null}
 
@@ -1254,7 +1256,7 @@ const styles = StyleSheet.create({
         // marginVertical: 4,
         borderColor: '#808080',
         //elevation: 5,
-        width: viewportWidth / 4,
+        width: 90,
         marginHorizontal: 5,
         height: 90,
         borderRadius: 5,
@@ -1338,13 +1340,15 @@ const styles = StyleSheet.create({
     },
 
     productContainerStyle: {
-        flex: 1,
+        // flex: 1,
         borderWidth: 0,
         marginHorizontal: 2,
         marginVertical: 4,
         borderColor: '#808080',
         elevation: 1,
-        width: viewportWidth / 3,
+       // width: (viewportWidth-35) / 3,
+        width: '32%',
+        maxWidth:130,
         justifyContent: 'center',
         alignItems: 'center',
     },

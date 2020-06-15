@@ -1032,13 +1032,13 @@ Meteor.methods({
             {owner: loggedUser},
             {
                 sort: {createDate: -1},
-                fields: {_id: 1, title: 1, owner: 1},
+                fields: {_id: 1, title: 1, owner: 1,businessType:1},
             }
         ).fetch();
     },
 
     getPopularResturants: () => {
-        return Service.find({businessType: BusinessType.RESTURANT}, {sort: {views: -1}, limit: 3})
+        return Service.find({businessType: BusinessType.RESTURANT}, {sort: {views: -1}, limit: 3}).fetch();
     },
     updateServiceViewCount: (serviceId) => {
         let _service = Service.findOne(serviceId);

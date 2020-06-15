@@ -258,8 +258,7 @@ class OrderDetailIn extends Component {
                                         <Button
                                             block light style={customStyle.buttonLight}
                                             onPress={this._updateOrderStatus.bind(this, OrderStatus.ORDER_DECLINED)}>
-                                            <Text uppercase={false} style={customStyle.buttonLightText}>Reject
-                                                Order</Text>
+                                            <Text uppercase={false} style={customStyle.buttonLightText}>Decline Order</Text>
                                         </Button>
                                     </View>
                                     <View style={customStyle.col}>

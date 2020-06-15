@@ -57,6 +57,16 @@ class Notification extends Component {
                 break;
             case NotificationTypes.RATE_SERVICE:
                 goToRoute(this.props.componentId, "ServiceRatings", {Id: item.navigateId});
+            case NotificationTypes.ORDER_DECLINED:
+                goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+            case NotificationTypes.ORDER_CANCELLED:
+                goToRoute(this.props.componentId, "OrderDetailIn", {Id: item.navigateId});
+            case NotificationTypes.ORDER_DISPATCHED:
+                goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+            case NotificationTypes.ORDER_DELIVERED:
+                goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+            case NotificationTypes.ORDER_REQUESTED:
+                goToRoute(this.props.componentId, "OrderDetailIn", {Id: item.navigateId});
                 break;
         }
     }
@@ -181,7 +191,7 @@ class Notification extends Component {
                     flexDirection: 'row'
                 }}>
                     <Left style={{flex: 0, alignSelf: 'flex-start', paddingTop: 4}}>
-                        {[NotificationTypes.ORDER_CANCELLED, NotificationTypes.ORDER_DISPATCHED, NotificationTypes.ORDER_DELIVERED].includes(item.type) ?
+                        {[].includes(item.type) ?
                             <Thumbnail medium square style={{borderRadius: 5}}
                                        source={require('../../images/logo.png')}/> :
 
@@ -207,17 +217,20 @@ class Notification extends Component {
                             <Label style={{fontSize: 14}}> has rated service '{item.description}'. </Label> : null}
                         {item.type == 3 ?
                             <Label style={{fontSize: 14}}> has written new article. </Label> : null}
-
                         {item.type == 21 ?
                             <Label style={{fontSize: 14}}> has added new products. </Label> : null}
                         {item.type == 22 ?
                             <Label style={{fontSize: 14}}> has added new news </Label> : null}
                         {item.type == NotificationTypes.ORDER_DISPATCHED ?
-                            <Label style={{fontSize: 14}}>Your Order has been dispatched. </Label> : null}
+                            <Label style={{fontSize: 14}}> has dispatched your order. </Label> : null}
                         {item.type == NotificationTypes.ORDER_DELIVERED ?
-                            <Label style={{fontSize: 14}}>Your Order has ben delivered </Label> : null}
+                            <Label style={{fontSize: 14}}> has delivered your order. </Label> : null}
                         {item.type == NotificationTypes.ORDER_CANCELLED ?
-                            <Label style={{fontSize: 14}}>Your Order has ben cancelled. </Label> : null}
+                            <Label style={{fontSize: 14}}> has cancelled the order. </Label> : null}
+                        {item.type == NotificationTypes.ORDER_DECLINED ?
+                            <Label style={{fontSize: 14}}> has declined your order. </Label> : null}
+                        {item.type == NotificationTypes.ORDER_REQUESTED ?
+                            <Label style={{fontSize: 14}}> has placed new order </Label> : null}
                     </Text>
                     <Text style={{
                         color: seen ? colors.gray_200 : colors.primaryText,
@@ -225,15 +238,20 @@ class Notification extends Component {
                     }}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
                     </Body>
                     <Right style={{flex: 0}}>
-                        <TouchableOpacity style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}>
-                        <Menu ref={ref => (this[`menu${item._id}`] = ref)}
-                        button={
-                        <Button transparent onPress={() => this[`menu${item._id}`].show()}>
-                        <Icon name={'more-vertical'} size={18} color={variables.gray_200}/>
-                        </Button>}>
-                        <MenuItem onPress={() => {this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)}}> Mark as read</MenuItem>
-                        <MenuItem onPress={() => {this[`menu${item._id}`].hide(), this.swipeLeft(item._id)}}> Remove</MenuItem>
-                        </Menu>
+                        <TouchableOpacity
+                            style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}>
+                            <Menu ref={ref => (this[`menu${item._id}`] = ref)}
+                                  button={
+                                      <Button transparent onPress={() => this[`menu${item._id}`].show()}>
+                                          <Icon name={'more-vertical'} size={18} color={variables.gray_200}/>
+                                      </Button>}>
+                                <MenuItem onPress={() => {
+                                    this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)
+                                }}> Mark as read</MenuItem>
+                                <MenuItem onPress={() => {
+                                    this[`menu${item._id}`].hide(), this.swipeLeft(item._id)
+                                }}> Remove</MenuItem>
+                            </Menu>
                         </TouchableOpacity>
                     </Right>
                 </View>
@@ -296,11 +314,12 @@ class Notification extends Component {
         }
 
     }
-    clearAll=()=>{
+
+    clearAll = () => {
         console.log("clearAll")
         const deviceId = DeviceInfo.getUniqueId();
-        Meteor.call('removeAllNotification',deviceId,(err,res)=>{
-            console.log(err,res)
+        Meteor.call('removeAllNotification', deviceId, (err, res) => {
+            console.log(err, res)
         });
     }
 
@@ -343,10 +362,10 @@ class Notification extends Component {
                     </Body>
                     <Right/>
                     <Right>
-                   <Button onPress={this.clearAll} transparent>
-                    <Icon name='trash' color='white' size={18}/>
-                    <Text>CLEAR ALL</Text>
-                    </Button>
+                        <Button onPress={this.clearAll} transparent>
+                            <Icon name='trash' color='white' size={18}/>
+                            <Text>CLEAR ALL</Text>
+                        </Button>
                     </Right>
                 </Header>
                 <Content style={styles.content}>

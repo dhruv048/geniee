@@ -29,7 +29,7 @@ import {
     Left,
     Body,
     Right,
-    Footer,Spinner,
+    Footer, Spinner,
     Input as NBInput
 } from 'native-base';
 import Meteor from "../../react-native-meteor";
@@ -42,15 +42,15 @@ import {CogMenu} from "../../components/CogMenu/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {backToRoot, goToRoute, goBack} from "../../Navigation";
 import AsyncStorage from '@react-native-community/async-storage';
-import settings from "../../config/settings";
+import settings, {BusinessType} from "../../config/settings";
 import FIcon from 'react-native-vector-icons/Feather';
 import Loading from '../../components/Loading';
 import {
-  GalioProvider,
-  Input,
-  Button as GButton,
-  Radio,
-  Text as GText,Checkbox
+    GalioProvider,
+    Input,
+    Button as GButton,
+    Radio,
+    Text as GText, Checkbox
 } from 'galio-framework';
 import {customGalioTheme} from '../../config/themes';
 
@@ -60,7 +60,7 @@ class AddProduct extends React.PureComponent {
         this.mounted = false;
         this.state = {
             query: '',
-            selectedService: {_id:'',title:''},
+            selectedService: {_id: '', title: ''},
             title: '',
             homeDelivery: false,
             radius: 0,
@@ -79,8 +79,8 @@ class AddProduct extends React.PureComponent {
             qty: '',
             loading: false,
             serviceModal: false,
-            myServices:[],
-            imageLoad:false,
+            myServices: [],
+            imageLoad: false,
         };
         this.myServices = [];
         this.imagesToRemove = [];
@@ -93,7 +93,7 @@ class AddProduct extends React.PureComponent {
         let myServices = await AsyncStorage.getItem('myServices');
         console.log(myServices)
         this.myServices = JSON.parse(myServices);
-        this.setState({myServices:this.myServices})
+        this.setState({myServices: this.myServices})
         this.fillEditForm();
     };
 
@@ -173,7 +173,7 @@ class AddProduct extends React.PureComponent {
             });
         }
         else if (selected === 1) {
-            this.setState({imageLoad:true})
+            this.setState({imageLoad: true})
             ImagePicker.openPicker({
                 includeBase64: true,
                 compressImageMaxWidth: 1440,
@@ -191,7 +191,7 @@ class AddProduct extends React.PureComponent {
         this.setState(prevState => ({
             images: [...prevState.images, image]
         }))
-this.setState({imageLoad:false})
+        this.setState({imageLoad: false})
         ImagePicker.clean().then(() => {
             console.log('removed all tmp images from tmp directory');
         }).catch(e => {
@@ -281,7 +281,7 @@ this.setState({imageLoad:false})
     resetForm() {
         this.setState({
             query: '',
-            selectedService: {_id:'',title:''},
+            selectedService: {_id: '', title: ''},
             title: '',
             homeDelivery: false,
             radius: 0,
@@ -346,20 +346,20 @@ this.setState({imageLoad:false})
         this.setState({modalVisible: visible});
     }
 
-    _findCategory=(query)=> {
-        console.log("_findCategory","query")
+    _findCategory = (query) => {
+        console.log("_findCategory", "query")
         if (query === '') {
-            this.setState({myServices:this.myServices});
+            this.setState({myServices: this.myServices});
         }
 
-        let myServices =[...this.myServices];
+        let myServices = [...this.myServices];
         const regex = new RegExp(`${query.trim()}`, 'i');
-         myServices= myServices.filter(ser => ser.title.search(regex) >= 0);
-        this.setState({myServices:myServices});
+        myServices = myServices.filter(ser => ser.title.search(regex) >= 0);
+        this.setState({myServices: myServices});
     }
 
     _getListItem = (data, index) => {
-        let item = data.item;
+        let item = data;
         return (
             <View key={index}>
                 <View style={[styles.containerStyle]}>
@@ -373,7 +373,8 @@ this.setState({imageLoad:false})
                            source={{uri: item.uri}}/>
                     <Button onPress={() => this.removeImage(item)} transparent
                             style={{position: 'absolute', top: -12, right: 0}}>
-                        <FIcon name='x-circle' style={{backgroundColor:'white',top:0}} size={20} color={colors.danger}/>
+                        <FIcon name='x-circle' style={{backgroundColor: 'white', top: 0}} size={20}
+                               color={colors.danger}/>
                     </Button>
                 </View>
 
@@ -388,171 +389,176 @@ this.setState({imageLoad:false})
         // const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
 
         return (
-               <GalioProvider theme={customGalioTheme}>
-            <Container style={styles.container}>
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor:colors.appLayout}}>
-                    <Left>
-                        {/*<Button transparent onPress={() => {*/}
-                        {/*this.props.navigation.openDrawer()*/}
-                        {/*}}>*/}
-                        {/*<Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>*/}
-                        {/*</Button>*/}
-                        <CogMenu componentId={this.props.componentId}/>
-                    </Left>
+            <GalioProvider theme={customGalioTheme}>
+                <Container style={styles.container}>
+                    <StatusBar
+                        backgroundColor={colors.statusBar}
+                        barStyle='light-content'
+                    />
+                    <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: colors.appLayout}}>
+                        <Left>
+                            {/*<Button transparent onPress={() => {*/}
+                            {/*this.props.navigation.openDrawer()*/}
+                            {/*}}>*/}
+                            {/*<Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>*/}
+                            {/*</Button>*/}
+                            <CogMenu componentId={this.props.componentId}/>
+                        </Left>
 
-                    <Body>
-                    <Text style={styles.screenHeader}>{this.props.Product ? "Update Product" : "Add Product"}</Text>
-                    </Body>
-                </Header>
-                <Content>
+                        <Body>
+                        <Text style={styles.screenHeader}>{this.props.Product ? "Update Product" : "Add Product"}</Text>
+                        </Body>
+                    </Header>
+                    <Content>
 
 
-                    <Fragment>
-                        <SafeAreaView style={styles.formContainer} keyboardShouldPersistTaps='always'>
-                            {/*<View underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                  {/*style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>*/}
+                        <Fragment>
+                            <SafeAreaView style={styles.formContainer} keyboardShouldPersistTaps='always'>
+                                {/*<View underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                {/*style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>*/}
                                 {/*<Autocomplete*/}
-                                    {/*autoCapitalize="none"*/}
-                                    {/*style={styles.inputBoxAC}*/}
-                                    {/*autoCorrect={false}*/}
-                                    {/*data={myServices.length === 1 && comp(query, myServices[0].title)*/}
-                                        {/*? [] : myServices}*/}
-                                    {/*defaultValue={query}*/}
-                                    {/*hideResults={selectedService && selectedService.title === query}*/}
-                                    {/*onChangeText={text => this.setState({query: text})}*/}
-                                    {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                    {/*placeholder="Enter Service Name (*)"*/}
-                                    {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
-                                    {/*renderItem={ser => <View style={{maxHeight: 200}}>*/}
-                                        {/*<ScrollView style={{flexGrow: 0}}>*/}
-                                            {/*<TouchableOpacity*/}
-                                                {/*style={styles.autosuggestCont}*/}
-                                                {/*onPress={() => (*/}
-                                                    {/*this.setState({*/}
-                                                        {/*query: ser.title,*/}
-                                                        {/*selectedService: ser*/}
-                                                    {/*})*/}
-                                                {/*)}*/}
-                                            {/*>*/}
-                                                {/*<Text style={styles.autosuggesText}>{ser.title}</Text>*/}
-                                            {/*</TouchableOpacity>*/}
-                                        {/*</ScrollView></View>}*/}
+                                {/*autoCapitalize="none"*/}
+                                {/*style={styles.inputBoxAC}*/}
+                                {/*autoCorrect={false}*/}
+                                {/*data={myServices.length === 1 && comp(query, myServices[0].title)*/}
+                                {/*? [] : myServices}*/}
+                                {/*defaultValue={query}*/}
+                                {/*hideResults={selectedService && selectedService.title === query}*/}
+                                {/*onChangeText={text => this.setState({query: text})}*/}
+                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
+                                {/*placeholder="Enter Service Name (*)"*/}
+                                {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
+                                {/*renderItem={ser => <View style={{maxHeight: 200}}>*/}
+                                {/*<ScrollView style={{flexGrow: 0}}>*/}
+                                {/*<TouchableOpacity*/}
+                                {/*style={styles.autosuggestCont}*/}
+                                {/*onPress={() => (*/}
+                                {/*this.setState({*/}
+                                {/*query: ser.title,*/}
+                                {/*selectedService: ser*/}
+                                {/*})*/}
+                                {/*)}*/}
+                                {/*>*/}
+                                {/*<Text style={styles.autosuggesText}>{ser.title}</Text>*/}
+                                {/*</TouchableOpacity>*/}
+                                {/*</ScrollView></View>}*/}
                                 {/*/>*/}
-                            {/*</View>*/}
+                                {/*</View>*/}
 
-                            <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                   placeholder='Service (*)'
-                                       onSubmitEditing={() => this.title.focus()}
-                                       onKeyPress={()=>this.setState({serviceModal:true})}
-                                       onFocus={()=>this.setState({serviceModal:true})}
-                                       value={this.state.selectedService.title}
-                            />
-                            <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT} 
-                  placeholder='Title (*)'
-                                       onSubmitEditing={() => this.title.focus()}
-                                       onChangeText={(title) => this.setState({title})}
-                                       value={this.state.title}
-                            />
-                            <Textarea rowSpan={3} placeholder="Description (*)"
-                                      style={styles.inputTextarea}
-                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                      underlineColorAndroid='red'
-                                //onSubmitEditing={() => this.contactNumber.focus()}
-                                      onChangeText={(description) => this.setState({description})}
-                                      value={this.state.description}
-                            />
-
-
-                            <View style={styles.multiField}>
-                             <View style={{flex:1,marginRight:5}} >
                                 <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                                           placeholder='Available Qty'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(qty) => this.setState({qty})}
-                                           value={this.state.qty}
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder='Service (*)'
+                                    onSubmitEditing={() => this.title.focus()}
+                                    onKeyPress={() => this.setState({serviceModal: true})}
+                                    onFocus={() => this.setState({serviceModal: true})}
+                                    value={this.state.selectedService.title}
                                 />
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder='Title (*)'
+                                    onSubmitEditing={() => this.title.focus()}
+                                    onChangeText={(title) => this.setState({title})}
+                                    value={this.state.title}
+                                />
+                                <Textarea rowSpan={3} placeholder="Description (*)"
+                                          style={styles.inputTextarea}
+                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                          underlineColorAndroid='red'
+                                    //onSubmitEditing={() => this.contactNumber.focus()}
+                                          onChangeText={(description) => this.setState({description})}
+                                          value={this.state.description}
+                                />
+                                {this.state.selectedService.businessType!==BusinessType.RESTURANT?
+                                <View style={styles.multiField}>
+                                    <View style={{flex: 1, marginRight: 5}}>
+                                        <Input
+                                            color={customGalioTheme.COLORS.INPUT_TEXT}
+                                            placeholder='Available Qty'
+                                            keyboardType='phone-pad'
+                                            onChangeText={(qty) => this.setState({qty})}
+                                            value={this.state.qty}
+                                        />
+                                    </View>
+                                    <View style={{flex: 1, marginLeft: 5}}>
+                                        <Input
+                                            color={customGalioTheme.COLORS.INPUT_TEXT}
+                                            placeholder='Unit'
+                                            onChangeText={(unit) => this.setState({unit})}
+                                            value={this.state.unit}
+                                        />
+                                    </View>
+                                </View>:null}
+                                <View style={styles.multiField}>
+                                    <View style={{flex: 1, marginRight: 5}}>
+                                        <Input
+                                            color={customGalioTheme.COLORS.INPUT_TEXT}
+                                            placeholder='Price per Unit'
+                                            keyboardType='phone-pad'
+                                            onChangeText={(price) => this.setState({price})}
+                                            value={this.state.price}
+                                        />
+                                    </View>
+                                    <View style={{flex: 1, marginLeft: 5}}>
+                                        <Input
+                                            color={customGalioTheme.COLORS.INPUT_TEXT}
+                                            placeholder='Discount in %'
+                                            keyboardType='phone-pad'
+                                            onChangeText={(discount) => this.setState({discount})}
+                                            value={this.state.discount}
+                                        />
+                                    </View>
                                 </View>
-                                  <View style={{flex:1,marginLeft:5}}>
-                                <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                                           placeholder='Unit'
-                                           onChangeText={(unit) => this.setState({unit})}
-                                           value={this.state.unit}
-                                />
-</View>
-                            </View>
-                            <View style={styles.multiField}>
-                             <View style={{flex:1,marginRight:5}} >
-                                <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                                           placeholder='Price per Unit'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(price) => this.setState({price})}
-                                           value={this.state.price}
-                                />
-                                </View>
-                                 <View style={{flex:1,marginLeft:5}}>
-                                <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                                           placeholder='Discount in %'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(discount) => this.setState({discount})}
-                                           value={this.state.discount}
-                                />
-</View>
-                            </View>
-                            <View style={styles.multiField}>
-                           <View style={{flex:1,marginRight:5}} >
-                               {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+                                {this.state.selectedService.businessType!==BusinessType.RESTURANT?
+                                    <>
+                                <View style={styles.multiField}>
+                                    <View style={{flex: 1, marginRight: 5}}>
+                                        {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                            placeholder='Radius in K.M (*)'
                                            keyboardType='phone-pad'
                                            onChangeText={(radius) => this.setState({radius})}
                                            value={this.state.radius}
                                 />*/}
- <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
-                                       placeholder='Contact No (*)'
-                                       keyboardType='phone-pad'
-                                       onChangeText={(contact) => this.setState({contact})}
-                                       value={this.state.contact}
-                            />
+                                        <Input color={customGalioTheme.COLORS.INPUT_TEXT}
+                                               placeholder='Contact No (*)'
+                                               keyboardType='phone-pad'
+                                               onChangeText={(contact) => this.setState({contact})}
+                                               value={this.state.contact}
+                                        />
 
-                                </View>
-                                <View style={styles.chkView}>
-<Checkbox
-                      label=""
-                        initialValue={this.state.homeDelivery}
-                        color="primary"
-                        onChange={() => this._updateHomeDelivery}
-                      />
-                              {/*  <CheckBox style={{marginEnd: 20}}
+                                    </View>
+                                    <View style={styles.chkView}>
+                                        <Checkbox
+                                            label=""
+                                            initialValue={this.state.homeDelivery}
+                                            color="primary"
+                                            onChange={() => this._updateHomeDelivery}
+                                        />
+                                        {/*  <CheckBox style={{marginEnd: 20}}
                                                                        checked={this.state.homeDelivery}
                                                                        onPress={this._updateHomeDelivery}/>*/}
-                                    <Text style={{color: 'rgba(0, 0, 0, 0.44)', marginLeft:5}}>{'Home Delivery'}</Text></View>
-                            </View>
-                            <Textarea rowSpan={2} placeholder="Colors seperated ;"
-                                      style={styles.inputTextarea}
-                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                      underlineColorAndroid='red'
+                                        <Text style={{
+                                            color: 'rgba(0, 0, 0, 0.44)',
+                                            marginLeft: 5
+                                        }}>{'Home Delivery'}</Text></View>
+                                </View>
+                                <Textarea rowSpan={2} placeholder="Colors seperated ;"
+                                          style={styles.inputTextarea}
+                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                          underlineColorAndroid='red'
 
-                                      onChangeText={(colors) => this.setState({colors})}
-                                      value={this.state.colors}
-                            />
-                            <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
-                                      style={styles.inputTextarea}
-                                      placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                      underlineColorAndroid='red'
-                                      onChangeText={(sizes) => this.setState({sizes})}
-                                      value={this.state.sizes}
-                            />
+                                          onChangeText={(colors) => this.setState({colors})}
+                                          value={this.state.colors}
+                                />
+                                <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
+                                          style={styles.inputTextarea}
+                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                          underlineColorAndroid='red'
+                                          onChangeText={(sizes) => this.setState({sizes})}
+                                          value={this.state.sizes}
+                                />
 
-                         {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+
+                                {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Contact No (*)'
                                        keyboardType='phone-pad'
                                        onChangeText={(contact) => this.setState({contact})}
@@ -560,13 +566,13 @@ this.setState({imageLoad:false})
                             /> */}
 
 
-                            <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+                                <Input color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Website'
                                        onChangeText={(webLink) => this.setState({webLink})}
                                        value={this.state.webLink}
-                            />
-                            
-                          {/*}  <Button
+                                />
+</>:null}
+                                {/* <Button
                                 style={styles.button}
                                 onPress={() => this.ActionSheet.show()}>
                                 <Icon name={'ios-add'} color={'white'}/>
@@ -574,156 +580,169 @@ this.setState({imageLoad:false})
                             </Button>*/}
 
 
-                            <View style={{marginTop: 22}}>
-                                <Modal
-                                    animationType="slide"
-                                    transparent={true}
-                                    visible={this.state.modalVisible}
-                                    onRequestClose={() => {
-                                        this.setModalVisible
-                                    }}>
-                                    <View style={{
-                                        flex: 1,
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}>
-
+                                <View style={{marginTop: 22}}>
+                                    <Modal
+                                        animationType="slide"
+                                        transparent={true}
+                                        visible={this.state.modalVisible}
+                                        onRequestClose={() => {
+                                            this.setModalVisible
+                                        }}>
                                         <View style={{
-                                            backgroundColor: 'white',
-                                            width: 350,
-                                            height: 200,
-                                            padding: 30,
-
+                                            flex: 1,
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
                                         }}>
 
-                                            <Button block bordered info onPress={() => {
-                                                this._handleImageUpload('key0')
+                                            <View style={{
+                                                backgroundColor: 'white',
+                                                width: 350,
+                                                height: 200,
+                                                padding: 30,
+
                                             }}>
-                                                <Text style={styles.item_text}>Picture from Camera</Text>
-                                            </Button>
-                                            <Button style={{marginTop: 10}} info block bordered onPress={() => {
-                                                this._handleImageUpload('key1')
-                                            }}>
-                                                <Text style={styles.item_text}>Picture from Gallery </Text>
-                                            </Button>
-                                            <Button transparent danger onPress={() => {
-                                                this.setModalVisible(false)
-                                            }}>
-                                                <Text>Cancel</Text>
-                                            </Button>
+
+                                                <Button block bordered info onPress={() => {
+                                                    this._handleImageUpload('key0')
+                                                }}>
+                                                    <Text style={styles.item_text}>Picture from Camera</Text>
+                                                </Button>
+                                                <Button style={{marginTop: 10}} info block bordered onPress={() => {
+                                                    this._handleImageUpload('key1')
+                                                }}>
+                                                    <Text style={styles.item_text}>Picture from Gallery </Text>
+                                                </Button>
+                                                <Button transparent danger onPress={() => {
+                                                    this.setModalVisible(false)
+                                                }}>
+                                                    <Text>Cancel</Text>
+                                                </Button>
+                                            </View>
                                         </View>
-                                    </View>
-                                </Modal>
+                                    </Modal>
+                                </View>
+                            </SafeAreaView>
+                            {/*<FlatList style={styles.mainContainer}*/}
+                            {/*data={this.state.images}*/}
+                            {/*renderItem={this._getListItem}*/}
+                            {/*keyExtracter={(item, index) => index.toString()}*/}
+                            {/*horizontal={false}*/}
+                            {/*numColumns={2}/>*/}
+                            <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start'}}>
+                                {this.state.images.map((item, indx) =>
+                                        this._getListItem(item, indx)
+                                )}
+                                {this.state.imageLoad ?
+                                    <View key={'123'}>
+                                        <View style={[styles.containerStyle]}>
+                                            <Spinner color={colors.appLayout} size='large'/>
+                                        </View>
+
+                                    </View> : null}
                             </View>
-                        </SafeAreaView>
-                        <FlatList style={styles.mainContainer}
-                                      data={this.state.images}
-                                      renderItem={this._getListItem}
-                                      keyExtracter={(item, index) => index.toString()}
-                                      horizontal={false}
-                                      numColumns={2}/>
-      {this.state.imageLoad?                     
- <View key={'123'}>
-                <View style={[styles.containerStyle]}>
-                    <Spinner color={colors.appLayout} size='large'/>
-                </View>
 
-            </View>:null}
 
-                             <GButton
-                             size="small"
-                  onPress={()=>this.ActionSheet.show()}
-                  style={{ marginVertical: 20,alignSelf
-                    :'center'}}>
-                 Upload Image
-                </GButton>
-                    </Fragment>
-                    <ActionSheet
-                        ref={o => this.ActionSheet = o}
-                        title={'Please select the option'}
-                        options={[<Text style={{color: colors.appLayout}}>Take Picture from Camera</Text>,
-                            <Text style={{color: colors.appLayout}}>Pick Image from Gallery</Text>, 'Cancel']}
-                        cancelButtonIndex={2}
-                        destructiveButtonIndex={2}
-                        onPress={(index) => {
-                            this._handleImageUpload(index)
-                        }}
-                    />
-                </Content>
-                <Footer style={{backgroundColor: colors.appBackground, alignItems: 'center',paddingHorizontal:10,height:50}}>
-                    {/*<View style={styles.buttonView}>
+                            <GButton
+                                size="small"
+                                onPress={() => this.ActionSheet.show()}
+                                style={{
+                                    marginVertical: 20, alignSelf: 'center'
+                                }}>
+                                Upload Image
+                            </GButton>
+                        </Fragment>
+                        <ActionSheet
+                            ref={o => this.ActionSheet = o}
+                            title={'Please select the option'}
+                            options={[<Text style={{color: colors.appLayout}}>Take Picture from Camera</Text>,
+                                <Text style={{color: colors.appLayout}}>Pick Image from Gallery</Text>, 'Cancel']}
+                            cancelButtonIndex={2}
+                            destructiveButtonIndex={2}
+                            onPress={(index) => {
+                                this._handleImageUpload(index)
+                            }}
+                        />
+                    </Content>
+                    <Footer style={{
+                        backgroundColor: colors.appBackground,
+                        alignItems: 'center',
+                        paddingHorizontal: 10,
+                        height: 50
+                    }}>
+                        {/*<View style={styles.buttonView}>
                     <Button
                         style={styles.button}
                         onPress={this._saveService}>
                         <Text style={styles.buttonText}> {this.props.Product ? "Update" : "Save"} </Text>
                     </Button>
                 </View>*/}
-                 <GButton
-                  onPress={this._saveService}
-                  style={{width: '100%', marginVertical: 20}}
-                  loading={this.state.loading}
-                  disabled={this.state.loading}>
-                 {this.props.Product ? "Update" : "Save"} 
-                </GButton>
-                </Footer>
+                        <GButton
+                            onPress={this._saveService}
+                            style={{width: '100%', marginVertical: 20}}
+                            loading={this.state.loading}
+                            disabled={this.state.loading}>
+                            {this.props.Product ? "Update" : "Save"}
+                        </GButton>
+                    </Footer>
 
-                {/* SELCT SERVICE MODAL START */}
-                <Modal style={customStyle.modal}
-                    // transparent={true}
-                       visible={this.state.serviceModal}
-                       onRequestClose={() => {
-                           this.setState({serviceModal: false})
-                       }}>
-                    <Header androidStatusBarColor={colors.statusBar}
-                            style={{backgroundColor: colors.appLayout}}>
-                        <Left style={{flex:1}}>
-                            <Button transparent style={{paddingHorizontal: 10}} onPress={() => {
-                                this.setState({serviceModal: false})
-                            }}>
-                                <FIcon name='arrow-left' size={20} color={'white'}/>
-                            </Button>
-                        </Left>
-                        <Body style={{flex:7}}>
-                        <Item rounded search boadered style={{
-                            backgroundColor: 'white',
-                            height: 40}}>
-                            <NBInput
-                                value={this.state.query}
-                                placeholder="Search.."
-                                onChangeText={(text) => {
-                                    this._debouncedFindCategory(text), this.setState({query: text})
-                                }}/>
-                            {
-                                this.state.query ?
-                                    <Button style={{paddingHorizontal: 10}}
-                                            onPress={() => {
-                                                this.setState({query: ''})
-                                            }} transparent>
-                                        <FIcon name='x' size={20}/>
-                                    </Button> : null
-                            }
-                        </Item>
-                        </Body>
-                    </Header>
-                    <Content padder>
-                        <FlatList
-                            data={this.state.myServices}
-                            _keyExtractor={(item, index) => index.toString()}
-                            keyboardShouldPersistTaps='always'
-                            renderItem={({item, index}) =>
-                                <ListItem onPress={() => {
-                                    this.setState({selectedService: item, serviceModal: false})
+                    {/* SELCT SERVICE MODAL START */}
+                    <Modal style={customStyle.modal}
+                        // transparent={true}
+                           visible={this.state.serviceModal}
+                           onRequestClose={() => {
+                               this.setState({serviceModal: false})
+                           }}>
+                        <Header androidStatusBarColor={colors.statusBar}
+                                style={{backgroundColor: colors.appLayout}}>
+                            <Left style={{flex: 1}}>
+                                <Button transparent style={{paddingHorizontal: 10}} onPress={() => {
+                                    this.setState({serviceModal: false})
                                 }}>
-                                    <Text>{item.title}</Text>
-                                </ListItem>
-                            }
-                        />
-                    </Content>
+                                    <FIcon name='arrow-left' size={20} color={'white'}/>
+                                </Button>
+                            </Left>
+                            <Body style={{flex: 7}}>
+                            <Item rounded search boadered style={{
+                                backgroundColor: 'white',
+                                height: 40
+                            }}>
+                                <NBInput
+                                    value={this.state.query}
+                                    placeholder="Search.."
+                                    onChangeText={(text) => {
+                                        this._debouncedFindCategory(text), this.setState({query: text})
+                                    }}/>
+                                {
+                                    this.state.query ?
+                                        <Button style={{paddingHorizontal: 10}}
+                                                onPress={() => {
+                                                    this.setState({query: ''})
+                                                }} transparent>
+                                            <FIcon name='x' size={20}/>
+                                        </Button> : null
+                                }
+                            </Item>
+                            </Body>
+                        </Header>
+                        <Content padder>
+                            <FlatList
+                                data={this.state.myServices}
+                                _keyExtractor={(item, index) => index.toString()}
+                                keyboardShouldPersistTaps='always'
+                                renderItem={({item, index}) =>
+                                    <ListItem onPress={() => {
+                                        this.setState({selectedService: item, serviceModal: false})
+                                    }}>
+                                        <Text>{item.title}</Text>
+                                    </ListItem>
+                                }
+                            />
+                        </Content>
 
-                </Modal>
-                {/* SELCT CATEGORY MODAL STOP */}
-            </Container>
+                    </Modal>
+                    {/* SELCT CATEGORY MODAL STOP */}
+                </Container>
             </GalioProvider>
 
         );
@@ -770,13 +789,13 @@ const GooglePlaceSerachStyle = {
 }
 
 const styles = StyleSheet.create({
-     formContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    flex: 1,
-    // width: '100%',
-  },
+    formContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        flex: 1,
+        // width: '100%',
+    },
     screenHeader: {
         fontSize: 20,
         fontFamily: `Source Sans Pro`,
@@ -878,15 +897,15 @@ const styles = StyleSheet.create({
     },
     inputTextarea: {
         flexDirection: 'row',
-    width: '100%',
-    backgroundColor: 'white',
-    borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
-    borderWidth: customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
-    borderColor: customGalioTheme.COLORS.PLACEHOLDER,
-    paddingHorizontal: 16,
-    fontSize: customGalioTheme.SIZES.INPUT_TEXT,
-    color: customGalioTheme.COLORS.INPUT_TEXT,
-    marginVertical: 5,
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
+        borderWidth: customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
+        borderColor: customGalioTheme.COLORS.PLACEHOLDER,
+        paddingHorizontal: 16,
+        fontSize: customGalioTheme.SIZES.INPUT_TEXT,
+        color: customGalioTheme.COLORS.INPUT_TEXT,
+        marginVertical: 5,
     },
     autocompleteOptions: {
         backgroundColor: `rgba(243, 247, 255, 1)`,
@@ -1029,9 +1048,9 @@ const styles = StyleSheet.create({
     },
     multiField: {
         flexDirection: 'row',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-around',
     },
     inputBoxMultiField: {
         width: '48%',
@@ -1084,7 +1103,6 @@ const styles = StyleSheet.create({
 
     },
     containerStyle: {
-        flex: 1,
         padding: 1,
         borderWidth: 0,
         marginVertical: 8,
@@ -1102,7 +1120,7 @@ const styles = StyleSheet.create({
 export {styles};
 export default Meteor.createContainer(() => {
     return {
-       // categories: Meteor.collection('categories').find(),
-      //  myServices: Meteor.collection('service').find()
+        // categories: Meteor.collection('categories').find(),
+        //  myServices: Meteor.collection('service').find()
     }
 }, AddProduct);

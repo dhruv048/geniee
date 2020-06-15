@@ -70,9 +70,16 @@ export const BusinessType = {
 };
 
 export const NotificationTypes = {
-    ADD_SERVICE:0,
-    ADD_PRODUCT:1,
-    RATE_SERVICE:2
+    ORDER_REQUESTED: 0,
+    ORDER_DISPATCHED: 1,
+    ORDER_DELIVERED: 2,
+    ORDER_CONFIRMED: 3,
+    ORDER_CANCELLED: 4,
+    ORDER_DECLINED:5,
+    ADD_SERVICE:10,
+    ADD_PRODUCT:11,
+    RATE_SERVICE:12,
+
 };
 export default settings;
 export const getProfileImage=(url)=>{

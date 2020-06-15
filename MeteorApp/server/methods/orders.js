@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { ProductOwner, OrderStatus } from "../../lib/utils";
+import {ProductOwner, OrderStatus, NotificationTypes} from "../../lib/utils";
 import { EFProducts, EFOrder } from "../../lib/collections/eatFit/efProducts";
 import { ROrder } from "../../lib/collections/orders";
 
@@ -14,6 +14,7 @@ Meteor.methods({
         let RTotal = 0;
         let EFItems = [];
         let RegularItems = [];
+        let ServiceProviders=[];
         return Async.runSync(function (done) {
             order.items.forEach(async (item, index) => {
                 let product = null;
@@ -26,6 +27,7 @@ Meteor.methods({
                 } else {
                     product = await Products.findOne({ _id: item.productId });
                     RegularItems.push(item);
+                    ServiceProviders.push(product.serviceOwner);
                     RTotal = RTotal + item.finalPrice * item.quantity;
                 }
 
@@ -79,11 +81,13 @@ Meteor.methods({
                                 //     description: product.productTitle,
                                 //     owner: order.owner ? order.owner : loggedUser._id,
                                 //     navigateId: res,
-                                //     receiver: product.owner,
-                                //     type: NotificationTypes.ORDER_PRODUCT
+                                //     receiver:ServiceProviders,
+                                //     type: NotificationTypes.ORDER_REQUESTED,
+                                //     receiver: [],
+                                //     removedBy: [],
                                 // }
                                 // Meteor.call('addNotification', notification);
-                                //return res;
+                                return res;
                                 orderIds.push(res);
                             } else {
                                 resetOrderQty(itemsUpdated);
@@ -98,17 +102,17 @@ Meteor.methods({
                         order.productOwner = ProductOwner.REGULAR_USERS;
                         ROrder.insert(order, (err, res) => {
                             if (res) {
-                                // let notification = {
-                                //     title: 'Order is placed ',
-                                //     description: product.productTitle,
-                                //     owner: order.owner ? order.owner : loggedUser._id,
-                                //     navigateId: res,
-                                //     receiver: product.owner,
-                                //     type: NotificationTypes.ORDER_PRODUCT
-                                // }
-                                // Meteor.call('addNotification', notification);
-                                //return res;
-                                // done(err, res);
+                                let notification = {
+                                    title: 'Order is placed ',
+                                    description: product.productTitle,
+                                    owner: order.owner ? order.owner : loggedUser._id,
+                                    navigateId: res,
+                                    receiver:ServiceProviders,
+                                    type: NotificationTypes.ORDER_REQUESTED,
+                                    receiver: [],
+                                    removedBy: [],
+                                }
+                                Meteor.call('addNotification', notification);
                                 orderIds.push(res);
                             } else {
                                 resetOrderQty(itemsUpdated);
@@ -227,7 +231,7 @@ Meteor.methods({
                         description: order._id,
                         owner: loggedUser._id,
                         navigateId: order._id,
-                        receiver: order.owner,
+                        receiver: [order.owner],
                         type: status,
                         removedBy: [],
                         seenBy: [],
@@ -242,6 +246,7 @@ Meteor.methods({
         console.log(Id, productOwner, deviceId);
         let loggedUser = Meteor.user() ? Meteor.user() : { _id: null };
         let success = false;
+        let ServiceOwners=[];
         if (productOwner == ProductOwner.EAT_FIT) {
             EFOrder.update(
                 { _id: Id },
@@ -252,6 +257,7 @@ Meteor.methods({
             if (order.deviceId === deviceId || order.owner === loggedUser._id) {
                 order.items.forEach((item) => {
                     item.status = OrderStatus.ORDER_CANCELLED;
+                    ServiceOwners.push(item.serviceOwner)
                     item.lastUpdated = new Date(new Date().toUTCString());
                 });
             } else {
@@ -276,7 +282,7 @@ Meteor.methods({
                             description: Id,
                             owner: loggedUser._id,
                             navigateId: order._id,
-                            receiver: order.serviceOwner,
+                            receiver: ServiceOwners,
                             type: status,
                             removedBy: [],
                             seenBy: [],

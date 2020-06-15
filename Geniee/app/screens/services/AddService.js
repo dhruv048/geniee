@@ -849,10 +849,10 @@ class AddService extends React.PureComponent {
                       label="Products/Goods Seller"
                       value={BusinessType.PRODUCTS_GOODS_SELLER}
                     />
-                    <Picker.Item
-                      label="Resturant"
-                      value={BusinessType.RESTURANT}
-                    />
+                    {/*<Picker.Item*/}
+                      {/*label="Resturant"*/}
+                      {/*value={BusinessType.RESTURANT}*/}
+                    {/*/>*/}
                   </Picker>
                 </View>
                 <Input
@@ -907,7 +907,7 @@ class AddService extends React.PureComponent {
                   onChangeText={radius => this.setState({radius})}
                   value={this.state.radius}
                 />
-             {/*}   <Label>Business Type: </Label>
+             {/*   <Label>Business Type: </Label>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -984,7 +984,7 @@ class AddService extends React.PureComponent {
                   onChangeText={webLink => this.setState({webLink})}
                   value={this.state.webLink}
                 />
-                {/*} <View style={styles.buttonView}>
+                {/* <View style={styles.buttonView}>
                   <Button style={styles.button} onPress={this._saveService}>
                     <Text style={styles.buttonText}>
                       {this.props.Service ? 'Update' : 'Save'}{' '}

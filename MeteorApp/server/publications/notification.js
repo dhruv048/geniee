@@ -17,7 +17,7 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
                     {
                         $or: [
                             {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
-                            {receiver:{$in:[logged]}}
+                            {receiver:logged}
                         ]
                     },
                     {removedBy: {$nin: [logged,deviceId]}}
@@ -62,6 +62,7 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
 
 Meteor.publish('newNotificationCount', function (deviceId) {
     let logged = this.userId?this.userId:"NA";
+    console.log(logged);
     ReactiveAggregate(this, Notification, [
             {
                 $match: {
@@ -70,7 +71,7 @@ Meteor.publish('newNotificationCount', function (deviceId) {
                         {
                             $or: [
                                 {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
-                                {receiver: {$in:[logged]}}
+                                {receiver: logged}
                             ]
                         },
                         {removedBy: {$nin: [logged,deviceId]}},
