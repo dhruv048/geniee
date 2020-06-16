@@ -18,7 +18,7 @@ import {
 import Meteor  from "../../react-native-meteor";
 import FIcon from 'react-native-vector-icons/Feather';
 import {colors} from "../../config/styles";
-
+import {Divider} from 'react-native-paper';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import Product from "../../components/ecommerce/Product";
 import {Navigation} from "react-native-navigation";
@@ -46,7 +46,8 @@ class AllProducts extends Component {
             Products:[],
             wishList:[],
             loading:false
-        }
+        };
+        this.arrayHolder=[];
         this.skip=0;
         this.limit=20;
 
@@ -68,20 +69,21 @@ class AllProducts extends Component {
             this.setState({loading:true})
             Meteor.call('getPopularProducts', this.skip, this.limit, (err, res) => {
                 this.setState({loading:false});
-                console.log(err, res);
+                // console.log(err, res);
                 if (err) {
                     console.log('this is due to error. ' + err);
                 }
                 else {
-                    this.skip=this.skip+this.loading;
-                    this.setState({Products: res.result});
+                    this.skip=this.skip+this.limit;
+                    this.arrayHolder=this.arrayHolder.concat(res.result);
+                    this.setState({Products: this.arrayHolder});
                 };
             });
         }
     };
     _onEndReached = (distance) => {
         console.log(distance);
-            this.fetchData();
+            this._fetchData();
     }
     async componentDidAppear() {
         let wishList = await AsyncStorage.getItem('myWhishList');
@@ -156,11 +158,11 @@ class AllProducts extends Component {
 
     _renderProduct = (data, index) => {
         let item = data.item;
-        console.log(item);
+        // console.log(item);
         return (
             <View style={styles.col}>
-                <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': item._id,data:item})} style={styles.containerStyle}>
-                    <Product key={item._id} product={item}/>
+                <View  style={styles.containerStyle}>
+                    <Product key={item._id} product={item} bottomTab={true} componentId={this.props.componentId}/>
                     {item.serviceOwner==Meteor.userId()?
                     <Button transparent style={{height:40,width:40}} onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
                         {/*<Icon name={'ios-menu'} style={{fontSize:25,color:colors.danger }}/>*/}
@@ -178,7 +180,7 @@ class AllProducts extends Component {
                             }}>Remove Product</MenuItem>
                         </Menu>
                     </Button>:null}
-                </TouchableOpacity>
+                </View>
             </View>
         )
     }
@@ -222,12 +224,12 @@ class AllProducts extends Component {
                     </Right>
                 </Header>
                 <Content style={styles.content}>
-                    <FlatList style={styles.mainContainer}
+                    <FlatList contentContainerStyle={styles.mainContainer}
                         //data={this.props.Products}
                               data={this.state.Products}
                               keyExtracter={(item, index) => item._id}
                               horizontal={false}
-                              numColumns={2}
+                           //   numColumns={2}
                               renderItem={(item, index) => this._renderProduct(item, index)}
                               onEndReachedThreshold={0.1}
                               onEndReached={(distance) => this._onEndReached(distance)}
@@ -241,19 +243,25 @@ class AllProducts extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        flex:1,
         backgroundColor: '#eee',
     },
     mainContainer: {
+        flexDirection:'row',
+        flexWrap:'wrap',
     },
     containerStyle: {
         borderRadius: 4,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        backgroundColor:'white'
     },
     content: {
+        flex:1,
         padding: 8
     },
     col: {
-        width: (viewportWidth / 2) - 8,
+        width: (viewportWidth-16)/ 2,
+        maxWidth:180,
         padding: 4
     }
 

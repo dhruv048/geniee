@@ -32,7 +32,7 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import CogMenu from "../components/CogMenu";
 import {Navigation} from 'react-native-navigation';
 import {goBack} from "../Navigation";
-import Product from "../components/Store/Product";
+import Product from "../components/ecommerce/Product";
 import MyFunctions from "../lib/MyFunctions";
 import ServiceRatings from "./services/ServiceRatings";
 
@@ -233,10 +233,10 @@ class ServiceDetail extends Component {
     _renderProduct=(data,index)=>{
         let item=data.item;
         return(
-            <View style={{width:'50%'}}>
-            <TouchableOpacity onPress={()=>this.navigateToRoute("ProductDetail", {'data':item})} style={styles.containerStyle}>
-            <Product key={item._id} product={item}   />
-            </TouchableOpacity>
+            <View style={styles.col}>
+            <View style={styles.containerStyle}>
+            <Product key={item._id} product={item} componentId={this.props.componentId}  bottomTab={true} />
+            </View>
             </View>
         )
     };
@@ -266,11 +266,11 @@ class ServiceDetail extends Component {
         return (
             <Container style={styles.container}>
 
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header style={{backgroundColor: '#094c6b'}}>
+                {/*<StatusBar*/}
+                    {/*backgroundColor={colors.statusBar}*/}
+                    {/*barStyle='light-content'*/}
+                {/*/>*/}
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     <Left>
                        <Button transparent onPress={() => {
                             goBack(this.props.componentId)
@@ -356,11 +356,11 @@ class ServiceDetail extends Component {
                         </Text>
 
                     </View>:null}
-                    <FlatList style={styles.mainContainer}
+                    <FlatList contentContainerStyle={styles.mainContainer}
                               data={this.props.Products}
                               keyExtracter={(item, index) => item._id}
                               horizontal={false}
-                              numColumns={2}
+                             // numColumns={2}
                               renderItem={(item,index)=>this._renderProduct(item,index)}
                     />
                 </Content>}
@@ -473,7 +473,6 @@ class ServiceDetail extends Component {
 
 const styles = StyleSheet.create({
     container: {
-
         flex: 1,
         marginVertical: 0,
         backgroundColor: '#05a5d10d',
@@ -564,49 +563,16 @@ const styles = StyleSheet.create({
         height: 40,
         color: '#094c6b'
     },
-    btnColor: {
-        height: 30,
-        width: 30,
-        borderRadius: 30,
-        marginHorizontal: 3
-    },
-    btnSize: {
-        height: 40,
-        width: 40,
-        borderRadius: 40,
-        borderColor: '#778899',
-        borderWidth: 1,
-        marginHorizontal: 3,
-        backgroundColor: 'white',
 
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    starDisplay: {
-        //justifyContent: 'center',
-        marginHorizontal: 10,
-        flexDirection: 'row',
-        marginTop: 5
-    },
-    starContainer: {
-        marginBottom: 15
-    },
+
+
+
+
     formGroup: {
         marginBottom: 15
     },
-    contentColors: {
-        justifyContent: 'center',
-        marginHorizontal: 30,
-        flexDirection: 'row',
-        marginTop: 20
-    },
-    contentSize: {
-        justifyContent: 'center',
-        marginHorizontal: 30,
-        flexDirection: 'row',
-        marginTop: 20
-    },
+
+
     separator: {
         height: 2,
         backgroundColor: "#094c6b",
@@ -614,88 +580,22 @@ const styles = StyleSheet.create({
         marginHorizontal: 10
     },
 
-    addToCarContainer: {
-        marginHorizontal: 30,
-        marginTop: 10
-    },
-    containerForm: {
-        flexGrow: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
 
-    inputBox: {
-        width: 300,
-        backgroundColor: colors.inputBackground,
-        borderRadius: 25,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        color: colors.whiteText,
-        marginVertical: 5
-    },
-
-    button: {
-        width: 300,
-        backgroundColor: colors.buttonPrimaryBackground,
-        borderRadius: 25,
-        marginVertical: 10,
-        paddingVertical: 13
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: '500',
-        color: colors.whiteText,
-        textAlign: 'center'
-    },
-    forgotPwdButton: {
-        color: colors.redText,
-        fontSize: 14,
-        fontWeight: '500'
-    },
-
-    signupCont: {
-        flexGrow: 1,
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        flexDirection: 'row'
-    },
-    signupText: {
-        color: colors.primaryText,
-        fontSize: 16,
-        fontWeight: '700',
-        paddingVertical: 2
-    },
-    navButton: {
-        width: 80,
-        backgroundColor: colors.buttonPrimaryBackground,
-        borderRadius: 25,
-        paddingVertical: 2,
-        marginLeft: 5
-    },
-    navButtonText: {
-        fontSize: 16,
-        fontWeight: '500',
-        color: colors.whiteText,
-        textAlign: 'center'
-    },
     mainContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-
-    },
+        flex:1,
+             flexDirection: 'row',
+             flexWrap: 'wrap',
+         },
     containerStyle: {
-        flex: 1,
-        borderWidth: 0,
-        marginHorizontal:5,
-        marginVertical:5,
-        borderColor: '#808080',
-        elevation: 2,
-        width: (viewportWidth / 2) - 10,
-        justifyContent: 'center',
-        alignItems: 'center'
+        borderRadius: 4,
+        overflow: 'hidden',
+        backgroundColor:'white'
     },
+    col: {
+        width: (viewportWidth -8)/2,
+        maxWidth:180,
+        padding: 4
+    }
 
 });
 

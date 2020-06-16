@@ -1,5 +1,6 @@
 import {Navigation} from "react-native-navigation";
 import {EventRegister} from 'react-native-event-listeners';
+import {colors} from './config/styles';
 
 import Dashboard from "./screens/Dashboard";
 import SideMenu from "./screens/SideMenu";
@@ -75,6 +76,7 @@ let currentRoute = ''
 
 
 Navigation.setDefaultOptions({
+    statusBar:{backgroundColor:colors.statusBar},
     animations: {
         setRoot: {
             enabled: 'true',

@@ -144,7 +144,7 @@ class MyProducts extends Component {
         return (
             <View style={styles.col}>
                 <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': item._id,data:item})} style={styles.containerStyle}>
-                    <Product key={item._id} product={item}/>
+                    <Product key={item._id} product={item}  componentId={this.props.componentId}/>
                         <Button transparent style={{height:40,width:40}} onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
                             {/*<Icon name={'ios-menu'} style={{fontSize:25,color:colors.danger }}/>*/}
                             <Menu
@@ -204,12 +204,12 @@ class MyProducts extends Component {
                     </Right>
                 </Header>
                 <Content style={styles.content}>
-                    <FlatList style={styles.mainContainer}
+                    <FlatList contentContainerStyle={styles.mainContainer}
                         //data={this.props.Products}
                               data={this.state.Products}
                               keyExtracter={(item, index) => item._id}
                               horizontal={false}
-                              numColumns={2}
+                              //numColumns={2}
                               renderItem={(item, index) => this._renderProduct(item, index)}
                     />
                 </Content>
@@ -221,19 +221,24 @@ class MyProducts extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        flex:1,
         backgroundColor: '#eee',
     },
     mainContainer: {
+        flexDirection:'row',
+        flexWrap:'wrap',
     },
     containerStyle: {
         borderRadius: 4,
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
     content: {
+        flex:1,
         padding: 8
     },
     col: {
         width: (viewportWidth / 2) - 8,
+        maxWidth:180,
         padding: 4
     }
 

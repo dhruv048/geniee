@@ -198,11 +198,7 @@ class ContactUs extends Component {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 
             <Container style={styles.container}>
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header style={{backgroundColor: '#094c6b'}}>
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     <Left>
                         {/*<Button transparent onPress={()=>{goBack(this.props.componentId)}}>*/}
                             {/*<Icon style={{color: '#ffffff'}} name="arrow-back" />*/}

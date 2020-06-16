@@ -467,6 +467,13 @@ class ProductDetail extends Component {
                                         <FIcon name={'phone'} size={24} color={colors.primary}/>
                                     </Button>
                                 </Col>
+                                <Col size={1}>
+                                    <Button block icon transparent
+                                         onPress={this.handleChat.bind(this)}
+                                            style={[customStyle.buttonOutlineSecondary, {marginRight: 5}]}>
+                                        <FIcon name={'message-square'} size={24} color={colors.primary}/>
+                                    </Button>
+                                </Col>
                             </Grid>
                         </Footer>
                         </>
@@ -632,6 +639,42 @@ class ProductDetail extends Component {
         product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.discount ? (this.state.product.price * (this.state.product.discount / 100)):0));
         goToRoute(this.props.componentId,'CheckoutEF', {'productOrder': product});
     }
+
+    _getChatChannel(userId){
+        var channelId = new Promise(function (resolve, reject) {
+            Meteor.call('addChatChannel', userId, function (error, result) {
+                if (error) {
+                    reject(error);
+                } else {
+                    // Now I can access `result` and make an assign `result` to variable `resultData`
+                    resolve(result);
+                }
+            });
+        });
+        return channelId;
+    }
+
+    handleChat(){
+        let Service=this.state.product.Service;
+        console.log('service' + Service._id);
+        this._getChatChannel(Service._id).then(channelId => {
+            // console.log(channelId);
+            let Channel = {
+                channelId: channelId,
+                user: {
+                    userId: Service.createdBy,
+                    name: "",
+                    profileImage: null,
+                },
+                service: Service
+            };
+            goToRoute(this.props.componentId,"Message",{Channel});
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+
 
     search(array, object) {
         for (var i = 0; i < array.length; i++)

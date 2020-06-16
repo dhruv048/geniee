@@ -666,7 +666,7 @@ class Dashboard extends Component {
                             style={{
                                 flex: 1,
                                 width: undefined,
-                                height: 70,
+                                height: 100,
                                 resizeMode: 'cover',
                             }}
                         />
@@ -686,8 +686,8 @@ class Dashboard extends Component {
                         <View
                             style={{
                                 position: 'absolute',
-                                top: 0,
-                                right: 0,
+                                top: 5,
+                                right: 5,
                                 backgroundColor: colors.primary,
                                 opacity: 1,
                                 borderRadius: 5,
@@ -1202,7 +1202,7 @@ class Dashboard extends Component {
                                 {/*renderItem={(item, index) => this._renderProduct(item, index)}*/}
                             {/*/>*/}
 
-                            <View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start'}}>
+                            <View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start',marginBottom:20}}>
                                 {this.state.popularProducts.map((item)=>this._renderProduct(item))}
                             </View>
                         </View>
@@ -1225,6 +1225,8 @@ class Dashboard extends Component {
                                     marginBottom: 80,
                                     marginTop: 10,
                                     paddingBottom: 10,
+                                    // flexWrap:'wrap',
+                                    // flexDirection:'row',
                                 }}
                                 data={this.state.categories}
                                 horizontal={true}
