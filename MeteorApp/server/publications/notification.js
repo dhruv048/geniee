@@ -62,7 +62,7 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
 
 Meteor.publish('newNotificationCount', function (deviceId) {
     let logged = this.userId?this.userId:"NA";
-    console.log(logged);
+   // console.log(logged);
     ReactiveAggregate(this, Notification, [
             {
                 $match: {

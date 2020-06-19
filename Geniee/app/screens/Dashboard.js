@@ -655,11 +655,11 @@ class Dashboard extends Component {
     _renderProduct = (data, index) => {
         let item = data;
         return (
-            <TouchableOpacity
+            <TouchableOpacity key={item._id}
                 onPress={() => this._handleProductPress(item)}
                 style={styles.productContainerStyle}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View key={item._id} style={customStyle.Card}>
+                <View  style={customStyle.Card}>
                     <CardItem cardBody style={{width: '100%'}}>
                         <Image
                             source={{uri: settings.IMAGE_URL + item.images[0]}}
@@ -758,7 +758,7 @@ class Dashboard extends Component {
             <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{backgroundColor: '#094c6b'}}>
+                    style={{backgroundColor: colors.appLayout}}>
                     <Left style={{flex: 1}}>
                         <CogMenu componentId={this.props.componentId}/>
                     </Left>
@@ -1100,7 +1100,7 @@ class Dashboard extends Component {
                                             },
                                         ]}>
                                         <TouchableOpacity
-                                            onPress={item.hasOwnProperty('onPress') ? item.onPress :{}}>
+                                            onPress={item.hasOwnProperty('onPress') ? item.onPress :()=>goToRoute(this.props.componentId,'ServiceDetail',{Id:item})}>
                                             <View>
                                                 <Image
                                                     onPress={() => item.onPress}

@@ -28,9 +28,8 @@ import {
 } from 'react-native';
 import {hashPassword} from '../react-native-meteor/lib/utils';
 import {colors} from '../config/styles';
-import {navigateToRoutefromSideMenu} from '../Navigation';
 import {Navigation} from 'react-native-navigation';
-import {goBack} from '../Navigation';
+import {goBack,backToRoot} from '../Navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import {GalioProvider, Input, Button as GButton} from 'galio-framework';
 import {customGalioTheme} from '../config/themes';
@@ -52,20 +51,21 @@ class ForgotPassword extends Component {
 
   componentDidMount() {
     Navigation.events().bindComponent(this);
-    BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackButton.bind(this),
-    );
+   
+  }
+
+  componentDidAppear(){
+     BackHandler.addEventListener('hardwareBackPress',  this.handleBackButton.bind(this));
   }
   handleBackButton() {
     console.log('handlebackpress');
     // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-    Navigation.popToRoot(this.props.componentId);
+   backToRoot(this.props.componentId);
     return true;
   }
 
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress');
+  componentDidDisappear() {
+    BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton.bind(this));
   }
 
   _forgotPassword = () => {
@@ -170,9 +170,8 @@ class ForgotPassword extends Component {
                 <Button
                   transparent
                   onPress={() => {
-                    navigateToRoutefromSideMenu(
-                      this.props.componentId,
-                      'Dashboard',
+                    backToRoot(
+                      this.props.componentId
                     );
                   }}>
                   <Icon style={{color: '#ffffff'}} name="arrow-back" />

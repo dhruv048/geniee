@@ -34,6 +34,7 @@ import MyFunctions from '../lib/MyFunctions';
 import StarRating from '../components/StarRating/StarRating';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import {Navigation} from 'react-native-navigation';
+import ServiceItem from "../components/Service/ServiceItem";
 
 export default class SearchResult extends PureComponent {
   constructor(props) {
@@ -181,77 +182,81 @@ export default class SearchResult extends PureComponent {
     // if (rowData.location && rowData.location.geometry)
     //     distance = MyFunctions.calculateDistance(this.region.latitude, this.region.longitude, rowData.location.geometry.location.lat, rowData.location.geometry.location.lng);
     // console.log(distance);
-    return (
-      <View key={data.item._id} style={styles.serviceList}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            this._handlItemPress(data.item);
-          }}>
-          <ListItem thumbnail>
-            <Left>
-              {rowData.coverImage === null ? (
-                //   <Thumbnail style={styles.banner} square source={dUser}/> :
-                <Text />
-              ) : (
-                <Thumbnail
-                  style={styles.banner}
-                  source={{
-                    uri: settings.API_URL + 'images/' + rowData.coverImage,
-                  }}
-                />
-              )}
-            </Left>
-            <Body>
-              <Text numberOfLines={1} style={styles.serviceTitle}>
-                {rowData.title}
-              </Text>
-              {rowData.location.formatted_address ? (
-                <Text note numberOfLines={1} style={styles.serviceAddress}>
-                  {rowData.location.formatted_address}
-                </Text>
-              ) : null}
+    // return (
+    //   <View key={data.item._id} style={styles.serviceList}>
+    //     <TouchableWithoutFeedback
+    //       onPress={() => {
+    //         this._handlItemPress(data.item);
+    //       }}>
+    //       <ListItem thumbnail>
+    //         <Left>
+    //           {rowData.coverImage === null ? (
+    //             //   <Thumbnail style={styles.banner} square source={dUser}/> :
+    //             <Text />
+    //           ) : (
+    //             <Thumbnail
+    //               style={styles.banner}
+    //               source={{
+    //                 uri: settings.API_URL + 'images/' + rowData.coverImage,
+    //               }}
+    //             />
+    //           )}
+    //         </Left>
+    //         <Body>
+    //           <Text numberOfLines={1} style={styles.serviceTitle}>
+    //             {rowData.title}
+    //           </Text>
+    //           {rowData.location.formatted_address ? (
+    //             <Text note numberOfLines={1} style={styles.serviceAddress}>
+    //               {rowData.location.formatted_address}
+    //             </Text>
+    //           ) : null}
+    //
+    //           {distance ? (
+    //             <Text note style={styles.serviceDist}>
+    //               {distance} KM
+    //             </Text>
+    //           ) : null}
+    //           <View style={styles.serviceAction}>
+    //             <StarRating
+    //               starRate={
+    //                 rowData.hasOwnProperty('ratings')
+    //                   ? this.averageRating(rowData.ratings)
+    //                   : 0
+    //               }
+    //             />
+    //             {/*{this.averageRating(rowData.ratings) > 0 ?
+    //                             <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
+    //                                 <Icon name={'star'}
+    //                                     style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
+    //                         </Text> : null}*/}
+    //           </View>
+    //         </Body>
+    //         <Right>
+    //           {data.item.contact || data.item.contact1 ? (
+    //             <Button
+    //               transparent
+    //               style={styles.serviceIconBtn}
+    //               onPress={() => {
+    //                 MyFunctions._callPhone(
+    //                   data.item.contact
+    //                     ? data.item.contact
+    //                     : data.item.contact1,
+    //                 );
+    //               }}>
+    //               {/*<Icon name={'call'} color={'green'}/>*/}
+    //               <Icon name={'phone'} size={20} style={styles.catIcon} />
+    //             </Button>
+    //           ) : null}
+    //         </Right>
+    //       </ListItem>
+    //     </TouchableWithoutFeedback>
+    //   </View>
+    // );
 
-              {distance ? (
-                <Text note style={styles.serviceDist}>
-                  {distance} KM
-                </Text>
-              ) : null}
-              <View style={styles.serviceAction}>
-                <StarRating
-                  starRate={
-                    rowData.hasOwnProperty('ratings')
-                      ? this.averageRating(rowData.ratings)
-                      : 0
-                  }
-                />
-                {/*{this.averageRating(rowData.ratings) > 0 ?
-                                <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
-                                    <Icon name={'star'}
-                                        style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-                            </Text> : null}*/}
-              </View>
-            </Body>
-            <Right>
-              {data.item.contact || data.item.contact1 ? (
-                <Button
-                  transparent
-                  style={styles.serviceIconBtn}
-                  onPress={() => {
-                    MyFunctions._callPhone(
-                      data.item.contact
-                        ? data.item.contact
-                        : data.item.contact1,
-                    );
-                  }}>
-                  {/*<Icon name={'call'} color={'green'}/>*/}
-                  <Icon name={'phone'} size={20} style={styles.catIcon} />
-                </Button>
-              ) : null}
-            </Right>
-          </ListItem>
-        </TouchableWithoutFeedback>
-      </View>
-    );
+      return(
+          <ServiceItem componentId={this.props.componentId} service={rowData} />
+      )
   };
 
   _renderProduct = (data, index) => {

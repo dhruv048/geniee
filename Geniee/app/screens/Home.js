@@ -44,6 +44,7 @@ import Geolocation from 'react-native-geolocation-service';
 import StarRating from "../components/StarRating/StarRating";
 import {Navigation} from "react-native-navigation";
 import {backToRoot, goToRoute} from "../Navigation";
+import ServiceItem from  "../components/Service/ServiceItem";
 
 class Home extends Component {
 
@@ -341,45 +342,7 @@ class Home extends Component {
     _getListItem = (data) => {
        let rowData = data.item;
         return (
-            <TouchableOpacity key={data.item._id} style={styles.serviceList}>
-                <TouchableWithoutFeedback onPress={() => {
-                    this._handlItemPress(data.item)
-                }}>
-                    <ListItem thumbnail>
-                        <Left>
-                            {rowData.coverImage === null ?
-                                //   <Thumbnail style={styles.banner} square source={dUser}/> :
-                                <Text></Text> :
-                                <Thumbnail style={styles.banner}
-                                           source={{uri: settings.IMAGE_URL + rowData.coverImage}}/>}
-                        </Left>
-                        <Body>
-                        <Text numberOfLines={1} style={styles.serviceTitle}>{rowData.title}</Text>
-                        {rowData.location.formatted_address ?
-                            <Text note numberOfLines={1} style={styles.serviceAddress}>{rowData.location.formatted_address}</Text> : null}
-
-                        {rowData.dist?
-                        <Text note style={styles.serviceDist}>{Math.round(rowData.dist.calculated * 100) / 100} KM</Text>:null}
-                        {/*<Text note numberOfLines={1}>{'Ph: '}{rowData.contact} {' , Service on'} {rowData.radius} {' KM around'}</Text>*/}
-                        <TouchableOpacity onPress={()=>goToRoute(this.props.componentId, 'ServiceRatings', {Id:rowData._id})} style={styles.serviceAction}>
-                            {/*<StarRating starRate={rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}/>*/}
-                            <StarRating starRate={rowData.Rating.avgRate}/>
-                        </TouchableOpacity>
-                        </Body>
-                        <Right>
-                            {(data.item.contact ||data.item.contact1)?
-                            <Button transparent style={styles.serviceIconBtn} onPress={() => {
-                                MyFunctions._callPhone(data.item.contact ? data.item.contact : data.item.contact1)
-                            }}>
-                                {/*<Icon name={'call'} color={'green'}/>*/}
-                                <Icon name={'call'} size={20} style={styles.catIcon}/>
-                            </Button>
-                                :null}
-                        </Right>
-
-                    </ListItem>
-                </TouchableWithoutFeedback>
-            </TouchableOpacity>
+            <ServiceItem componentId={this.props.componentId} service={rowData} />
         )
 
     }
@@ -515,8 +478,8 @@ class Home extends Component {
                     {/*</Right>*/}
                 </Header>
 
-                <Content style={{flex: 1}}
-                         contentContainerStyle={{flex: 1}} >
+                <Content
+                         contentContainerStyle={{flex: 1,padding:5}} >
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {this.renderSelectedTab()}
                     {/*<List style={styles.contentList}*/}

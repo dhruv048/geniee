@@ -94,6 +94,7 @@ export default class Product extends PureComponent {
             50,
         );
     };
+    
     _getChatChannel = (userId) => {
         var channelId = new Promise(function (resolve, reject) {
             Meteor.call('addChatChannel', userId, function (error, result) {
@@ -126,6 +127,7 @@ export default class Product extends PureComponent {
             console.error(error);
         });
     }
+
     render() {
         const {product, isRight,bottomTab,componentId} = this.props;
         // console.log(product)
@@ -142,7 +144,7 @@ export default class Product extends PureComponent {
 
                 </View>
                 </TouchableOpacity>
-                {bottomTab?
+                {bottomTab && product.serviceOwner!=Meteor.userId()?
                     <>
                         <Divider style={{width:'90%',alignSelf:'center'}} />
                         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-around',padding:5}}>
@@ -157,7 +159,6 @@ export default class Product extends PureComponent {
             </View>
         );
     }
-
 }
 
 const style = {
@@ -172,7 +173,7 @@ const style = {
     price: {
         color:colors.primary,
         fontSize: 15,
-        fontWeight: '',
+        fontWeight: '100',
     },
     card: {
         backgroundColor: '#fff',
