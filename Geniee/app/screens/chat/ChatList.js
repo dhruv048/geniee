@@ -31,6 +31,7 @@ import Meteor from '../../react-native-meteor';
 import Moment from 'moment/moment';
 import {Navigation} from 'react-native-navigation/lib/dist/index';
 import CogMenu from '../../components/CogMenu';
+import ChatListItem from '../../components/Chat/ChatListItem';
 import {
   backToRoot,
   goToRoute,
@@ -230,6 +231,7 @@ class ChatList extends Component {
             ) : null}
           </ListItem>
         </TouchableWithoutFeedback>
+        <ChatListItem chatChannel={item}/>
       </View>
     );
   };

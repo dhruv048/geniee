@@ -261,9 +261,8 @@ class ServiceDetail extends Component {
         //     console.log(Id)
         //     Service = Id;
         // }
-
-
         return (
+
             <Container style={styles.container}>
 
                 {/*<StatusBar*/}
@@ -485,7 +484,8 @@ const styles = StyleSheet.create({
     },
     productImg: {
         width: '100%',
-        height: 150,
+        height: viewportWidth/2,
+        maxHeight:300,
     },
     serviceInfo: {
         width: '100%',

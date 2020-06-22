@@ -33,7 +33,6 @@ import Meteor from '../../react-native-meteor';
 import settings from '../../config/settings';
 import {colors} from '../../config/styles';
 import MyFunctions from '../../lib/MyFunctions';
-import call from 'react-native-phone-call';
 import Geolocation from 'react-native-geolocation-service';
 import StarRating from '../../components/StarRating/StarRating';
 import {Navigation} from 'react-native-navigation/lib/dist/index';
@@ -273,8 +272,8 @@ class MyServices extends Component {
   _getListItem = data => {
     let rowData = data.item;
     return (
-        
-      <ServiceItem service={rowData} componentId={this.props.componentDidAppear} />
+
+      <ServiceItem service={rowData} componentId={this.props.componentId} />
     );
   };
 
@@ -446,6 +445,7 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: colors.appBackground,
     flex: 1,
+    padding:8,
   },
   serviceList: {
     flex: 1,

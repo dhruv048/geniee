@@ -152,7 +152,7 @@ export default class Product extends PureComponent {
                             <Icon onPress={()=>this.addToWishlist(product._id)} name={'heart'}  style={{fontSize:20, color:colors.appLayout}}/>:
                                 <FIcon onPress={()=>this.addToWishlist(product._id)}   name={'heart'}  style={{fontSize:18, color:colors.appLayout}}/>}
                             {/*<FIcon name={'shopping-cart'}  style={{fontSize:18, color:colors.appLayout}}/>*/}
-                            <FIcon onPress={()=>this.handleChat(product.Service)} name={'message-circle'} style={{fontSize:18, color:colors.appLayout}}/>
+                            <FIcon onPress={()=>this.handleChat(product.Service)} name={'message-square'} style={{fontSize:18, color:colors.appLayout}}/>
                         </View>
                     </>
                     :null}

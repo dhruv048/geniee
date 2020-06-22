@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text,
+    BackHandler,
     View,
     TouchableOpacity,
     Alert,
@@ -22,18 +22,11 @@ import {Divider} from 'react-native-paper';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import Product from "../../components/ecommerce/Product";
 import {Navigation} from "react-native-navigation";
-import {goBack,goToRoute} from "../../Navigation";
+import {backToRoot, goBack, goToRoute} from "../../Navigation";
 import Menu,{MenuItem} from "react-native-material-menu";
 
 
 class AllProducts extends Component {
-    ratingCompleted = (rating) => {
-        this.setState({
-            starCount: rating,
-        });
-    };
-
-
     constructor(props) {
         super(props);
         this.state = {
@@ -107,9 +100,26 @@ class AllProducts extends Component {
             }
         }
     }
-    componentWillUnmount() {
+    handleBackButton() {
+        console.log('handlebackpress from AllProducts');
+        backToRoot(this.props.componentId);
+        return true;
     }
 
+    componentDidAppear() {
+        BackHandler.addEventListener(
+            'hardwareBackPress',
+            this.handleBackButton.bind(this),
+        );
+        this.fetchData();
+    }
+
+    componentDidDisappear() {
+        BackHandler.removeEventListener(
+            'hardwareBackPress',
+            this.handleBackButton.bind(this),
+        );
+    }
     clickEventListener() {
         Alert.alert("Success", "Product has been added to cart")
     }

@@ -166,10 +166,10 @@ _callPhone = number => {
             <TouchableOpacity
               style={{flex: 6}}
               onPress={() => this._handlItemPress(service)}>
-              <Subheading>{service.title}</Subheading>
-              {service.Category ? (
-                <Text style={{alignSelf: 'flex-start'}}>
-                  {service.Category.subCategory}
+              <Subheading numberOfLines={1}>{service.title}</Subheading>
+              {service.subCategory ? (
+                <Text numberOfLines={1} style={{alignSelf: 'flex-start',fontSize:14}}>
+                  {service.subCategory.subCategory}
                 </Text>
               ) : null}
               <Caption>{service.location.formatted_address || ''}</Caption>
@@ -228,12 +228,12 @@ _callPhone = number => {
                 <Menu
                   ref={ref => (this[`menu${service._id}`] = ref)}
                   button={
-                    <Button
+                    <Button style={{alignSelf:'flex-end'}}
                       transparent
                       onPress={() => this[`menu${service._id}`].show()}>
                       <FIcon
                         name={'more-vertical'}
-                        size={20}
+                        size={25}
                         color={colors.primary}
                       />
                     </Button>
@@ -247,7 +247,7 @@ _callPhone = number => {
                     <FIcon
                         name={'phone'}
                         size={15}
-                        color={colors.primary}
+                        color={colors.gray_200}
                       />  Call
                   </MenuItem>:null}
                   {Meteor.userId() && Meteor.userId()!=service.owner?
@@ -259,7 +259,7 @@ _callPhone = number => {
                     <FIcon
                         name={'message-square'}
                         size={15}
-                        color={colors.primary}
+                        color={colors.gray_200}
                       />  Message
                   </MenuItem> : null}
                   {Meteor.userId()==service.owner?
@@ -273,7 +273,7 @@ _callPhone = number => {
                     <FIcon
                         name={'edit'}
                         size={15}
-                        color={colors.primary}
+                        color={colors.gray_200}
                       />  Edit
                   </MenuItem>
                   <MenuItem
@@ -284,7 +284,7 @@ _callPhone = number => {
                     <FIcon
                         name={'trash'}
                         size={15}
-                        color={colors.primary}
+                        color={colors.gray_200}
                       />  Remove
                   </MenuItem>
                   </>:null}
