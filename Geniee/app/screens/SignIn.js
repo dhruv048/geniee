@@ -42,6 +42,7 @@ class SignIn extends Component {
       password: '',
       isLogged: Meteor.user() ? true : null,
       loading:false,
+        loadingFB:false,
     };
   }
 
@@ -87,12 +88,12 @@ class SignIn extends Component {
     console.log('loginFB');
     // try {
     //  LoginManager.logInWithPermissions(["email", "user_location", "user_birthday","public_profile"]).then(function (result) {
-        this.setState({loading:true})
+        this.setState({loadingFB:true})
     LoginManager.logInWithPermissions(['email', 'public_profile'])
       .then(function(result) {
         console.log('resulttt', result);
         if (result.isCancelled) {
-            this.setState({loading:false})
+            this.setState({loadingFB:false})
           console.log('Login cancelled');
         } else {
           console.log(
@@ -101,7 +102,7 @@ class SignIn extends Component {
           );
           Keyboard.dismiss();
           onLoginFinished(result, componentId, needReturn);
-          this.setState({loading:false})
+          this.setState({loadingFB:false})
         }
       })
       .catch(function(error) {
@@ -109,6 +110,7 @@ class SignIn extends Component {
           'There has been a problem with your fetch operation: ' +
             error.message,
         );
+          this.setState({loadingFB:false})
         // ADD THIS THROW error
         throw error;
       });
@@ -250,7 +252,7 @@ class SignIn extends Component {
 
             <Button 
             // round 
-             loading={this.state.loading}
+             loading={this.state.loadingFB}
             color={customGalioTheme.COLORS.FACEBOOK}
               style={{width:'100%',marginVertical:20}}
              onPress={() =>
