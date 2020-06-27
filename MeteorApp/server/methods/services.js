@@ -338,8 +338,10 @@ Meteor.methods({
                 type: NotificationTypes.RATE_SERVICE,
             };
             Meteor.call("addNotification", notification);
-            const tokens =
-                Meteor.users.findOne({_id: service.owner}).devices || [];
+
+                const Owner = Meteor.users.findOne({_id: service.owner});
+                const tokens= Owner.hasOwnProperty('devices') ? Owner.devices : [];
+
             FIREBASE_MESSAGING.notificationToList(
                 tokens,
                 "New Service Review",
@@ -825,6 +827,8 @@ Meteor.methods({
             pbox: 1,
             radius: 1,
             website: 1,
+            contact:1,
+            contact1:1,
             coverImage: 1,
             subCategory: {
                 $arrayElemAt: [

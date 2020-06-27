@@ -30,7 +30,6 @@ import {
     Input,
     ListItem,
     Thumbnail,
-    Badge,
     Icon as NBIcon,
     Spinner,
     Card,
@@ -39,7 +38,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle, variables} from '../config/styles';
 import {Navigation} from 'react-native-navigation';
-
+import  { Badge,} from 'react-native-paper';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from '../config/settings';
 import StarRating from '../components/StarRating/StarRating';
@@ -171,6 +170,7 @@ class Dashboard extends Component {
     }
 
     async componentDidMount() {
+        this.updateCounts();
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
             MainCategories = JSON.parse(MainCategories);
@@ -381,19 +381,9 @@ class Dashboard extends Component {
         }
     };
 
-    async componentDidAppear() {
+     componentDidAppear() {
         isDashBoard = true;
-        let wishList = await AsyncStorage.getItem('myWhishList');
-        if (wishList) wishList = JSON.parse(wishList);
-        else wishList = [];
-
-        let cartList = await AsyncStorage.getItem('myCart');
-        if (cartList) {
-            cartList = JSON.parse(cartList);
-        } else {
-            cartList = [];
-        }
-        this.setState({wishList: wishList, totalCount: cartList.length});
+        this.updateCounts();
         BackHandler.addEventListener(
             'hardwareBackPress',
             this.handleBackButton.bind(this),
@@ -408,7 +398,19 @@ class Dashboard extends Component {
         //     }
         // })
     }
+    async updateCounts(){
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        if (wishList) wishList = JSON.parse(wishList);
+        else wishList = [];
 
+        let cartList = await AsyncStorage.getItem('myCart');
+        if (cartList) {
+            cartList = JSON.parse(cartList);
+        } else {
+            cartList = [];
+        }
+        this.setState({wishList: wishList, totalCount: cartList.length});
+    }
     componentDidDisappear() {
         isDashBoard = false;
         BackHandler.removeEventListener(
@@ -653,13 +655,13 @@ class Dashboard extends Component {
     };
 
     _renderProduct = (data, index) => {
-        let item = data;
+        let item = data.item;
         return (
             <TouchableOpacity key={item._id}
                 onPress={() => this._handleProductPress(item)}
                 style={styles.productContainerStyle}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View  style={customStyle.Card}>
+                <View  style={[customStyle.Card,{top:0,left:0,rigth:0}]}>
                     <CardItem cardBody style={{width: '100%'}}>
                         <Image
                             source={{uri: settings.IMAGE_URL + item.images[0]}}
@@ -774,34 +776,34 @@ class Dashboard extends Component {
                             transparent>
                             <Icon name="heart" style={{fontSize: 24, color: 'white'}}/>
                             {this.state.wishList.length > 0 ? (
-                                <Badge style={{position: 'absolute', height: 18, right: 0}}>
-                                    <Text
-                                        style={{
-                                            fontSize: 10,
-                                            fontWeight: '100',
-                                            color: 'white',
-                                            lineHeight: 18,
-                                        }}>
+                                <Badge style={{position: 'absolute',top:0 ,right: 0}}>
+                                    {/*<Text*/}
+                                        {/*style={{*/}
+                                            {/*fontSize: 10,*/}
+                                            {/*fontWeight: '100',*/}
+                                            {/*color: 'white',*/}
+                                            {/*lineHeight: 18,*/}
+                                        {/*}}>*/}
                                         {this.state.wishList.length}
-                                    </Text>
+                                    {/*</Text>*/}
                                 </Badge>
                             ) : null}
                         </Button>
                         <Button
                             onPress={() => goToRoute(this.props.componentId, 'CartEF')}
                             transparent>
-                            <NBIcon name="ios-cart" style={{fontSize: 27, color: 'white'}}/>
+                            <NBIcon name="ios-cart" style={{fontSize: 27,color: 'white'}}/>
                             {this.state.totalCount > 0 ? (
-                                <Badge style={{position: 'absolute', height: 18, right: 0}}>
-                                    <Text
-                                        style={{
-                                            fontSize: 10,
-                                            fontWeight: '100',
-                                            color: 'white',
-                                            lineHeight: 18,
-                                        }}>
+                                <Badge style={{position: 'absolute', top:0, right: 0}}>
+                                    {/*<Text*/}
+                                        {/*style={{*/}
+                                            {/*fontSize: 10,*/}
+                                            {/*fontWeight: '100',*/}
+                                            {/*color: 'white',*/}
+                                            {/*lineHeight: 18,*/}
+                                        {/*}}>*/}
                                         {this.state.totalCount}
-                                    </Text>
+                                    {/*</Text>*/}
                                 </Badge>
                             ) : null}
                         </Button>
@@ -813,16 +815,16 @@ class Dashboard extends Component {
                                 style={{fontSize: 29, color: 'white'}}
                             />
                             {this.state.notificationCount > 0 ? (
-                                <Badge style={{position: 'absolute', height: 18, right: 0}}>
-                                    <Text
-                                        style={{
-                                            fontSize: 10,
-                                            fontWeight: '100',
-                                            color: 'white',
-                                            lineHeight: 18,
-                                        }}>
+                                <Badge style={{position: 'absolute', top:0, right: 0}}>
+                                    {/*<Text*/}
+                                        {/*style={{*/}
+                                            {/*fontSize: 10,*/}
+                                            {/*fontWeight: '100',*/}
+                                            {/*color: 'white',*/}
+                                            {/*lineHeight: 18,*/}
+                                        {/*}}>*/}
                                         {this.state.notificationCount}
-                                    </Text>
+                                    {/*</Text>*/}
                                 </Badge>
                             ) : null}
                         </Button>
@@ -1192,19 +1194,19 @@ class Dashboard extends Component {
                                     </Text>
                                 </Button>
                             </View>
-                            {/*<FlatList*/}
-                                {/*contentContainerStyle={{paddingBottom: 15}}*/}
-                                {/*data={this.state.popularProducts}*/}
-                                {/*horizontal={false}*/}
-                                {/*// _keyExtractor={(item, index) => index.toString()}*/}
-                                {/*showsHorizontalScrollIndicator={false}*/}
-                                {/*numColumns={3}*/}
-                                {/*renderItem={(item, index) => this._renderProduct(item, index)}*/}
-                            {/*/>*/}
+                            <FlatList
+                                contentContainerStyle={{paddingBottom: 15}}
+                                data={this.state.popularProducts}
+                                horizontal={true}
+                                // _keyExtractor={(item, index) => index.toString()}
+                                showsHorizontalScrollIndicator={false}
+                              //  numColumns={3}
+                                renderItem={(item, index) => this._renderProduct(item, index)}
+                            />
 
-                            <View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start',marginBottom:20}}>
-                                {this.state.popularProducts.map((item)=>this._renderProduct(item))}
-                            </View>
+                            {/*<View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start',marginBottom:20}}>*/}
+                                {/*{this.state.popularProducts.map((item)=>this._renderProduct(item))}*/}
+                            {/*</View>*/}
                         </View>
                     ) : null}
 
@@ -1342,17 +1344,17 @@ const styles = StyleSheet.create({
     },
 
     productContainerStyle: {
+        height:160,
         // flex: 1,
         borderWidth: 0,
         marginHorizontal: 2,
         marginVertical: 4,
         borderColor: '#808080',
         elevation: 1,
-       // width: (viewportWidth-35) / 3,
-        width: '32%',
+        width: (viewportWidth) / 3,
+       // width: '32%',
         maxWidth:130,
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor:'white'
     },
     block: {},
     blockHeader: {

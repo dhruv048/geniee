@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {
-    Text,Badge
-} from 'native-base';
+    Badge
+} from 'react-native-paper';
 import Meteor  from '../../react-native-meteor';
 import {View} from 'react-native';
+import {customGalioTheme} from "../../config/themes";
 
 
 class MessageCount extends Component {
@@ -27,8 +28,8 @@ class MessageCount extends Component {
                 // style={{position: 'absolute', top:-5,right:-5}}
             >
             {this.props.unreadMessages.length>0?
-                <Badge  style={{height:20,padding:2}}>
-                    <Text style={{fontSize:10, fontWeight:'100', lineHeight:20}}>{this.props.unreadMessages.length}</Text>
+                <Badge style={{backgroundColor: customGalioTheme.COLORS.PRIMARY}}>
+                    {this.props.unreadMessages.length}
                 </Badge>:null}
             </View>
         );

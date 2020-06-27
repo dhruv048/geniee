@@ -36,6 +36,7 @@ _callPhone = number => {
     console.log(number);
     if (!number) {
       Alert.alert('Contact No. Unavailable for the Service');
+      return;
     }
 
     const args = {
@@ -143,6 +144,7 @@ _callPhone = number => {
 
   render() {
     const {service} = this.props;
+    console.log(service)
     return (
       <Provider theme={customPaperTheme}>
         <View style={styles.listBox}>

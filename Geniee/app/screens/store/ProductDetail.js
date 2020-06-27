@@ -146,15 +146,17 @@ class ProductDetail extends Component {
               width: 40,
               height: 40,
               borderRadius: 100,
+                backgroundColor:'white',
+                opacity:0.8
             }}
             onPress={() => {
               Navigation.pop(this.props.componentId);
             }}>
-            <FIcon name="arrow-left" color="white" size={24} />
+            <FIcon name="arrow-left" color={colors.primary} size={24} />
           </TouchableOpacity>
 
           {this.state.product ? (
-            <Text numberOfLines={1} note style={{color: 'white'}}>
+            <Text numberOfLines={1} note style={{color: 'white',fontWeight:'bold'}}>
               {this.state.product.title}
             </Text>
           ) : null}
@@ -166,6 +168,8 @@ class ProductDetail extends Component {
               width: 40,
               height: 40,
               borderRadius: 100,
+                backgroundColor:'white',
+                opacity:0.8
             }}
             onPress={this.addToWishlist.bind(this)}>
             {this.state.liked ? (
@@ -174,7 +178,7 @@ class ProductDetail extends Component {
                 style={{fontSize: 26, color: colors.primary}}
               />
             ) : (
-              <FIcon name="heart" size={24} color="white" />
+              <FIcon name="heart" size={24} color={colors.primary} />
             )}
           </TouchableOpacity>
         </View>
