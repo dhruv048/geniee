@@ -94,11 +94,12 @@ class SideMenu extends PureComponent {
     render() {
         return (
             <Fragment>
-            <SafeAreaView style={{ flex: 0,   }} />
+            <SafeAreaView style={{ flex: 0,  }} />
                 <Header androidStatusBarColor={colors.statusBar}
-                        style={{height: 220, backgroundColor: colors.appLayout}} >
-                    <Body style={{justifyContent: 'center', alignItems: 'center'}}>
-                    {this.state.user ?
+                        style={{height: 220,backgroundColor: colors.appBackground }} >
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+
+                    {this.state.user=='NaN' ?
                         <TouchableOpacity onPress={this.navigateToRoute.bind(this,'Profile')}>
                             <>
                                 <Image style={{
@@ -119,16 +120,16 @@ class SideMenu extends PureComponent {
                         </TouchableOpacity> :
                         <Image style={{width: 150, height: 150}}
                                source={require('../images/logo2-trans-640X640.png')}/>}
-                    <Text style={{fontSize: 16, fontWeight: "400", color: 'white'}}>WELLCOME</Text>
+                    <Text style={{fontSize: 16, fontWeight: "400", color: colors.appLayout}}>WELLCOME</Text>
                     {this.state.user ?
                         <Text style={{
                             fontSize: 14,
                             fontWeight: "200",
-                            color: 'white'
+                            color: colors.appLayout
                         }}>{this.state.user.profile.name}</Text> : null}
 
-                    <Text note style={{color:'white'}}>[ Version: {DeviceInfo.getVersion()} ]</Text>
-                    </Body>
+                    <Text note style={{color:colors.appLayout}}>[ Version: {DeviceInfo.getVersion()} ]</Text>
+                    </View>
 
 
                 </Header>
@@ -142,8 +143,7 @@ class SideMenu extends PureComponent {
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Orders")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'Orders' ? style.selectedTextStyle : style.screenTextStyle]}>My
-                                Orders</Text>
+                                style={[this.state.currentRoute == 'Orders' ? style.selectedTextStyle : style.screenTextStyle]}>Orders</Text>
                         </View>
                     </TouchableNativeFeedback>
                     {this.state.isLogged ?
@@ -151,7 +151,7 @@ class SideMenu extends PureComponent {
                             <TouchableNativeFeedback onPress={() => this.navigateToRoute("Chat")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
-                                        style={[this.state.currentRoute == 'Chat' ? style.selectedTextStyle : style.screenTextStyle]}>Chat</Text>
+                                        style={[this.state.currentRoute == 'Chat' ? style.selectedTextStyle : style.screenTextStyle]}>Message</Text>
                                     <Right style={{marginRight: 10}}>
                                         <MessageCount/>
                                     </Right>
@@ -159,26 +159,25 @@ class SideMenu extends PureComponent {
                             </TouchableNativeFeedback>
                             <TouchableNativeFeedback onPress={() => this.navigateToRoute("MyServices")}>
                                 <View style={[style.screenStyle]}>
-                                    <Text style={[this.state.currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Services</Text>
-                                </View>
-                            </TouchableNativeFeedback>
-                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("MyProducts")}>
-                                <View style={[style.screenStyle]}>
-                                    <Text style={[this.state.currentRoute == 'MyProducts' ? style.selectedTextStyle : style.screenTextStyle]}>My Products</Text>
+                                    <Text style={[this.state.currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Business</Text>
                                 </View>
                             </TouchableNativeFeedback>
                             <TouchableNativeFeedback onPress={() => this.navigateToRoute("AddService")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
-                                        style={[this.state.currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Add
-                                        Service</Text>
+                                        style={[this.state.currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Create Business/Store</Text>
                                 </View>
                             </TouchableNativeFeedback>
+                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("MyProducts")}>
+                                <View style={[style.screenStyle]}>
+                                    <Text style={[this.state.currentRoute == 'MyProducts' ? style.selectedTextStyle : style.screenTextStyle]}>My Products/Services</Text>
+                                </View>
+                            </TouchableNativeFeedback>
+
                             <TouchableNativeFeedback onPress={() => this.navigateToRoute("AddProduct")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
-                                        style={[this.state.currentRoute == 'AddProduct' ? style.selectedTextStyle : style.screenTextStyle]}>Add
-                                        Product</Text>
+                                        style={[this.state.currentRoute == 'AddProduct' ? style.selectedTextStyle : style.screenTextStyle]}>Create Product/Service</Text>
                                 </View>
                             </TouchableNativeFeedback></> : null}
 

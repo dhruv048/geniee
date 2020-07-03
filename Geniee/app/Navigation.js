@@ -104,8 +104,9 @@ export const goToDashboard = () =>
 						name: 'SideMenu',
 						options:{
 							statusBar: {
+                                style: 'dark',
 							//drawBehind: true,
-							backgroundColor: colors.statusBar,
+							backgroundColor: colors.appBackground,
 						},
 						}
 					},
@@ -120,7 +121,7 @@ export const goToDashboard = () =>
 							},
 							statusBar: {
 								style: 'light',
-								drawBehind: true,
+								//drawBehind: true,
 								backgroundColor:colors.statusBar,
 							},
 						},

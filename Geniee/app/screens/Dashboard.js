@@ -397,6 +397,7 @@ class Dashboard extends Component {
         //         this.categories=res.result;
         //     }
         // })
+         this._fetchNearByServices();
     }
     async updateCounts(){
         let wishList = await AsyncStorage.getItem('myWhishList');
@@ -702,7 +703,7 @@ class Dashboard extends Component {
                             </Text>
                         </View>
                     ) : null}
-                    <CardItem style={{paddingTop: 0, paddingLeft: 7, paddingRight: 3}}>
+                    <CardItem style={{paddingTop: 0, paddingHorizental: 3}}>
                         <Body style={{alignItems: 'center'}}>
                         <Text
                             style={{fontSize: 12, color: colors.primaryText}}
@@ -713,6 +714,7 @@ class Dashboard extends Component {
                             style={{
                                 flexDirection: 'row',
                                 alignItems: 'center',
+                                width:'100%',alignSelf:'center'
                             }}>
                             <Icon name={'home'} size={10} color={colors.gray_200}/>
                             <Text
@@ -977,7 +979,7 @@ class Dashboard extends Component {
                                                         <Text>
                                                             {item.hasOwnProperty('ratings')
                                                                 ? Math.round(item.Rating.avgRate)
-                                                                : 0}
+                                                                : 1}
                                                         </Text>
 
                                                         <Icon

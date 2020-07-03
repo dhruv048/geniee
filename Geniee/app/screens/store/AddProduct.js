@@ -42,7 +42,7 @@ import {CogMenu} from "../../components/CogMenu/CogMenu";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {backToRoot, goToRoute, goBack} from "../../Navigation";
 import AsyncStorage from '@react-native-community/async-storage';
-import settings, {BusinessType} from "../../config/settings";
+import settings, {BusinessType, ServiceDuration} from "../../config/settings";
 import FIcon from 'react-native-vector-icons/Feather';
 import Loading from '../../components/Loading';
 import {
@@ -81,6 +81,9 @@ class AddProduct extends React.PureComponent {
             serviceModal: false,
             myServices: [],
             imageLoad: false,
+            used: false,
+            numDays: '',
+            duration: 3,
         };
         this.myServices = [];
         this.imagesToRemove = [];
@@ -143,7 +146,10 @@ class AddProduct extends React.PureComponent {
                 colors: colorss,
                 sizes: sizess,
                 qty: _product.qty.toString(),
-                images: imgs
+                images: imgs,
+                used: _product.used,
+                numDays: _product.numDays.toString(),
+                duration: _product.duration,
             });
         }
     }
@@ -215,6 +221,13 @@ class AddProduct extends React.PureComponent {
         let current = this.state.homeDelivery;
         this.setState(
             {homeDelivery: current === false ? true : false}
+        )
+    };
+    _updateUsedorNot = () => {
+        let current = this.state.used;
+        console.log(current)
+        this.setState(
+            {used: current ? false : true}
         )
     };
     _callSaveServiceMethod = (product) => {
@@ -296,11 +309,14 @@ class AddProduct extends React.PureComponent {
             sizes: '',
             qty: '',
             images: [],
+            used: false,
+            numDays: 0,
+            duration: 3,
         });
     }
 
     _saveService = () => {
-        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, location, webLink, colors, sizes, qty} = this.state;
+        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, qty, numDays, duration} = this.state;
         let product = {
             title: title,
             description: description,
@@ -318,9 +334,13 @@ class AddProduct extends React.PureComponent {
             qty: qty,
             images: images,
             service: selectedService._id,
-            serviceOwner: selectedService.owner
+            serviceOwner: selectedService.owner,
+            used: used,
+            numDays: numDays,
+            duration: duration,
+            type:this.state.selectedService.businessType,
         };
-        if (title.length === 0 || contact.length === 0 || description.length === 0 || radius.length === 0 || !selectedService._id) {
+        if (this.state.selectedService.businessType== BusinessType.PRODUCTS_GOODS_SELLER && ( title.length === 0 || description.length === 0 || radius.length === 0 || !selectedService._id || !price)) {
             ToastAndroid.showWithGravityAndOffset(
                 'Please Enter all the fields with *.',
                 ToastAndroid.LONG,
@@ -330,7 +350,11 @@ class AddProduct extends React.PureComponent {
             );
             //valid = false;
         }
-        else {
+        else if(this.state.selectedService.businessType== BusinessType.SERVICE_PROVIDER && ( title.length === 0 ||  description.length === 0 || radius.length === 0 || !selectedService._id || !price)){
+
+        }
+            else
+            {
             this._callSaveServiceMethod(product)
         }
     }
@@ -357,7 +381,9 @@ class AddProduct extends React.PureComponent {
         myServices = myServices.filter(ser => ser.title.search(regex) >= 0);
         this.setState({myServices: myServices});
     }
-
+    durationChange = duration => {
+        this.setState({duration});
+    };
     _getListItem = (data, index) => {
         let item = data;
         return (
@@ -391,10 +417,6 @@ class AddProduct extends React.PureComponent {
         return (
             <GalioProvider theme={customGalioTheme}>
                 <Container style={styles.container}>
-                    <StatusBar
-                        backgroundColor={colors.statusBar}
-                        barStyle='light-content'
-                    />
                     <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: colors.appLayout}}>
                         <Left>
                             {/*<Button transparent onPress={() => {*/}
@@ -468,37 +490,116 @@ class AddProduct extends React.PureComponent {
                                           onChangeText={(description) => this.setState({description})}
                                           value={this.state.description}
                                 />
-                                {this.state.selectedService.businessType!==BusinessType.RESTURANT?
-                                <View style={styles.multiField}>
-                                    <View style={{flex: 1, marginRight: 5}}>
-                                        <Input
-                                            color={customGalioTheme.COLORS.INPUT_TEXT}
-                                            placeholder='Available Qty'
-                                            keyboardType='phone-pad'
-                                            onChangeText={(qty) => this.setState({qty})}
-                                            value={this.state.qty}
-                                        />
-                                    </View>
-                                    <View style={{flex: 1, marginLeft: 5}}>
-                                        <Input
-                                            color={customGalioTheme.COLORS.INPUT_TEXT}
-                                            placeholder='Unit'
-                                            onChangeText={(unit) => this.setState({unit})}
-                                            value={this.state.unit}
-                                        />
-                                    </View>
-                                </View>:null}
-                                <View style={styles.multiField}>
-                                    <View style={{flex: 1, marginRight: 5}}>
-                                        <Input
-                                            color={customGalioTheme.COLORS.INPUT_TEXT}
-                                            placeholder='Price per Unit'
-                                            keyboardType='phone-pad'
-                                            onChangeText={(price) => this.setState({price})}
-                                            value={this.state.price}
-                                        />
-                                    </View>
-                                    <View style={{flex: 1, marginLeft: 5}}>
+                                {this.state.selectedService.businessType == BusinessType.PRODUCTS_GOODS_SELLER ?
+                                    <>
+                                        <View style={styles.multiField}>
+                                            <View style={{flex: 1, marginRight: 5}}>
+                                                <Input
+                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                    placeholder='Available Qty'
+                                                    keyboardType='phone-pad'
+                                                    onChangeText={(qty) => this.setState({qty})}
+                                                    value={this.state.qty}
+                                                />
+                                            </View>
+                                            <View style={{flex: 1, marginLeft: 5}}>
+                                                <Input
+                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                    placeholder='Unit'
+                                                    onChangeText={(unit) => this.setState({unit})}
+                                                    value={this.state.unit}
+                                                />
+                                            </View>
+                                        </View>
+                                        <View style={styles.multiField}>
+                                            <View style={{flex: 1, marginRight: 5}}>
+                                                <Input
+                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                    placeholder='Price per Unit'
+                                                    keyboardType='phone-pad'
+                                                    onChangeText={(price) => this.setState({price})}
+                                                    value={this.state.price}
+                                                />
+                                            </View>
+                                            <View style={{flex: 1, marginLeft: 5}}>
+                                                <Input
+                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                    placeholder='Discount in %'
+                                                    keyboardType='phone-pad'
+                                                    onChangeText={(discount) => this.setState({discount})}
+                                                    value={this.state.discount}
+                                                />
+                                            </View>
+                                        </View>
+                                    </>
+                                    : null}
+
+
+                                {this.state.selectedService.businessType == BusinessType.SERVICE_PROVIDER ?
+                                    <>
+                                        <View style={styles.multiField}>
+                                            <View style={{flex: 1}}>
+                                                <Input
+                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                    placeholder='Price'
+                                                    keyboardType='phone-pad'
+                                                    onChangeText={(price) => this.setState({price})}
+                                                    value={this.state.price}
+                                                />
+                                            </View>
+                                            <Text style={{marginHorizontal: 5}} note>/</Text>
+                                            <View
+                                                style={{
+                                                    flex: 1,
+                                                    alignItems: 'center',
+                                                    width: '100%',
+                                                    height: 45,
+                                                    backgroundColor: customGalioTheme.COLORS.WHITE,
+                                                    borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
+                                                    borderWidth: customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
+                                                    borderColor: customGalioTheme.COLORS.PLACEHOLDER,
+                                                }}>
+                                                <Picker
+                                                    mode="dropdown"
+                                                    iosIcon={<Icon name="arrow-down"/>}
+                                                    placeholder="Select Duration"
+                                                    placeholderStyle={{
+                                                        color: customGalioTheme.COLORS.PLACEHOLDER,
+                                                    }}
+                                                    itemTextStyle={{ color: customGalioTheme.COLORS.INPUT_TEXT}}
+                                                    placeholderIconColor={customGalioTheme.COLORS.PLACEHOLDER}
+                                                    style={{width: '100%'}}
+                                                    selectedValue={this.state.duration}
+                                                    onValueChange={this.durationChange}>
+                                                    <Picker.Item
+                                                        label="Min"
+                                                        value={ServiceDuration.Min}
+                                                    />
+                                                    <Picker.Item
+                                                        label="Hr"
+                                                        value={ServiceDuration.Hr}
+                                                    />
+                                                    <Picker.Item
+                                                        label="Day"
+                                                        value={ServiceDuration.Day}
+                                                    />
+                                                    <Picker.Item
+                                                        label="Month"
+                                                        value={ServiceDuration.Month}
+                                                    />
+                                                    <Picker.Item
+                                                        label="Yr"
+                                                        value={ServiceDuration.Yr}
+                                                    />
+                                                    <Picker.Item
+                                                        label="Sq. Feet"
+                                                        value={ServiceDuration.SQ_Feet}
+                                                    />
+
+                                                </Picker>
+                                            </View>
+                                        </View>
+
                                         <Input
                                             color={customGalioTheme.COLORS.INPUT_TEXT}
                                             placeholder='Discount in %'
@@ -506,59 +607,88 @@ class AddProduct extends React.PureComponent {
                                             onChangeText={(discount) => this.setState({discount})}
                                             value={this.state.discount}
                                         />
-                                    </View>
-                                </View>
-                                {this.state.selectedService.businessType!==BusinessType.RESTURANT?
-                                    <>
-                                <View style={styles.multiField}>
-                                    <View style={{flex: 1, marginRight: 5}}>
-                                        {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
-                                           placeholder='Radius in K.M (*)'
-                                           keyboardType='phone-pad'
-                                           onChangeText={(radius) => this.setState({radius})}
-                                           value={this.state.radius}
-                                />*/}
-                                        <Input color={customGalioTheme.COLORS.INPUT_TEXT}
-                                               placeholder='Contact No (*)'
-                                               keyboardType='phone-pad'
-                                               onChangeText={(contact) => this.setState({contact})}
-                                               value={this.state.contact}
-                                        />
+                                    </> : null}
 
-                                    </View>
-                                    <View style={styles.chkView}>
-                                        <Checkbox
-                                            label=""
-                                            initialValue={this.state.homeDelivery}
-                                            color="primary"
-                                            onChange={() => this._updateHomeDelivery}
-                                        />
-                                        {/*  <CheckBox style={{marginEnd: 20}}
+
+                                {this.state.selectedService.businessType == BusinessType.PRODUCTS_GOODS_SELLER ?
+                                    <>
+                                        <View style={styles.multiField}>
+                                            {/*<View style={{flex: 1, marginRight: 5}}>*/}
+                                            {/*/!*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}*/}
+                                            {/*placeholder='Radius in K.M (*)'*/}
+                                            {/*keyboardType='phone-pad'*/}
+                                            {/*onChangeText={(radius) => this.setState({radius})}*/}
+                                            {/*value={this.state.radius}*/}
+                                            {/*/>*!/*/}
+                                            {/*<Input color={customGalioTheme.COLORS.INPUT_TEXT}*/}
+                                            {/*placeholder='Contact No (*)'*/}
+                                            {/*keyboardType='phone-pad'*/}
+                                            {/*onChangeText={(contact) => this.setState({contact})}*/}
+                                            {/*value={this.state.contact}*/}
+                                            {/*/>*/}
+
+                                            {/*</View>*/}
+                                            <View style={styles.chkView}>
+                                                <Checkbox
+                                                    label="Home Delivery"
+                                                    initialValue={this.state.homeDelivery}
+                                                    color="primary"
+                                                    onChange={this._updateHomeDelivery}
+                                                />
+                                                {/*  <CheckBox style={{marginEnd: 20}}
                                                                        checked={this.state.homeDelivery}
                                                                        onPress={this._updateHomeDelivery}/>*/}
-                                        <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.44)',
-                                            marginLeft: 5
-                                        }}>{'Home Delivery'}</Text></View>
-                                </View>
-                                <Textarea rowSpan={2} placeholder="Colors seperated ;"
-                                          style={styles.inputTextarea}
-                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                          underlineColorAndroid='red'
+                                                {/*<Text style={{*/}
+                                                {/*color: 'rgba(0, 0, 0, 0.44)',*/}
+                                                {/*marginLeft: 5*/}
+                                                {/*}}>{'Home Delivery'}</Text>*/}
 
-                                          onChangeText={(colors) => this.setState({colors})}
-                                          value={this.state.colors}
-                                />
-                                <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
-                                          style={styles.inputTextarea}
-                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                          underlineColorAndroid='red'
-                                          onChangeText={(sizes) => this.setState({sizes})}
-                                          value={this.state.sizes}
-                                />
+                                            </View>
+                                            <View style={styles.chkView}>
+                                                <Checkbox
+                                                    label="Used (Not New)"
+                                                    initialValue={this.state.used}
+                                                    color="primary"
+                                                    onChange={this._updateUsedorNot}
+                                                />
+                                                {/*  <CheckBox style={{marginEnd: 20}}
+                                                                       checked={this.state.homeDelivery}
+                                                                       onPress={this._updateHomeDelivery}/>*/}
+                                                {/*<Text style={{*/}
+                                                {/*color: 'rgba(0, 0, 0, 0.44)',*/}
+                                                {/*marginLeft: 5*/}
+                                                {/*}}>{'Brand New'}</Text>*/}
+                                            </View>
+                                        </View>
+                                        {!this.state.used ?
+                                            <Input
+                                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                placeholder='No. of Days Used'
+                                                onSubmitEditing={() => this.title.focus()}
+                                                onChangeText={(numDays) => this.setState({numDays})}
+                                                keyboardType='phone-pad'
+                                                value={this.state.numDays}
+                                            />
+                                            : null
+                                        }
+                                        <Textarea rowSpan={2} placeholder="Colors seperated ;"
+                                                  style={styles.inputTextarea}
+                                                  placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                                  underlineColorAndroid='red'
+
+                                                  onChangeText={(colors) => this.setState({colors})}
+                                                  value={this.state.colors}
+                                        />
+                                        <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
+                                                  style={styles.inputTextarea}
+                                                  placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                                  underlineColorAndroid='red'
+                                                  onChangeText={(sizes) => this.setState({sizes})}
+                                                  value={this.state.sizes}
+                                        />
 
 
-                                {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
+                                        {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Contact No (*)'
                                        keyboardType='phone-pad'
                                        onChangeText={(contact) => this.setState({contact})}
@@ -566,12 +696,13 @@ class AddProduct extends React.PureComponent {
                             /> */}
 
 
+
+                                    </> : null}
                                 <Input color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Website'
                                        onChangeText={(webLink) => this.setState({webLink})}
                                        value={this.state.webLink}
                                 />
-</>:null}
                                 {/* <Button
                                 style={styles.button}
                                 onPress={() => this.ActionSheet.show()}>
@@ -629,9 +760,14 @@ class AddProduct extends React.PureComponent {
                             {/*keyExtracter={(item, index) => index.toString()}*/}
                             {/*horizontal={false}*/}
                             {/*numColumns={2}/>*/}
-                            <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start'}}>
+                            <View style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignItems: 'flex-start'
+                            }}>
                                 {this.state.images.map((item, indx) =>
-                                        this._getListItem(item, indx)
+                                    this._getListItem(item, indx)
                                 )}
                                 {this.state.imageLoad ?
                                     <View key={'123'}>
@@ -695,18 +831,23 @@ class AddProduct extends React.PureComponent {
                            }}>
                         <Header androidStatusBarColor={colors.statusBar}
                                 style={{backgroundColor: colors.appLayout}}>
-                            <Left style={{flex: 1}}>
-                                <Button transparent style={{paddingHorizontal: 10}} onPress={() => {
-                                    this.setState({serviceModal: false})
-                                }}>
-                                    <FIcon name='arrow-left' size={20} color={'white'}/>
-                                </Button>
-                            </Left>
+                            {/*<Left style={{flex: 1}}>*/}
+                                {/*<Button transparent style={{paddingHorizontal: 10}} onPress={() => {*/}
+                                    {/*this.setState({serviceModal: false})*/}
+                                {/*}}>*/}
+                                    {/*<FIcon name='arrow-left' size={20} color={'white'}/>*/}
+                                {/*</Button>*/}
+                            {/*</Left>*/}
                             <Body style={{flex: 7}}>
-                            <Item rounded search boadered style={{
+                            <Item searchBar boadered style={{
                                 backgroundColor: 'white',
                                 height: 40
                             }}>
+                                <Button transparent style={{paddingHorizontal: 15}} onPress={() => {
+                                    this.setState({serviceModal: false})
+                                }}>
+                                    <FIcon name='arrow-left' size={20} />
+                                </Button>
                                 <NBInput
                                     value={this.state.query}
                                     placeholder="Search.."

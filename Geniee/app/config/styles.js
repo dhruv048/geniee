@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 export const colors = {
-    appBackground: '#05a5d10d',
+    appBackground: '#e4eff5',
     statusBar: '#094c6b',
     inputBackground: 'rgba(9,76,107,0.5)',
     buttonPrimaryBackground: '#094c6b',

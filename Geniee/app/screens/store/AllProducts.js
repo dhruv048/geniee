@@ -49,7 +49,7 @@ class AllProducts extends Component {
     componentDidMount() {
         Navigation.events().bindComponent(this);
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
-       this._fetchData()
+      // this._fetchData()
         this.setState({
             //     totalCount: this.props.Count.length > 0 ? this.props.Count[0].totalCount : 0,
             CategoryName:this.props.Category
@@ -111,7 +111,7 @@ class AllProducts extends Component {
             'hardwareBackPress',
             this.handleBackButton.bind(this),
         );
-        this.fetchData();
+        this._fetchData();
     }
 
     componentDidDisappear() {

@@ -144,7 +144,6 @@ _callPhone = number => {
 
   render() {
     const {service} = this.props;
-    console.log(service)
     return (
       <Provider theme={customPaperTheme}>
         <View style={styles.listBox}>
@@ -241,7 +240,7 @@ _callPhone = number => {
                       />
                     </Button>
                   }>
-                   {Meteor.userId()!=service.owner?
+                   {Meteor.userId() && Meteor.userId()==service.owner? null : 
                   <MenuItem
                     onPress={() => {
                       this[`menu${service._id}`].hide(),
@@ -252,7 +251,7 @@ _callPhone = number => {
                         size={15}
                         color={colors.gray_200}
                       />  Call
-                  </MenuItem>:null}
+                  </MenuItem>}
                   {Meteor.userId() && Meteor.userId()!=service.owner?
                   <MenuItem
                     onPress={() => {
@@ -265,7 +264,7 @@ _callPhone = number => {
                         color={colors.gray_200}
                       />  Message
                   </MenuItem> : null}
-                  {Meteor.userId()==service.owner?
+                  {Meteor.userId() && Meteor.userId()==service.owner?
                     <>
                   <MenuDivider/>
                   <MenuItem

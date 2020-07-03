@@ -371,10 +371,12 @@ class Chat extends Component {
     });
   };
   _saveMessageToServer(Message) {
+      this.setState({message: ''});
     this.setState({disable: true});
     Meteor.call('addChatMessage', Message, err => {
       this.setState({disable: false});
       if (err) {
+          // this.setState({message: Message.data.message});
       } else {
         this.setState({message: ''});
         // this.flatList.scrollToOffset({offset: 0, animated: true});

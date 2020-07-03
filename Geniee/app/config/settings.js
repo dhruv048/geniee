@@ -5,26 +5,25 @@
 let GOOGLE_MAP_API_KEY = 'AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY';
 
 
-let API_URL='http://192.168.1.245:3000/api/';
-let IMAGE_URL='http://192.168.1.245:3000/api/images/';
-let WEB_URL='http://192.168.1.245:3000/';
+let API_URL = 'http://192.168.1.245:3000/api/';
+let IMAGE_URL = 'http://192.168.1.245:3000/api/images/';
+let WEB_URL = 'http://192.168.1.245:3000/';
 let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 
 
-// let API_URL = "https://api.krishisansaar.com/api/";
-// let IMAGE_URL='https://api.krishisansaar.com/api/images/';
-// let METEOR_URL = 'wss://api.krishisansaar.com/websocket';
-// let WEB_URL = "https://api.krishisansaar.com/";
+// let API_URL = "http://198.167.140.2/api/";
+// let IMAGE_URL = 'http://198.167.140.2/api/images/';
+// let METEOR_URL = 'ws://198.167.140.2/websocket';
+// let WEB_URL = "http://198.167.140.2/";
 
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 
 if (process.env.NODE_ENV === 'production') {
-    METEOR_URL = 'wss://api.krishisansaar.com/websocket';
-    //API_URL = "http://139.59.81.51/api/";
-    API_URL = "https://api.krishisansaar.com/api/";
-    IMAGE_URL='https://api.krishisansaar.com/api/images/';
-    WEB_URL = "https://api.krishisansaar.com/";
+    API_URL = "http://198.167.140.2/api/";
+    IMAGE_URL = 'http://198.167.140.2/api/images/';
+    METEOR_URL = 'ws://198.167.140.2/websocket';
+    WEB_URL = "http://198.167.140.2/";
 }
 export const settings = {
     env: process.env.NODE_ENV,
@@ -39,8 +38,8 @@ export const settings = {
 export const userType = {
     NORMAL: 0,
     SERVICE_PROVIDER: 1,
-    EAT_FIT:222,
-    GENIEE_REPAIR:111
+    EAT_FIT: 222,
+    GENIEE_REPAIR: 111
 };
 
 export const PaymentType = {
@@ -54,19 +53,19 @@ export const OrderStatus = {
     ORDER_DELIVERED: 2,
     ORDER_CONFIRMED: 3,
     ORDER_CANCELLED: 4,
-    ORDER_DECLINED:5,
+    ORDER_DECLINED: 5,
 }
 
 export const ProductOwner = {
-    REGULAR_USERS:0,
-    EAT_FIT:1,
-    BAADSHAH_BIRYANI:2,
+    REGULAR_USERS: 0,
+    EAT_FIT: 1,
+    BAADSHAH_BIRYANI: 2,
 };
 
 export const BusinessType = {
-    SERVICE_PROVIDER:0,
-    PRODUCTS_GOODS_SELLER:1,
-    RESTURANT:2,
+    SERVICE_PROVIDER: 0,
+    PRODUCTS_GOODS_SELLER: 1,
+    RESTURANT: 2,
 };
 
 export const NotificationTypes = {
@@ -75,17 +74,26 @@ export const NotificationTypes = {
     ORDER_DELIVERED: 2,
     ORDER_CONFIRMED: 3,
     ORDER_CANCELLED: 4,
-    ORDER_DECLINED:5,
-    ADD_SERVICE:10,
-    ADD_PRODUCT:11,
-    RATE_SERVICE:12,
+    ORDER_DECLINED: 5,
+    ADD_SERVICE: 10,
+    ADD_PRODUCT: 11,
+    RATE_SERVICE: 12,
 
 };
-export default settings;
-export const getProfileImage=(url)=>{
 
-    if(url.includes('https://'))
-        return url ;
+export const ServiceDuration = {
+    Min: 0,
+    Hr: 1,
+    Day: 2,
+    Month: 3,
+    Yr: 4,
+    SQ_Feet: 5,
+};
+export default settings;
+export const getProfileImage = (url) => {
+
+    if (url.includes('https://'))
+        return url;
     else
         return settings.IMAGE_URL + url;
 }
