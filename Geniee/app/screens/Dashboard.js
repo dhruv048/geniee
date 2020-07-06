@@ -50,13 +50,14 @@ import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import {goToRoute} from '../Navigation';
 import {getProfileImage} from '../config/settings';
-
+import LinearGradient from  'react-native-linear-gradient';
 let isDashBoard = true;
 
 class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            viewAll:false,
             categories: [],
             loading: false,
             services: [],
@@ -136,6 +137,11 @@ class Dashboard extends Component {
         }
     };
 
+    setViewAll=()=>{
+        this.setState({viewAll:true,categories:this.props.categories});
+
+    }
+
     _spring() {
         ToastAndroid.showWithGravityAndOffset(
             'Tap again to Exit.',
@@ -174,7 +180,7 @@ class Dashboard extends Component {
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
             MainCategories = JSON.parse(MainCategories);
-            this.setState({categories: MainCategories, loading: false});
+            this.setState({categories: MainCategories.slice(0,6), loading: false});
             this.arrayholder = MainCategories;
         } else {
             MainCategories = [];
@@ -233,6 +239,7 @@ class Dashboard extends Component {
                     longitude: position.coords.longitude,
                 };
                 this.region = region;
+                this._fetchNearByServices();
             },
             error => {
                 // See error code charts below.
@@ -264,7 +271,7 @@ class Dashboard extends Component {
             //console.log(MainCategories)
             if (this.props.categories.length > 0) {
                 let MainCategories = this.props.categories;
-                this.setState({categories: MainCategories, loading: false});
+                this.setState({categories:this.state.viewAll? MainCategories : MainCategories.slice(0,6), loading: false});
 
                 this.arrayholder = MainCategories;
                 AsyncStorage.setItem('Categories', JSON.stringify(MainCategories));
@@ -290,9 +297,11 @@ class Dashboard extends Component {
             coords: [this.region.longitude, this.region.latitude],
             subCatIds: null,
         };
-        Meteor.call('getServicesNearBy', data, (err, res) => {
+     //   Meteor.call('getServicesNearBy', data, (err, res) => {
+        Meteor.call('getRandomServices',  [this.region.longitude, this.region.latitude],15,10, (err, res) => {
             this.setState({loading: false});
             if (!err) {
+                console.log(res)
                 this.setState({nearByservice: res.result});
             } else {
                 console.log(err);
@@ -481,7 +490,7 @@ class Dashboard extends Component {
             },
         });
     };
-    renderItem = (data, index) => {
+    renderCategoryItem = (data, index) => {
         var item = data.item;
         return (
             <View key={item._id} style={styles.containerStyle}>
@@ -496,7 +505,9 @@ class Dashboard extends Component {
                         padding: 10
                     }}>*/}
                     <Body>
-                    <Icon name={item.icon} size={18} style={styles.catIcon}/>
+                    <View style={styles.catIcon}>
+                    <Icon name={item.icon} size={25} color='white'/>
+                    </View>
                     </Body>
 
                     <Text
@@ -930,6 +941,7 @@ class Dashboard extends Component {
                                                 paddingHorizontal: 10,
                                                 paddingBottom: 15,
                                             }}>
+                                            <View style={{ height: 90, width: 150,}}>
                                             <Thumbnail
                                                 style={{
                                                     width: 150,
@@ -946,64 +958,74 @@ class Dashboard extends Component {
                                                         : require('../images/no-image.png')
                                                 }
                                             />
-
-                                            <View style={{flexDirection: 'row'}}>
-                                                <View
+                                                <LinearGradient
+                                                    colors={['transparent', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.6)']}
                                                     style={{
-                                                        flex: 1,
+                                                        position: 'absolute',
+                                                        bottom: 0,
                                                         width: '100%',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
+                                                        padding:5,
+                                                        paddingTop:10,
                                                     }}>
-                                                    <Thumbnail
-                                                        style={{borderRadius: 2, height: 25, width: 25}}
-                                                        square
-                                                        small
-                                                        source={
-                                                            item.Owner.profile.profileImage
-                                                                ? {
-                                                                    uri: getProfileImage(
-                                                                        item.Owner.profile.profileImage,
-                                                                    ),
-                                                                }
-                                                                : require('../images/user-icon.png')
-                                                        }
-                                                    />
-                                                    {/*<Text note>{item.Owner.profile.name}</Text>*/}
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                        }}>
-                                                        <Text>
-                                                            {item.hasOwnProperty('ratings')
-                                                                ? Math.round(item.Rating.avgRate)
-                                                                : 1}
-                                                        </Text>
-
-                                                        <Icon
-                                                            name={'star'}
-                                                            size={14}
-                                                            color={colors.warning}
-                                                        />
-                                                    </View>
+                                                    <Text style={{color: 'white', fontSize: 12}}>{item.title}</Text>
+                                                </LinearGradient>
                                                 </View>
-                                                <View
-                                                    style={{
-                                                        borderColor: colors.appBackground,
-                                                        borderLeftWidth: 1,
-                                                    }}
-                                                />
+                                            <View style={{flexDirection: 'row'}}>
+                                                {/*<View style={{*/}
+                                                        {/*flex: 1,*/}
+                                                        {/*width: '100%',*/}
+                                                        {/*alignItems: 'center',*/}
+                                                        {/*justifyContent: 'center',*/}
+                                                    {/*}}>*/}
+                                                    {/*<Thumbnail*/}
+                                                        {/*style={{borderRadius: 2, height: 25, width: 25}}*/}
+                                                        {/*square*/}
+                                                        {/*small*/}
+                                                        {/*source={*/}
+                                                            {/*item.Owner.profile.profileImage*/}
+                                                                {/*? {*/}
+                                                                    {/*uri: getProfileImage(*/}
+                                                                        {/*item.Owner.profile.profileImage,*/}
+                                                                    {/*),*/}
+                                                                {/*}*/}
+                                                                {/*: require('../images/user-icon.png')*/}
+                                                        {/*}*/}
+                                                    {/*/>*/}
+                                                    {/*<View*/}
+                                                        {/*style={{*/}
+                                                            {/*flexDirection: 'row',*/}
+                                                            {/*alignItems: 'center',*/}
+                                                            {/*justifyContent: 'center',*/}
+                                                        {/*}}>*/}
+                                                        {/*<Text>*/}
+                                                            {/*{item.hasOwnProperty('ratings')*/}
+                                                                {/*? Math.round(item.Rating.avgRate)*/}
+                                                                {/*: 1}*/}
+                                                        {/*</Text>*/}
+
+                                                        {/*<Icon*/}
+                                                            {/*name={'star'}*/}
+                                                            {/*size={14}*/}
+                                                            {/*color={colors.warning}*/}
+                                                        {/*/>*/}
+                                                    {/*</View>*/}
+                                                {/*</View>*/}
+                                                {/*<View*/}
+                                                    {/*style={{*/}
+                                                        {/*borderColor: colors.appBackground,*/}
+                                                        {/*borderLeftWidth: 1,*/}
+                                                    {/*}}*/}
+                                                {/*/>*/}
                                                 <View
                                                     style={{
                                                         flex: 3,
                                                         alignItems: 'center',
                                                         marginLeft: 5,
+                                                        marginTop:5,
                                                     }}>
-                                                    <Text style={styles.cardTitle} numberOfLines={1}>
-                                                        {item.title}
-                                                    </Text>
+                                                    {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
+                                                        {/*{item.title}*/}
+                                                    {/*</Text>*/}
                                                     {item.category ? (
                                                         <View
                                                             style={{
@@ -1030,9 +1052,27 @@ class Dashboard extends Component {
                                                     <View
                                                         style={{
                                                             flexDirection: 'row',
-                                                            justifyContent: 'space-around',
+                                                            justifyContent: 'space-between',
                                                             width: '100%',
                                                         }}>
+                                                        <View
+                                                            style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}>
+                                                            <Text note style={{fontSize: 12}}>
+                                                                {item.hasOwnProperty('ratings')
+                                                                    ? Math.round(item.Rating.avgRate)
+                                                                    : 1}
+                                                            </Text>
+
+                                                            <Icon
+                                                                name={'star'}
+                                                                size={12}
+                                                                color={colors.warning}
+                                                            />
+                                                        </View>
                                                         <View
                                                             style={{
                                                                 alignItem: 'center',
@@ -1042,7 +1082,7 @@ class Dashboard extends Component {
                                                             {/*color={colors.gray_200}/>*/}
                                                             <Text note style={{fontSize: 12}}>
                                                                 {Math.round(item.dist.calculated * 100) / 100}{' '}
-                                                                K.M Away
+                                                                K.M away
                                                             </Text>
                                                         </View>
                                                         {/*{item.Category?*/}
@@ -1077,10 +1117,7 @@ class Dashboard extends Component {
                             <Text style={styles.blockTitle}>
                                 Hungry? Order delicious foods now.
                             </Text>
-                            {/*<Button onPress={() => {*/}
-                            {/*this.props.navigation.navigate('Shopping')*/}
-                            {/*}} transparent style={customStyle.buttonOutlinePrimary}>*/}
-                            {/*<Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
+                          
                         </View>
                         <View
                             style={[
@@ -1216,7 +1253,7 @@ class Dashboard extends Component {
 
                     {/*CATEGORIES LIST START*/}
                     {this.state.categories.length > 0 ? (
-                        <View style={styles.block}>
+                        <View style={[styles.block,{marginBottom:80}]}>
                             <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Availble Categories</Text>
                                 {/*<Button transparent*/}
@@ -1226,22 +1263,28 @@ class Dashboard extends Component {
                             </View>
                             <FlatList
                                 contentContainerStyle={{
-                                    marginBottom: 80,
                                     marginTop: 10,
                                     paddingBottom: 10,
+                                    alignItems:'center',
+                                    justifyContent:'space-around'
                                     // flexWrap:'wrap',
                                     // flexDirection:'row',
                                 }}
                                 data={this.state.categories}
-                                horizontal={true}
+                                horizontal={false}
                                 _keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={this.renderItem}
+                               // showsHorizontalScrollIndicator={false}
+                                renderItem={this.renderCategoryItem}
+                                numColumns={3}
                             />
+                        {this.state.viewAll? null:
+                          <Button onPress={() => {this.setViewAll()}}
+                            style={[customStyle.buttonOutlinePrimary,{height:25,marginBottom:30,width:100,alignSelf:'center',backgroundColor:'white'}]}>
+                            <Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>}
                         </View>
                     ) : null}
 
-                    {/*CATEGORIES LIST LIST END*/}
+                    
                 </Content>
             </Container>
         );
@@ -1262,9 +1305,9 @@ const styles = StyleSheet.create({
         // marginVertical: 4,
         borderColor: '#808080',
         //elevation: 5,
-        width: 90,
-        marginHorizontal: 5,
-        height: 90,
+        width: (viewportWidth-60)/3,
+        margin: 5,
+        height: 100,
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
@@ -1274,8 +1317,10 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         backgroundColor: colors.appLayout,
         color: 'white',
-        width: 40,
-        height: 40,
+        width: 50,
+        height: 50,
+        alignItems:'center',
+        justifyContent:'center'
     },
     activeTabIcon: {
         color: '#ffffff',

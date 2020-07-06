@@ -45,7 +45,7 @@ if (Meteor.isServer) {
 
         }
         catch (e) {
-            console.log(e.message);
+           // console.log(e.message);
         //    res.writeHead(500);
             res.end(e.message);
         }
@@ -78,7 +78,7 @@ if (Meteor.isServer) {
 
             }
             catch (e) {
-                console.log(e.message);
+              //  console.log(e.message);
                 //res.writeHead(500);
                 res.end(e.message);
             }

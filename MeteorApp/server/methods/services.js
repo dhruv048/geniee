@@ -822,6 +822,8 @@ Meteor.methods({
             fax: 1,
             isPaid: 1,
             location: 1,
+            contact:1,
+            contact1:1,
             pbox: 1,
             radius: 1,
             website: 1,
@@ -855,12 +857,12 @@ Meteor.methods({
                             distanceMultiplier: 0.001,
                         },
                     },
+                    {$limit: obj.skip + obj.limit},
+                    {$skip: obj.skip},
                     {$lookup: categoryLookup},
                     {$lookup: ServiceRatings},
                     {$lookup: OwnerLookup},
                     {$addFields: addValues},
-                    {$limit: obj.skip + obj.limit},
-                    {$skip: obj.skip},
                     {$project: project}
                 ],
                 {cursor: {}}
@@ -872,6 +874,136 @@ Meteor.methods({
             });
         });
     },
+
+    getRandomServices : (cordinates,KM,sampleSize) => {
+        const match= {'location.geometry.location' : {$geoWithin: { $centerSphere:  [cordinates, ((KM*0.62137119)/3963.2)] }}};
+        const collection = Service.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultUser = {
+            id: "000",
+            profile: {name: "", profileImage: null},
+        };
+        const categoryLookup = {
+            from: "MainCategories",
+            localField: "categoryId",
+            foreignField: "subCategories.subCatId",
+            as: "categories",
+        };
+        const OwnerLookup = {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users",
+        };
+        const ServiceRatings = {
+            from: "ratings",
+            let: {serviceId: "$_id"},
+            pipeline: [
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                {
+                    $group: {
+                        _id: "$_id",
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1},
+                    },
+                },
+                {$project: {avgRate: 1, count: 1}},
+            ],
+            as: "servRatings",
+        };
+
+        const addValues = {
+            Rating: {
+                $cond: {
+                    if: {$eq: ["$servRatings", []]},
+                    then: defaultRating,
+                    else: {$arrayElemAt: ["$servRatings", 0]},
+                },
+            },
+            Owner: {
+                $cond: {
+                    if: {$eq: ["$users", []]},
+                    then: defaultUser,
+                    else: {$arrayElemAt: ["$users", 0]},
+                },
+            },
+            category: {$arrayElemAt: ["$categories", 0]},
+            subCategories: {
+                $arrayElemAt: ["$categories.subCategories", 0],
+            },
+        };
+        const project = {
+            _id: 1,
+            createdAt: 1,
+            createdBy: 1,
+            Rating: 1,
+            Owner: 1,
+            owner: 1,
+            categoryId: 1,
+            title: 1,
+            description: 1,
+            "category.mainCategory": 1,
+            "category.catId": 1,
+            "category._id": 1,
+            dist: 1,
+            email: 1,
+            fax: 1,
+            isPaid: 1,
+            location: 1,
+            contact:1,
+            contact1:1,
+            pbox: 1,
+            radius: 1,
+            website: 1,
+            coverImage: 1,
+            subCategory: {
+                $arrayElemAt: [
+                    {
+                        $filter: {
+                            input: "$subCategories",
+                            as: "item",
+                            cond: {$eq: ["$$item.subCatId", "$categoryId"]},
+                        },
+                    },
+                    0,
+                ],
+            },
+        };
+        //  return Category.find().fetch();
+        // const query = obj.subCatIds
+        //     ? {categoryId: {$in: obj.subCatIds}}
+        //     : {};
+        return Async.runSync(function (done) {
+            aggregate(
+                [
+                    // {$match:match},
+                    {
+                        $geoNear: {
+                            near: {type: "Point", coordinates: cordinates},
+                            distanceField: "dist.calculated",
+                            query: {},
+                            spherical: true,
+                            distanceMultiplier: 0.001,
+                        },
+                    },
+                    {$limit: 100},
+                    {$sample: { size: sampleSize } },
+                    {$lookup: categoryLookup},
+                    {$lookup: ServiceRatings},
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+                    {$project: project}
+                ],
+                {cursor: {}}
+            ).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+},
 
     getMyServices: () => {
         const collection = Service.rawCollection();

@@ -340,7 +340,7 @@ class AddProduct extends React.PureComponent {
             duration: duration,
             type:this.state.selectedService.businessType,
         };
-        if (this.state.selectedService.businessType== BusinessType.PRODUCTS_GOODS_SELLER && ( title.length === 0 || description.length === 0 || radius.length === 0 || !selectedService._id || !price)) {
+        if (this.state.selectedService.businessType== BusinessType.PRODUCTS_GOODS_SELLER && ( title.length === 0 || description.length === 0 ||  !selectedService._id || !price)) {
             ToastAndroid.showWithGravityAndOffset(
                 'Please Enter all the fields with *.',
                 ToastAndroid.LONG,
@@ -350,7 +350,7 @@ class AddProduct extends React.PureComponent {
             );
             //valid = false;
         }
-        else if(this.state.selectedService.businessType== BusinessType.SERVICE_PROVIDER && ( title.length === 0 ||  description.length === 0 || radius.length === 0 || !selectedService._id || !price)){
+        else if(this.state.selectedService.businessType== BusinessType.SERVICE_PROVIDER && ( title.length === 0 ||  description.length === 0 || !selectedService._id || !price)){
 
         }
             else

@@ -5,18 +5,25 @@
 // let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 
 
-let API_URL = "https://api.krishisansaar.com/api/";
-let IMAGE_URL='https://api.krishisansaar.com/api/images/';
+let API_URL = "http://198.167.140.2/api/";
+let IMAGE_URL='http://198.167.140.2/api/images/';
 let METEOR_URL = 'wss://api.krishisansaar.com/websocket';
-let WEB_URL = "https://api.krishisansaar.com/";
+let WEB_URL = "http://198.167.140.2/";
 
 
 
 if(process.env.NODE_ENV === "production"){
-    let API_URL = "https://api.krishisansaar.com/api/";
-    let IMAGE_URL='https://api.krishisansaar.com/api/images/';
-    let METEOR_URL = 'wss://api.krishisansaar.com/websocket';
-    let WEB_URL = "https://api.krishisansaar.com/";
+     API_URL = "http://198.167.140.2/api/";
+     IMAGE_URL='http://198.167.140.2/api/images/';
+     METEOR_URL = 'wss://api.krishisansaar.com/websocket';
+     WEB_URL = "http://198.167.140.2/";
+}
+
+export const Urls={
+    API_URL:API_URL,
+    IMAGE_URL:IMAGE_URL,
+    METEOR_URL:METEOR_URL,
+    WEB_URL:WEB_URL
 }
 
 

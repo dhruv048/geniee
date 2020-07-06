@@ -35,7 +35,7 @@ import DeviceInfo from "react-native-device-info";
 class Notification extends Component {
 
     _notificationPressed = (item) => {
-        console.log('press');
+        console.log('press',item);
         const deviceId = DeviceInfo.getUniqueId();
         Meteor.call('updateNotificationSeen', [item._id], deviceId, (err) => {
             if (err) {
@@ -57,14 +57,19 @@ class Notification extends Component {
                 break;
             case NotificationTypes.RATE_SERVICE:
                 goToRoute(this.props.componentId, "ServiceRatings", {Id: item.navigateId});
+                 break;
             case NotificationTypes.ORDER_DECLINED:
                 goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+                 break;
             case NotificationTypes.ORDER_CANCELLED:
                 goToRoute(this.props.componentId, "OrderDetailIn", {Id: item.navigateId});
+                 break;
             case NotificationTypes.ORDER_DISPATCHED:
                 goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+                 break;
             case NotificationTypes.ORDER_DELIVERED:
                 goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+                 break;
             case NotificationTypes.ORDER_REQUESTED:
                 goToRoute(this.props.componentId, "OrderDetailIn", {Id: item.navigateId});
                 break;

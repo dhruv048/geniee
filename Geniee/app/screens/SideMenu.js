@@ -120,7 +120,7 @@ class SideMenu extends PureComponent {
                         </TouchableOpacity> :
                         <Image style={{width: 150, height: 150}}
                                source={require('../images/logo2-trans-640X640.png')}/>}
-                    <Text style={{fontSize: 16, fontWeight: "400", color: colors.appLayout}}>WELLCOME</Text>
+                    <Text style={{fontSize: 16, fontWeight: "400", color: colors.appLayout}}>WELCOME</Text>
                     {this.state.user ?
                         <Text style={{
                             fontSize: 14,
@@ -137,7 +137,7 @@ class SideMenu extends PureComponent {
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Dashboard")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Dashboard</Text>
+                                style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Home</Text>
                         </View>
                     </TouchableNativeFeedback>
                     <TouchableNativeFeedback onPress={() => this.navigateToRoute("Orders")}>

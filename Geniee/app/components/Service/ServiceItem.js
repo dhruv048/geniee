@@ -252,7 +252,7 @@ _callPhone = number => {
                         color={colors.gray_200}
                       />  Call
                   </MenuItem>}
-                  {Meteor.userId() && Meteor.userId()!=service.owner?
+                  {Meteor.userId() && service.owner && Meteor.userId()!=service.owner?
                   <MenuItem
                     onPress={() => {
                       this[`menu${service._id}`].hide(),
