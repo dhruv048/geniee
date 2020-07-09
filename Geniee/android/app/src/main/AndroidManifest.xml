@@ -49,7 +49,7 @@
 See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/cicon"/>
+                android:resource="@mipmap/cicon"/>
         <!--android:resource="@mipmap/ic_launcher_round"/>-->
 
 

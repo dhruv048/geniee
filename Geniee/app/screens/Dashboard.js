@@ -38,7 +38,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle, variables} from '../config/styles';
 import {Navigation} from 'react-native-navigation';
-import  { Badge,} from 'react-native-paper';
+import  { Badge,Avatar} from 'react-native-paper';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from '../config/settings';
 import StarRating from '../components/StarRating/StarRating';
@@ -74,6 +74,7 @@ class Dashboard extends Component {
             nearByservice: [],
             popularProducts: [],
             isActionButtonVisible: true,
+            loggedUser:Meteor.user(),
             resturants: [
                 {
                     title: '',
@@ -127,7 +128,7 @@ class Dashboard extends Component {
     //});
     //}
 
-    handleBackButton = () => {
+    handleBackButton() {
         console.log('back handle from dashboard');
         if (isDashBoard) {
             const {screen, navigator} = this.props;
@@ -138,7 +139,9 @@ class Dashboard extends Component {
     };
 
     setViewAll=()=>{
-        this.setState({viewAll:true,categories:this.props.categories});
+        let prevState=this.state.viewAll;
+        const categories=prevState? this.props.categories.slice(0,6):this.props.categories;
+        this.setState({viewAll:!prevState,categories:categories});
 
     }
 
@@ -176,6 +179,7 @@ class Dashboard extends Component {
     }
 
     async componentDidMount() {
+        this.setState({loggedUser:this.props.loggedUser});
         this.updateCounts();
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
@@ -239,7 +243,7 @@ class Dashboard extends Component {
                     longitude: position.coords.longitude,
                 };
                 this.region = region;
-                this._fetchNearByServices();
+             //   this._fetchNearByServices();
             },
             error => {
                 // See error code charts below.
@@ -312,18 +316,19 @@ class Dashboard extends Component {
     componentWillReceiveProps(newProps) {
         const oldProps = this.props;
         if (oldProps.categories.length !== newProps.categories.length) {
-            this.setState({categories: newProps.categories, loading: false});
+            this.setState({categories: this.state.viewAll? newProps.categories: newProps.categories.slice(0,6), loading: false});
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch);
             AsyncStorage.setItem('Categories', JSON.stringify(newProps.categories));
         }
-        if (
-            newProps.notificationCount.length > 0 &&
-            newProps.notificationCount[0].totalCount != this.state.notificationCount
-        )
+        if (newProps.notificationCount.length>0 && newProps.notificationCount[0].totalCount != this.state.notificationCount)
             this.setState({
                 notificationCount: newProps.notificationCount[0].totalCount,
             });
+
+        if(newProps.loggedUser){
+            this.setState({loggedUser:this.props.loggedUser});
+        }
     }
 
     componentWillUnmount() {
@@ -745,7 +750,7 @@ class Dashboard extends Component {
                                     zIndex: 1000,
                                     backgroundColor: '#fdfdfd',
                                 }}>
-                                Rs. {item.price}
+                                Rs. {item.price}{item.unit? ("/"+item.unit) : ""}
                             </Text>
                         </View>
                         </Body>
@@ -774,8 +779,14 @@ class Dashboard extends Component {
                 <Header
                     androidStatusBarColor={colors.statusBar}
                     style={{backgroundColor: colors.appLayout}}>
-                    <Left style={{flex: 1}}>
+                    <Left style={{flex: 1, flexDirection:'row', alignItems:'center'}}>
                         <CogMenu componentId={this.props.componentId}/>
+                        <TouchableOpacity onPress={()=>goToRoute(this.props.componentId,'Profile')} style={{borderColor:'white',borderWidth:1,borderRadius:18}}>
+                        {(this.state.loggedUser && this.state.loggedUser.profile.profileImage) ?
+                        <Avatar.Image   size={35} source={{uri:MyFunctions.getProfileImage(this.state.loggedUser.profile.profileImage)}}  />:null}
+                        {(this.state.loggedUser && !this.state.loggedUser.profile.profileImage) ?
+                            <Avatar.Image size={35}  source={require('../images/user-icon.png')} style={{backgroundColor:'white'}}/>:null}
+                        </TouchableOpacity>
                     </Left>
                     {/*<Body>*/}
                     {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
@@ -939,7 +950,7 @@ class Dashboard extends Component {
                                                 flexDirection: 'column',
                                                 alignItems: 'center',
                                                 paddingHorizontal: 10,
-                                                paddingBottom: 15,
+                                                paddingBottom: 10,
                                             }}>
                                             <View style={{ height: 90, width: 150,}}>
                                             <Thumbnail
@@ -970,7 +981,7 @@ class Dashboard extends Component {
                                                     <Text style={{color: 'white', fontSize: 12}}>{item.title}</Text>
                                                 </LinearGradient>
                                                 </View>
-                                            <View style={{flexDirection: 'row'}}>
+                                            <View style={{flexDirection: 'row',padding:5}}>
                                                 {/*<View style={{*/}
                                                         {/*flex: 1,*/}
                                                         {/*width: '100%',*/}
@@ -1020,8 +1031,6 @@ class Dashboard extends Component {
                                                     style={{
                                                         flex: 3,
                                                         alignItems: 'center',
-                                                        marginLeft: 5,
-                                                        marginTop:5,
                                                     }}>
                                                     {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
                                                         {/*{item.title}*/}
@@ -1255,11 +1264,10 @@ class Dashboard extends Component {
                     {this.state.categories.length > 0 ? (
                         <View style={[styles.block,{marginBottom:80}]}>
                             <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Availble Categories</Text>
-                                {/*<Button transparent*/}
-                                {/*onPress={() => goToRoute(this.props.componentId, "MyProducts", {Region: this.region})}>*/}
-                                {/*<Text*/}
-                                {/*style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>*/}
+                                <Text style={styles.blockTitle}>Categories</Text>
+                                <Button transparent
+                                onPress={() => this.setViewAll()}>
+                                <Text style={customStyle.buttonOutlinePrimaryText}>{this.state.viewAll ?'Vew Less':'View All'}</Text></Button>
                             </View>
                             <FlatList
                                 contentContainerStyle={{
@@ -1277,12 +1285,12 @@ class Dashboard extends Component {
                                 renderItem={this.renderCategoryItem}
                                 numColumns={3}
                             />
-                        {this.state.viewAll? null:
+                      {/*  {this.state.viewAll? null:
                           <Button onPress={() => {this.setViewAll()}}
-                            style={[customStyle.buttonOutlinePrimary,{height:25,marginBottom:30,width:100,alignSelf:'center',backgroundColor:'white'}]}>
-                            <Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>}
+                            style={[customStyle.buttonOutlinePrimary,{height:25,marginBottom:30,width:130,alignSelf:'center',backgroundColor:'white'}]}>
+                            <Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>} */}
                         </View>
-                    ) : null}
+                    ) : null} 
 
                     
                 </Content>
@@ -1469,6 +1477,7 @@ const styles = StyleSheet.create({
 });
 export default Meteor.withTracker(() => {
     return {
+        loggedUser:Meteor.user(),
         categories: Meteor.collection('MainCategories').find(),
         notificationCount: Meteor.collection('newNotificationCount').find(),
     };

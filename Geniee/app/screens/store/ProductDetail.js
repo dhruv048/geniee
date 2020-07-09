@@ -14,6 +14,7 @@ import {
   StyleSheet,
   Linking,
   ToastAndroid,
+  BackHandler
 } from 'react-native';
 import {
   Icon as NBIcon,
@@ -37,7 +38,7 @@ import Product from '../../components/ecommerce/Product';
 import {colors, customStyle} from '../../config/styles';
 import Meteor from '../../react-native-meteor';
 import settings from '../../config/settings';
-import {goToRoute} from '../../Navigation';
+import {goToRoute,goBack} from '../../Navigation';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
@@ -56,14 +57,6 @@ class ProductDetail extends Component {
   }
 
   async componentDidMount() {
-    // /* Select the default color and size (first ones) */
-    // let defColor = this.state.product.colors[0];
-    // let defSize = this.state.product.sizes[0];
-    // this.setState({
-    //     selectedColor: defColor,
-    //     selectedSize: defSize
-    // });
-
     Navigation.events().bindComponent(this);
     //get the product with id of this.props.product.id from your server
     let productId = this.props.Id;
@@ -120,6 +113,19 @@ class ProductDetail extends Component {
   _browse = url => {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
   };
+
+// componentDidAppear(){
+//     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+// }
+
+//     handleBackButton() {
+//         console.log('handlebackpress Pdetil')
+//         goBack(this.props.componentId);
+//     }
+
+//     componentDidDisappear() {
+//         BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton.bind(this));
+//     }
 
   render() {
     return (

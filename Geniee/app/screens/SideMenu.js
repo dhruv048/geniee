@@ -64,15 +64,15 @@ class SideMenu extends PureComponent {
             [
                 {
                     text: 'Yes SignOut', onPress: () => Meteor.logout((err) => {
-                        if (!err) {
-                            console.log('logout');
+                        // if (!err) {
+                            console.log('logout',err);
                             AsyncStorage.setItem(USER_TOKEN_KEY, '');
                             AsyncStorage.setItem('loggedUser', '');
                             this.setState({isLogged: false,user:''})
                             navigateToRoutefromSideMenu(this.props.componentId, 'Dashboard');
-                        }
-                        else
-                            goBack(this.props.componentId)
+                        // }
+                        // else
+                        //     goBack(this.props.componentId)
                     })
                 },
                 {text: 'Cancel', onPress: () => {}}
