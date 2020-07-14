@@ -2,7 +2,7 @@ import React, { ToastAndroid } from 'react-native';
 import { AccessToken } from 'react-native-fbsdk';
 import Meteor from '../react-native-meteor';
 import {MyFunctions} from "../lib/MyFunctions";
-import {goToDashboard,goBack} from "../Navigation";
+import {backToRoot,goBack} from "../Navigation";
 import {EventRegister} from "react-native-event-listeners";
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -35,7 +35,7 @@ export const loginWithTokens = (compId,needReturn) => {
                             goBack(compId);
                         }
                         else {
-                            goToDashboard();
+                            backToRoot(compId);
                         }
 
                     };

@@ -212,7 +212,7 @@ Meteor.startup(function () {
     }
 
     if (Service.find().count() < 100) {
-        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/services.csv') : process.env.PWD + '/private/csvFiles/services.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/Allservices.csv') : process.env.PWD + '/private/csvFiles/services.csv', {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
@@ -230,8 +230,8 @@ Meteor.startup(function () {
                     formatted_address: line.add1 + ', ' + line.city + ', ' + line.add2,
                     geometry: (line.lat != null && line.lat != "NULL" && line.lat != undefined && line.lat != '') ? {
                         location: {
-                            lat: parseFloat(line.lat),
-                            lng: parseFloat(line.lng)
+                            lat: parseFloat(line.lat||0),
+                            lng: parseFloat(line.lng||0)
                         },
                         type: 'Point',
                         coordinates: [parseFloat(line.lng), parseFloat(line.lat)]

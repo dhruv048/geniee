@@ -33,7 +33,10 @@ class App extends Component {
         firebase.messaging().subscribeToTopic('newServiceStaging');
         firebase.messaging().subscribeToTopic('allGenieeStaging');
 
-        Meteor.subscribe('newNotificationCount', deviceId);
+        if(!Meteor.getData()._tokenIdSaved) {
+            console.log('notLogged');
+            Meteor.subscribe('newNotificationCount', deviceId);
+        }
 
         this.messageListener().catch(e => {
             console.log(e);
@@ -43,6 +46,7 @@ class App extends Component {
 
         Meteor.Accounts.onLogin(async cd => {
             console.log('onLogin');
+            Meteor.subscribe('newNotificationCount', deviceId);
             this.checkPermission().catch(e => {
                 console.log(e);
             });

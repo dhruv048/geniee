@@ -38,7 +38,7 @@ if (Meteor.isServer) {
                 }
                 catch(e){
                    // res.writeHead(500);
-                    console.log(e.message)
+                   // console.log(e.message)
                     res.end(e.message);
                 }
             });
@@ -272,7 +272,7 @@ if (Meteor.isServer) {
                     }
                 }, {limit: 50}
             ).fetch();
-            console.log(products);
+           // console.log(products);
             // let Service = MongoInternals.defaultRemoteCollectionDriver().mongo.db.collection('service');
             // Service.aggregate(
             //     pipeline, {cursor: {}}
@@ -284,7 +284,10 @@ if (Meteor.isServer) {
             //     }
             // });
            // console.log('result', result)
-            res.end(JSON.stringify({services: result, products: products, categories: categories}));
+            res.end(JSON.stringify({
+                services:result,
+                products: products,
+                categories: categories}));
         }
         catch (e) {
             console.log(e.message);

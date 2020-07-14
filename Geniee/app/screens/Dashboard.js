@@ -196,8 +196,6 @@ class Dashboard extends Component {
             this.setState({
                 notificationCount: this.props.notificationCount[0].totalCount,
             });
-
-
         Meteor.call('getActiveAdvertises', (err, res) => {
             if (!err) {
                 this.setState({Adds: res});
@@ -258,7 +256,6 @@ class Dashboard extends Component {
 
 
         Meteor.call('getPopularResturants', (err, res) => {
-            console.log('resturants', err, res)
             if (!err) {
                 let resturants = [...this.state.resturants]
                 resturants = resturants.concat(res);
@@ -276,7 +273,6 @@ class Dashboard extends Component {
             if (this.props.categories.length > 0) {
                 let MainCategories = this.props.categories;
                 this.setState({categories:this.state.viewAll? MainCategories : MainCategories.slice(0,6), loading: false});
-
                 this.arrayholder = MainCategories;
                 AsyncStorage.setItem('Categories', JSON.stringify(MainCategories));
             }
@@ -305,7 +301,6 @@ class Dashboard extends Component {
         Meteor.call('getRandomServices',  [this.region.longitude, this.region.latitude],15,10, (err, res) => {
             this.setState({loading: false});
             if (!err) {
-                console.log(res)
                 this.setState({nearByservice: res.result});
             } else {
                 console.log(err);
@@ -321,13 +316,14 @@ class Dashboard extends Component {
             this._search(this.currentSearch);
             AsyncStorage.setItem('Categories', JSON.stringify(newProps.categories));
         }
-        if (newProps.notificationCount.length>0 && newProps.notificationCount[0].totalCount != this.state.notificationCount)
+        if (newProps.notificationCount.length>0) {
+            console.log(newProps.notificationCount)
             this.setState({
                 notificationCount: newProps.notificationCount[0].totalCount,
             });
-
+        }
         if(newProps.loggedUser){
-            this.setState({loggedUser:this.props.loggedUser});
+            this.setState({loggedUser:newProps.loggedUser});
         }
     }
 
@@ -781,12 +777,12 @@ class Dashboard extends Component {
                     style={{backgroundColor: colors.appLayout}}>
                     <Left style={{flex: 1, flexDirection:'row', alignItems:'center'}}>
                         <CogMenu componentId={this.props.componentId}/>
+                        {this.state.loggedUser ?
                         <TouchableOpacity onPress={()=>goToRoute(this.props.componentId,'Profile')} style={{borderColor:'white',borderWidth:1,borderRadius:18}}>
-                        {(this.state.loggedUser && this.state.loggedUser.profile.profileImage) ?
-                        <Avatar.Image   size={35} source={{uri:MyFunctions.getProfileImage(this.state.loggedUser.profile.profileImage)}}  />:null}
-                        {(this.state.loggedUser && !this.state.loggedUser.profile.profileImage) ?
-                            <Avatar.Image size={35}  source={require('../images/user-icon.png')} style={{backgroundColor:'white'}}/>:null}
-                        </TouchableOpacity>
+
+                        <Avatar.Image   style={{backgroundColor:'white'}}  size={35} source={this.state.loggedUser.profile.profileImage ? {uri:MyFunctions.getProfileImage(this.state.loggedUser.profile.profileImage)}:require('../images/user-icon.png')}  />
+
+                        </TouchableOpacity>:null}
                     </Left>
                     {/*<Body>*/}
                     {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
@@ -1273,17 +1269,17 @@ class Dashboard extends Component {
                                 contentContainerStyle={{
                                     marginTop: 10,
                                     paddingBottom: 10,
-                                    alignItems:'center',
-                                    justifyContent:'space-around'
-                                    // flexWrap:'wrap',
-                                    // flexDirection:'row',
+                                 //   alignItems:'center',
+                                    justifyContent:'space-around',
+                                    flexWrap:'wrap',
+                                    flexDirection:'row',
                                 }}
                                 data={this.state.categories}
-                                horizontal={false}
+                                //horizontal={true}
                                 _keyExtractor={(item, index) => index.toString()}
                                // showsHorizontalScrollIndicator={false}
                                 renderItem={this.renderCategoryItem}
-                                numColumns={3}
+                              //  numColumns={3}
                             />
                       {/*  {this.state.viewAll? null:
                           <Button onPress={() => {this.setViewAll()}}
@@ -1313,7 +1309,8 @@ const styles = StyleSheet.create({
         // marginVertical: 4,
         borderColor: '#808080',
         //elevation: 5,
-        width: (viewportWidth-60)/3,
+        //width: (viewportWidth-60)/3,
+        width: 100,
         margin: 5,
         height: 100,
         borderRadius: 5,

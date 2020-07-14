@@ -822,8 +822,8 @@ Meteor.methods({
             fax: 1,
             isPaid: 1,
             location: 1,
-            contact:1,
-            contact1:1,
+            contact: 1,
+            contact1: 1,
             pbox: 1,
             radius: 1,
             website: 1,
@@ -875,8 +875,8 @@ Meteor.methods({
         });
     },
 
-    getRandomServices : (cordinates,KM,sampleSize) => {
-        const match= {'location.geometry.location' : {$geoWithin: { $centerSphere:  [cordinates, ((KM*0.62137119)/3963.2)] }}};
+    getRandomServices: (cordinates, KM, sampleSize) => {
+        const match = {'location.geometry.location': {$geoWithin: {$centerSphere: [cordinates, ((KM * 0.62137119) / 3963.2)]}}};
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
         const defaultRating = {id: "000", avgRate: 1, count: 0};
@@ -951,8 +951,8 @@ Meteor.methods({
             fax: 1,
             isPaid: 1,
             location: 1,
-            contact:1,
-            contact1:1,
+            contact: 1,
+            contact1: 1,
             pbox: 1,
             radius: 1,
             website: 1,
@@ -988,7 +988,7 @@ Meteor.methods({
                         },
                     },
                     {$limit: 100},
-                    {$sample: { size: sampleSize } },
+                    {$sample: {size: sampleSize}},
                     {$lookup: categoryLookup},
                     {$lookup: ServiceRatings},
                     {$lookup: OwnerLookup},
@@ -1003,7 +1003,7 @@ Meteor.methods({
                 done(err, doc);
             });
         });
-},
+    },
 
     getMyServices: () => {
         const collection = Service.rawCollection();
@@ -1164,7 +1164,7 @@ Meteor.methods({
             {owner: loggedUser},
             {
                 sort: {createDate: -1},
-                fields: {_id: 1, title: 1, owner: 1,businessType:1},
+                fields: {_id: 1, title: 1, owner: 1, businessType: 1},
             }
         ).fetch();
     },
@@ -1201,4 +1201,199 @@ Meteor.methods({
             ServiceImage.remove(item);
         });
     },
-});
+
+
+    searchService: (obj) => {
+        console.log(obj);
+        const collection = Service.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultUser = {
+            id: "000",
+            profile: {name: "", profileImage: null},
+        };
+        const categoryLookup = {
+            from: "MainCategories",
+            localField: "categoryId",
+            foreignField: "subCategories.subCatId",
+            as: "categories",
+        };
+        const OwnerLookup = {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users",
+        };
+        const ServiceRatings = {
+            from: "ratings",
+            let: {serviceId: "$_id"},
+            pipeline: [
+                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                {
+                    $group: {
+                        _id: "$_id",
+                        avgRate: {$avg: "$rating.count"},
+                        count: {$sum: 1},
+                    },
+                },
+                {$project: {avgRate: 1, count: 1}},
+            ],
+            as: "servRatings",
+        };
+
+        const addValues = {
+            Rating: {
+                $cond: {
+                    if: {$eq: ["$servRatings", []]},
+                    then: defaultRating,
+                    else: {$arrayElemAt: ["$servRatings", 0]},
+                },
+            },
+            Owner: {
+                $cond: {
+                    if: {$eq: ["$users", []]},
+                    then: defaultUser,
+                    else: {$arrayElemAt: ["$users", 0]},
+                },
+            },
+            category: {$arrayElemAt: ["$categories", 0]},
+            subCategories: {
+                $arrayElemAt: ["$categories.subCategories", 0],
+            },
+        };
+        const project = {
+            _id: 1,
+            createdAt: 1,
+            createdBy: 1,
+            Rating: 1,
+            Owner: 1,
+            owner: 1,
+            categoryId: 1,
+            title: 1,
+            description: 1,
+            "category.mainCategory": 1,
+            "category.catId": 1,
+            "category._id": 1,
+            dist: 1,
+            email: 1,
+            fax: 1,
+            isPaid: 1,
+            location: 1,
+            contact: 1,
+            contact1: 1,
+            pbox: 1,
+            radius: 1,
+            website: 1,
+            coverImage: 1,
+            subCategory: {
+                $arrayElemAt: [
+                    {
+                        $filter: {
+                            input: "$subCategories",
+                            as: "item",
+                            cond: {$eq: ["$$item.subCatId", "$categoryId"]},
+                        },
+                    },
+                    0,
+                ],
+            },
+        };
+        //  return Category.find().fetch();
+        const query = obj.subCatIds
+            ? {$text: {$search: obj.searchValue},categoryId: {$in: obj.subCatIds}}
+            : {$text: {$search: obj.searchValue}};
+        return Async.runSync(function (done) {
+            aggregate(
+                [
+                    {$match:query},
+                    {$sort: {titleScore: {$meta: "textScore"}}},
+                    {$limit: 20},
+                    {$skip: 0},
+                    {$lookup: categoryLookup},
+                    {$lookup: ServiceRatings},
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+                    {$project: project}
+                ],
+                {
+                    cursor: {}
+                }
+            ).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
+    searchProducts:(searchValue)=>{
+        const collection = Products.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+
+        const OwnerLookup = {
+            from: "service",
+            localField: "service",
+            foreignField: "_id",
+            as: "services",
+        };
+        const addValues = {
+            Service: {$arrayElemAt: ["$services", 0]},
+        };
+        return Async.runSync(function (done) {
+            aggregate(
+                [
+                    {$match:{$text: {$search: searchValue}}},
+                    {$sort: {titleScore: {$meta: "textScore"}}},
+                    {$limit: 20},
+                    {$skip: 0},
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+
+                ],
+                {cursor: {}}
+            ).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
+
+    searchCategories:(searchValue)=>{
+        const collection = MainCategories.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+
+        const OwnerLookup = {
+            from: "service",
+            localField: "service",
+            foreignField: "_id",
+            as: "services",
+        };
+        const addValues = {
+            Service: {$arrayElemAt: ["$services", 0]},
+        };
+        return Async.runSync(function (done) {
+            aggregate(
+                [
+                    {$match:{$text: {$search: searchValue}}},
+                    {$sort: {titleScore: {$meta: "textScore"}}},
+                    {$limit: 20},
+                    {$skip: 0},
+                    {$lookup: OwnerLookup},
+                    {$addFields: addValues},
+
+                ],
+                {cursor: {}}
+            ).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    }
+})
+;
