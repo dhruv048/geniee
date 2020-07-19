@@ -74,25 +74,25 @@ Navigation.registerComponent('SearchResult', () => SearchResult);
 
 let currentRoute = '';
 
-Navigation.setDefaultOptions({
-	statusBar: {
-		style: 'light',
-		backgroundColor:colors.statusBar,
-	},
+//Navigation.setDefaultOptions({
+//	statusBar: {
+//		style: 'light',
+//		backgroundColor:colors.statusBar,
+//	},
 
-	animations: {
-		setRoot: {
-			enabled: 'true',
-			alpha: {
-				from: 0,
-				to: 1,
-				duration: 400,
-				startDelay: 100,
-				interpolation: 'accelerate',
-			},
-		},
-	},
-});
+//	animations: {
+//		setRoot: {
+//			enabled: 'true',
+//			alpha: {
+//				from: 0,
+//				to: 1,
+//				duration: 400,
+//				startDelay: 100,
+//				interpolation: 'accelerate',
+//			},
+//		},
+//	},
+//});
 
 export const goToDashboard = () =>
 	Navigation.setRoot({
@@ -132,13 +132,13 @@ export const goToDashboard = () =>
 						],
 					},
 				},
-				options: {
+				options:Platform.OS == 'android'? {
 					sideMenu: {
 						left: {
 							width: 280,
 						},
 					},
-				},
+				}:{},
 			},
 		},
 	});
@@ -168,6 +168,13 @@ export const navigateToRoutefromSideMenu = (componentId, route) => {
 						},
 					},
 				},
+				options: {
+					sideMenu: {
+						left: {
+							visible: false
+						  }
+					}
+				}
 			},
 		});
 		EventRegister.emit('routeChanged', 'Dashboard');
@@ -179,6 +186,13 @@ export const navigateToRoutefromSideMenu = (componentId, route) => {
 			Navigation.push('DASHBOARD_STACK', {
 				component: {
 					name: route,
+					options: {
+						sideMenu: {
+							left: {
+								visible: false
+							  }
+						}
+					}
 				},
 			});
 		}

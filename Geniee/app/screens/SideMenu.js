@@ -1,7 +1,7 @@
 import React, {PureComponent,Fragment} from 'react';
 import {Body, Container, Content, Header, Icon, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
-import {StatusBar, StyleSheet, Alert, TouchableNativeFeedback, View, Image, TouchableOpacity,SafeAreaView} from "react-native";
+import {StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity,SafeAreaView} from "react-native";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 import ContactUs from "./ContactUs";
@@ -134,21 +134,21 @@ class SideMenu extends PureComponent {
 
                 </Header>
                 <Content style={{flex: 1, marginTop: 1, backgroundColor:'white'}}>
-                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("Dashboard")}>
+                    <TouchableOpacity onPress={() => this.navigateToRoute("Dashboard")}>
                         <View style={[style.screenStyle]}>
                             <Text
                                 style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Home</Text>
                         </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("Orders")}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.navigateToRoute("Orders")}>
                         <View style={[style.screenStyle]}>
                             <Text
                                 style={[this.state.currentRoute == 'Orders' ? style.selectedTextStyle : style.screenTextStyle]}>Orders</Text>
                         </View>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                     {this.state.isLogged ?
                         <>
-                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("Chat")}>
+                            <TouchableOpacity onPress={() => this.navigateToRoute("Chat")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
                                         style={[this.state.currentRoute == 'Chat' ? style.selectedTextStyle : style.screenTextStyle]}>Message</Text>
@@ -156,60 +156,60 @@ class SideMenu extends PureComponent {
                                         <MessageCount/>
                                     </Right>
                                 </View>
-                            </TouchableNativeFeedback>
-                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("MyServices")}>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.navigateToRoute("MyServices")}>
                                 <View style={[style.screenStyle]}>
                                     <Text style={[this.state.currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Business</Text>
                                 </View>
-                            </TouchableNativeFeedback>
-                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("AddService")}>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.navigateToRoute("AddService")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
                                         style={[this.state.currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Create Business/Store</Text>
                                 </View>
-                            </TouchableNativeFeedback>
-                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("MyProducts")}>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.navigateToRoute("MyProducts")}>
                                 <View style={[style.screenStyle]}>
                                     <Text style={[this.state.currentRoute == 'MyProducts' ? style.selectedTextStyle : style.screenTextStyle]}>My Products/Services</Text>
                                 </View>
-                            </TouchableNativeFeedback>
+                            </TouchableOpacity>
 
-                            <TouchableNativeFeedback onPress={() => this.navigateToRoute("AddProduct")}>
+                            <TouchableOpacity onPress={() => this.navigateToRoute("AddProduct")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
                                         style={[this.state.currentRoute == 'AddProduct' ? style.selectedTextStyle : style.screenTextStyle]}>Create Product/Service</Text>
                                 </View>
-                            </TouchableNativeFeedback></> : null}
+                            </TouchableOpacity></> : null}
 
-                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("ContactUs")}>
+                    <TouchableOpacity onPress={() => this.navigateToRoute("ContactUs")}>
                         <View style={[style.screenStyle]}>
                             <Text
                                 style={[this.state.currentRoute == 'ContactUs' ? style.selectedTextStyle : style.screenTextStyle]}>Contact
                                 Us</Text>
                         </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback onPress={() => this.navigateToRoute("ForgotPassword")}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.navigateToRoute("ForgotPassword")}>
                         <View style={[style.screenStyle]}>
                             <Text
                                 style={[this.state.currentRoute == 'ForgotPassword' ? style.selectedTextStyle : style.screenTextStyle]}>Forgot
                                 Password</Text>
                         </View>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
 
                     {this.state.isLogged ?
-                        <TouchableNativeFeedback onPress={() => this._signOut()}>
+                        <TouchableOpacity onPress={() => this._signOut()}>
                             <View style={[style.screenStyle]}>
                                 <Text
                                     style={[this.state.currentRoute == 'SignOut' ? style.selectedTextStyle : style.screenTextStyle]}>SignOut</Text>
                             </View>
-                        </TouchableNativeFeedback> :
-                        <TouchableNativeFeedback onPress={() => this.navigateToRoute("SignIn")}>
+                        </TouchableOpacity> :
+                        <TouchableOpacity onPress={() => this.navigateToRoute("SignIn")}>
                             <View style={[style.screenStyle]}>
                                 <Text
                                     style={[this.state.currentRoute == 'SignIn' ? style.selectedTextStyle : style.screenTextStyle]}>Sign
                                     In</Text>
                             </View>
-                        </TouchableNativeFeedback>}
+                        </TouchableOpacity>}
 
                     {/*<View style={[styles.screenStyle, {paddingLeft: 28}]}>*/}
                         {/*<MaterialIcons name='get-app' size={20}/>*/}

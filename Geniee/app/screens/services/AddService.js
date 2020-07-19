@@ -62,13 +62,13 @@ const RNFS = require('react-native-fs');
 const styles = StyleSheet.create({
     screenHeader: {
         fontSize: 20,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         color: '#ffffff',
     },
 
     s1f0fdd20: {
         color: `rgba(0, 0, 0, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 36,
     },
     sfe09f185: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     },
     sad8176a7: {
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5,
     },
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     },
     sb47a0426: {
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5,
         lineHeight: 2,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         backgroundColor: `rgba(243, 247, 255, 1)`,
         borderRadius: 5,
         color: `rgba(0, 0, 0, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         padding: 10,
         //paddingLeft: 0,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     },
     itemText: {
         color: 'rgba(51, 51, 51, 1)',
-        fontFamily: 'Source Sans Pro',
+        fontFamily: 'Roboto',
         fontSize: 16,
         opacity: 0.5,
     },
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         textAlign: 'center',
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5,
     },
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
         //sbackgroundColor: `rgba(243, 247, 255, 1)`,
         //borderRadius: 5,
         color: `rgba(0, 0, 0, 0.44)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 18,
         padding: 10,
         paddingLeft: 40,
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
         //backgroundColor: `rgba(243, 247, 255, 1)`,
         borderRadius: 5,
         color: 'rgba(0, 0, 0, 1)',
-        fontFamily: 'Source Sans Pro',
+        fontFamily: 'Roboto',
         fontSize: 18,
         // padding: 10,
         paddingLeft: 40,
@@ -741,7 +741,7 @@ class AddService extends React.PureComponent {
                     </Right>*/}
                 </Header>
                 <GalioProvider theme={customGalioTheme}>
-                    <Content>
+                    <Content style={{padding:20}}>
                         <Fragment>
                             {/*<ImageBackground*/}
                             {/*style={styles.sbf9e8383}*/}
@@ -814,7 +814,7 @@ class AddService extends React.PureComponent {
                                     placeholder="Category (*)"
                                     onSubmitEditing={() => this.title.focus()}
                                     onKeyPress={() => this.setState({categoryModal: true})}
-                                    onKeyFocus={() => this.setState({categoryModal: true})}
+                                    onFocus={() => this.setState({categoryModal: true})}
                                     value={this.state.selectedCategory.subCategory}
                                 />
                                 <View

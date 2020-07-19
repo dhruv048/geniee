@@ -14,7 +14,8 @@ import {goToDashboard, goToRoute} from './app/Navigation';
 import {Container} from 'native-base';
 import settings, {getProfileImage} from './app/config/settings';
 import Meteor from './app/react-native-meteor';
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 import MyFunctions from './app/lib/MyFunctions';
 import AsyncStorage from '@react-native-community/async-storage';
 import DeviceInfo from 'react-native-device-info';
@@ -29,9 +30,9 @@ class App extends Component {
 
     componentDidMount() {
         const deviceId = DeviceInfo.getUniqueId();
-        firebase.messaging().subscribeToTopic('newPoductStaging');
-        firebase.messaging().subscribeToTopic('newServiceStaging');
-        firebase.messaging().subscribeToTopic('allGenieeStaging');
+        messaging().subscribeToTopic('newPoductStaging');
+        messaging().subscribeToTopic('newServiceStaging');
+        messaging().subscribeToTopic('allGenieeStaging');
 
         if(!Meteor.getData()._tokenIdSaved) {
             console.log('notLogged');
@@ -63,8 +64,12 @@ class App extends Component {
     }
 
     checkPermission = async () => {
-        const enabled = await firebase.messaging().hasPermission();
-        if (enabled) {
+         const authStatus = await messaging().requestPermission();
+         const enabled =
+           authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+           authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+         if (enabled) {
             this.getFcmToken();
         } else {
             this.requestPermission();
@@ -72,7 +77,7 @@ class App extends Component {
     };
 
     getFcmToken = async () => {
-        const fcmToken = await firebase.messaging().getToken();
+        const fcmToken = await messaging().getToken();
         // console.log(fcmToken);
         if (fcmToken && Meteor.user()) {
             // this.showAlert('Your Firebase Token is:', fcmToken);
@@ -90,16 +95,16 @@ class App extends Component {
 
     requestPermission = async () => {
         try {
-            await firebase.messaging().requestPermission();
+            await messaging().requestPermission();
             // User has authorised
         } catch (error) {
             // User has rejected permissions
         }
     };
     messageListener = async () => {
-        this.notificationListener = firebase
-            .notifications()
-            .onNotification(notification => {
+        this.notificationListener =  messaging()
+             .getInitialNotification()
+             .then(notification => {
                 const {title, body} = notification;
                 // this.showAlert(title, body);
                 console.log('onNotification', notification);
@@ -200,7 +205,7 @@ class App extends Component {
         //
         // }
 
-        this.messageListener = firebase.messaging().onMessage(message => {
+        this.messageListener = messaging().onMessage(message => {
             console.log(JSON.stringify(message));
             console.log('onMessage', message);
             if (message.data.title == 'REMOVE_AUTH_TOKEN') {
