@@ -230,11 +230,11 @@ Meteor.startup(function () {
                     formatted_address: line.add1 + ', ' + line.city + ', ' + line.add2,
                     geometry: (line.lat != null && line.lat != "NULL" && line.lat != undefined && line.lat != '') ? {
                         location: {
-                            lat: parseFloat(line.lat||0),
-                            lng: parseFloat(line.lng||0)
+                            lat: parseFloat(line.lat? line.lat: 0),
+                            lng: parseFloat(line.lng? line.lng:0)
                         },
                         type: 'Point',
-                        coordinates: [parseFloat(line.lng), parseFloat(line.lat)]
+                        coordinates: [parseFloat(line.lng? line.lng:0), parseFloat(line.lat? line.lat: 0)]
                     } : null,
                     website: line.webpage
                 },
