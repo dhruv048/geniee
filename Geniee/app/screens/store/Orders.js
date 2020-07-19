@@ -12,7 +12,7 @@ import {
 } from 'native-base';
 import Moment from "moment";
 import {
-    StyleSheet, FlatList,TouchableNativeFeedback,BackHandler
+    StyleSheet, FlatList,TouchableOpacity,BackHandler
 
 } from 'react-native';
 import {colors, customStyle} from "../../config/styles";
@@ -165,9 +165,9 @@ class Orders extends Component {
         let TotalAmount = order.totalPrice;
         return (
             <Card key={order._id} style={customStyle.Card}>
-                <TouchableNativeFeedback onPress={() => {
+                <TouchableOpacity onPress={() => {
                     goToRoute(this.props.componentId,this.state.isOwnOrders?'OrderDetailOut':'OrderDetailIn', {'Id':order._id})
-                }} background={TouchableNativeFeedback.SelectableBackground()}>
+                }} >
                     <CardItem>
                         <Grid>
                             <Col style={{flex: 2}}>
@@ -210,7 +210,7 @@ class Orders extends Component {
                             </Col>
                         </Grid>
                     </CardItem>
-                </TouchableNativeFeedback>
+                </TouchableOpacity>
             </Card>
         )
     }

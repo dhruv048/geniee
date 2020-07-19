@@ -10,7 +10,7 @@ import {
     TextInput,
     FlatList,
     Dimensions,
-    SafeAreaView, ScrollView, BackHandler
+    SafeAreaView, ScrollView, BackHandler,ActionSheetIOS
 } from "react-native";
 import Autocomplete from 'native-base-autocomplete';
 import {colors, customStyle} from "../../config/styles";
@@ -408,7 +408,22 @@ class AddProduct extends React.PureComponent {
 
         )
     };
-
+    _handleImageUploadIOS = () =>{
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: [ "Take Picture from Camera", "Pick Image from Gallery","Cancel"],
+        destructiveButtonIndex: 2,
+        cancelButtonIndex: 2
+      },
+      buttonIndex => {
+        if (buttonIndex === 2) {
+          // cancel action
+        } else  {
+          this._handleImageUpload(buttonIndex);
+        }
+      }
+    );
+    }
     render() {
         const {query, selectedService} = this.state;
         // const myServices = this._findCategory(query);
@@ -431,7 +446,7 @@ class AddProduct extends React.PureComponent {
                         <Text style={styles.screenHeader}>{this.props.Product ? "Update Product" : "Add Product"}</Text>
                         </Body>
                     </Header>
-                    <Content>
+                    <Content style={{padding:20}}>
 
 
                         <Fragment>
@@ -781,7 +796,7 @@ class AddProduct extends React.PureComponent {
 
                             <GButton
                                 size="small"
-                                onPress={() => this.ActionSheet.show()}
+                                onPress={() => {Platform.OS==='ios'? this._handleImageUploadIOS() : this.ActionSheet.show()}}
                                 style={{
                                     marginVertical: 20, alignSelf: 'center'
                                 }}>
@@ -939,14 +954,14 @@ const styles = StyleSheet.create({
     },
     screenHeader: {
         fontSize: 20,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         color: '#ffffff',
 
     },
 
     s1f0fdd20: {
         color: `rgba(0, 0, 0, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 36
     },
     sfe09f185: {
@@ -971,7 +986,7 @@ const styles = StyleSheet.create({
     },
     sad8176a7: {
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5
     },
@@ -984,7 +999,7 @@ const styles = StyleSheet.create({
     },
     sb47a0426: {
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5,
         lineHeight: 2
@@ -1052,7 +1067,7 @@ const styles = StyleSheet.create({
         backgroundColor: `rgba(243, 247, 255, 1)`,
         borderRadius: 5,
         color: `rgba(0, 0, 0, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         padding: 10,
         //paddingLeft: 0,
@@ -1081,7 +1096,7 @@ const styles = StyleSheet.create({
     },
     itemText: {
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5
     },
@@ -1122,7 +1137,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         textAlign: 'center',
         color: `rgba(51, 51, 51, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 16,
         opacity: 0.5
     },
@@ -1142,7 +1157,7 @@ const styles = StyleSheet.create({
         //sbackgroundColor: `rgba(243, 247, 255, 1)`,
         //borderRadius: 5,
         color: `rgba(0, 0, 0, 0.44)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 18,
         padding: 10,
         paddingLeft: 40,
@@ -1168,7 +1183,7 @@ const styles = StyleSheet.create({
         //backgroundColor: `rgba(243, 247, 255, 1)`,
         borderRadius: 5,
         color: `rgba(0, 0, 0, 1)`,
-        fontFamily: `Source Sans Pro`,
+        fontFamily: `Roboto`,
         fontSize: 18,
         // padding: 10,
         paddingLeft: 40,

@@ -7,16 +7,25 @@
 
 #import "AppDelegate.h"
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
-
 #import <React/RCTBundleURLProvider.h>
+
+#import <Firebase.h>
+#import "RNSplashScreen.h"
+#import <GoogleMaps/GoogleMaps.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSServices provideAPIKey:@"AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY"];
   [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  } 
+  [RNSplashScreen show];
   return YES;
 }
+
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
@@ -27,4 +36,19 @@
 #endif
 }
 
+/* 
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  if ([[FBSDKApplicationDelegate sharedInstance] application:app openURL:url options:options]) {
+    return YES;
+  }
+
+  if ([RCTLinkingManager application:app openURL:url options:options]) {
+    return YES;
+  }
+
+  return NO;
+} */
 @end

@@ -4,7 +4,8 @@ import {Container,Content} from 'native-base';
 import {View,Alert,StyleSheet,Dimensions,PermissionsAndroid,TouchableWithoutFeedback} from 'react-native';
 var {height, width} = Dimensions.get('window');
 import Geolocation from 'react-native-geolocation-service';
-
+import {goToRoute} from '../Navigation';
+import Navigation from 'react-native-navigation';
 
 class Map extends Component {
     constructor(props) {
@@ -86,7 +87,8 @@ class Map extends Component {
     }
 
     handleClick=(id)=>{
-        goToRoute(this.props.componentId,'Service',{'Id':id});
+        console.log(this.props.componentId,id);
+        goToRoute(this.props.componentId,'ServiceDetail',{'Id':id});
 }
 
     onRegionChange(region) {

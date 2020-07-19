@@ -46,7 +46,8 @@ import Product from '../components/Store/Product';
 import MyFunctions from '../lib/MyFunctions';
 import CogMenu from '../components/CogMenu';
 import SplashScreen from 'react-native-splash-screen';
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import {goToRoute} from '../Navigation';
 import {getProfileImage} from '../config/settings';
@@ -201,8 +202,10 @@ class Dashboard extends Component {
                 this.setState({Adds: res});
             }
         });
-
-
+        if (Platform.OS === 'ios') {
+            this.granted = await  Geolocation.requestAuthorization('always');
+          }
+else{
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
@@ -212,7 +215,8 @@ class Dashboard extends Component {
                 'so we can know where you are.',
             },
         );
-        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+}
+        if (this.granted === Permissions.RESULTS.GRANTED || this.granted === PermissionsAndroid.RESULTS.GRANTED) {
             Geolocation.getCurrentPosition(
                 position => {
                     //  console.log(position);
@@ -317,7 +321,7 @@ class Dashboard extends Component {
             AsyncStorage.setItem('Categories', JSON.stringify(newProps.categories));
         }
         if (newProps.notificationCount.length>0) {
-            console.log(newProps.notificationCount)
+            //console.log(newProps.notificationCount)
             this.setState({
                 notificationCount: newProps.notificationCount[0].totalCount,
             });
@@ -333,9 +337,7 @@ class Dashboard extends Component {
     }
 
     messageListener = async () => {
-        this.notificationOpenedListener = firebase
-            .notifications()
-            .onNotificationOpened(notificationOpen => {
+        this.notificationOpenedListener =  messaging().onNotificationOpenedApp(notificationOpen => {
                 const {title, body} = notificationOpen.notification;
                 // this.showAlert(title, body);
                 console.log('onNotificationOpened', notificationOpen);
@@ -362,9 +364,7 @@ class Dashboard extends Component {
                 }
             });
 
-        const notificationOpen = await firebase
-            .notifications()
-            .getInitialNotification();
+        const notificationOpen = await  messaging().getInitialNotification().then(remoteMessage => { return remoteMessage});
         if (notificationOpen) {
             const {title, body} = notificationOpen.notification;
             //  this.showAlert(title, body);
@@ -867,7 +867,7 @@ class Dashboard extends Component {
                             height: 40,
                             zIndex: 1,
                             position: 'absolute',
-                            top: 70,
+                            top: Platform.OS == 'android'? 70:90,
                             left: 0,
                             right: 0,
                         }}>

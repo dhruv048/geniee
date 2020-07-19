@@ -365,7 +365,7 @@ class Home extends Component {
                 return home;
                 break;
             case 'map':
-                return (<Map
+                return (<Map componentId={this.props.componentId}
                     markers={this._fetchMarkers()}/>);
                 break;
             default:
@@ -459,7 +459,7 @@ class Home extends Component {
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}
-                            style={{color: '#ffffff'}}
+                            
                             note={false}
                             selectedValue={this.state.selected}
                             onValueChange={this.onValueChange.bind(this)}

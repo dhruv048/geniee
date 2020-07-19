@@ -1,7 +1,6 @@
 MeteorApp/node_modules/
 MeteorApp/.deploy/
 .idea/
-Geniee/ios
 Geniee/node_modules/
 Geniee/app/config/settings.js
 Geniee/package-lock.json
