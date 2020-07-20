@@ -66,7 +66,6 @@ class Register extends Component {
             );
             valid = false;
         }
-
         return valid;
     };
     handleCreateAccount = () => {
@@ -84,11 +83,7 @@ class Register extends Component {
                 );
                 //valid = false;
             } else {
-                let selectedItem = this.state.radioButtons.find(e => e.checked == true);
-                selectedItem = selectedItem
-                    ? selectedItem.value
-                    : this.state.radioButtons[0].value;
-
+            
                 if (this.state.termsChecked) {
                     let user = {
                         password: password,
@@ -97,7 +92,6 @@ class Register extends Component {
                         createdAt: new Date(),
                         //createdBy: new Date(),
                         profile: {
-                            role: selectedItem,
                             name: capitalzeFirstLetter(name),
                             contactNo: contact,
                             profileImage: null,

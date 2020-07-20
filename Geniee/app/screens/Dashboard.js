@@ -38,7 +38,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, customStyle, variables} from '../config/styles';
 import {Navigation} from 'react-native-navigation';
-import  { Badge,Avatar} from 'react-native-paper';
+import {Badge, Avatar} from 'react-native-paper';
+
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from '../config/settings';
 import StarRating from '../components/StarRating/StarRating';
@@ -51,14 +52,15 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import {goToRoute} from '../Navigation';
 import {getProfileImage} from '../config/settings';
-import LinearGradient from  'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
+
 let isDashBoard = true;
 
 class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            viewAll:false,
+            viewAll: false,
             categories: [],
             loading: false,
             services: [],
@@ -75,7 +77,7 @@ class Dashboard extends Component {
             nearByservice: [],
             popularProducts: [],
             isActionButtonVisible: true,
-            loggedUser:Meteor.user(),
+            loggedUser: Meteor.user(),
             resturants: [
                 {
                     title: '',
@@ -139,10 +141,10 @@ class Dashboard extends Component {
         }
     };
 
-    setViewAll=()=>{
-        let prevState=this.state.viewAll;
-        const categories=prevState? this.props.categories.slice(0,6):this.props.categories;
-        this.setState({viewAll:!prevState,categories:categories});
+    setViewAll = () => {
+        let prevState = this.state.viewAll;
+        const categories = prevState ? this.props.categories.slice(0, 6) : this.props.categories;
+        this.setState({viewAll: !prevState, categories: categories});
 
     }
 
@@ -180,12 +182,12 @@ class Dashboard extends Component {
     }
 
     async componentDidMount() {
-        this.setState({loggedUser:this.props.loggedUser});
+        this.setState({loggedUser: this.props.loggedUser});
         this.updateCounts();
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
             MainCategories = JSON.parse(MainCategories);
-            this.setState({categories: MainCategories.slice(0,6), loading: false});
+            this.setState({categories: MainCategories.slice(0, 6), loading: false});
             this.arrayholder = MainCategories;
         } else {
             MainCategories = [];
@@ -204,18 +206,18 @@ class Dashboard extends Component {
         });
         if (Platform.OS === 'ios') {
             this.granted = await  Geolocation.requestAuthorization('always');
-          }
-else{
-        this.granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-                title: 'Location Permission',
-                message:
-                'This App needs access to your location ' +
-                'so we can know where you are.',
-            },
-        );
-}
+        }
+        else {
+            this.granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: 'Location Permission',
+                    message:
+                    'This App needs access to your location ' +
+                    'so we can know where you are.',
+                },
+            );
+        }
         if (this.granted === Permissions.RESULTS.GRANTED || this.granted === PermissionsAndroid.RESULTS.GRANTED) {
             Geolocation.getCurrentPosition(
                 position => {
@@ -245,7 +247,7 @@ else{
                     longitude: position.coords.longitude,
                 };
                 this.region = region;
-             //   this._fetchNearByServices();
+                //   this._fetchNearByServices();
             },
             error => {
                 // See error code charts below.
@@ -276,7 +278,10 @@ else{
             //console.log(MainCategories)
             if (this.props.categories.length > 0) {
                 let MainCategories = this.props.categories;
-                this.setState({categories:this.state.viewAll? MainCategories : MainCategories.slice(0,6), loading: false});
+                this.setState({
+                    categories: this.state.viewAll ? MainCategories : MainCategories.slice(0, 6),
+                    loading: false
+                });
                 this.arrayholder = MainCategories;
                 AsyncStorage.setItem('Categories', JSON.stringify(MainCategories));
             }
@@ -301,8 +306,8 @@ else{
             coords: [this.region.longitude, this.region.latitude],
             subCatIds: null,
         };
-     //   Meteor.call('getServicesNearBy', data, (err, res) => {
-        Meteor.call('getRandomServices',  [this.region.longitude, this.region.latitude],15,10, (err, res) => {
+        //   Meteor.call('getServicesNearBy', data, (err, res) => {
+        Meteor.call('getRandomServices', [this.region.longitude, this.region.latitude], 15, 10, (err, res) => {
             this.setState({loading: false});
             if (!err) {
                 this.setState({nearByservice: res.result});
@@ -315,19 +320,22 @@ else{
     componentWillReceiveProps(newProps) {
         const oldProps = this.props;
         if (oldProps.categories.length !== newProps.categories.length) {
-            this.setState({categories: this.state.viewAll? newProps.categories: newProps.categories.slice(0,6), loading: false});
+            this.setState({
+                categories: this.state.viewAll ? newProps.categories : newProps.categories.slice(0, 6),
+                loading: false
+            });
             this.arrayholder = newProps.categories;
             this._search(this.currentSearch);
             AsyncStorage.setItem('Categories', JSON.stringify(newProps.categories));
         }
-        if (newProps.notificationCount.length>0) {
+        if (newProps.notificationCount.length > 0) {
             //console.log(newProps.notificationCount)
             this.setState({
                 notificationCount: newProps.notificationCount[0].totalCount,
             });
         }
-        if(newProps.loggedUser){
-            this.setState({loggedUser:newProps.loggedUser});
+        if (newProps.loggedUser) {
+            this.setState({loggedUser: newProps.loggedUser});
         }
     }
 
@@ -337,34 +345,36 @@ else{
     }
 
     messageListener = async () => {
-        this.notificationOpenedListener =  messaging().onNotificationOpenedApp(notificationOpen => {
-                const {title, body} = notificationOpen.notification;
-                // this.showAlert(title, body);
-                console.log('onNotificationOpened', notificationOpen);
-                // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
-                //     try {
-                //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
-                //         Meteor.logout();
-                //         goToRoute(this.props.componentId'Auth');
-                //     }
-                //     catch (e) {
-                //         console.log(e.message)
-                //         goToRoute(this.props.componentId'Auth');
-                //     }
-                // }
-                if (notificationOpen.notification.data.navigate) {
-                    console.log('subscribe & Navigate');
-                    // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-                    goToRoute(
-                        this.props.componentId,
-                        notificationOpen.notification.data.route,
-                        {Id: notificationOpen.notification.data.Id},
-                    );
-                    // });
-                }
-            });
+        this.notificationOpenedListener = messaging().onNotificationOpenedApp(notificationOpen => {
+            const {title, body} = notificationOpen.notification;
+            // this.showAlert(title, body);
+            console.log('onNotificationOpened', notificationOpen);
+            // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
+            //     try {
+            //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
+            //         Meteor.logout();
+            //         goToRoute(this.props.componentId'Auth');
+            //     }
+            //     catch (e) {
+            //         console.log(e.message)
+            //         goToRoute(this.props.componentId'Auth');
+            //     }
+            // }
+            if (notificationOpen.notification.data.navigate) {
+                console.log('subscribe & Navigate');
+                // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
+                goToRoute(
+                    this.props.componentId,
+                    notificationOpen.notification.data.route,
+                    {Id: notificationOpen.notification.data.Id},
+                );
+                // });
+            }
+        });
 
-        const notificationOpen = await  messaging().getInitialNotification().then(remoteMessage => { return remoteMessage});
+        const notificationOpen = await  messaging().getInitialNotification().then(remoteMessage => {
+            return remoteMessage
+        });
         if (notificationOpen) {
             const {title, body} = notificationOpen.notification;
             //  this.showAlert(title, body);
@@ -391,7 +401,7 @@ else{
         }
     };
 
-     componentDidAppear() {
+    componentDidAppear() {
         isDashBoard = true;
         this.updateCounts();
         BackHandler.addEventListener(
@@ -407,9 +417,10 @@ else{
         //         this.categories=res.result;
         //     }
         // })
-         this._fetchNearByServices();
+        this._fetchNearByServices();
     }
-    async updateCounts(){
+
+    async updateCounts() {
         let wishList = await AsyncStorage.getItem('myWhishList');
         if (wishList) wishList = JSON.parse(wishList);
         else wishList = [];
@@ -422,6 +433,7 @@ else{
         }
         this.setState({wishList: wishList, totalCount: cartList.length});
     }
+
     componentDidDisappear() {
         isDashBoard = false;
         BackHandler.removeEventListener(
@@ -507,7 +519,7 @@ else{
                     }}>*/}
                     <Body>
                     <View style={styles.catIcon}>
-                    <Icon name={item.icon} size={25} color='white'/>
+                        <Icon name={item.icon} size={25} color='white'/>
                     </View>
                     </Body>
 
@@ -671,10 +683,10 @@ else{
         let item = data.item;
         return (
             <TouchableOpacity key={item._id}
-                onPress={() => this._handleProductPress(item)}
-                style={styles.productContainerStyle}>
+                              onPress={() => this._handleProductPress(item)}
+                              style={styles.productContainerStyle}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View  style={[customStyle.Card,{top:0,left:0,rigth:0}]}>
+                <View style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
                     <CardItem cardBody style={{width: '100%'}}>
                         <Image
                             source={{uri: settings.IMAGE_URL + item.images[0]}}
@@ -726,7 +738,7 @@ else{
                             style={{
                                 flexDirection: 'row',
                                 alignItems: 'center',
-                                width:'100%',alignSelf:'center'
+                                width: '100%', alignSelf: 'center'
                             }}>
                             <Icon name={'home'} size={10} color={colors.gray_200}/>
                             <Text
@@ -746,7 +758,7 @@ else{
                                     zIndex: 1000,
                                     backgroundColor: '#fdfdfd',
                                 }}>
-                                Rs. {item.price}{item.unit? ("/"+item.unit) : ""}
+                                Rs. {item.price}{item.unit ? ("/" + item.unit) : ""}
                             </Text>
                         </View>
                         </Body>
@@ -775,14 +787,16 @@ else{
                 <Header
                     androidStatusBarColor={colors.statusBar}
                     style={{backgroundColor: colors.appLayout}}>
-                    <Left style={{flex: 1, flexDirection:'row', alignItems:'center'}}>
+                    <Left style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                         <CogMenu componentId={this.props.componentId}/>
                         {this.state.loggedUser ?
-                        <TouchableOpacity onPress={()=>goToRoute(this.props.componentId,'Profile')} style={{borderColor:'white',borderWidth:1,borderRadius:18}}>
+                            <TouchableOpacity onPress={() => goToRoute(this.props.componentId, 'Profile')}
+                                              style={{borderColor: 'white', borderWidth: 1, borderRadius: 18}}>
 
-                        <Avatar.Image   style={{backgroundColor:'white'}}  size={35} source={this.state.loggedUser.profile.profileImage ? {uri:MyFunctions.getProfileImage(this.state.loggedUser.profile.profileImage)}:require('../images/user-icon.png')}  />
+                                <Avatar.Image style={{backgroundColor: 'white'}} size={35}
+                                              source={this.state.loggedUser.profile.profileImage ? {uri: MyFunctions.getProfileImage(this.state.loggedUser.profile.profileImage)} : require('../images/user-icon.png')}/>
 
-                        </TouchableOpacity>:null}
+                            </TouchableOpacity> : null}
                     </Left>
                     {/*<Body>*/}
                     {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
@@ -796,15 +810,15 @@ else{
                             transparent>
                             <Icon name="heart" style={{fontSize: 24, color: 'white'}}/>
                             {this.state.wishList.length > 0 ? (
-                                <Badge style={{position: 'absolute',top:0 ,right: 0}}>
+                                <Badge style={{position: 'absolute', top: 0, right: 0}}>
                                     {/*<Text*/}
-                                        {/*style={{*/}
-                                            {/*fontSize: 10,*/}
-                                            {/*fontWeight: '100',*/}
-                                            {/*color: 'white',*/}
-                                            {/*lineHeight: 18,*/}
-                                        {/*}}>*/}
-                                        {this.state.wishList.length}
+                                    {/*style={{*/}
+                                    {/*fontSize: 10,*/}
+                                    {/*fontWeight: '100',*/}
+                                    {/*color: 'white',*/}
+                                    {/*lineHeight: 18,*/}
+                                    {/*}}>*/}
+                                    {this.state.wishList.length}
                                     {/*</Text>*/}
                                 </Badge>
                             ) : null}
@@ -812,17 +826,17 @@ else{
                         <Button
                             onPress={() => goToRoute(this.props.componentId, 'CartEF')}
                             transparent>
-                            <NBIcon name="ios-cart" style={{fontSize: 27,color: 'white'}}/>
+                            <NBIcon name="ios-cart" style={{fontSize: 27, color: 'white'}}/>
                             {this.state.totalCount > 0 ? (
-                                <Badge style={{position: 'absolute', top:0, right: 0}}>
+                                <Badge style={{position: 'absolute', top: 0, right: 0}}>
                                     {/*<Text*/}
-                                        {/*style={{*/}
-                                            {/*fontSize: 10,*/}
-                                            {/*fontWeight: '100',*/}
-                                            {/*color: 'white',*/}
-                                            {/*lineHeight: 18,*/}
-                                        {/*}}>*/}
-                                        {this.state.totalCount}
+                                    {/*style={{*/}
+                                    {/*fontSize: 10,*/}
+                                    {/*fontWeight: '100',*/}
+                                    {/*color: 'white',*/}
+                                    {/*lineHeight: 18,*/}
+                                    {/*}}>*/}
+                                    {this.state.totalCount}
                                     {/*</Text>*/}
                                 </Badge>
                             ) : null}
@@ -835,15 +849,15 @@ else{
                                 style={{fontSize: 29, color: 'white'}}
                             />
                             {this.state.notificationCount > 0 ? (
-                                <Badge style={{position: 'absolute', top:0, right: 0}}>
+                                <Badge style={{position: 'absolute', top: 0, right: 0}}>
                                     {/*<Text*/}
-                                        {/*style={{*/}
-                                            {/*fontSize: 10,*/}
-                                            {/*fontWeight: '100',*/}
-                                            {/*color: 'white',*/}
-                                            {/*lineHeight: 18,*/}
-                                        {/*}}>*/}
-                                        {this.state.notificationCount}
+                                    {/*style={{*/}
+                                    {/*fontSize: 10,*/}
+                                    {/*fontWeight: '100',*/}
+                                    {/*color: 'white',*/}
+                                    {/*lineHeight: 18,*/}
+                                    {/*}}>*/}
+                                    {this.state.notificationCount}
                                     {/*</Text>*/}
                                 </Badge>
                             ) : null}
@@ -867,7 +881,7 @@ else{
                             height: 40,
                             zIndex: 1,
                             position: 'absolute',
-                            top: Platform.OS == 'android'? 70:90,
+                            top: Platform.OS == 'android' ? 70 : 90,
                             left: 0,
                             right: 0,
                         }}>
@@ -948,80 +962,80 @@ else{
                                                 paddingHorizontal: 10,
                                                 paddingBottom: 10,
                                             }}>
-                                            <View style={{ height: 90, width: 150,}}>
-                                            <Thumbnail
-                                                style={{
-                                                    width: 150,
-                                                    height: 90,
-                                                    marginBottom: 10,
-                                                    borderTopLeftRadius: 4,
-                                                    borderTopRightRadius: 4,
-                                                    resizeMode: 'cover',
-                                                }}
-                                                square
-                                                source={
-                                                    item.coverImage
-                                                        ? {uri: settings.IMAGE_URL + item.coverImage}
-                                                        : require('../images/no-image.png')
-                                                }
-                                            />
+                                            <View style={{height: 90, width: 150,}}>
+                                                <Thumbnail
+                                                    style={{
+                                                        width: 150,
+                                                        height: 90,
+                                                        marginBottom: 10,
+                                                        borderTopLeftRadius: 4,
+                                                        borderTopRightRadius: 4,
+                                                        resizeMode: 'cover',
+                                                    }}
+                                                    square
+                                                    source={
+                                                        item.coverImage
+                                                            ? {uri: settings.IMAGE_URL + item.coverImage}
+                                                            : require('../images/no-image.png')
+                                                    }
+                                                />
                                                 <LinearGradient
                                                     colors={['transparent', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.6)']}
                                                     style={{
                                                         position: 'absolute',
                                                         bottom: 0,
                                                         width: '100%',
-                                                        padding:5,
-                                                        paddingTop:10,
+                                                        padding: 5,
+                                                        paddingTop: 10,
                                                     }}>
                                                     <Text style={{color: 'white', fontSize: 12}}>{item.title}</Text>
                                                 </LinearGradient>
-                                                </View>
-                                            <View style={{flexDirection: 'row',padding:5}}>
+                                            </View>
+                                            <View style={{flexDirection: 'row', padding: 5}}>
                                                 {/*<View style={{*/}
-                                                        {/*flex: 1,*/}
-                                                        {/*width: '100%',*/}
-                                                        {/*alignItems: 'center',*/}
-                                                        {/*justifyContent: 'center',*/}
-                                                    {/*}}>*/}
-                                                    {/*<Thumbnail*/}
-                                                        {/*style={{borderRadius: 2, height: 25, width: 25}}*/}
-                                                        {/*square*/}
-                                                        {/*small*/}
-                                                        {/*source={*/}
-                                                            {/*item.Owner.profile.profileImage*/}
-                                                                {/*? {*/}
-                                                                    {/*uri: getProfileImage(*/}
-                                                                        {/*item.Owner.profile.profileImage,*/}
-                                                                    {/*),*/}
-                                                                {/*}*/}
-                                                                {/*: require('../images/user-icon.png')*/}
-                                                        {/*}*/}
-                                                    {/*/>*/}
-                                                    {/*<View*/}
-                                                        {/*style={{*/}
-                                                            {/*flexDirection: 'row',*/}
-                                                            {/*alignItems: 'center',*/}
-                                                            {/*justifyContent: 'center',*/}
-                                                        {/*}}>*/}
-                                                        {/*<Text>*/}
-                                                            {/*{item.hasOwnProperty('ratings')*/}
-                                                                {/*? Math.round(item.Rating.avgRate)*/}
-                                                                {/*: 1}*/}
-                                                        {/*</Text>*/}
+                                                {/*flex: 1,*/}
+                                                {/*width: '100%',*/}
+                                                {/*alignItems: 'center',*/}
+                                                {/*justifyContent: 'center',*/}
+                                                {/*}}>*/}
+                                                {/*<Thumbnail*/}
+                                                {/*style={{borderRadius: 2, height: 25, width: 25}}*/}
+                                                {/*square*/}
+                                                {/*small*/}
+                                                {/*source={*/}
+                                                {/*item.Owner.profile.profileImage*/}
+                                                {/*? {*/}
+                                                {/*uri: getProfileImage(*/}
+                                                {/*item.Owner.profile.profileImage,*/}
+                                                {/*),*/}
+                                                {/*}*/}
+                                                {/*: require('../images/user-icon.png')*/}
+                                                {/*}*/}
+                                                {/*/>*/}
+                                                {/*<View*/}
+                                                {/*style={{*/}
+                                                {/*flexDirection: 'row',*/}
+                                                {/*alignItems: 'center',*/}
+                                                {/*justifyContent: 'center',*/}
+                                                {/*}}>*/}
+                                                {/*<Text>*/}
+                                                {/*{item.hasOwnProperty('ratings')*/}
+                                                {/*? Math.round(item.Rating.avgRate)*/}
+                                                {/*: 1}*/}
+                                                {/*</Text>*/}
 
-                                                        {/*<Icon*/}
-                                                            {/*name={'star'}*/}
-                                                            {/*size={14}*/}
-                                                            {/*color={colors.warning}*/}
-                                                        {/*/>*/}
-                                                    {/*</View>*/}
+                                                {/*<Icon*/}
+                                                {/*name={'star'}*/}
+                                                {/*size={14}*/}
+                                                {/*color={colors.warning}*/}
+                                                {/*/>*/}
+                                                {/*</View>*/}
                                                 {/*</View>*/}
                                                 {/*<View*/}
-                                                    {/*style={{*/}
-                                                        {/*borderColor: colors.appBackground,*/}
-                                                        {/*borderLeftWidth: 1,*/}
-                                                    {/*}}*/}
+                                                {/*style={{*/}
+                                                {/*borderColor: colors.appBackground,*/}
+                                                {/*borderLeftWidth: 1,*/}
+                                                {/*}}*/}
                                                 {/*/>*/}
                                                 <View
                                                     style={{
@@ -1029,7 +1043,7 @@ else{
                                                         alignItems: 'center',
                                                     }}>
                                                     {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
-                                                        {/*{item.title}*/}
+                                                    {/*{item.title}*/}
                                                     {/*</Text>*/}
                                                     {item.category ? (
                                                         <View
@@ -1122,7 +1136,7 @@ else{
                             <Text style={styles.blockTitle}>
                                 Hungry? Order delicious foods now.
                             </Text>
-                          
+
                         </View>
                         <View
                             style={[
@@ -1146,7 +1160,7 @@ else{
                                             },
                                         ]}>
                                         <TouchableOpacity
-                                            onPress={item.hasOwnProperty('onPress') ? item.onPress :()=>goToRoute(this.props.componentId,'ServiceDetail',{Id:item})}>
+                                            onPress={item.hasOwnProperty('onPress') ? item.onPress : () => goToRoute(this.props.componentId, 'ServiceDetail', {Id: item})}>
                                             <View>
                                                 <Image
                                                     onPress={() => item.onPress}
@@ -1244,12 +1258,12 @@ else{
                                 horizontal={true}
                                 // _keyExtractor={(item, index) => index.toString()}
                                 showsHorizontalScrollIndicator={false}
-                              //  numColumns={3}
+                                //  numColumns={3}
                                 renderItem={(item, index) => this._renderProduct(item, index)}
                             />
 
                             {/*<View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start',marginBottom:20}}>*/}
-                                {/*{this.state.popularProducts.map((item)=>this._renderProduct(item))}*/}
+                            {/*{this.state.popularProducts.map((item)=>this._renderProduct(item))}*/}
                             {/*</View>*/}
                         </View>
                     ) : null}
@@ -1258,37 +1272,38 @@ else{
 
                     {/*CATEGORIES LIST START*/}
                     {this.state.categories.length > 0 ? (
-                        <View style={[styles.block,{marginBottom:80}]}>
+                        <View style={[styles.block, {marginBottom: 80}]}>
                             <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent
-                                onPress={() => this.setViewAll()}>
-                                <Text style={customStyle.buttonOutlinePrimaryText}>{this.state.viewAll ?'Vew Less':'View All'}</Text></Button>
+                                        onPress={() => this.setViewAll()}>
+                                    <Text
+                                        style={customStyle.buttonOutlinePrimaryText}>{this.state.viewAll ? 'Vew Less' : 'View All'}</Text></Button>
                             </View>
                             <FlatList
                                 contentContainerStyle={{
                                     marginTop: 10,
                                     paddingBottom: 10,
-                                 //   alignItems:'center',
-                                    justifyContent:'space-around',
-                                    flexWrap:'wrap',
-                                    flexDirection:'row',
+                                    //   alignItems:'center',
+                                    justifyContent: 'space-around',
+                                    flexWrap: 'wrap',
+                                    flexDirection: 'row',
                                 }}
                                 data={this.state.categories}
                                 //horizontal={true}
                                 _keyExtractor={(item, index) => index.toString()}
-                               // showsHorizontalScrollIndicator={false}
+                                // showsHorizontalScrollIndicator={false}
                                 renderItem={this.renderCategoryItem}
-                              //  numColumns={3}
+                                //  numColumns={3}
                             />
-                      {/*  {this.state.viewAll? null:
+                            {/*  {this.state.viewAll? null:
                           <Button onPress={() => {this.setViewAll()}}
                             style={[customStyle.buttonOutlinePrimary,{height:25,marginBottom:30,width:130,alignSelf:'center',backgroundColor:'white'}]}>
                             <Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>} */}
                         </View>
-                    ) : null} 
+                    ) : null}
 
-                    
+
                 </Content>
             </Container>
         );
@@ -1324,8 +1339,8 @@ const styles = StyleSheet.create({
         color: 'white',
         width: 50,
         height: 50,
-        alignItems:'center',
-        justifyContent:'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     activeTabIcon: {
         color: '#ffffff',
@@ -1396,7 +1411,7 @@ const styles = StyleSheet.create({
     },
 
     productContainerStyle: {
-        height:160,
+        height: 160,
         // flex: 1,
         borderWidth: 0,
         marginHorizontal: 2,
@@ -1404,9 +1419,9 @@ const styles = StyleSheet.create({
         borderColor: '#808080',
         elevation: 1,
         width: (viewportWidth) / 3,
-       // width: '32%',
-        maxWidth:130,
-        backgroundColor:'white'
+        // width: '32%',
+        maxWidth: 130,
+        backgroundColor: 'white'
     },
     block: {},
     blockHeader: {
@@ -1474,7 +1489,7 @@ const styles = StyleSheet.create({
 });
 export default Meteor.withTracker(() => {
     return {
-        loggedUser:Meteor.user(),
+        loggedUser: Meteor.user(),
         categories: Meteor.collection('MainCategories').find(),
         notificationCount: Meteor.collection('newNotificationCount').find(),
     };

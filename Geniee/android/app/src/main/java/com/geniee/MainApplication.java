@@ -18,8 +18,8 @@ import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.appevents.AppEventsLogger;
 
 
-import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this lin
-import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+// import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this lin
+// import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 public class MainApplication extends NavigationApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -35,8 +35,8 @@ public class MainApplication extends NavigationApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
-            packages.add(new RNFirebaseMessagingPackage());
-            packages.add(new RNFirebaseNotificationsPackage());
+            // packages.add(new RNFirebaseMessagingPackage());
+            // packages.add(new RNFirebaseNotificationsPackage());
             return packages;
         }
 

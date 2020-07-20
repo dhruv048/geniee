@@ -5,16 +5,16 @@
 let GOOGLE_MAP_API_KEY = 'AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY';
 
 
-//let API_URL = 'http://192.168.1.245:3000/api/';
-//let IMAGE_URL = 'http://192.168.1.245:3000/api/images/';
-//let WEB_URL = 'http://192.168.1.245:3000/';
-//let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
+let API_URL = 'http://192.168.1.245:3000/api/';
+let IMAGE_URL = 'http://192.168.1.245:3000/api/images/';
+let WEB_URL = 'http://192.168.1.245:3000/';
+let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 
 
- let API_URL = "http://198.167.140.2/api/";
- let IMAGE_URL = 'http://198.167.140.2/api/images/';
- let METEOR_URL = 'ws://198.167.140.2/websocket';
- let WEB_URL = "http://198.167.140.2/";
+ // let API_URL = "http://198.167.140.2/api/";
+ // let IMAGE_URL = 'http://198.167.140.2/api/images/';
+ // let METEOR_URL = 'ws://198.167.140.2/websocket';
+ // let WEB_URL = "http://198.167.140.2/";
 
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';

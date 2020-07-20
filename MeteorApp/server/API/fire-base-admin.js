@@ -5,16 +5,16 @@ export const FIREBASE_MESSAGING = {
 
         // These registration tokens come from the client FCM SDKs.
         const registrationTokens = [
-            'fA1EQWZ3x-I:APA91bH2424HEgp5uKABTIwt-8cenSTR9rHkGD1xGnQndrMODhvEhQXnypR0I00aEfX0KqZ7rQlTEgzJPUOAzGRjG92k8h1G9-lJ2sietLCpJi-2BPxgs0BO3U--JTeZPPSEDYGYcLjX',
+            'dvN3mCHuuWY:APA91bHkG0D4QFJ4vjTJ-c_41UTKAJ7mlvWTnCVUhN6W0INqwveJJUSj-P1cHeIbiXeHO_iR9m8M1X5LkEtJfORjP1ahh3MTDZhtnU5yoYC7Di-ZrwAKG7B9rIf2adA9TKq7e5XndJhR',
         ];
 
         const message = {
             notification: {
-                title: 'Test',
+                title: 'Test Notification.',
                 body: 'This is to test Push Notification from server.'
             },
            // data: {score: '850', time: '2:45', image:"https://api.krishisansaar.com/img/gr.jpg", icon:"https://api.krishisansaar.com/img/gr-icon.jpg"},
-            data: {score: '850', time: '2:45', image:"fJeksckQAaMt8W6zt", icon:"5JdKu8yCxwvSXyrHb"},
+            data: {score: '850', time: '2:45', image:"fWLQk2Ef6cxgsJxjC", icon:"https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10218369691369366&height=200&width=200&ext=1596357554&hash=AeT7qBsCqmudFwF9"},
             tokens: registrationTokens,
         };
 

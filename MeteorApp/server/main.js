@@ -18,7 +18,7 @@ Meteor.startup(function () {
     });
 
 
-    // FIREBASE_MESSAGING.sendTestMessage();
+     FIREBASE_MESSAGING.sendTestMessage();
 
 
     FacebookOAuthInit();

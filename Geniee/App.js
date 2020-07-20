@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {StyleSheet, ActivityIndicator} from 'react-native';
 
 import {colors} from './app/config/styles';
@@ -21,6 +21,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import DeviceInfo from 'react-native-device-info';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {customPaperTheme} from './app/config/themes';
+import notifee, {EventType, AndroidStyle} from '@notifee/react-native';
+
+
 
 class App extends Component {
     constructor(props) {
@@ -68,7 +71,7 @@ class App extends Component {
          const enabled =
            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
+         console.log(enabled)
          if (enabled) {
             this.getFcmToken();
         } else {
@@ -78,7 +81,7 @@ class App extends Component {
 
     getFcmToken = async () => {
         const fcmToken = await messaging().getToken();
-        // console.log(fcmToken);
+         console.log(fcmToken);
         if (fcmToken && Meteor.user()) {
             // this.showAlert('Your Firebase Token is:', fcmToken);
             let oldToken = await AsyncStorage.getItem('FCM_TOKEN');
@@ -102,6 +105,7 @@ class App extends Component {
         }
     };
     messageListener = async () => {
+
         this.notificationListener =  messaging()
              .getInitialNotification()
              .then(notification => {
@@ -205,9 +209,10 @@ class App extends Component {
         //
         // }
 
-        this.messageListener = messaging().onMessage(message => {
-            console.log(JSON.stringify(message));
+        this.messageListener =  messaging().onMessage(async message => {
             console.log('onMessage', message);
+            console.log(JSON.stringify(message));
+            let notification = message.notification;
             if (message.data.title == 'REMOVE_AUTH_TOKEN') {
                 // try {
                 //     AsyncStorage.setItem(USER_TOKEN_KEY, '');
@@ -219,7 +224,70 @@ class App extends Component {
                 //     goToRoute(this.props.componentId,'Auth');
                 // }
             }
+            // Create a channel
+            const channelId = await notifee.createChannel({
+                id: 'default',
+                name: 'Default Channel',
+            });
+
+            // Display a notification
+            if (Platform.OS == 'android') {
+                await notifee.displayNotification({
+                    title: notification.title,
+                    subtitle: 'subtitle',
+                    body: notification.body,
+                    android: {
+                        channelId,
+                        color: colors.primary,
+                        smallIcon: 'cicon',
+                        largeIcon:message.data.icon? getProfileImage(message.data.icon):null,
+                        style: message.data.image ?
+                            {type: AndroidStyle.BIGPICTURE, picture: settings.IMAGE_URL + message.data.image} :
+                            {type: AndroidStyle.BIGTEXT, text: message.data.body},
+                    },
+                });
+            }
+            else{
+                await notifee.displayNotification({
+                    title: notification.title,
+                    body: notification.body,
+                });
+            }
         });
+
+        notifee.onForegroundEvent(({ type, detail }) => {
+            switch (type) {
+                case EventType.DISMISSED:
+                    console.log('User dismissed notification', detail.notification);
+
+                    break;
+                case EventType.PRESS:
+                    console.log('User pressed notification', detail.notification);
+                    const notificationOpen=detail;
+                    // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
+                    //     try {
+                    //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                    //         Meteor.logout();
+                    //         goToRoute(this.props.componentId'Auth');
+                    //     }
+                    //     catch (e) {
+                    //         console.log(e.message)
+                    //         goToRoute(this.props.componentId'Auth');
+                    //     }
+                    // }
+                    if (notificationOpen.notification.data.navigate) {
+                        console.log('subscribe & Navigate');
+                        // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
+                        goToRoute(
+                            this.props.componentId,
+                            notificationOpen.notification.data.route,
+                            {Id: notificationOpen.notification.data.Id},
+                        );
+                        // });
+                    }
+                    break;
+            }
+            });
     };
 
     componentWillUnmount() {
