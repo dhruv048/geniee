@@ -46,6 +46,7 @@ import ServiceDetail from '../ServiceDetail';
 import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 import AsyncStorage from '@react-native-community/async-storage';
 import ServiceItem from  "../../components/Service/ServiceItem";
+import {CogMenu} from "../../components/CogMenu/CogMenu";
 
 
 class MyServices extends Component {
@@ -358,7 +359,7 @@ class MyServices extends Component {
   render() {
     return (
       <Container style={{backgroundColor: colors.appBackground}}>
-        <Header
+        <Header rounded searchBar
           androidStatusBarColor={colors.statusBar}
           style={{backgroundColor: '#094c6b'}}>
           {/*<Left>
@@ -369,16 +370,14 @@ class MyServices extends Component {
 
           {/*<Body style={{flexDirection: 'row'}}>
                     <Item style={{height: 40, flex: 4, paddingVertical: 5}}>*/}
-          <Body style={{flexDirection: 'row'}}>
+
             <Item style={{height: 40, flex: 4, paddingVertical: 5}}>
               {/*<Button transparent onPress={()=>{}}>*/}
-              <Icon style={styles.activeTabIcon} name="search" />
+              {/*<Icon style={styles.activeTabIcon} name="search" />*/}
               {/*</Button>*/}
+                <CogMenu componentId={this.props.componentId} color={colors.primary}/>
               <Input
-                placeholder="Search"
-                style={styles.searchInput}
-                placeholderTextColor="#ffffff"
-                selectionColor="#ffffff"
+                placeholder="Search..."
                 //  underlineColorAndroid="transparent"
                 onChangeText={searchText => {
                   this._search(searchText);
@@ -386,9 +385,9 @@ class MyServices extends Component {
                 autoCorrect={false}
               />
 
-              {/*<Button transparent onPress={() => this.openDrawer()}>*/}
-              {/*<Icon name='more' style={styles.activeTabIcon}/>*/}
-              {/*</Button>*/}
+              <Button transparent style={{paddingHorizontal:10}} onPress={() => goToRoute(this.props.componentId,'AddService')}>
+              <Icon name='plus' size={28} color={colors.primary}/>
+              </Button>
             </Item>
             {/*<Item style={{height: 40, flex: 2, marginLeft: 4}}>*/}
             {/*<Picker*/}
@@ -404,7 +403,7 @@ class MyServices extends Component {
             {/*<Picker.Item label="My Location" value="myLocation"/>*/}
             {/*</Picker>*/}
             {/*</Item>*/}
-          </Body>
+
           {/*<Right>*/}
           {/*/!*<Button transparent onPress={()=>this.openDrawer()}>*!/*/}
           {/*/!*<Icon name='more' />*!/*/}

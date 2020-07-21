@@ -32,8 +32,7 @@ import {
     PermissionsAndroid,
     FlatList, View
 } from 'react-native';
-
-
+import {BottomNavigation} from 'react-native-paper';
 import Meteor from "../react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
@@ -45,6 +44,8 @@ import StarRating from "../components/StarRating/StarRating";
 import {Navigation} from "react-native-navigation";
 import {backToRoot, goToRoute} from "../Navigation";
 import ServiceItem from  "../components/Service/ServiceItem";
+import {CogMenu} from "../components/CogMenu/CogMenu";
+import FIcon from 'react-native-vector-icons/Feather';
 
 class Home extends Component {
 
@@ -190,7 +191,9 @@ class Home extends Component {
             error: null,
             searchText: '',
             selected: 'all',
-            active: false
+            active: false,
+            query:'',
+            index:0,
         }
         this.arrayholder = [];
         this.currentSearch = '';
@@ -372,6 +375,37 @@ class Home extends Component {
         }
     }
 
+    renderScene = ({ route, jumpTo }) => {
+        const home = (
+            <FlatList
+                contentContainerStyle={{padding:5}}
+                style={styles.contentList}
+                      data={this.state.data}
+                      onEndReachedThreshold={0.1}
+                      renderItem={this._getListItem}
+                      initialNumToRender={15}
+                      onEndReached={(distance) => this._onEndReached(distance)}
+                      ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
+                      keyExtractor={(item, index) => index.toString()}
+            />
+
+        )
+        switch (route.key) {
+            case 'list':
+                return home;
+                break;
+            case 'map':
+                return (<Map componentId={this.props.componentId}
+                             markers={this._fetchMarkers()}/>);
+                break;
+            default:
+        }
+    }
+
+     setIndex(index){
+        this.setState({index});
+     }
+
     onValueChange(value) {
         this.setState({
             selected: value
@@ -418,14 +452,18 @@ class Home extends Component {
     };
 
     render() {
-
+       const routes=[
+            {key:'list',title:'List' ,icon:'menu', color: '#3F51B5'},
+            {key:'map',title:'Map' ,icon:'map'  }
+        ];
+       const {index} = this.state;
         return (
             <Container style={{backgroundColor: colors.appBackground}}>
                 {/*<StatusBar*/}
                     {/*backgroundColor={colors.statusBar}*/}
                     {/*barStyle='light-content'*/}
                 {/*/>*/}
-                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+                <Header searchBar rounded androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />
@@ -434,32 +472,32 @@ class Home extends Component {
 
                     {/*<Body style={{flexDirection: 'row'}}>
                     <Item style={{height: 40, flex: 4, paddingVertical: 5}}>*/}
-                    <Body style={{flexDirection: 'row'}}>
-                    <Item style={{height: 40, flex: 4, paddingVertical: 5}}>
+                    {/*<Body style={{flexDirection: 'row'}}>*/}
+                    <Item >
+                        <CogMenu componentId={this.props.componentId} color={colors.primary}/>
                         {/*<Button transparent onPress={()=>{}}>*/}
-                        <Icon style={styles.activeTabIcon} name='search'/>
+                        {/*<Icon style={styles.activeTabIcon} name='search'/>*/}
                         {/*</Button>*/}
-                        <Input placeholder="Search" style={styles.searchInput}
-                               placeholderTextColor='#ffffff'
-                               selectionColor='#ffffff'
-                            //  underlineColorAndroid="transparent"
+                        <Input placeholder="Search.."
+                               value={this.state.query}
                                onChangeText={(searchText) => {
-                                   this._search(searchText)
+                                   this._search(searchText), this.setState({query:searchText})
                                }}
                                autoCorrect={false}
                         />
 
-
-                        {/*<Button transparent onPress={() => this.openDrawer()}>*/}
-                        {/*<Icon name='more' style={styles.activeTabIcon}/>*/}
-                        {/*</Button>*/}
-
-                    </Item>
-                    <Item style={{height: 40, flex: 2, marginLeft: 4}}>
+                        {this.state.query ?
+                            <Button style={{paddingHorizontal: 10}}
+                                    onPress={() => {
+                                        this.setState({query: ''}),
+                                            this._search("")
+                                    }} transparent>
+                                <FIcon name='x' size={20} color={colors.primary}/>
+                            </Button> :
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}
-                            
+
                             note={false}
                             selectedValue={this.state.selected}
                             onValueChange={this.onValueChange.bind(this)}
@@ -467,9 +505,29 @@ class Home extends Component {
                             <Picker.Item label="All" value="all"/>
                             <Picker.Item label="Starred" value="starred"/>
                             <Picker.Item label="My Location" value="myLocation"/>
-                        </Picker>
-                            </Item>
-                    </Body>
+                            <Picker.Item label="Select Categories" value="category"/>
+                        </Picker>}
+
+                        {/*<Button transparent onPress={() => this.openDrawer()}>*/}
+                        {/*<Icon name='more' style={styles.activeTabIcon}/>*/}
+                        {/*</Button>*/}
+
+                    </Item>
+                    {/*<Item style={{height: 40, flex: 2, marginLeft: 4}}>*/}
+                        {/*<Picker*/}
+                            {/*mode="dropdown"*/}
+                            {/*iosIcon={<Icon name="arrow-dropdown-circle" style={{color: "#007aff", fontSize: 25}}/>}*/}
+                            {/**/}
+                            {/*note={false}*/}
+                            {/*selectedValue={this.state.selected}*/}
+                            {/*onValueChange={this.onValueChange.bind(this)}*/}
+                        {/*>*/}
+                            {/*<Picker.Item label="All" value="all"/>*/}
+                            {/*<Picker.Item label="Starred" value="starred"/>*/}
+                            {/*<Picker.Item label="My Location" value="myLocation"/>*/}
+                        {/*</Picker>*/}
+                            {/*</Item>*/}
+                    {/*</Body>*/}
                     {/*<Right>*/}
                     {/*/!*<Button transparent onPress={()=>this.openDrawer()}>*!/*/}
                     {/*/!*<Icon name='more' />*!/*/}
@@ -479,29 +537,38 @@ class Home extends Component {
                 </Header>
 
                 <Content
-                         contentContainerStyle={{flex: 1,padding:5}} >
+                    contentContainerStyle={{flex: 1}} >
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
-                    {this.renderSelectedTab()}
+                    {/*{this.renderSelectedTab()}*/}
                     {/*<List style={styles.contentList}*/}
                     {/*dataArray={this.props.categories}*/}
                     {/*renderRow={this._getListItem} >*/}
                     {/*</List>*/}
+
+                <BottomNavigation
+                    barStyle={{ paddingBottom: 5,backgroundColor:colors.primary }}
+                    navigationState={{index, routes}}
+                    onIndexChange={index=>this.setIndex(index)}
+                    renderScene={this.renderScene}
+                />
+
                 </Content>
-                <Footer>
-                    <FooterTab style={[customStyle.footer,{paddingHorizontal:0}]}>
-                        <Button vertical style={{height:'100%',backgroundColor : this.state.selectedTab === 'home'? colors.primary : 'white'}}
-                                onPress={() => this.setState({selectedTab: 'home'})}>
-                            <Icon name="list" style={this.state.selectedTab === 'home'? styles.activeTabIcon:{ color: colors.primary}}/>
-                            <Text style={this.state.selectedTab === 'home'? styles.activeTabText :{ color: colors.primary}}>List View</Text>
-                        </Button>
-                        {/*<Image source={logoImage} style={styles.image}/>*/}
-                        <Button   vertical  style={{height : '100%', backgroundColor : this.state.selectedTab === 'map'? colors.primary : 'white'}}
-                                onPress={() => this.setState({selectedTab: 'map'})}>
-                            <Icon name="map"  style={this.state.selectedTab === 'map'? styles.activeTabIcon:{ color: colors.primary}}/>
-                            <Text style={this.state.selectedTab === 'map'? styles.activeTabText :{ color: colors.primary}}>Map View</Text>
-                        </Button>
-                    </FooterTab>
-                </Footer>
+
+                {/*<Footer>*/}
+                    {/*<FooterTab style={[customStyle.footer,{paddingHorizontal:0}]}>*/}
+                        {/*<Button vertical style={{height:'100%',backgroundColor : this.state.selectedTab === 'home'? colors.primary : 'white'}}*/}
+                                {/*onPress={() => this.setState({selectedTab: 'home'})}>*/}
+                            {/*<Icon name="list" style={this.state.selectedTab === 'home'? styles.activeTabIcon:{ color: colors.primary}}/>*/}
+                            {/*<Text style={this.state.selectedTab === 'home'? styles.activeTabText :{ color: colors.primary}}>List View</Text>*/}
+                        {/*</Button>*/}
+                        {/*/!*<Image source={logoImage} style={styles.image}/>*!/*/}
+                        {/*<Button   vertical  style={{height : '100%', backgroundColor : this.state.selectedTab === 'map'? colors.primary : 'white'}}*/}
+                                {/*onPress={() => this.setState({selectedTab: 'map'})}>*/}
+                            {/*<Icon name="map"  style={this.state.selectedTab === 'map'? styles.activeTabIcon:{ color: colors.primary}}/>*/}
+                            {/*<Text style={this.state.selectedTab === 'map'? styles.activeTabText :{ color: colors.primary}}>Map View</Text>*/}
+                        {/*</Button>*/}
+                    {/*</FooterTab>*/}
+                {/*</Footer>*/}
 
             </Container>
 
