@@ -37,9 +37,10 @@ import Text from '../../components/Store/Text';
 import Product from '../../components/ecommerce/Product';
 import {colors, customStyle} from '../../config/styles';
 import Meteor from '../../react-native-meteor';
-import settings from '../../config/settings';
+import settings, {ProductType, ServiceDuration} from '../../config/settings';
 import {goToRoute,goBack} from '../../Navigation';
 import AutoHeightWebView from 'react-native-autoheight-webview';
+import MyFunctions from "../../lib/MyFunctions";
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -245,6 +246,7 @@ class ProductDetail extends Component {
                   </Col>
                   {this.state.product.price ? (
                     <Col size={2}>
+                        {this.state.product.type===ProductType.PRODUCT?
                       <Text
                         style={{
                           fontSize: 17,
@@ -255,11 +257,24 @@ class ProductDetail extends Component {
                         {this.state.product.unit ? (
                           <Text>/{this.state.product.unit}</Text>
                         ) : null}
-                      </Text>
+                      </Text>:null}
+
+                        {this.state.product.type===ProductType.SERVICE?
+                            <Text
+                                style={{
+                                    fontSize: 17,
+                                    fontWeight: 'bold',
+                                    color: colors.appLayout,
+                                }}>
+                                Rs. {this.state.product.price}
+                                {this.state.product.duration ? (
+                                    <Text>/{MyFunctions.getKeyByValue(ServiceDuration,this.state.product.duration)}</Text>
+                                ) : null}
+                            </Text>:null}
                     </Col>
                   ) : null}
                 </Grid>
-
+                  {this.state.product.type===ProductType.PRODUCT?
                 <Grid>
                   <Col size={2}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
@@ -271,7 +286,8 @@ class ProductDetail extends Component {
                       {this.state.product.availabeQuantity}
                     </Text>
                   </Col>
-                </Grid>
+                </Grid>:null}
+
                 {/*{this.state.product.colors ?*/}
                 {/*<Grid>*/}
                 {/*<Col size={2}>*/}
@@ -350,7 +366,7 @@ class ProductDetail extends Component {
                     </Col>
                   </Grid>
                 ) : null}
-
+                  {this.state.product.type===ProductType.PRODUCT?
                 <Grid>
                   <Col size={2}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
@@ -409,7 +425,66 @@ class ProductDetail extends Component {
                       </Button>
                     </View>
                   </Col>
-                </Grid>
+                </Grid>:null}
+                  {this.state.product.type===ProductType.SERVICE?
+                      <Grid>
+                          <Col size={2}>
+                              <View style={{flex: 1, justifyContent: 'center'}}>
+                                  <Text>Select Quantity:</Text>
+                              </View>
+                          </Col>
+
+                          <Col size={2}>
+                              <View style={{flex: 1, flexDirection: 'row'}}>
+                                  <Button
+                                      block
+                                      icon
+                                      transparent
+                                      onPress={() =>
+                                          this.setState({
+                                              quantity:
+                                                  this.state.quantity > 1
+                                                      ? this.state.quantity - 1
+                                                      : 1,
+                                          })
+                                      }>
+                                      <NBIcon
+                                          name="ios-remove"
+                                          style={{color: colors.appLayout}}
+                                      />
+                                  </Button>
+                                  <View
+                                      style={{
+                                          flex: 4,
+                                          justifyContent: 'center',
+                                          alignItems: 'center',
+                                          paddingLeft: 30,
+                                          paddingRight: 30,
+                                      }}>
+                                      <Text style={{fontSize: 18}}>
+                                          {this.state.quantity}
+                                      </Text>
+                                  </View>
+                                  <Button
+                                      block
+                                      icon
+                                      transparent
+                                      onPress={() =>
+                                          this.setState({
+                                              quantity:
+                                                  this.state.quantity + 1
+                                          })
+                                      }>
+                                      <NBIcon
+                                          style={{color: colors.appLayout}}
+                                          name="ios-add"
+                                      />
+                                  </Button>
+                              </View>
+                          </Col>
+                      </Grid>:null}
+
+
                 {/*<Grid style={{marginTop: 15}}>*/}
                 {/*<Col size={3}>*/}
                 {/*<Button block onPress={this.addToCart.bind(this)}*/}

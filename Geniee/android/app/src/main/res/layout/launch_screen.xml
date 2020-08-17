@@ -11,13 +11,15 @@
             android:layout_weight="1"
             android:gravity="center|bottom"
             android:orientation="vertical" >
+
         <ProgressBar
-        android:layout_gravity="center_horizontal|center"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:id="@+id/progressBar"
-        android:progressDrawable="@drawable/circular_progress_bar"
-        android:layout_marginBottom="50dp"/>
+            android:id="@+id/progressBar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal|center"
+            android:layout_marginBottom="50dp"
+            android:background="#FFFFFF"
+            android:progressDrawable="@drawable/circular_progress_bar" />
     </LinearLayout>
 </LinearLayout>
 

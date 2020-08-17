@@ -14,7 +14,7 @@ import {
     Content,
     Header,
     Left,
-    Body, Right, Title} from 'native-base';
+    Body, Right, Title,Item, Input} from 'native-base';
 import Meteor  from "../../react-native-meteor";
 import FIcon from 'react-native-vector-icons/Feather';
 import {colors} from "../../config/styles";
@@ -200,9 +200,9 @@ class AllProducts extends Component {
         return (
 
             <Container style={styles.container}>
-                <Header androidStatusBarColor={colors.statusBar}
+                <Header searchBar rounded androidStatusBarColor={colors.statusBar}
                         style={{backgroundColor: colors.appLayout}}>
-                    <Left>
+                   {/*} <Left>
                         <Button transparent onPress={() => {
                             goBack(this.props.componentId)
                         }}>
@@ -214,24 +214,26 @@ class AllProducts extends Component {
                     <Title style={styles.screenHeader}>Products</Title>
                     </Body>
                     <Right>
-                        {/*<Button onPress={() => goToRoute(this.props.componentId,'WishListEF')} transparent>*/}
-                        {/*<FIcon name='heart' style={{fontSize:24,color:'white'}} />*/}
-                        {/*{this.state.wishList.length > 0 ?*/}
-                        {/*<Badge*/}
-                        {/*style={{position: 'absolute', height: 18}}>*/}
-                        {/*<Text style={{*/}
-                        {/*fontSize: 10,*/}
-                        {/*fontWeight: '100',*/}
-                        {/*color: 'white',*/}
-                        {/*lineHeight: 18*/}
-                        {/*}}>{this.state.wishList.length}</Text></Badge>*/}
-                        {/*: null}*/}
-                        {/*</Button>*/}
                         {Meteor.userId()?
                         <Button onPress={() => goToRoute(this.props.componentId,'AddProduct')} transparent>
                             <FIcon name='plus' style={{fontSize:27,color:'white'}} />
                         </Button>:null}
-                    </Right>
+                    </Right> */}
+
+                    <Item>
+                        <Button style={{paddingHorizontal:10}} transparent onPress={() => {
+                            goBack(this.props.componentId)
+                        }}>
+                            <FIcon name="arrow-left"   size={24}/>
+                        </Button> 
+
+                        <Input placeholder="Search..." />
+                        {Meteor.userId()?
+                        <Button style={{paddingHorizontal:10}} onPress={() => goToRoute(this.props.componentId,'AddProduct')} transparent>
+                            <FIcon name='plus' style={{fontSize:28}} />
+                        </Button>:null}
+
+                    </Item>
                 </Header>
                 <Content style={styles.content}>
                     <FlatList contentContainerStyle={styles.mainContainer}

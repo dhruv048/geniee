@@ -446,7 +446,7 @@ class AddProduct extends React.PureComponent {
                         <Text style={styles.screenHeader}>{this.props.Product ? "Update Product" : "Add Product"}</Text>
                         </Body>
                     </Header>
-                    <Content style={{padding:20}}>
+                    <Content style={{padding:Platform.OS==='ios'?20:0}}>
 
 
                         <Fragment>

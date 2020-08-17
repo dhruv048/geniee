@@ -19,6 +19,8 @@ import {
   Body,
   Right,
   Title,
+  Item,
+  Input
 } from 'native-base';
 import Meteor from '../../react-native-meteor';
 import FIcon from 'react-native-vector-icons/Feather';
@@ -211,10 +213,10 @@ class MyProducts extends Component {
     const Id = this.props.Id;
     return (
       <Container style={styles.container}>
-        <Header
+        <Header searchBar rounded
           androidStatusBarColor={colors.statusBar}
           style={{backgroundColor: colors.appLayout}}>
-          <Left>
+         {/*} <Left>
             <Button
               transparent
               onPress={() => {
@@ -228,25 +230,28 @@ class MyProducts extends Component {
             <Title style={styles.screenHeader}>My Products</Title>
           </Body>
           <Right>
-            {/*<Button onPress={() => goToRoute(this.props.componentId,'WishListEF')} transparent>*/}
-            {/*<FIcon name='heart' style={{fontSize:24,color:'white'}} />*/}
-            {/*{this.state.wishList.length > 0 ?*/}
-            {/*<Badge*/}
-            {/*style={{position: 'absolute', height: 18}}>*/}
-            {/*<Text style={{*/}
-            {/*fontSize: 10,*/}
-            {/*fontWeight: '100',*/}
-            {/*color: 'white',*/}
-            {/*lineHeight: 18*/}
-            {/*}}>{this.state.wishList.length}</Text></Badge>*/}
-            {/*: null}*/}
-            {/*</Button>*/}
             <Button
               onPress={() => goToRoute(this.props.componentId, 'AddProduct')}
               transparent>
               <FIcon name="plus" style={{fontSize: 27, color: 'white'}} />
             </Button>
-          </Right>
+          </Right> */}
+          <Item>
+            <Button style={{paddingHorizontal:10}}
+              transparent
+              onPress={() => {
+                backToRoot(this.props.componentId);
+              }}>
+              <FIcon name="arrow-left"  size={24} />
+            </Button>
+
+            <Input placeholder="search.." />
+             <Button style={{paddingHorizontal:10}}
+              onPress={() => goToRoute(this.props.componentId, 'AddProduct')}
+              transparent>
+              <FIcon name="plus" style={{fontSize: 28, }} />
+            </Button>
+          </Item>
         </Header>
         <Content style={styles.content}>
           <FlatList

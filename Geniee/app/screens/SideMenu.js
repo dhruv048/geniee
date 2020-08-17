@@ -96,7 +96,7 @@ class SideMenu extends PureComponent {
             <Fragment>
             <SafeAreaView style={{ flex: 0,  }} />
                 <Header androidStatusBarColor={colors.statusBar}
-                        style={{height: 220,backgroundColor: colors.appBackground }} >
+                        style={{height: 220,backgroundColor: '#daecf2' }} >
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
 
                     {this.state.user=='NaN' ?

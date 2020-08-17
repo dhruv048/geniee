@@ -9,7 +9,7 @@ import {
   Divider,
   Provider,
 } from 'react-native-paper';
-import {Body, Left, ListItem, Right, View, Text, Button} from 'native-base';
+import {Body, Left, ListItem, Right, View, Text, Button,Icon} from 'native-base';
 import {Image, StyleSheet, TouchableOpacity,Alert,ToastAndroid} from 'react-native';
 import settings from '../../config/settings';
 import StarRating from '../../components/StarRating/StarRating';
@@ -170,10 +170,28 @@ _callPhone = number => {
               onPress={() => this._handlItemPress(service)}>
               <Subheading numberOfLines={1}>{service.title}</Subheading>
               {service.subCategory ? (
-                <Text numberOfLines={1} style={{alignSelf: 'flex-start',fontSize:14}}>
-                  {service.subCategory.subCategory}
+                <Text numberOfLines={1}  style={{alignSelf: 'flex-start',fontSize:14, color:colors.gray_100}}>
+                  ({service.subCategory.subCategory})
                 </Text>
-              ) : null}
+              ) : (
+              service.Category?
+               <Text numberOfLines={1}  style={{alignSelf: 'flex-start',fontSize:14, color:colors.gray_100}}>
+                  ({service.Category.subCategory})
+                </Text>:null
+              )}
+
+              {service.dist?
+                <View
+                    style={{
+                        alignItem: 'center',
+                        flexDirection: 'row',
+                    }}>
+                    {/*<FIcon name={'navigation'} size={12}*/}
+                    {/*color={colors.gray_200}/>*/}
+                    <Text  style={{fontSize: 12,color:colors.gray_100}}>
+                        {Math.round(service.dist.calculated * 100) / 100}{' '}
+                        K.M. away</Text>
+                </View>:null}
               <Caption>{service.location.formatted_address || ''}</Caption>
             </TouchableOpacity>
             <Right
@@ -182,42 +200,7 @@ _callPhone = number => {
                 flexDirection: 'column',
                 alignItems: 'flex-end',
               }}>
-              {/*<Button*/}
-              {/*icon*/}
-              {/*transparent*/}
-              {/*// onPress={this.addToCart.bind(this)}*/}
-              {/*style={[*/}
-              {/*customStyle.buttonOutlineSecondary, {*/}
-              {/*height: 30,*/}
-              {/*width: 30,*/}
-              {/*marginBottom: 5,*/}
-              {/*alignItems: 'center',*/}
-              {/*justifyContent: 'center',*/}
-              {/*backgroundColor: colors.appBackground*/}
-              {/*}*/}
-              {/*]}>*/}
-              {/*<FIcon name={'phone'} size={20} color={colors.primary}/>*/}
-              {/*</Button>*/}
-              {/*<Button*/}
-              {/*icon*/}
-              {/*transparent*/}
-              {/*onPress={this.handleChat.bind(this)}*/}
-              {/*style={[*/}
-              {/*customStyle.buttonOutlineSecondary, {*/}
-              {/*height: 30,*/}
-              {/*width: 30,*/}
-              {/*marginTop: 5,*/}
-              {/*alignItems: 'center',*/}
-              {/*justifyContent: 'center',*/}
-              {/*backgroundColor: colors.appBackground*/}
-              {/*}*/}
-              {/*]}>*/}
-              {/*<FIcon*/}
-              {/*name={'message-square'}*/}
-              {/*size={20}*/}
-              {/*color={colors.primary}*/}
-              {/*/>*/}
-              {/*</Button>*/}
+
 
               <TouchableOpacity
                 style={{
@@ -240,7 +223,7 @@ _callPhone = number => {
                       />
                     </Button>
                   }>
-                   {Meteor.userId() && Meteor.userId()==service.owner? null : 
+                   {Meteor.userId() && Meteor.userId()==service.owner? null :
                   <MenuItem
                     onPress={() => {
                       this[`menu${service._id}`].hide(),
@@ -292,6 +275,8 @@ _callPhone = number => {
                   </>:null}
                 </Menu>
               </TouchableOpacity>
+
+
             </Right>
           </ListItem>
         </View>

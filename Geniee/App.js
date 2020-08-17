@@ -81,7 +81,7 @@ class App extends Component {
 
     getFcmToken = async () => {
         const fcmToken = await messaging().getToken();
-         console.log(fcmToken);
+        // console.log(fcmToken);
         if (fcmToken && Meteor.user()) {
             // this.showAlert('Your Firebase Token is:', fcmToken);
             let oldToken = await AsyncStorage.getItem('FCM_TOKEN');
@@ -239,7 +239,7 @@ class App extends Component {
                     android: {
                         channelId,
                         color: colors.primary,
-                        smallIcon: 'cicon',
+                         smallIcon: 'ic_small_icon',
                         largeIcon:message.data.icon? getProfileImage(message.data.icon):null,
                         style: message.data.image ?
                             {type: AndroidStyle.BIGPICTURE, picture: settings.IMAGE_URL + message.data.image} :

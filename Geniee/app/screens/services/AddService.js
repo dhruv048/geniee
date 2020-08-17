@@ -741,7 +741,7 @@ class AddService extends React.PureComponent {
                     </Right>*/}
                 </Header>
                 <GalioProvider theme={customGalioTheme}>
-                    <Content style={{padding:20}}>
+                    <Content style={{padding:Platform.OS==='ios'?20:0}}>
                         <Fragment>
                             {/*<ImageBackground*/}
                             {/*style={styles.sbf9e8383}*/}

@@ -183,6 +183,7 @@ class Dashboard extends Component {
 
     async componentDidMount() {
         this.setState({loggedUser: this.props.loggedUser});
+
         this.updateCounts();
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
@@ -204,6 +205,19 @@ class Dashboard extends Component {
                 this.setState({Adds: res});
             }
         });
+
+
+        //Get Popular Products
+        Meteor.call('getPopularProducts', 0, 6, (err, res) => {
+            console.log(err, res)
+            if (!err) {
+                this.setState({popularProducts: res.result});
+            } else {
+                console.log(err);
+            }
+        });
+
+
         if (Platform.OS === 'ios') {
             this.granted = await  Geolocation.requestAuthorization('always');
         }
@@ -218,7 +232,7 @@ class Dashboard extends Component {
                 },
             );
         }
-        if (this.granted === Permissions.RESULTS.GRANTED || this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+        if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
             Geolocation.getCurrentPosition(
                 position => {
                     //  console.log(position);
@@ -287,19 +301,11 @@ class Dashboard extends Component {
             }
         });
 
-        //Get Popular Products
-        Meteor.call('getPopularProducts', 0, 6, (err, res) => {
-            if (!err) {
-                this.setState({popularProducts: res.result});
-            } else {
-                console.log(err);
-            }
-        });
-
 
     }
 
     _fetchNearByServices = () => {
+        console.log('_fetchNearByServices')
         const data = {
             skip: 0,
             limit: 10,
@@ -308,6 +314,7 @@ class Dashboard extends Component {
         };
         //   Meteor.call('getServicesNearBy', data, (err, res) => {
         Meteor.call('getRandomServices', [this.region.longitude, this.region.latitude], 15, 10, (err, res) => {
+            console.log(err, res)
             this.setState({loading: false});
             if (!err) {
                 this.setState({nearByservice: res.result});
@@ -992,51 +999,6 @@ class Dashboard extends Component {
                                                 </LinearGradient>
                                             </View>
                                             <View style={{flexDirection: 'row', padding: 5}}>
-                                                {/*<View style={{*/}
-                                                {/*flex: 1,*/}
-                                                {/*width: '100%',*/}
-                                                {/*alignItems: 'center',*/}
-                                                {/*justifyContent: 'center',*/}
-                                                {/*}}>*/}
-                                                {/*<Thumbnail*/}
-                                                {/*style={{borderRadius: 2, height: 25, width: 25}}*/}
-                                                {/*square*/}
-                                                {/*small*/}
-                                                {/*source={*/}
-                                                {/*item.Owner.profile.profileImage*/}
-                                                {/*? {*/}
-                                                {/*uri: getProfileImage(*/}
-                                                {/*item.Owner.profile.profileImage,*/}
-                                                {/*),*/}
-                                                {/*}*/}
-                                                {/*: require('../images/user-icon.png')*/}
-                                                {/*}*/}
-                                                {/*/>*/}
-                                                {/*<View*/}
-                                                {/*style={{*/}
-                                                {/*flexDirection: 'row',*/}
-                                                {/*alignItems: 'center',*/}
-                                                {/*justifyContent: 'center',*/}
-                                                {/*}}>*/}
-                                                {/*<Text>*/}
-                                                {/*{item.hasOwnProperty('ratings')*/}
-                                                {/*? Math.round(item.Rating.avgRate)*/}
-                                                {/*: 1}*/}
-                                                {/*</Text>*/}
-
-                                                {/*<Icon*/}
-                                                {/*name={'star'}*/}
-                                                {/*size={14}*/}
-                                                {/*color={colors.warning}*/}
-                                                {/*/>*/}
-                                                {/*</View>*/}
-                                                {/*</View>*/}
-                                                {/*<View*/}
-                                                {/*style={{*/}
-                                                {/*borderColor: colors.appBackground,*/}
-                                                {/*borderLeftWidth: 1,*/}
-                                                {/*}}*/}
-                                                {/*/>*/}
                                                 <View
                                                     style={{
                                                         flex: 3,

@@ -5,10 +5,10 @@
 let GOOGLE_MAP_API_KEY = 'AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY';
 
 
-let API_URL = 'http://192.168.1.246:3000/api/';
-let IMAGE_URL = 'http://192.168.1.246:3000/api/images/';
-let WEB_URL = 'http://192.168.1.246:3000/';
-let METEOR_URL = 'ws://192.168.1.246:3000/websocket';
+let API_URL = 'http://192.168.1.245:3000/api/';
+let IMAGE_URL = 'http://192.168.1.245:3000/api/images/';
+let WEB_URL = 'http://192.168.1.245:3000/';
+let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
 
 
  // let API_URL = "http://198.167.140.2/api/";
@@ -66,6 +66,11 @@ export const BusinessType = {
     SERVICE_PROVIDER: 0,
     PRODUCTS_GOODS_SELLER: 1,
     RESTURANT: 2,
+};
+
+export const ProductType={
+    SERVICE: 0,
+    PRODUCT: 1,
 };
 
 export const NotificationTypes = {
