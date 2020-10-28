@@ -3,8 +3,8 @@ module.exports = {
     one: {
       // TODO: set host address, username, and authentication method
       host: '198.167.140.2',
-      username: 'roshan',
-       pem: '~/.ssh/id_rsa',
+      username: 'geniee',
+      pem: '~/.ssh/id_rsa',
       // password: '1ay04cs064'
       // or neither for authenticate from ssh-agent
       //   opts: {
@@ -36,13 +36,17 @@ module.exports = {
         MONGO_URL: 'mongodb://localhost:27017/Geniee',
       //  MONGO_OPLOG_URL: 'mongodb://mongodb/local',
         PORT: 3000,
-
     },
 
     docker: {
       // change to 'abernix/meteord:base' if your app is using Meteor 1.4 - 1.5
       //image: 'abernix/meteord:base',
-	    image: 'abernix/meteord:node-12.16.1-base',
+      image: 'abernix/meteord:node-12.16.1-base',
+      // prepareBundle: false,
+      args: [
+        //use network of host
+        '--network host' 
+      ],
     },
 
     // Show progress bar while uploading bundle to server

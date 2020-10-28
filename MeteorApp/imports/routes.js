@@ -92,7 +92,7 @@ adminRoutes.route('/advertisements', {
         document.title = "Geniee-Admin Advertisements";
     },
     triggersEnter: [function (context, redirect) {
-        Meteor.subscribe('adminGallery');
+        // Meteor.subscribe('adminGallery');
     }]
 });
 adminRoutes.route('/speciizations', {

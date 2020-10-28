@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Meteor from '../react-native-meteor';
 import {
     StyleSheet,
@@ -36,11 +36,11 @@ import {
     CardItem,
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {colors, customStyle, variables} from '../config/styles';
-import {Navigation} from 'react-native-navigation';
-import {Badge, Avatar} from 'react-native-paper';
+import { colors, customStyle, variables } from '../config/styles';
+import { Navigation } from 'react-native-navigation';
+import { Badge, Avatar } from 'react-native-paper';
 
-const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 import settings from '../config/settings';
 import StarRating from '../components/StarRating/StarRating';
 import Product from '../components/Store/Product';
@@ -50,8 +50,8 @@ import SplashScreen from 'react-native-splash-screen';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
-import {goToRoute} from '../Navigation';
-import {getProfileImage} from '../config/settings';
+import { goToRoute } from '../Navigation';
+import { getProfileImage } from '../config/settings';
 import LinearGradient from 'react-native-linear-gradient';
 
 let isDashBoard = true;
@@ -115,13 +115,13 @@ class Dashboard extends Component {
         ];
         this._listViewOffset = 0;
         UIManager.setLayoutAnimationEnabledExperimental &&
-        UIManager.setLayoutAnimationEnabledExperimental(true);
+            UIManager.setLayoutAnimationEnabledExperimental(true);
         //this.onClick = this.onClick.bind(this);
     }
 
-    handleOnPress = () => this.setState({showSearchBar: true});
+    handleOnPress = () => this.setState({ showSearchBar: true });
     handleOnPressUnset = () => {
-        this.setState({showSearchBar: false, query: ''});
+        this.setState({ showSearchBar: false, query: '' });
         this._search('');
     };
     //onClick() {
@@ -134,7 +134,7 @@ class Dashboard extends Component {
     handleBackButton() {
         console.log('back handle from dashboard');
         if (isDashBoard) {
-            const {screen, navigator} = this.props;
+            const { screen, navigator } = this.props;
             console.log(screen, navigator, this.props);
             this.state.backClickCount == 1 ? BackHandler.exitApp() : this._spring();
             return true;
@@ -144,7 +144,7 @@ class Dashboard extends Component {
     setViewAll = () => {
         let prevState = this.state.viewAll;
         const categories = prevState ? this.props.categories.slice(0, 6) : this.props.categories;
-        this.setState({viewAll: !prevState, categories: categories});
+        this.setState({ viewAll: !prevState, categories: categories });
 
     }
 
@@ -157,7 +157,7 @@ class Dashboard extends Component {
             50,
         );
 
-        this.setState({backClickCount: 1}, () => {
+        this.setState({ backClickCount: 1 }, () => {
             Animated.sequence([
                 Animated.spring(this.springValue, {
                     toValue: -0.15 * viewportHeight,
@@ -171,24 +171,24 @@ class Dashboard extends Component {
                     useNativeDriver: true,
                 }),
             ]).start(() => {
-                this.setState({backClickCount: 0});
+                this.setState({ backClickCount: 0 });
             });
         });
     }
 
     handleOnLocationSelect(location) {
         console.log(location);
-        this.setState({pickLocation: false});
+        this.setState({ pickLocation: false });
     }
 
     async componentDidMount() {
-        this.setState({loggedUser: this.props.loggedUser});
+        this.setState({ loggedUser: this.props.loggedUser });
 
         this.updateCounts();
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
             MainCategories = JSON.parse(MainCategories);
-            this.setState({categories: MainCategories.slice(0, 6), loading: false});
+            this.setState({ categories: MainCategories.slice(0, 6), loading: false });
             this.arrayholder = MainCategories;
         } else {
             MainCategories = [];
@@ -202,7 +202,7 @@ class Dashboard extends Component {
             });
         Meteor.call('getActiveAdvertises', (err, res) => {
             if (!err) {
-                this.setState({Adds: res});
+                this.setState({ Adds: res });
             }
         });
 
@@ -211,7 +211,7 @@ class Dashboard extends Component {
         Meteor.call('getPopularProducts', 0, 6, (err, res) => {
             console.log(err, res)
             if (!err) {
-                this.setState({popularProducts: res.result});
+                this.setState({ popularProducts: res.result });
             } else {
                 console.log(err);
             }
@@ -219,7 +219,7 @@ class Dashboard extends Component {
 
 
         if (Platform.OS === 'ios') {
-            this.granted = await  Geolocation.requestAuthorization('always');
+            this.granted = await Geolocation.requestAuthorization('always');
         }
         else {
             this.granted = await PermissionsAndroid.request(
@@ -227,8 +227,8 @@ class Dashboard extends Component {
                 {
                     title: 'Location Permission',
                     message:
-                    'This App needs access to your location ' +
-                    'so we can know where you are.',
+                        'This App needs access to your location ' +
+                        'so we can know where you are.',
                 },
             );
         }
@@ -248,7 +248,7 @@ class Dashboard extends Component {
                     // See error code charts below.
                     console.log(error.code, error.message);
                 },
-                {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
             );
         } else {
             console.log('Location permission denied');
@@ -267,7 +267,7 @@ class Dashboard extends Component {
                 // See error code charts below.
                 console.log(error.code, error.message);
             },
-            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
         );
 
         this.messageListener().catch(e => {
@@ -279,7 +279,7 @@ class Dashboard extends Component {
             if (!err) {
                 let resturants = [...this.state.resturants]
                 resturants = resturants.concat(res);
-                this.setState({resturants});
+                this.setState({ resturants });
             }
         });
 
@@ -315,9 +315,9 @@ class Dashboard extends Component {
         //   Meteor.call('getServicesNearBy', data, (err, res) => {
         Meteor.call('getRandomServices', [this.region.longitude, this.region.latitude], 15, 10, (err, res) => {
             console.log(err, res)
-            this.setState({loading: false});
+            this.setState({ loading: false });
             if (!err) {
-                this.setState({nearByservice: res.result});
+                this.setState({ nearByservice: res.result });
             } else {
                 console.log(err);
             }
@@ -342,7 +342,7 @@ class Dashboard extends Component {
             });
         }
         if (newProps.loggedUser) {
-            this.setState({loggedUser: newProps.loggedUser});
+            this.setState({ loggedUser: newProps.loggedUser });
         }
     }
 
@@ -353,7 +353,7 @@ class Dashboard extends Component {
 
     messageListener = async () => {
         this.notificationOpenedListener = messaging().onNotificationOpenedApp(notificationOpen => {
-            const {title, body} = notificationOpen.notification;
+            const { title, body } = notificationOpen.notification;
             // this.showAlert(title, body);
             console.log('onNotificationOpened', notificationOpen);
             // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
@@ -373,17 +373,17 @@ class Dashboard extends Component {
                 goToRoute(
                     this.props.componentId,
                     notificationOpen.notification.data.route,
-                    {Id: notificationOpen.notification.data.Id},
+                    { Id: notificationOpen.notification.data.Id },
                 );
                 // });
             }
         });
 
-        const notificationOpen = await  messaging().getInitialNotification().then(remoteMessage => {
+        const notificationOpen = await messaging().getInitialNotification().then(remoteMessage => {
             return remoteMessage
         });
         if (notificationOpen) {
-            const {title, body} = notificationOpen.notification;
+            const { title, body } = notificationOpen.notification;
             //  this.showAlert(title, body);
             console.log('notificationOpen', notificationOpen.notification);
             if (notificationOpen.notification.data.title == 'REMOVE_AUTH_TOKEN') {
@@ -402,7 +402,7 @@ class Dashboard extends Component {
                 goToRoute(
                     this.props.componentId,
                     notificationOpen.notification.data.route,
-                    {Id: notificationOpen.notification.data.Id},
+                    { Id: notificationOpen.notification.data.Id },
                 );
             }
         }
@@ -438,7 +438,7 @@ class Dashboard extends Component {
         } else {
             cartList = [];
         }
-        this.setState({wishList: wishList, totalCount: cartList.length});
+        this.setState({ wishList: wishList, totalCount: cartList.length });
     }
 
     componentDidDisappear() {
@@ -525,9 +525,9 @@ class Dashboard extends Component {
                         padding: 10
                     }}>*/}
                     <Body>
-                    <View style={styles.catIcon}>
-                        <Icon name={item.icon} size={25} color='white'/>
-                    </View>
+                        <View style={styles.catIcon}>
+                            <Icon name={item.icon} size={25} color='white' />
+                        </View>
                     </Body>
 
                     <Text
@@ -574,34 +574,34 @@ class Dashboard extends Component {
                             )}
                         </Left>
                         <Body>
-                        <Text numberOfLines={1} style={styles.serviceTitle}>
-                            {rowData.title}
-                        </Text>
-                        {rowData.location.formatted_address ? (
-                            <Text note numberOfLines={1} style={styles.serviceAddress}>
-                                {rowData.location.formatted_address}
+                            <Text numberOfLines={1} style={styles.serviceTitle}>
+                                {rowData.title}
                             </Text>
-                        ) : null}
+                            {rowData.location.formatted_address ? (
+                                <Text note numberOfLines={1} style={styles.serviceAddress}>
+                                    {rowData.location.formatted_address}
+                                </Text>
+                            ) : null}
 
-                        {distance ? (
-                            <Text note style={styles.serviceDist}>
-                                {distance} KM
-                            </Text>
-                        ) : null}
-                        <View style={styles.serviceAction}>
-                            <StarRating
-                                starRate={
-                                    rowData.hasOwnProperty('ratings')
-                                        ? this.averageRating(rowData.ratings)
-                                        : 0
-                                }
-                            />
-                            {/*{this.averageRating(rowData.ratings) > 0 ?
+                            {distance ? (
+                                <Text note style={styles.serviceDist}>
+                                    {distance} KM
+                                </Text>
+                            ) : null}
+                            <View style={styles.serviceAction}>
+                                <StarRating
+                                    starRate={
+                                        rowData.hasOwnProperty('ratings')
+                                            ? this.averageRating(rowData.ratings)
+                                            : 0
+                                    }
+                                />
+                                {/*{this.averageRating(rowData.ratings) > 0 ?
                             <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
                                 <Icon name={'star'}
                                     style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
                                 </Text> : null}*/}
-                        </View>
+                            </View>
                         </Body>
                         <Right>
                             {data.item.contact || data.item.contact1 ? (
@@ -616,7 +616,7 @@ class Dashboard extends Component {
                                         );
                                     }}>
                                     {/*<Icon name={'call'} color={'green'}/>*/}
-                                    <Icon name={'phone'} size={20} style={styles.catIcon}/>
+                                    <Icon name={'phone'} size={20} style={styles.catIcon} />
                                 </Button>
                             ) : null}
                         </Right>
@@ -626,9 +626,9 @@ class Dashboard extends Component {
         );
     };
 
-    _renderItem({item, index}) {
+    _renderItem({ item, index }) {
         return (
-            <View key={index} style={{flex: 1, width: '100%'}}>
+            <View key={index} style={{ flex: 1, width: '100%' }}>
                 <Thumbnail
                     square
                     style={{
@@ -636,7 +636,7 @@ class Dashboard extends Component {
                         height: Math.round(viewportWidth * 0.29),
                         resizeMode: 'cover',
                     }}
-                    source={{uri: settings.IMAGE_URL + item.src}}
+                    source={{ uri: settings.IMAGE_URL + item.src }}
                 />
             </View>
         );
@@ -652,7 +652,7 @@ class Dashboard extends Component {
         //     }
         // });
 
-        goToRoute(this.props.componentId, 'ProductDetail', {data: pro});
+        goToRoute(this.props.componentId, 'ProductDetail', { data: pro });
     };
 
     _onScroll = event => {
@@ -680,7 +680,7 @@ class Dashboard extends Component {
         const isActionButtonVisible = direction === 'up';
         if (isActionButtonVisible !== this.state.isActionButtonVisible) {
             LayoutAnimation.configureNext(CustomLayoutLinear);
-            this.setState({isActionButtonVisible});
+            this.setState({ isActionButtonVisible });
         }
         // Update your scroll position
         this._listViewOffset = currentOffset;
@@ -690,13 +690,13 @@ class Dashboard extends Component {
         let item = data.item;
         return (
             <TouchableOpacity key={item._id}
-                              onPress={() => this._handleProductPress(item)}
-                              style={styles.productContainerStyle}>
+                onPress={() => this._handleProductPress(item)}
+                style={styles.productContainerStyle}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
-                    <CardItem cardBody style={{width: '100%'}}>
+                <View style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
+                    <CardItem cardBody style={{ width: '100%' }}>
                         <Image
-                            source={{uri: settings.IMAGE_URL + item.images[0]}}
+                            source={{ uri: settings.IMAGE_URL + item.images[0] }}
                             style={{
                                 flex: 1,
                                 width: undefined,
@@ -729,45 +729,45 @@ class Dashboard extends Component {
                                 padding: 2,
                                 zIndex: 1,
                             }}>
-                            <Text style={{fontSize: 8, color: 'white'}}>
+                            <Text style={{ fontSize: 8, color: 'white' }}>
                                 {item.discount}% off
                             </Text>
                         </View>
                     ) : null}
-                    <CardItem style={{paddingTop: 0, paddingHorizental: 3}}>
-                        <Body style={{alignItems: 'center'}}>
-                        <Text
-                            style={{fontSize: 12, color: colors.primaryText}}
-                            numberOfLines={1}>
-                            {item.title}
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                width: '100%', alignSelf: 'center'
-                            }}>
-                            <Icon name={'home'} size={10} color={colors.gray_200}/>
+                    <CardItem style={{ paddingTop: 0, paddingHorizental: 3 }}>
+                        <Body style={{ alignItems: 'center' }}>
                             <Text
-                                numberOfLines={1}
-                                note
-                                style={{fontSize: 12, marginLeft: 3, marginRight: 0}}>
-                                {item.Service.title || ''}
+                                style={{ fontSize: 12, color: colors.primaryText }}
+                                numberOfLines={1}>
+                                {item.title}
                             </Text>
-                        </View>
-                        <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
-                            <Text
-                                note
+                            <View
                                 style={{
-                                    fontSize: 10,
-                                    paddingLeft: 2,
-                                    paddingRight: 2,
-                                    zIndex: 1000,
-                                    backgroundColor: '#fdfdfd',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    width: '100%', alignSelf: 'center'
                                 }}>
-                                Rs. {item.price}{item.unit ? ("/" + item.unit) : ""}
-                            </Text>
-                        </View>
+                                <Icon name={'home'} size={10} color={colors.gray_200} />
+                                <Text
+                                    numberOfLines={1}
+                                    note
+                                    style={{ fontSize: 12, marginLeft: 3, marginRight: 0 }}>
+                                    {item.Service.title || ''}
+                                </Text>
+                            </View>
+                            <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
+                                <Text
+                                    note
+                                    style={{
+                                        fontSize: 10,
+                                        paddingLeft: 2,
+                                        paddingRight: 2,
+                                        zIndex: 1000,
+                                        backgroundColor: '#fdfdfd',
+                                    }}>
+                                    Rs. {item.price}{item.unit ? ("/" + item.unit) : ""}
+                                </Text>
+                            </View>
                         </Body>
                     </CardItem>
                 </View>
@@ -785,23 +785,32 @@ class Dashboard extends Component {
 
     closePickLocation() {
         // console.log('method Called');
-        this.setState({pickLocation: false});
+        this.setState({ pickLocation: false });
     }
 
+
+
+
+
     render() {
+        const { loggedUser } = this.state;
+        const profileImage=loggedUser? loggedUser.profile.profileImage : null;
+        console.log(loggedUser,profileImage)
         return (
-            <Container style={{flex: 1, backgroundColor: colors.appBackground}}>
+            <Container style={{ flex: 1, backgroundColor: colors.appBackground }}>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{backgroundColor: colors.appLayout}}>
-                    <Left style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        <CogMenu componentId={this.props.componentId}/>
-                        {this.state.loggedUser ?
+                    style={{ backgroundColor: colors.appLayout }}>
+                    <Left style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                        <CogMenu componentId={this.props.componentId} />
+                        {loggedUser ?
                             <TouchableOpacity onPress={() => goToRoute(this.props.componentId, 'Profile')}
-                                              style={{borderColor: 'white', borderWidth: 1, borderRadius: 18}}>
-
-                                <Avatar.Image style={{backgroundColor: 'white'}} size={35}
-                                              source={this.state.loggedUser.profile.profileImage ? {uri: MyFunctions.getProfileImage(this.state.loggedUser.profile.profileImage)} : require('../images/user-icon.png')}/>
+                                style={{ borderColor: 'white', borderWidth: 1, borderRadius: 18 }}>
+                                {profileImage ?
+                                    <Avatar.Image style={{ backgroundColor: 'white' }} size={35}
+                                        source={{ uri: MyFunctions.getProfileImage(profileImage) }} /> :
+                                    <Avatar.Image style={{ backgroundColor: 'white' }} size={35}
+                                        source={require('../images/user-icon.png')} />}
 
                             </TouchableOpacity> : null}
                     </Left>
@@ -811,13 +820,13 @@ class Dashboard extends Component {
                     {/*</Text>*/}
                     {/*</Body>*/}
 
-                    <Right style={{flex: 1, marginRight: 5}}>
+                    <Right style={{ flex: 1, marginRight: 5 }}>
                         <Button
                             onPress={() => goToRoute(this.props.componentId, 'WishListEF')}
                             transparent>
-                            <Icon name="heart" style={{fontSize: 24, color: 'white'}}/>
+                            <Icon name="heart" style={{ fontSize: 24, color: 'white' }} />
                             {this.state.wishList.length > 0 ? (
-                                <Badge style={{position: 'absolute', top: 0, right: 0}}>
+                                <Badge style={{ position: 'absolute', top: 0, right: 3, borderWidth: 2, borderColor: colors.primary }}>
                                     {/*<Text*/}
                                     {/*style={{*/}
                                     {/*fontSize: 10,*/}
@@ -833,9 +842,9 @@ class Dashboard extends Component {
                         <Button
                             onPress={() => goToRoute(this.props.componentId, 'CartEF')}
                             transparent>
-                            <NBIcon name="ios-cart" style={{fontSize: 27, color: 'white'}}/>
+                            <NBIcon name="ios-cart" style={{ fontSize: 27, color: 'white' }} />
                             {this.state.totalCount > 0 ? (
-                                <Badge style={{position: 'absolute', top: 0, right: 0}}>
+                                <Badge style={{ position: 'absolute', top: 0, right: 3, borderWidth: 2, borderColor: colors.primary }}>
                                     {/*<Text*/}
                                     {/*style={{*/}
                                     {/*fontSize: 10,*/}
@@ -853,10 +862,10 @@ class Dashboard extends Component {
                             transparent>
                             <NBIcon
                                 name="ios-notifications"
-                                style={{fontSize: 29, color: 'white'}}
+                                style={{ fontSize: 29, color: 'white' }}
                             />
                             {this.state.notificationCount > 0 ? (
-                                <Badge style={{position: 'absolute', top: 0, right: 0}}>
+                                <Badge style={{ position: 'absolute', top: 0, right: 3, borderWidth: 2, borderColor: colors.primary }}>
                                     {/*<Text*/}
                                     {/*style={{*/}
                                     {/*fontSize: 10,*/}
@@ -907,13 +916,13 @@ class Dashboard extends Component {
                             />
                         </Button>
                         <Input
-                            style={{fontFamily: 'Roboto'}}
+                            style={{ fontFamily: 'Roboto' }}
                             placeholder={'Search your wish..'}
                             underlineColorAndroid="rgba(0,0,0,0)"
                             returnKeyType="search"
                             onSubmitEditing={this._search}
                             onChangeText={searchText => {
-                                this.setState({query: searchText});
+                                this.setState({ query: searchText });
                             }}
                         />
                     </Item>
@@ -945,12 +954,12 @@ class Dashboard extends Component {
                                 </Button>
                             </View>
                             <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
+                                contentContainerStyle={{ paddingBottom: 15 }}
                                 data={this.state.nearByservice}
                                 horizontal={true}
                                 _keyExtractor={(item, index) => index.toString()}
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={({item, index}) => (
+                                renderItem={({ item, index }) => (
                                     <TouchableOpacity
                                         onPress={() => {
                                             goToRoute(this.props.componentId, 'ServiceDetail', {
@@ -969,7 +978,7 @@ class Dashboard extends Component {
                                                 paddingHorizontal: 10,
                                                 paddingBottom: 10,
                                             }}>
-                                            <View style={{height: 90, width: 150,}}>
+                                            <View style={{ height: 90, width: 150, }}>
                                                 <Thumbnail
                                                     style={{
                                                         width: 150,
@@ -982,7 +991,7 @@ class Dashboard extends Component {
                                                     square
                                                     source={
                                                         item.coverImage
-                                                            ? {uri: settings.IMAGE_URL + item.coverImage}
+                                                            ? { uri: settings.IMAGE_URL + item.coverImage }
                                                             : require('../images/no-image.png')
                                                     }
                                                 />
@@ -995,10 +1004,10 @@ class Dashboard extends Component {
                                                         padding: 5,
                                                         paddingTop: 10,
                                                     }}>
-                                                    <Text style={{color: 'white', fontSize: 12}}>{item.title}</Text>
+                                                    <Text style={{ color: 'white', fontSize: 12 }}>{item.title}</Text>
                                                 </LinearGradient>
                                             </View>
-                                            <View style={{flexDirection: 'row', padding: 5}}>
+                                            <View style={{ flexDirection: 'row', padding: 5 }}>
                                                 <View
                                                     style={{
                                                         flex: 3,
@@ -1023,7 +1032,7 @@ class Dashboard extends Component {
                                                             <Text
                                                                 numberOfLines={1}
                                                                 note
-                                                                style={{marginLeft: 5, fontSize: 12}}>
+                                                                style={{ marginLeft: 5, fontSize: 12 }}>
                                                                 {item.category.mainCategory || ''}
                                                             </Text>
                                                         </View>
@@ -1042,7 +1051,7 @@ class Dashboard extends Component {
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
                                                             }}>
-                                                            <Text note style={{fontSize: 12}}>
+                                                            <Text note style={{ fontSize: 12 }}>
                                                                 {item.hasOwnProperty('ratings')
                                                                     ? Math.round(item.Rating.avgRate)
                                                                     : 1}
@@ -1061,7 +1070,7 @@ class Dashboard extends Component {
                                                             }}>
                                                             {/*<Icon name={'location-arrow'} size={18}*/}
                                                             {/*color={colors.gray_200}/>*/}
-                                                            <Text note style={{fontSize: 12}}>
+                                                            <Text note style={{ fontSize: 12 }}>
                                                                 {Math.round(item.dist.calculated * 100) / 100}{' '}
                                                                 K.M away
                                                             </Text>
@@ -1103,15 +1112,15 @@ class Dashboard extends Component {
                         <View
                             style={[
                                 styles.blockBody,
-                                {marginTop: 10, marginBottom: 15, padding: 0},
+                                { marginTop: 10, marginBottom: 15, padding: 0 },
                             ]}>
                             <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
+                                contentContainerStyle={{ paddingBottom: 15 }}
                                 data={this.state.resturants}
                                 horizontal={true}
                                 _keyExtractor={(item, index) => index.toString()}
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={({item, index}) => (
+                                renderItem={({ item, index }) => (
                                     <View
                                         key={item._id}
                                         style={[
@@ -1122,13 +1131,13 @@ class Dashboard extends Component {
                                             },
                                         ]}>
                                         <TouchableOpacity
-                                            onPress={item.hasOwnProperty('onPress') ? item.onPress : () => goToRoute(this.props.componentId, 'ServiceDetail', {Id: item})}>
+                                            onPress={item.hasOwnProperty('onPress') ? item.onPress : () => goToRoute(this.props.componentId, 'ServiceDetail', { Id: item })}>
                                             <View>
                                                 <Image
                                                     onPress={() => item.onPress}
                                                     source={
                                                         item.hasOwnProperty('coverImage')
-                                                            ? {uri: settings.IMAGE_URL + item.coverImage}
+                                                            ? { uri: settings.IMAGE_URL + item.coverImage }
                                                             : item.imgSource
                                                     }
                                                     style={{
@@ -1170,7 +1179,7 @@ class Dashboard extends Component {
 
                     {/*SPECIAL RESTURANT LISTING END*/}
 
-                    <View style={[styles.block, {marginVertical: 20}]}>
+                    <View style={[styles.block, { marginVertical: 20 }]}>
                         {this.state.Adds.length > 0 ? (
                             <View
                                 style={{
@@ -1215,7 +1224,7 @@ class Dashboard extends Component {
                                 </Button>
                             </View>
                             <FlatList
-                                contentContainerStyle={{paddingBottom: 15}}
+                                contentContainerStyle={{ paddingBottom: 15 }}
                                 data={this.state.popularProducts}
                                 horizontal={true}
                                 // _keyExtractor={(item, index) => index.toString()}
@@ -1234,11 +1243,11 @@ class Dashboard extends Component {
 
                     {/*CATEGORIES LIST START*/}
                     {this.state.categories.length > 0 ? (
-                        <View style={[styles.block, {marginBottom: 80}]}>
+                        <View style={[styles.block, { marginBottom: 80 }]}>
                             <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent
-                                        onPress={() => this.setViewAll()}>
+                                    onPress={() => this.setViewAll()}>
                                     <Text
                                         style={customStyle.buttonOutlinePrimaryText}>{this.state.viewAll ? 'Vew Less' : 'View All'}</Text></Button>
                             </View>
@@ -1256,7 +1265,7 @@ class Dashboard extends Component {
                                 _keyExtractor={(item, index) => index.toString()}
                                 // showsHorizontalScrollIndicator={false}
                                 renderItem={this.renderCategoryItem}
-                                //  numColumns={3}
+                            //  numColumns={3}
                             />
                             {/*  {this.state.viewAll? null:
                           <Button onPress={() => {this.setViewAll()}}

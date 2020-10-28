@@ -146,12 +146,15 @@ class App extends Component {
                         .android.setAutoCancel(true)
                         .android.setVibrate(1000);
                     if (notification.data.image)
+                    {
+                    const image=settings.IMAGE_URL + notification.data.image;
                         notification_to_be_displayed.android.setBigPicture(
-                            settings.IMAGE_URL + notification.data.image,
+                           image ,
                             getProfileImage(notification.data.icon),
                             notification.title,
                             notification.body,
                         );
+                    }
                     else
                         notification_to_be_displayed.android.setBigText(notification.body);
 
@@ -232,6 +235,7 @@ class App extends Component {
 
             // Display a notification
             if (Platform.OS == 'android') {
+                const image=settings.IMAGE_URL + message.data.image;
                 await notifee.displayNotification({
                     title: notification.title,
                     subtitle: 'subtitle',
@@ -242,7 +246,7 @@ class App extends Component {
                          smallIcon: 'ic_small_icon',
                         largeIcon:message.data.icon? getProfileImage(message.data.icon):null,
                         style: message.data.image ?
-                            {type: AndroidStyle.BIGPICTURE, picture: settings.IMAGE_URL + message.data.image} :
+                            {type: AndroidStyle.BIGPICTURE, picture: image} :
                             {type: AndroidStyle.BIGTEXT, text: message.data.body},
                     },
                 });

@@ -147,7 +147,7 @@ _callPhone = number => {
     return (
       <Provider theme={customPaperTheme}>
         <View style={styles.listBox}>
-          <ListItem style={{paddingRight: 10}}>
+          <ListItem style={{}}>
             <Left style={{flex: 3, flexDirection: 'column'}}>
               <TouchableOpacity
                 onPress={() => {
@@ -194,20 +194,21 @@ _callPhone = number => {
                 </View>:null}
               <Caption>{service.location.formatted_address || ''}</Caption>
             </TouchableOpacity>
+
+
             <Right
               style={{
                 flex: 1,
-                flexDirection: 'column',
+                flexDirection: 'row',
                 alignItems: 'flex-end',
               }}>
-
-
               <TouchableOpacity
                 style={{
-                  width: 38,
-                  height: 38,
+                  width: 40,
+                  height: 40,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  alignSelf:'flex-end'
                 }}
                 onPress={() => {}}>
                 <Menu

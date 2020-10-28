@@ -8,7 +8,12 @@ Template.Advertisements.helpers({
     }
 });
 
+Template.Advertisements.onCreated(()=>{
+    this.subscribe("adminGallery");
+})
+
 Template.Advertisements.rendered = () => {
+    // Meteor.subscribe('adminGallery');
     $(".image-checkbox").each(function () {
         if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
             $(this).addClass('image-checkbox-checked');
@@ -17,7 +22,6 @@ Template.Advertisements.rendered = () => {
         }
     });
 };
-
 
 Template.Advertisements.events({
     'click #addNewGalleryItem': () => {
