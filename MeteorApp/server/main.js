@@ -101,8 +101,8 @@ Meteor.startup(function () {
         } else {
             console.log('No default user!  Please invoke meteor with a settings file.');
         }
-    }
-    ;
+    };
+    
     if (!Meteor.users.findOne({'profile.role': 111})) {
         if (!!Meteor.settings.private.GRAccount) {
             Accounts.createUser({
@@ -121,7 +121,6 @@ Meteor.startup(function () {
             console.log('No GRAccount user!  Please invoke meteor with a settings file.');
         }
     }
-
     if (!Meteor.users.findOne({'profile.role': 222})) {
         if (!!Meteor.settings.private.EFAccount) {
             Accounts.createUser({
@@ -140,6 +139,9 @@ Meteor.startup(function () {
             console.log('No EFAccount user!  Please invoke meteor with a settings file.');
         }
     }
+
+    // console.log('Users',Meteor.users.find({'profile.role':{$in : [111,222]}}).fetch())
+    // Meteor.users.update({'profile.role':{$in : [111,222]}},{$set:{'emails.$.verified': true}}, { "multi": true });
 
     // if(Notifications.find().count()===0){
     //     Notifications.insert({

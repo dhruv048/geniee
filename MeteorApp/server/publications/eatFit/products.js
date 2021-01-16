@@ -2,8 +2,9 @@
 import {EFProducts} from "../../../lib/collections/eatFit/efProducts";
 import {EFCategories} from "../../../lib/collections/eatFit/efCategories";
 
+
 Meteor.publish('allcategoriesEF',function(){
-    return EFCategories.find()
+    return EFCategories.find();
 });
 
 Meteor.publish('productsEF',(Id)=>{

@@ -98,17 +98,20 @@ class ProductsEF extends Component {
     clickEventListener() {
         Alert.alert("Success", "Product has been added to cart")
     }
+    _productPress=(componentId,item)=>{
+        // Alert.alert('Pressed')
+        goToRoute(componentId,"ProductDetailEF", {'Id': item._id,data:item})
+    }
 
-
-    _renderProduct = (data, index) => {
+    _renderProduct = ( data, index,compId) => {
         let item = data.item;
-        console.log(item);
+        console.log(item,compId);
         return (
             <View style={styles.col}>
-                <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetailEF", {'Id': item._id,data:item})} style={styles.containerStyle}>
+                 <TouchableOpacity onPress={()=>this._productPress(this.props.componentId,item)} style={styles.containerStyle}> 
                     <Product key={item._id} product={item}/>
-                </TouchableOpacity>
-            </View>
+                    </TouchableOpacity>
+            </View>   
         )
     }
 
@@ -165,7 +168,7 @@ class ProductsEF extends Component {
                                   keyExtracter={(item, index) => item._id}
                                   horizontal={false}
                                   numColumns={2}
-                                  renderItem={(item, index) => this._renderProduct(item, index)}
+                                  renderItem={(item, index) => this._renderProduct(item, index,this.props.componentId)}
                         />
                     </Content>
                 </Container>

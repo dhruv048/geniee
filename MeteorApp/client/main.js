@@ -78,20 +78,20 @@ import "../imports/client/ui/pages/eatFit/order/orders";
 // Meteor.startup(function () {
 //     FlowRouter.initialize({hashbang: true});
 // });
-Meteor.subscribe('loggedUser');
-FlowRouter.wait();
-Tracker.autorun(() => {
-    let handle=Meteor.subscribe('loggedUser');
-    console.log('autorun',Meteor.user(),handle.ready());
-    // wait on roles to intialise so we can check is use is in proper role
-    if ((handle.ready()|| Meteor.user()) && !FlowRouter._initialized) {
-        if(Meteor.user())
-        Session.set('loggedUserRole',Meteor.user().profile.role)
-        else{
-            Session.set('loggedUserRole',null)
-        }
-        FlowRouter.initialize()
-    }else{
-        Meteor.subscribe('loggedUser');
-    }
-});
+// Meteor.subscribe('loggedUser');
+// FlowRouter.wait();
+// Tracker.autorun(() => {
+//     let handle=Meteor.subscribe('loggedUser');
+//     console.log('autorun',Meteor.user(),handle.ready());
+//     // wait on roles to intialise so we can check is use is in proper role
+//     if ((handle.ready()|| Meteor.user()) && !FlowRouter._initialized) {
+//         if(Meteor.user())
+//         Session.set('loggedUserRole',Meteor.user().profile.role)
+//         else{
+//             Session.set('loggedUserRole',null)
+//         }
+//         FlowRouter.initialize()
+//     }else{
+//         Meteor.subscribe('loggedUser');
+//     }
+// });

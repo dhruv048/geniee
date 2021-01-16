@@ -1,22 +1,22 @@
 
-// let API_URL='http://192.168.1.245:3000/api/';
-// let IMAGE_URL='http://192.168.1.245:3000/api/images/';
-// let WEB_URL='http://192.168.1.245:3000/';
-// let METEOR_URL = 'ws://192.168.1.245:3000/websocket';
+let API_URL='http://192.168.0.104:3000/api/';
+let IMAGE_URL='http://192.168.0.104:3000/api/images/';
+let WEB_URL='http://192.168.0.104:3000/';
+let METEOR_URL = 'ws://192.168.0.104:3000/websocket';
 
 
-let API_URL = "http://198.167.140.2/api/";
-let IMAGE_URL='http://198.167.140.2/api/images/';
-let METEOR_URL = 'wss://api.krishisansaar.com/websocket';
-let WEB_URL = "http://198.167.140.2/";
+// let API_URL = "http://198.167.140.2/api/";
+// let IMAGE_URL='http://198.167.140.2/api/images/';
+// let METEOR_URL = 'wss://139.59.59.117/websocket';
+// let WEB_URL = "http://198.167.140.2/";
 
 
 
 if(process.env.NODE_ENV === "production"){
-     API_URL = "http://198.167.140.2/api/";
-     IMAGE_URL='http://198.167.140.2/api/images/';
-     METEOR_URL = 'wss://api.krishisansaar.com/websocket';
-     WEB_URL = "http://198.167.140.2/";
+     API_URL = "http://139.59.59.117/api/";
+     IMAGE_URL='http://139.59.59.117/api/images/';
+     METEOR_URL = 'wss://139.59.59.117/websocket';
+     WEB_URL = "http://139.59.59.117/";
 }
 
 export const Urls={

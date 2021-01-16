@@ -14,7 +14,7 @@ Meteor.methods({
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach(image => {
-                    console.log(image.name,image.type,image.data)
+                    // console.log(image.name,image.type,image.data)
                     let Id = moment().format('DDMMYYx');
                     EFProductImages.write(new Buffer(image.data, 'base64'),
                         {
@@ -37,7 +37,7 @@ Meteor.methods({
                                     const notification={
                                         title:'New Product by- EAT-FIT',
                                         description: productInfo.title,
-                                        owner: Meteor.userId(),
+                                        owner: currentUserId,
                                         productOwner:ProductOwner.EAT_FIT,
                                         navigateId: Id,
                                         receiver:[],
@@ -256,4 +256,8 @@ Meteor.methods({
                 }
             })
     },
+
+    'removeProductEF':(Id)=>{
+        EFProducts.remove(Id);
+    }
 })

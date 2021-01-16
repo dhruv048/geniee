@@ -6,3 +6,5 @@ Geniee/app/config/settings.js
 Geniee/package-lock.json
 Geniee/android/app/build/
 Geniee/android/build/
+GenieeServer/node_modules/
+.vscode/

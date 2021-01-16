@@ -112,7 +112,6 @@ class ServiceDetail extends Component {
             // You could also display a dialog with the link to the app store.
             throw new Error(`Cannot resolve activity for intent . Did you install the app?`);
         }
-
         const response = await RNEsewaSdk.makePayment('1').then(function (response) {
             return response
         }).catch(function (error) {
@@ -120,13 +119,10 @@ class ServiceDetail extends Component {
             // ADD THIS THROW error
             throw error;
         });
-
         // if (response.resultCode !== RNEsewaSdk.OK) {
         //     throw new Error('Invalid result from child activity.');
         // }
         console.log(response.data);
-
-
         return response.data;
     };
 
@@ -234,9 +230,9 @@ class ServiceDetail extends Component {
         let item=data.item;
         return(
             <View style={styles.col}>
-            <View style={styles.containerStyle}>
+            <TouchableOpacity onPress={()=>{goToRoute(this.props.componentId,"ProductDetail", {'Id': item._id,data:item})}} style={styles.containerStyle}>
             <Product key={item._id} product={item} componentId={this.props.componentId}  bottomTab={true} />
-            </View>
+            </TouchableOpacity>
             </View>
         )
     };

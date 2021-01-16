@@ -16,7 +16,6 @@ var loggedIn = FlowRouter.group({
         if (!(Meteor.loggingIn() || Meteor.userId())) {
             console.log('LoggedIn',Meteor.user());
             route = FlowRouter.current();
-
             if (!(route.route.name == 'login')) {
                 Session.set('redirectAfterLogin', route.path)
             }
@@ -29,15 +28,15 @@ var loggedIn = FlowRouter.group({
 
 Accounts.onLogin(function () {
     console.log('OnLogin',Meteor.user());
-    Session.set('loggedUserRole',Meteor.user().profile.role)
+    Session.set('loggedUserRole',222)
     redirect = Session.get("redirectAfterLogin");
-    if (redirect != null) {
-        if (redirect != '/admin/login')
-            FlowRouter.go(redirect);
-        else
-            FlowRouter.go('/admin/');
+    // if (redirect != null) {
+    //     if (redirect != '/admin/login')
+    //         FlowRouter.go(redirect);
+    //     else
+    //         FlowRouter.go('/admin/');
 
-    }
+    // }
 });
 
 
@@ -121,7 +120,7 @@ adminRoutes.route('/categories', {
     triggersEnter: [function () {
         Meteor.subscribe('storeCategory');
         Meteor.subscribe('allgrcategories');
-        Meteor.subscribe('allgrcategoriesEF');
+        Meteor.subscribe('allcategoriesEF');
     }]
 })
 

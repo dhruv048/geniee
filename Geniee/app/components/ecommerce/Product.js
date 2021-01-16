@@ -133,7 +133,7 @@ export default class Product extends PureComponent {
         // console.log(product)
         return (
             <View style={[customStyle.Card, style.card]}>
-                <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': product._id,data:product})}>
+                {/* <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': product._id,data:product})}> */}
                 <Image source={{uri: settings.IMAGE_URL + product.images[0]}} style={style.thumbnail}/>
                 <View style={style.cardDetails}>
                     <Text style={style.productTitle}
@@ -143,7 +143,7 @@ export default class Product extends PureComponent {
                     <Text numberOfLines={1} note>{product.Service.title}</Text>:null}
 
                 </View>
-                </TouchableOpacity>
+                {/* </TouchableOpacity> */}
                 {bottomTab && product.serviceOwner!=Meteor.userId()?
                     <>
                         <Divider style={{width:'90%',alignSelf:'center'}} />

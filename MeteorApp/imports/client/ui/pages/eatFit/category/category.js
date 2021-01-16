@@ -1,14 +1,17 @@
-import {EFCategories} from "../../../../../../lib/collections/eatFit/efCategories";
+import { EFCategories } from "../../../../../../lib/collections/eatFit/efCategories";
 
 
-Template.categoriesEF.onRendered(function () {
-// $('#dataTable').DataTable();
+Template.categoriesEF.onCreated(function () {
+    // $('#dataTable').DataTable();
+    Meteor.subscribe('allcategoriesEF',()=>{
+        console.log(EFCategories.find().fetch())
+    });
 });
 
 Template.categoriesEF.helpers({
     categories: () => {
         console.log(EFCategories.find().fetch())
-        return EFCategories.find().fetch();
+        return EFCategories.find();
     }
 })
 
@@ -48,15 +51,15 @@ Template.categoriesEF.events({
 
     'click .removeCategory': function (e, t) {
         e.preventDefault();
-// new Confirmation({
-// message: "Are you sure, you want to remove this news ?",
-// title: "Confirmation",
-// cancelText: "Cancel",
-// okText: "Ok",
-// success: true, // whether the button should be green or red
-// focus: "cancel" // which button to autofocus, "cancel" (default) or "ok", or "none"
-// }, function (ok) {
-// // ok is true if the user clicked on "ok", false otherwise
+        // new Confirmation({
+        // message: "Are you sure, you want to remove this news ?",
+        // title: "Confirmation",
+        // cancelText: "Cancel",
+        // okText: "Ok",
+        // success: true, // whether the button should be green or red
+        // focus: "cancel" // which button to autofocus, "cancel" (default) or "ok", or "none"
+        // }, function (ok) {
+        // // ok is true if the user clicked on "ok", false otherwise
         let id = e.currentTarget.id;
         console.log('_id:' + e.currentTarget.id);
         Meteor.call('removeEFCategory', id, function (err) {
@@ -66,7 +69,7 @@ Template.categoriesEF.events({
             else
                 sAlert.success('News removed successfully!!!');
         })
-// });
+        // });
 
     }
 })
