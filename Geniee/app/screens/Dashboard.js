@@ -826,25 +826,19 @@ class Dashboard extends Component {
                                 </Badge>
                             ) : null}
                         </Button>
-                        <Button
+                        {/* <Button
                         style={{marginHorizontal:8 }}
                             onPress={() => goToRoute(this.props.componentId, 'WishListEF')}
                             transparent>
                             <Icon name="heart" style={{ fontSize: 22, color: 'white'}} />
                             {this.state.wishList.length > 0 ? (
                                 <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
-                                    {/*<Text*/}
-                                    {/*style={{*/}
-                                    {/*fontSize: 10,*/}
-                                    {/*fontWeight: '100',*/}
-                                    {/*color: 'white',*/}
-                                    {/*lineHeight: 18,*/}
-                                    {/*}}>*/}
+                                     
                                     {this.state.wishList.length}
-                                    {/*</Text>*/}
+                                    
                                 </Badge>
                             ) : null}
-                        </Button>
+                        </Button> */}
                         <Button
                         style={{marginHorizontal:8 }}
                             onPress={() => goToRoute(this.props.componentId, 'CartEF')}
@@ -956,7 +950,7 @@ class Dashboard extends Component {
                                 </Button>
                             </View>
                             <FlatList
-                                contentContainerStyle={{ paddingBottom: 15 }}
+                                contentContainerStyle={{ paddingBottom: 15 , paddingLeft: 0, marginLeft:0}}
                                 data={this.state.nearByservice}
                                 horizontal={true}
                                 _keyExtractor={(item, index) => index.toString()}
@@ -972,22 +966,22 @@ class Dashboard extends Component {
                                             key={item._id}
                                             style={{
                                                 backgroundColor: 'white',
-                                                marginHorizontal: 5,
-                                                width: 150,
-                                                borderRadius: 4,
+                                                marginRight: 5,
+                                                // height: 120,
+                                                width: 280,
                                                 flexDirection: 'column',
-                                                alignItems: 'center',
-                                                paddingHorizontal: 10,
-                                                paddingBottom: 10,
+                                                // alignItems: 'center',
+                                                // paddingHorizontal: 10,
+                                                // paddingBottom: 10,
+                                                borderRadius: 10
                                             }}>
-                                            <View style={{ height: 90, width: 150, }}>
+                                            <View style={{ height: 120, width: 280,  borderRadius: 10,}}>
                                                 <Thumbnail
                                                     style={{
-                                                        width: 150,
-                                                        height: 90,
+                                                        width: 280,
+                                                        height: 120,
                                                         marginBottom: 10,
-                                                        borderTopLeftRadius: 4,
-                                                        borderTopRightRadius: 4,
+                                                        borderRadius:10,
                                                         resizeMode: 'cover',
                                                     }}
                                                     square
@@ -1005,15 +999,17 @@ class Dashboard extends Component {
                                                         width: '100%',
                                                         padding: 5,
                                                         paddingTop: 10,
+                                                       borderBottomLeftRadius:10,
+                                                       borderBottomRightRadius:10
                                                     }}>
-                                                    <Text style={{ color: 'white', fontSize: 12 }}>{item.title}</Text>
+                                                    <Text style={{ color: 'white', fontSize: 15 }}>{item.title}</Text>
                                                 </LinearGradient>
                                             </View>
                                             <View style={{ flexDirection: 'row', padding: 5 }}>
                                                 <View
                                                     style={{
                                                         flex: 3,
-                                                        alignItems: 'center',
+                                                        alignItems: 'flex-start',
                                                     }}>
                                                     {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
                                                     {/*{item.title}*/}
@@ -1028,13 +1024,12 @@ class Dashboard extends Component {
                                                             <Icon
                                                                 name={'tag'}
                                                                 size={10}
-                                                                color={colors.gray_200}
+                                                                color={colors.gray_100}
                                                             />
 
                                                             <Text
                                                                 numberOfLines={1}
-                                                                note
-                                                                style={{ marginLeft: 5, fontSize: 12 }}>
+                                                                style={{ marginLeft: 5, fontSize: 14 }}>
                                                                 {item.category.mainCategory || ''}
                                                             </Text>
                                                         </View>
@@ -1044,28 +1039,10 @@ class Dashboard extends Component {
                                                     <View
                                                         style={{
                                                             flexDirection: 'row',
-                                                            justifyContent: 'space-between',
+                                                            // justifyContent: 'space-between',
                                                             width: '100%',
                                                         }}>
-                                                        <View
-                                                            style={{
-                                                                flexDirection: 'row',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}>
-                                                            <Text note style={{ fontSize: 12 }}>
-                                                                {item.hasOwnProperty('ratings')
-                                                                    ? Math.round(item.Rating.avgRate)
-                                                                    : 1}
-                                                            </Text>
-
-                                                            <Icon
-                                                                name={'star'}
-                                                                size={12}
-                                                                color={colors.warning}
-                                                            />
-                                                        </View>
-                                                        <View
+                                                             <View
                                                             style={{
                                                                 alignItem: 'center',
                                                                 flexDirection: 'row',
@@ -1074,9 +1051,32 @@ class Dashboard extends Component {
                                                             {/*color={colors.gray_200}/>*/}
                                                             <Text note style={{ fontSize: 12 }}>
                                                                 {Math.round(item.dist.calculated * 100) / 100}{' '}
-                                                                K.M away
+                                                                km away
                                                             </Text>
                                                         </View>
+                                                        <View
+                                                            style={{
+                                                                marginLeft:10,
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}>
+                                                                 <NBIcon
+                                                                name={'star'}
+                                                                style={{fontSize:14,color:colors.gray_100}}
+                                                            />
+                                                            <Text note style={{ fontSize: 12,marginLeft:5 }}>
+                                                                {item.hasOwnProperty('ratings')
+                                                                    ? Math.round(item.Rating.avgRate)
+                                                                    : 1} (
+                                                                     {item.hasOwnProperty('ratings')
+                                                                    ? tem.Rating.count
+                                                                    : 0})
+                                                            </Text>
+
+                                                           
+                                                        </View>
+                                                       
                                                         {/*{item.Category?*/}
                                                         {/*<View style={{*/}
                                                         {/*flexDirection: 'row',*/}

@@ -20,7 +20,7 @@ import settings, {ProductOwner} from "../../config/settings";
 import {colors} from '../../config/styles';
 import {Navigation} from "react-native-navigation";
 import {goBack, goToRoute} from "../../Navigation";
-
+import FooterTabs from '../../components/FooterTab';
 class WishListEF extends Component {
     constructor(props) {
         super(props);
@@ -183,6 +183,7 @@ class WishListEF extends Component {
                         />
                     </Content>
                 }
+                 <FooterTabs route={'Favourite'} componentId={this.props.componentId}/>
             </Container>
         );
     }

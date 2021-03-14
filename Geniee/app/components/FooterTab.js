@@ -1,4 +1,4 @@
-import {Text, FooterTab,Footer,Button,  View} from "native-base";
+import {Text, FooterTab,Footer,Button,  View, Icon as NBIcon} from "native-base";
 import Icon from 'react-native-vector-icons/Feather'
 import React from "react";
 import { colors } from "../config/styles";
@@ -11,7 +11,7 @@ const FooterTabs = (props) => {
             <Button transparent style={{flex:1,flexDirection:'column', justifyContent:'center'}}
             onPress={()=> backToRoot(props.componentId)}
             >
-                <Icon name="home"style={{ color:props.route=='Home' ? colors.appLayout : colors.gray_200}} size={20}></Icon>
+                <NBIcon name="home"style={{ color:props.route=='Home' ? colors.appLayout : colors.gray_200}} size={20}></NBIcon>
                 {props.route=='Home'?
               <Text note style={{ color:colors.appLayout , fontSize: 8}}>Home</Text>
                :null} 
@@ -23,13 +23,17 @@ const FooterTabs = (props) => {
                 {props.route=='Chat'?
               <Text note style={{ color:colors.appLayout , fontSize: 8}}>Message</Text>:null}
             </Button>
+            <View style={{flex:1,justifyContent:'center', alignItems:'center'}}>
             <Button  style={{flexDirection:'column', justifyContent:'center', backgroundColor:colors.appLayout, height:40,width:40, borderRadius:20}} >
             <Icon name="plus" style={{ color:colors.whiteText}} size={25}></Icon>
             </Button>
-            <Button transparent style={{flex:1,flexDirection:'column', justifyContent:'center'}} >
+            </View>
+            <Button transparent style={{flex:1,flexDirection:'column', justifyContent:'center'}} 
+             onPress={()=>goToRoute(props.componentId,'WishListEF')}  
+            >
             <Icon name="heart" style={{ color:props.route=='Favourite' ? colors.appLayout : colors.gray_200}} size={20}></Icon>
                 {props.route=='Favourite'?
-              <Text note style={{ color:colors.appLayout , fontSize: 8}}>Favourite</Text>:null}
+              <Text note style={{ color:colors.appLayout , fontSize: 8}}>WishList</Text>:null}
             </Button>
             <Button transparent style={{flex:1,flexDirection:'column', justifyContent:'center'}} 
             onPress={()=>goToRoute(props.componentId,'SideMenu')}
