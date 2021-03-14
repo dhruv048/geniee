@@ -14,6 +14,7 @@ import {
     Image,
     TouchableWithoutFeedback,
     UIManager,
+    SafeAreaView
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Geolocation from 'react-native-geolocation-service';
@@ -35,7 +36,7 @@ import {
     Card,
     CardItem,
 } from 'native-base';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 import { colors, customStyle, variables } from '../config/styles';
 import { Navigation } from 'react-native-navigation';
 import { Badge, Avatar } from 'react-native-paper';
@@ -53,7 +54,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { goToRoute } from '../Navigation';
 import { getProfileImage } from '../config/settings';
 import LinearGradient from 'react-native-linear-gradient';
-
+import FooterTabs from '../components/FooterTab';
 let isDashBoard = true;
 
 class Dashboard extends Component {
@@ -797,36 +798,41 @@ class Dashboard extends Component {
         const profileImage=loggedUser? loggedUser.profile.profileImage : null;
         console.log(loggedUser,profileImage)
         return (
-            <Container style={{ flex: 1, backgroundColor: colors.appBackground }}>
-                <Header
-                    androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: colors.appLayout }}>
-                    <Left style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                        <CogMenu componentId={this.props.componentId} />
-                        {loggedUser ?
-                            <TouchableOpacity onPress={() => goToRoute(this.props.componentId, 'Profile')}
-                                style={{ borderColor: 'white', borderWidth: 1, borderRadius: 18 }}>
-                                {profileImage ?
-                                    <Avatar.Image style={{ backgroundColor: 'white' }} size={35}
-                                        source={{ uri: MyFunctions.getProfileImage(profileImage) }} /> :
-                                    <Avatar.Image style={{ backgroundColor: 'white' }} size={35}
-                                        source={require('../images/user-icon.png')} />}
-
-                            </TouchableOpacity> : null}
-                    </Left>
-                    {/*<Body>*/}
-                    {/*<Text onPress={this.handleOnPress} style={{color: 'white', fontSize: 18, fontWeight: '500'}}>*/}
-                    {/*Home*/}
-                    {/*</Text>*/}
-                    {/*</Body>*/}
-
-                    <Right style={{ flex: 1, marginRight: 5 }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+                
+                <View style={{backgroundColor:colors.appLayout, height:this.state.isActionButtonVisible ? 100 :50}}>
+                    <View style={{flex:1,flexDirection:'row', justifyContent:'space-between', marginHorizontal:15}}>
+                        <Text style={{fontSize:25,  fontWeight:'bold', color:'white', fontFamily:'Roboto'}}>Geniee</Text>
+                        <View style={{ justifyContent:'space-around',  flexDirection:'row' }}>
                         <Button
+                        style={{marginHorizontal:8 }}
+                            onPress={() => goToRoute(this.props.componentId, 'Notification')}
+                            transparent>
+                            <Icon
+                                name="bell"
+                                style={{ fontSize: 22, color: 'white' }}
+                            />
+                            {this.state.notificationCount > 0 ? (
+                                <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
+                                    {/*<Text*/}
+                                    {/*style={{*/}
+                                    {/*fontSize: 10,*/}
+                                    {/*fontWeight: '100',*/}
+                                    {/*color: 'white',*/}
+                                    {/*lineHeight: 18,*/}
+                                    {/*}}>*/}
+                                    {this.state.notificationCount}
+                                    {/*</Text>*/}
+                                </Badge>
+                            ) : null}
+                        </Button>
+                        <Button
+                        style={{marginHorizontal:8 }}
                             onPress={() => goToRoute(this.props.componentId, 'WishListEF')}
                             transparent>
-                            <Icon name="heart" style={{ fontSize: 24, color: 'white' }} />
+                            <Icon name="heart" style={{ fontSize: 22, color: 'white'}} />
                             {this.state.wishList.length > 0 ? (
-                                <Badge style={{ position: 'absolute', top: 0, right: 3, borderWidth: 2, borderColor: colors.primary }}>
+                                <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
                                     {/*<Text*/}
                                     {/*style={{*/}
                                     {/*fontSize: 10,*/}
@@ -840,11 +846,12 @@ class Dashboard extends Component {
                             ) : null}
                         </Button>
                         <Button
+                        style={{marginHorizontal:8 }}
                             onPress={() => goToRoute(this.props.componentId, 'CartEF')}
                             transparent>
-                            <NBIcon name="ios-cart" style={{ fontSize: 27, color: 'white' }} />
+                            <Icon name="shopping-bag" style={{ fontSize: 22, color: 'white' }} />
                             {this.state.totalCount > 0 ? (
-                                <Badge style={{ position: 'absolute', top: 0, right: 3, borderWidth: 2, borderColor: colors.primary }}>
+                                <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
                                     {/*<Text*/}
                                     {/*style={{*/}
                                     {/*fontSize: 10,*/}
@@ -857,49 +864,38 @@ class Dashboard extends Component {
                                 </Badge>
                             ) : null}
                         </Button>
+                       
+
                         <Button
-                            onPress={() => goToRoute(this.props.componentId, 'Notification')}
+                        style={{marginHorizontal:8 }}
+                            onPress={() => goToRoute(this.props.componentId, loggedUser ? 'Profile': 'SignIn')}
                             transparent>
-                            <NBIcon
-                                name="ios-notifications"
-                                style={{ fontSize: 29, color: 'white' }}
+                            <Icon
+                                name="user"
+                                style={{ fontSize: 22, color: 'white' }}
                             />
-                            {this.state.notificationCount > 0 ? (
-                                <Badge style={{ position: 'absolute', top: 0, right: 3, borderWidth: 2, borderColor: colors.primary }}>
-                                    {/*<Text*/}
-                                    {/*style={{*/}
-                                    {/*fontSize: 10,*/}
-                                    {/*fontWeight: '100',*/}
-                                    {/*color: 'white',*/}
-                                    {/*lineHeight: 18,*/}
-                                    {/*}}>*/}
-                                    {this.state.notificationCount}
-                                    {/*</Text>*/}
-                                </Badge>
-                            ) : null}
-                        </Button>
+                            </Button>
                         {/*<Button transparent onPress={this.handleOnPress}>*/}
                         {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
-                    </Right>
-                </Header>
-                {/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
+                    </View>
+                    </View>
                 {this.state.isActionButtonVisible ? (
                     <Item
-                        rounded
                         search
-                        boadered
                         style={{
-                            backgroundColor: 'white',
+                            backgroundColor: '#cce0ff',
                             marginLeft: 10,
                             marginRight: 10,
                             marginVertical: 10,
-                            marginTop: 10,
+                            marginTop: 15,
                             height: 40,
                             zIndex: 1,
-                            position: 'absolute',
-                            top: Platform.OS == 'android' ? 70 : 90,
-                            left: 0,
-                            right: 0,
+                            borderRadius:8,
+                            borderBottomWidth:0
+                            // position: 'absolute',
+                            // top: Platform.OS == 'android' ? 70 : 90,
+                            // left: 0,
+                            // right: 0,
                         }}>
                         <Button
                             transparent
@@ -917,7 +913,7 @@ class Dashboard extends Component {
                         </Button>
                         <Input
                             style={{ fontFamily: 'Roboto' }}
-                            placeholder={'Search your wish..'}
+                            placeholder={'Search anything...'}
                             underlineColorAndroid="rgba(0,0,0,0)"
                             returnKeyType="search"
                             onSubmitEditing={this._search}
@@ -928,29 +924,35 @@ class Dashboard extends Component {
                     </Item>
                 ) : null}
 
+                </View>
+                {/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
+                
+
                 <Content
                     onScroll={this._onScroll}
                     style={{
                         width: '100%',
                         flex: 1,
-                        paddingHorizontal: 10,
-                        paddingTop: 80,
+                        paddingLeft: 10,
+                         paddingTop: 10,
                     }}>
                     {/*NEARBY SERVICE PROVIDERS LIST START*/}
                     {this.state.nearByservice.length > 0 ? (
                         <View style={styles.block}>
                             <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Services/Stores Nearby</Text>
+                                <Text style={styles.blockTitle}>Services/Store nearby</Text>
                                 <Button
+                                style={{paddingRight:10}}
                                     transparent
                                     onPress={() =>
                                         goToRoute(this.props.componentId, 'ServiceList', {
                                             Region: this.region,
                                         })
                                     }>
-                                    <Text style={customStyle.buttonOutlinePrimaryText}>
+                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
                                         View All
-                                    </Text>
+                                    </Text> */}
+                                    <Icon name="arrow-right" size={20} color={colors.gray_200}/>
                                 </Button>
                             </View>
                             <FlatList
@@ -1107,7 +1109,6 @@ class Dashboard extends Component {
                             <Text style={styles.blockTitle}>
                                 Hungry? Order delicious foods now.
                             </Text>
-
                         </View>
                         <View
                             style={[
@@ -1212,15 +1213,17 @@ class Dashboard extends Component {
                             <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Popular Products</Text>
                                 <Button
+                                    style={{ paddingRight: 10 }}
                                     transparent
                                     onPress={() =>
                                         goToRoute(this.props.componentId, 'AllProducts', {
                                             Region: this.region,
                                         })
                                     }>
-                                    <Text style={customStyle.buttonOutlinePrimaryText}>
+                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
                                         View All
-                                    </Text>
+                                    </Text> */}
+                                    <Icon name="arrow-right" size={20} color={colors.gray_200} />
                                 </Button>
                             </View>
                             <FlatList
@@ -1276,7 +1279,8 @@ class Dashboard extends Component {
 
 
                 </Content>
-            </Container>
+                <FooterTabs route={'Home'} componentId={this.props.componentId}/>
+            </SafeAreaView>
         );
     }
 }
@@ -1288,7 +1292,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     containerStyle: {
-        paddingHorizontal: 5,
+        paddingLeft: 5,
         paddingVertical: 5,
         backgroundColor: 'white',
         borderWidth: 0,
@@ -1402,14 +1406,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // borderBottomWidth: 1,
         borderColor: '#E2E2E2',
-        paddingHorizontal: 15,
+        // paddingHorizontal: 15,
         //  backgroundColor:'white'
     },
     blockTitle: {
         fontSize: 18,
-        fontWeight: '500',
+        fontWeight: '600',
         fontFamily: 'Roboto',
-        color: colors.primary,
+        color: colors.gray_100,
     },
     blockBody: {
         padding: 10,

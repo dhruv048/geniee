@@ -24,6 +24,7 @@ import {
   backToRoot,
   goToRoute,
 } from '../../Navigation';
+import FooterTabs from '../../components/FooterTab';
 
 class ChatList extends Component {
   constructor(props) {
@@ -156,6 +157,7 @@ class ChatList extends Component {
             keyExtractor={item => item._id}
           />
         </Content>
+        <FooterTabs route={'Chat'} componentId={this.props.componentId}/>
       </Container>
     );
   }

@@ -1,7 +1,7 @@
 import React, {PureComponent,Fragment} from 'react';
 import {Body, Container, Content, Header, Icon, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
-import {StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity,SafeAreaView} from "react-native";
+import {StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity,SafeAreaView,BackHandler} from "react-native";
 import {Navigation} from "react-native-navigation/lib/dist/index";
 import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 import ContactUs from "./ContactUs";
@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import MessageCount from "../components/MessageCount/MessageCount";
 import settings , {getProfileImage} from "../config/settings";
 import DeviceInfo from 'react-native-device-info';
+import FooterTabs from '../components/FooterTab';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 
@@ -27,6 +28,7 @@ class SideMenu extends PureComponent {
 
     async componentDidMount() {
         let Token=await AsyncStorage.getItem(USER_TOKEN_KEY);
+        BackHandler.addEventListener('hardwareBackPress', this.handleBack);
         let loggedUser=await AsyncStorage.getItem("loggedUser");
         loggedUser=loggedUser?  JSON.parse(loggedUser) : null;
         Navigation.events().bindComponent(this);
@@ -46,11 +48,20 @@ class SideMenu extends PureComponent {
             })
         });
     }
+    handleBack=()=>{
+            console.log('handlebackpress')
+            // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
+            goBack(this.props.componentId);
+            return true;
+    }
 
     componentWillReceiveProps(newProps) {
       //  this.setState({isLogged: newProps.loggedUser ? true : false})
         if (newProps.loggedUser)
             this.setState({user: newProps.loggedUser})
+    }
+    componentWillUnmount(){
+        BackHandler.removeEventListener('hardwareBackPress',this.handleBack);
     }
 
     navigateToRoute(route) {
@@ -218,6 +229,7 @@ class SideMenu extends PureComponent {
                     {/*</View>*/}
 
                 </Content>
+                <FooterTabs route={'More'} componentId={this.props.componentId}/>
             </Fragment>
         )
     }

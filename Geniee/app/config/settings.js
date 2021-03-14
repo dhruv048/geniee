@@ -25,6 +25,7 @@ if (process.env.NODE_ENV === 'production') {
     METEOR_URL = 'ws://139.59.59.117/websocket';
     WEB_URL = "http://139.59.59.117/";
 }
+
 export const settings = {
     env: process.env.NODE_ENV,
     METEOR_URL,
