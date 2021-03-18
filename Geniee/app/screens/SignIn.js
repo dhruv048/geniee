@@ -28,6 +28,7 @@ import {
 } from '../Navigation';
 import {EventRegister} from 'react-native-event-listeners';
 import {GalioProvider, Input, Button} from 'galio-framework';
+import {Title} from 'react-native-paper';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
@@ -218,6 +219,10 @@ class SignIn extends Component {
                             />
 
                             <Logo/>
+                            <View style={styles.welcomeText}>
+                                <Title>Welcome,</Title>
+                                <Text>Log in to continue</Text>
+                            </View>
 
                             <View style={styles.containerForm}>
                                 <Input
@@ -246,31 +251,30 @@ class SignIn extends Component {
                                     onPress={this.handleSignIn}
                                     style={{width: '100%', marginVertical: 20}}
                                     loading={this.state.loading}>
-                                    Log In
+                                    LOG IN
                                 </Button>
-
-                                <View>
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            goToRoute(this.props.componentId, 'ForgotPassword')
-                                        }>
-                                        <Text style={styles.forgotPwdButton}>Forgot password?</Text>
-                                    </TouchableOpacity>
-                                </View>
-
                                 <Button
                                     // round
                                     loading={this.state.loadingFB}
                                     color={customGalioTheme.COLORS.FACEBOOK}
-                                    style={{width: '100%', marginVertical: 20}}
+                                    style={{width: '100%', marginVertical:15}}
+                                    Icon='facebook'
                                     onPress={() =>
                                         this._loginFacabook(
                                             this.props.componentId,
                                             this.props.needReturn,
                                         )
                                     }>
-                                    Facebook Login
+                                    Continue with Facebook                                  
                                 </Button>
+                                <View>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            goToRoute(this.props.componentId, 'ForgotPassword')
+                                        }>
+                                        <Text style={styles.forgotPwdButton}>Forgot your password?</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
 
                             <View style={styles.signupCont}>
@@ -293,15 +297,15 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.appBackground,
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+       // alignItems: 'center',
+       // justifyContent: 'center',
     },
 
     containerForm: {
         flexGrow: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 30,
+        //alignItems: 'center',
+        //justifyContent: 'center',
+        paddingHorizontal: 25,
         width: '100%'
     },
 
@@ -332,14 +336,14 @@ const styles = StyleSheet.create({
         color: colors.redText,
         fontSize: 14,
         fontWeight: '500',
+        paddingVertical: 20,
     },
 
     signupCont: {
-        flexGrow: 1,
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingVertical: 16,
+         flexGrow: 1,
         flexDirection: 'row',
+        paddingHorizontal:30,
+        paddingBottom : 100,
     },
     signupText: {
         color: customGalioTheme.COLORS.PRIMARY,
@@ -368,6 +372,13 @@ const styles = StyleSheet.create({
     //fontWeight: '500',
     //paddingVertical: 10,
     //},
+    welcomeText : {
+        flexGrow: 1,
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
+        paddingHorizontal: 25,
+        paddingVertical : 15,
+    },
 });
 
 export default SignIn;
