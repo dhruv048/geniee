@@ -29,6 +29,7 @@ import {TermsCondition} from '../lib/Terms&Condition';
 import {customGalioTheme} from '../config/themes';
 import {GalioProvider, Input, Checkbox, Button} from 'galio-framework';
 import {Navigation} from 'react-native-navigation';
+import {Title} from 'react-native-paper';
 
 class Register extends Component {
     validInput = overrideConfirm => {
@@ -228,7 +229,10 @@ class Register extends Component {
 
                             <View style={{paddingTop: 20}}>
                                 {/* <Logo />*/}
-
+                                <View style={styles.welcomeText}>
+                                <Title>Welcome to Geniee,</Title>
+                                <Text>Sign up with email</Text>
+                                </View>
                                 <View style={styles.containerRegister}>
                                     <Input
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
@@ -264,6 +268,7 @@ class Register extends Component {
                                     <Input
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         password
+                                        viewPass
                                         placeholder="Password"
                                         ref={input => (this.password = input)}
                                         onSubmitEditing={() => this.confirmPassword.focus()}
@@ -271,6 +276,7 @@ class Register extends Component {
                                     />
                                     <Input
                                         password
+                                        viewPass
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Confirm Password"
                                         secureTextEntry
@@ -304,14 +310,12 @@ class Register extends Component {
                                         style={{
                                             paddingTop: 16,
                                             paddingBottom: 16,
-                                            paddingLeft: 30,
-                                            paddingRight: 30,
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             textAlign: 'center',
                                             color: '#8E8E8E',
                                             flexDirection: 'row',
-                                            flexWrap: 'wrap',
+                                            flexWrap: 'wrap', 
                                         }}>
                                         <Checkbox
                                             label=""
@@ -343,10 +347,10 @@ class Register extends Component {
                                     <Button
                                         // round
                                         onPress={this.handleCreateAccount}
-                                        style={{width: '100%', marginVertical: 20}}
+                                        style={{width: '100%', marginVertical: 5}}
                                         loading={this.state.loading}
                                         disabled={this.state.loading}>
-                                        Register
+                                        SIGN UP
                                     </Button>
 
                                     {/*       <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
@@ -548,7 +552,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 30,
-        marginTop: 20,
+        marginTop: 5,
     },
 
     inputBox: {
@@ -559,7 +563,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         fontSize: 16,
         color: colors.whiteText,
-        marginVertical: 5,
+       // marginVertical: 5,
     },
 
     radioView: {
@@ -599,7 +603,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         alignItems: 'flex-end',
         justifyContent: 'center',
-        paddingVertical: 16,
+        paddingVertical: 10,
         flexDirection: 'row',
     },
     signupText: {
@@ -621,6 +625,12 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.whiteText,
         textAlign: 'center',
+    },
+    welcomeText : {
+        flexGrow: 1,
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
+        paddingHorizontal: 25,
     },
 
 });

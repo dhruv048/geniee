@@ -13,7 +13,7 @@ import {
     BackHandler,
 } from 'react-native';
 import {Container} from 'native-base';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Meteor from '../react-native-meteor';
 import Logo from '../components/Logo/Logo';
 import {colors} from '../config/styles';
@@ -27,8 +27,8 @@ import {
     goBack,
 } from '../Navigation';
 import {EventRegister} from 'react-native-event-listeners';
-import {GalioProvider, Input, Button} from 'galio-framework';
-import {Title} from 'react-native-paper';
+import {GalioProvider, Input} from 'galio-framework';
+import {Title,Button} from 'react-native-paper';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
@@ -248,6 +248,8 @@ class SignIn extends Component {
 
                                 <Button
                                     // round
+                                    mode='contained'
+                                    color={customGalioTheme.COLORS.PRIMARY}
                                     onPress={this.handleSignIn}
                                     style={{width: '100%', marginVertical: 20}}
                                     loading={this.state.loading}>
@@ -255,17 +257,18 @@ class SignIn extends Component {
                                 </Button>
                                 <Button
                                     // round
+                                    icon ='facebook'
+                                    mode='contained'
                                     loading={this.state.loadingFB}
                                     color={customGalioTheme.COLORS.FACEBOOK}
                                     style={{width: '100%', marginVertical:15}}
-                                    Icon='facebook'
                                     onPress={() =>
                                         this._loginFacabook(
                                             this.props.componentId,
                                             this.props.needReturn,
                                         )
                                     }>
-                                    Continue with Facebook                                  
+                                    <Text>Continue with Facebook</Text>                                 
                                 </Button>
                                 <View>
                                     <TouchableOpacity
