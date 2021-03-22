@@ -259,6 +259,11 @@ class Register extends Component {
                                     />
 
                                     <Input
+                                        right
+                                        icon="map-pin"
+                                        family="feather"
+                                        iconSize={14}
+                                        iconColor="black"
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Location"
                                         value={location ? location.formatted_address : ''}
