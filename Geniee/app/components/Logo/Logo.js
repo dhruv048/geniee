@@ -16,8 +16,9 @@ export default class Logo extends Component {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'flex-end',
+    paddingLeft:25
   },
   image: {
     width: 125,

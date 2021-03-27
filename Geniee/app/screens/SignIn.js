@@ -12,7 +12,7 @@ import {
     AsyncStorage,
     BackHandler,
 } from 'react-native';
-import {Container} from 'native-base';
+import {Container, Icon as NBIcon} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Meteor from '../react-native-meteor';
 import Logo from '../components/Logo/Logo';
@@ -214,11 +214,17 @@ class SignIn extends Component {
                     <GalioProvider theme={customGalioTheme}>
                         <View style={styles.container} keyboardShouldPersistTaps="always">
                             <StatusBar
+                            hidden
                                 backgroundColor={colors.appBackground}
                                 barStyle="dark-content"
                             />
-
+ <View style={{width:'100%', alignItems:'flex-end'}}>
+                                <Button mode='text'>
+                                    <NBIcon name='close' size={20} />
+                                </Button>
+                            </View>
                             <Logo/>
+                           
                             <View style={styles.welcomeText}>
                                 <Title>Welcome,</Title>
                                 <Text>Log in to continue</Text>
@@ -298,7 +304,7 @@ class SignIn extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.appBackground,
+        backgroundColor: colors.whiteText,
         flex: 1,
        // alignItems: 'center',
        // justifyContent: 'center',
@@ -336,7 +342,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     forgotPwdButton: {
-        color: colors.redText,
+        color: colors.primary,
         fontSize: 14,
         fontWeight: '500',
         paddingVertical: 20,
@@ -349,14 +355,14 @@ const styles = StyleSheet.create({
         paddingBottom : 100,
     },
     signupText: {
-        color: customGalioTheme.COLORS.PRIMARY,
+        color: colors.gray_200,
         fontSize: 16,
         fontWeight: '700',
         paddingVertical: 2,
     },
     navButton: {
         width: 80,
-        backgroundColor: customGalioTheme.COLORS.PRIMARY,
+        // backgroundColor: customGalioTheme.COLORS.PRIMARY,
         borderRadius: 25,
         paddingVertical: 2,
         marginLeft: 5,
@@ -364,7 +370,7 @@ const styles = StyleSheet.create({
     navButtonText: {
         fontSize: 16,
         fontWeight: '500',
-        color: colors.whiteText,
+        color: colors.primary,
         textAlign: 'center',
         alignSelf: 'center'
     },

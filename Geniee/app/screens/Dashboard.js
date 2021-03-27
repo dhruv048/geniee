@@ -81,14 +81,16 @@ class Dashboard extends Component {
             loggedUser: Meteor.user(),
             resturants: [
                 {
-                    title: '',
+                    title: 'Baadshah Briyani',
                     imgSource: require('../images/baadshah_logo.jpg'),
                     onPress: this.gotoBB,
+                    description:'Baadshah Biryani serves the most authentic Biryani in Kathmandu prepared by our expertise.Our Biryani will give you a burst of flavour in every bite as we use in-house spices'
                 },
                 {
-                    title: 'EAT-FIT',
+                    title: 'Eat-Fit',
                     imgSource: require('../images/EF2.jpg'),
                     onPress: this.gotoEatFit,
+                    description:'At cure.fit, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation, and medical & lifestyle care hassle-free. #BeBetterEveryDay'
                 },
             ],
         };
@@ -692,10 +694,10 @@ class Dashboard extends Component {
         return (
             <TouchableOpacity key={item._id}
                 onPress={() => this._handleProductPress(item)}
-                style={styles.productContainerStyle}>
+                style={[styles.productContainerStyle,{borderTopLeftRadius:5,borderTopRightRadius:5}]}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
-                    <CardItem cardBody style={{ width: '100%' }}>
+                <View style={[customStyle.Card, { top: 0, left: 0, rigth: 0,  }]}>
+                    <CardItem cardBody style={{ width: '100%',borderRadius:5 }}>
                         <Image
                             source={{ uri: settings.IMAGE_URL + item.images[0] }}
                             style={{
@@ -703,9 +705,10 @@ class Dashboard extends Component {
                                 width: undefined,
                                 height: 100,
                                 resizeMode: 'cover',
+                                borderRadius:5 
                             }}
                         />
-                        <View
+                        {/* <View
                             style={{
                                 position: 'absolute',
                                 top: 5,
@@ -715,9 +718,9 @@ class Dashboard extends Component {
                                 borderWidth: 1,
                                 borderColor: 'rgba(253, 253, 253, 0.2)',
                             }}
-                        />
+                        /> */}
                     </CardItem>
-                    {item.discount ? (
+                    {/* {item.discount ? (
                         <View
                             style={{
                                 position: 'absolute',
@@ -734,15 +737,23 @@ class Dashboard extends Component {
                                 {item.discount}% off
                             </Text>
                         </View>
-                    ) : null}
-                    <CardItem style={{ paddingTop: 0, paddingHorizental: 3 }}>
-                        <Body style={{ alignItems: 'center' }}>
-                            <Text
-                                style={{ fontSize: 12, color: colors.primaryText }}
-                                numberOfLines={1}>
+                    ) : null} */}
+                    <CardItem style={{ paddingTop: 0,paddingLeft:5}}>
+                        <Body>
+                        <View style={{height:35}}>
+                            <Text note numberOfLines={2} style={{fontWeight:'bold'}}>
+                                 {/* style={{ fontSize: 12, color: colors.primaryText }}
+                                 numberOfLines={1}> */}
                                 {item.title}
                             </Text>
-                            <View
+                            </View>
+                            <Text style={{color:colors.appLayout, fontWeight:'700' ,fontSize:14}}>Rs. {(item.price-(item.price*item.discount)/100)}</Text>
+                            {item.discount ? 
+                            <>
+                            <Text style={{color:colors.gray_200, fontWeight:'500' ,fontSize:12, textDecorationLine: 'line-through',textDecorationStyle: 'solid'}}>Rs. {item.price }</Text>
+                            <Text style={{color:colors.gray_200, fontWeight:'300' ,fontSize:10,}}>{item.discount}% off</Text>
+                            </> :null}
+                            {/* <View
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
@@ -768,7 +779,7 @@ class Dashboard extends Component {
                                     }}>
                                     Rs. {item.price}{item.unit ? ("/" + item.unit) : ""}
                                 </Text>
-                            </View>
+                            </View> */}
                         </Body>
                     </CardItem>
                 </View>
@@ -1128,7 +1139,7 @@ class Dashboard extends Component {
                                             styles.card,
                                             {
                                                 marginHorizontal: 5,
-                                                width: 200,
+                                                width: viewportWidth/2.5,
                                             },
                                         ]}>
                                         <TouchableOpacity
@@ -1149,7 +1160,7 @@ class Dashboard extends Component {
                                                         // margin: 5,
                                                     }}
                                                 />
-                                                {item.title ? (
+                                                {/* {item.title ? (
                                                     <View
                                                         style={{
                                                             top: 0,
@@ -1169,7 +1180,10 @@ class Dashboard extends Component {
                                                             {item.title}
                                                         </Text>
                                                     </View>
-                                                ) : null}
+                                                ) : null} */}
+
+                                                <Text numberOfLines={1} style={{fontSize:14,fontWeight:'bold', color:colors.gray_200}} >{item.title}</Text>
+                                                <Text note numberOfLines={2}>{item.description}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -1180,7 +1194,7 @@ class Dashboard extends Component {
 
                     {/*SPECIAL RESTURANT LISTING END*/}
 
-                    <View style={[styles.block, { marginVertical: 20 }]}>
+                    <View style={[styles.block, { marginVertical: 20, }]}>
                         {this.state.Adds.length > 0 ? (
                             <View
                                 style={{
@@ -1211,7 +1225,7 @@ class Dashboard extends Component {
                     {this.state.popularProducts.length > 0 ? (
                         <View style={styles.block}>
                             <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular Products</Text>
+                                <Text style={styles.blockTitle}>Popular</Text>
                                 <Button
                                     style={{ paddingRight: 10 }}
                                     transparent
@@ -1386,14 +1400,14 @@ const styles = StyleSheet.create({
     },
 
     productContainerStyle: {
-        height: 160,
+        height: 200,
         // flex: 1,
         borderWidth: 0,
         marginHorizontal: 2,
         marginVertical: 4,
-        borderColor: '#808080',
-        elevation: 1,
-        width: (viewportWidth) / 3,
+        borderColor: '#ffffff',
+        // elevation: 1,
+        width: (viewportWidth) / 3.5,
         // width: '32%',
         maxWidth: 130,
         backgroundColor: 'white'
