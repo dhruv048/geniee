@@ -65,7 +65,7 @@ class OrderDetailOut extends Component {
     var order = this.state.order;
     var left = (
       <Left style={{flex: 1}}>
-        <Button onPress={() => goBack(this.props.componentId)} transparent>
+        <Button onPress={() => this.props.navigation.goBack()} transparent>
           <Icon name="arrow-left" size={24} color={'white'} />
         </Button>
       </Left>

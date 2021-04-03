@@ -402,7 +402,7 @@ class AddService extends React.PureComponent {
             this.categories = this.categories.concat(item.subCategories);
         });
         this.setState({categories: this.categories});
-        Navigation.events().bindComponent(this);
+        
         BackHandler.addEventListener(
             'hardwareBackPress',
             this.handleBackButton.bind(this),
@@ -436,8 +436,8 @@ class AddService extends React.PureComponent {
     };
 
     handleBackButton() {
-        // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-        backToRoot(this.props.componentId);
+        // this.props.navigation.navigate('Dashboard');
+        this.props.navigation.navigate('Home');
         return true;
     }
 
@@ -554,14 +554,14 @@ class AddService extends React.PureComponent {
                         webLink: '',
                         businessType: 1,
                     });
-                    //  navigateToRoutefromSideMenu(this.props.componentId, 'MyServices');
+                    //  this.props.navigation.navigate( 'MyServices');
                     //Store own Services
                     Meteor.call('geOwnServiceList', (err, res) => {
                         if (!err) {
                             AsyncStorage.setItem('myServices', res);
                         }
                     });
-                    goBack(this.props.componentId);
+                    this.props.navigation.goBack();
                 }
             });
         } else {
@@ -594,7 +594,7 @@ class AddService extends React.PureComponent {
                         unit: null,
                         webLink: '',
                     });
-                    navigateToRoutefromSideMenu(this.props.componentId, 'MyServices');
+                    this.props.navigation.navigate( 'MyServices');
                 }
             });
         }

@@ -32,7 +32,7 @@ import {
 } from 'native-base';
 import FIcon from 'react-native-vector-icons/Feather';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
-import {Navigation} from 'react-native-navigation';
+
 import Text from '../../components/Store/Text';
 import Product from '../../components/ecommerce/Product';
 import {colors, customStyle} from '../../config/styles';
@@ -58,7 +58,7 @@ class ProductDetail extends Component {
   }
 
   async componentDidMount() {
-    Navigation.events().bindComponent(this);
+    
     //get the product with id of this.props.product.id from your server
     let productId = this.props.Id;
     let _product = this.props.data;
@@ -121,7 +121,7 @@ class ProductDetail extends Component {
 
 //     handleBackButton() {
 //         console.log('handlebackpress Pdetil')
-//         goBack(this.props.componentId);
+//         this.props.navigation.goBack();
 //     }
 
 //     componentDidDisappear() {
@@ -684,7 +684,7 @@ class ProductDetail extends Component {
       <TouchableWithoutFeedback
         key={index}
         onPress={() =>
-          goToRoute(this.props.componentId, 'ImageGallery', {
+          this.props.navigation.navigate( 'ImageGallery', {
             images: this.state.product.images,
             position: parseInt(index),
           })
@@ -761,7 +761,7 @@ class ProductDetail extends Component {
   // }
 
   openGallery = pos => {
-    goToRoute(this.props.componentId, 'ImageGallery', {
+    this.props.navigation.navigate( 'ImageGallery', {
       images: this.state.product.images,
       position: pos,
     });
@@ -851,7 +851,7 @@ class ProductDetail extends Component {
           ? this.state.product.price * (this.state.product.discount / 100)
           : 0),
     );
-    goToRoute(this.props.componentId, 'CheckoutEF', {productOrder: product});
+    this.props.navigation.navigate( 'CheckoutEF', {productOrder: product});
   }
 
   _getChatChannel(userId) {
@@ -883,7 +883,7 @@ class ProductDetail extends Component {
           },
           service: Service,
         };
-        goToRoute(this.props.componentId, 'Message', {Channel});
+        this.props.navigation.navigate( 'Message', {Channel});
       })
       .catch(error => {
         console.error(error);

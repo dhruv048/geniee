@@ -166,7 +166,7 @@ class CheckoutEF extends Component {
     render() {
         var left = (
             <Left style={{flex: 1}}>
-                <Button onPress={() => goBack(this.props.componentId)} transparent>
+                <Button onPress={() => this.props.navigation.goBack()} transparent>
                     <Icon name='ios-arrow-back'/>
                 </Button>
             </Left>
@@ -363,7 +363,7 @@ class CheckoutEF extends Component {
                     text: 'Log In Now'
                     ,
                     onPress: () => {
-                        goToRoute(this.props.componentId, 'SignIn', {needReturn: true}
+                        this.props.navigation.navigate( 'SignIn', {needReturn: true}
                         )
                     }
                 }],
@@ -492,10 +492,10 @@ class CheckoutEF extends Component {
                         //         });
                         //         if (!singleProduct) {
                         //                             AsyncStorage.setItem('myCart', JSON.stringify([]));
-                        //                             navigateToRoutefromSideMenu(this.props.componentId,'Orders');
+                        //                             this.props.navigation.navigate('Orders');
                         //                         }else{
                         //
-                        //                             goBack(this.props.componentId);
+                        //                             this.props.navigation.goBack();
                         //                         }
                         //     }
                         //     else {
@@ -534,9 +534,9 @@ class CheckoutEF extends Component {
                         );
                         if (!singleProduct) {
                             //  AsyncStorage.setItem('myCart', JSON.stringify([]));
-                            navigateToRoutefromSideMenu(this.props.componentId, 'Orders');
+                            this.props.navigation.navigate( 'Orders');
                         } else {
-                            goBack(this.props.componentId);
+                            this.props.navigation.goBack();
                         }
                     }
                 }
@@ -607,8 +607,8 @@ class CheckoutEF extends Component {
         //           // })
         //       }
         //   })
-        // //  goToRoute(this.props.componentId,'OrderList');
-        //   goBack(this.props.componentId);
+        // //  this.props.navigation.navigate('OrderList');
+        //   this.props.navigation.goBack();
     };
     _esewaPay = async (Amount, Product, Id) => {
         // const response = await NativeModules.RNEsewa.makePayment(Amount, Product, Id, 'http://medidocnepal.com').then(function (res) {

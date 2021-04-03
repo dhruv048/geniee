@@ -15,10 +15,8 @@ import settings from '../../config/settings';
 import StarRating from '../../components/StarRating/StarRating';
 import {customGalioTheme, customPaperTheme} from '../../config/themes';
 import {colors, customStyle} from '../../config/styles';
-import {Navigation} from 'react-native-navigation';
 import FIcon from 'react-native-vector-icons/Feather';
 import Meteor from '../../react-native-meteor';
-import {goToRoute} from '../../Navigation';
 import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 import call from 'react-native-phone-call';
 
@@ -90,7 +88,7 @@ _callPhone = number => {
   };
 
   editService = serv => {
-    goToRoute(this.props.componentId, 'AddService', {Service: serv});
+    this.props.navigation.navigate( 'AddService', {Service: serv});
   };
 
 
@@ -124,7 +122,7 @@ _callPhone = number => {
           },
           service: Service,
         };
-        goToRoute(this.props.componentId, 'Message', {Channel});
+        this.props.navigation.navigate( 'Message', {Channel});
       })
       .catch(error => {
         console.error(error);
@@ -132,14 +130,15 @@ _callPhone = number => {
   }
 
   _handlItemPress = service => {
-    Navigation.push(this.props.componentId, {
-      component: {
-        name: 'ServiceDetail',
-        passProps: {
-          Id: service,
-        },
-      },
-    });
+    this.props.navigation.navigate('ServiceDetail',{ Id: service,})
+    // Navigation.push(this.props.componentId, {
+    //   component: {
+    //     name: 'ServiceDetail',
+    //     passProps: {
+    //       Id: service,
+    //     },
+    //   },
+    // });
   };
 
   render() {

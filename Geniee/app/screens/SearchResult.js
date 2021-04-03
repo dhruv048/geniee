@@ -28,7 +28,7 @@ import {goBack} from '../Navigation';
 import Meteor from '../react-native-meteor';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
-import {Navigation} from 'react-native-navigation';
+
 import ServiceItem from "../components/Service/ServiceItem";
 
 export default class SearchResult extends PureComponent {
@@ -402,7 +402,7 @@ export default class SearchResult extends PureComponent {
 
                     <Item style={{height: 40, width: '95%', paddingLeft: 10}}>
                         <Button
-                            onPress={() => goBack(this.props.componentId)}
+                            onPress={() => this.props.navigation.goBack()}
                             style={{paddingHorizontal: 10}}
                             transparent>
                             <Icon name={'arrow-left'} size={25} color={colors.primary}/>

@@ -48,30 +48,30 @@ class Notification extends Component {
 
             case NotificationTypes.ADD_PRODUCT:
                 if (item.productOwner == ProductOwner.EAT_FIT)
-                    goToRoute(this.props.componentId, "ProductDetailEF", {Id: item.navigateId});
+                    this.props.navigation.navigate( "ProductDetailEF", {Id: item.navigateId});
                 else
-                    goToRoute(this.props.componentId, "ProductDetail", {Id: item.navigateId});
+                    this.props.navigation.navigate( "ProductDetail", {Id: item.navigateId});
                 break;
             case NotificationTypes.ADD_SERVICE:
-                goToRoute(this.props.componentId, "ServiceDetail", {Id: item.navigateId});
+                this.props.navigation.navigate( "ServiceDetail", {Id: item.navigateId});
                 break;
             case NotificationTypes.RATE_SERVICE:
-                goToRoute(this.props.componentId, "ServiceRatings", {Id: item.navigateId});
+                this.props.navigation.navigate( "ServiceRatings", {Id: item.navigateId});
                  break;
             case NotificationTypes.ORDER_DECLINED:
-                goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+                this.props.navigation.navigate( "OrderDetailOut", {Id: item.navigateId});
                  break;
             case NotificationTypes.ORDER_CANCELLED:
-                goToRoute(this.props.componentId, "OrderDetailIn", {Id: item.navigateId});
+                this.props.navigation.navigate( "OrderDetailIn", {Id: item.navigateId});
                  break;
             case NotificationTypes.ORDER_DISPATCHED:
-                goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+                this.props.navigation.navigate( "OrderDetailOut", {Id: item.navigateId});
                  break;
             case NotificationTypes.ORDER_DELIVERED:
-                goToRoute(this.props.componentId, "OrderDetailOut", {Id: item.navigateId});
+                this.props.navigation.navigate( "OrderDetailOut", {Id: item.navigateId});
                  break;
             case NotificationTypes.ORDER_REQUESTED:
-                goToRoute(this.props.componentId, "OrderDetailIn", {Id: item.navigateId});
+                this.props.navigation.navigate( "OrderDetailIn", {Id: item.navigateId});
                 break;
         }
     }
@@ -357,7 +357,7 @@ class Notification extends Component {
                 <Header androidStatusBarColor={colors.statusBar} searchBar rounded
                         style={{backgroundColor: colors.appLayout}}>
                     <Left>
-                        <Button onPress={() => goBack(this.props.componentId)
+                        <Button onPress={() => this.props.navigation.goBack()
                         } transparent>
                             <Icon name='x' color='white' size={24}/>
                         </Button>

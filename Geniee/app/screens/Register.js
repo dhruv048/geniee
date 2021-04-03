@@ -28,7 +28,7 @@ import {privacyPolicy} from '../lib/PrivacyPolicy';
 import {TermsCondition} from '../lib/Terms&Condition';
 import {customGalioTheme} from '../config/themes';
 import {GalioProvider, Input, Checkbox, Button} from 'galio-framework';
-import {Navigation} from 'react-native-navigation';
+
 import {Title} from 'react-native-paper';
 
 class Register extends Component {
@@ -124,7 +124,7 @@ class Register extends Component {
                                 50,
                             );
                             //  this.handleSignIn();
-                            goToRoute(this.props.componentId, 'SignIn');
+                            this.props.navigation.navigate( 'SignIn');
                         }
                     });
                 } else {
@@ -179,7 +179,7 @@ class Register extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
     }
 
     componentWillUnmount() {
@@ -193,7 +193,7 @@ class Register extends Component {
 
     handleBackButton() {
         console.log('handlebackpress Register')
-        goBack(this.props.componentId);
+        this.props.navigation.goBack();
         return true;
     }
 
@@ -369,7 +369,7 @@ class Register extends Component {
                                     </Text>
                                     <TouchableOpacity
                                         style={styles.navButton}
-                                        onPress={() => goBack(this.props.componentId)}>
+                                        onPress={() => this.props.navigation.goBack()}>
                                         <Text style={styles.navButtonText}>Login</Text>
                                     </TouchableOpacity>
                                 </View>

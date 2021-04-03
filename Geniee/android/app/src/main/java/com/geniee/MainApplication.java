@@ -3,10 +3,10 @@ package com.geniee;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
-import com.reactnativenavigation.NavigationApplication;
-import com.reactnativenavigation.react.NavigationPackage;
+import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
-import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
@@ -17,13 +17,10 @@ import com.facebook.FacebookSdk;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.appevents.AppEventsLogger;
 
-
-// import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this lin
-// import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
-public class MainApplication extends NavigationApplication {
+public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
-      new NavigationReactNativeHost(this) {
+      new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
@@ -35,9 +32,7 @@ public class MainApplication extends NavigationApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
-            // packages.add(new RNFirebaseMessagingPackage());
-            // packages.add(new RNFirebaseNotificationsPackage());
-            return packages;
+          return packages;
         }
 
         @Override
@@ -54,26 +49,32 @@ public class MainApplication extends NavigationApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-      FacebookSdk.setApplicationId("1158795330975784");
-      FacebookSdk.sdkInitialize(this);
-      AppEventsLogger.activateApp(this);
-    initializeFlipper(this); // Remove this line if you don't want Flipper enabled
+    FacebookSdk.setApplicationId("1158795330975784");
+    FacebookSdk.sdkInitialize(this);
+    AppEventsLogger.activateApp(this);
+    SoLoader.init(this, /* native exopackage */ false);
+    initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
   /**
-   * Loads Flipper in React Native templates.
+   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+   * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
    *
    * @param context
+   * @param reactInstanceManager
    */
-  private static void initializeFlipper(Context context) {
+  private static void initializeFlipper(
+      Context context, ReactInstanceManager reactInstanceManager) {
     if (BuildConfig.DEBUG) {
       try {
         /*
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.facebook.flipper.ReactNativeFlipper");
-        aClass.getMethod("initializeFlipper", Context.class).invoke(null, context);
+        Class<?> aClass = Class.forName("com.geniee.ReactNativeFlipper");
+        aClass
+            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+            .invoke(null, context, reactInstanceManager);
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       } catch (NoSuchMethodException e) {

@@ -137,7 +137,7 @@ class ProductDetailEF extends Component {
         let product = this.state.product;
         product['orderQuantity'] = this.state.quantity;
         product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
-        goToRoute(this.props.componentId, 'CheckoutEF', {'productOrder': product});
+        this.props.navigation.navigate( 'CheckoutEF', {'productOrder': product});
     }
 
     _browse = (url) => {
@@ -195,7 +195,7 @@ class ProductDetailEF extends Component {
                         borderRadius: 100,
                     }}
                                       onPress={() => {
-                                          goBack(this.props.componentId)
+                                          this.props.navigation.goBack()
                                       }}>
                         <FIcon name='arrow-left' color='white' size={24}/>
                     </TouchableOpacity>
@@ -506,7 +506,7 @@ class ProductDetailEF extends Component {
         return (
             <TouchableWithoutFeedback
                 key={index}
-                onPress={() => goToRoute(this.props.componentId, 'ImageGallery', {
+                onPress={() => this.props.navigation.navigate( 'ImageGallery', {
                     images: this.state.product.images,
                     position: parseInt(index)
                 })}

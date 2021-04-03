@@ -2,12 +2,9 @@ import React, {PureComponent,Fragment} from 'react';
 import {Body, Container, Content, Header, Icon, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
 import {StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity,SafeAreaView,BackHandler} from "react-native";
-import {Navigation} from "react-native-navigation/lib/dist/index";
-import {goBack, goToRoute, navigateToRoutefromSideMenu} from "../Navigation";
 import ContactUs from "./ContactUs";
 import ForgotPassword from "./ForgotPassword";
 import Meteor from "../react-native-meteor";
-import {EventRegister} from 'react-native-event-listeners';
 import AsyncStorage from "@react-native-community/async-storage";
 import MessageCount from "../components/MessageCount/MessageCount";
 import settings , {getProfileImage} from "../config/settings";
@@ -31,27 +28,12 @@ class SideMenu extends PureComponent {
         BackHandler.addEventListener('hardwareBackPress', this.handleBack);
         let loggedUser=await AsyncStorage.getItem("loggedUser");
         loggedUser=loggedUser?  JSON.parse(loggedUser) : null;
-        Navigation.events().bindComponent(this);
         this.setState({isLogged: Token ? true : false, user: this.props.loggedUser ? this.props.loggedUser :loggedUser})
-        this.listener = EventRegister.addEventListener('routeChanged', (data) => {
-            console.log('routeChanged', data)
-            this.setState({
-                currentRoute: data
-            })
-        });
-
-        this.listener = EventRegister.addEventListener('siggnedIn', (data) => {
-            console.log('siggnedIn', data)
-            this.setState({
-                isLogged: true,
-                user:this.props.loggedUser
-            })
-        });
     }
     handleBack=()=>{
             console.log('handlebackpress')
-            // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-            goBack(this.props.componentId);
+            // this.props.navigation.navigate('Dashboard');
+            this.props.navigation.goBack();
             return true;
     }
 
@@ -65,7 +47,7 @@ class SideMenu extends PureComponent {
     }
 
     navigateToRoute(route) {
-        navigateToRoutefromSideMenu(this.props.componentId, route)
+        this.props.navigation.navigate(route)
     }
 
     _signOut() {
@@ -80,10 +62,10 @@ class SideMenu extends PureComponent {
                             AsyncStorage.setItem(USER_TOKEN_KEY, '');
                             AsyncStorage.setItem('loggedUser', '');
                             this.setState({isLogged: false,user:''})
-                            navigateToRoutefromSideMenu(this.props.componentId, 'Dashboard');
+                            this.props.navigation.navigate( 'Dashboard');
                         // }
                         // else
-                        //     goBack(this.props.componentId)
+                        //     this.props.navigation.goBack()
                     })
                 },
                 {text: 'Cancel', onPress: () => {}}
@@ -98,7 +80,7 @@ class SideMenu extends PureComponent {
         //         this.props.navigation.navigate('UnAuthorized');
         //     }
         //     else
-        //         goBack(this.props.componentId)
+        //         this.props.navigation.goBack()
         // })
     }
 
@@ -229,7 +211,7 @@ class SideMenu extends PureComponent {
                     {/*</View>*/}
 
                 </Content>
-                <FooterTabs route={'More'} componentId={this.props.componentId}/>
+                {/* <FooterTabs route={'More'} componentId={this.props.componentId}/> */}
             </Fragment>
         )
     }

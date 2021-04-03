@@ -28,7 +28,7 @@ import {colors} from '../../config/styles';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import Product from '../../components/ecommerce/Product';
-import {Navigation} from 'react-native-navigation';
+
 import {goBack, goToRoute,backToRoot} from '../../Navigation';
 import Menu, {MenuItem} from 'react-native-material-menu';
 
@@ -54,12 +54,12 @@ class MyProducts extends Component {
   }
   handleBackButton() {
     console.log('handlebackpress');
-    backToRoot(this.props.componentId);
+    this.props.navigation.navigate('Home');
     return true;
   }
 
   componentDidMount() {
-    Navigation.events().bindComponent(this);
+    
     // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
     Meteor.call('getMyProducts', (err, res) => {
       console.log(err, res);
@@ -111,7 +111,7 @@ class MyProducts extends Component {
   }
 
   editProduct = _product => {
-    goToRoute(this.props.componentId, 'AddProduct', {Product: _product});
+    this.props.navigation.navigate( 'AddProduct', {Product: _product});
   };
 
   removeProduct = _product => {
@@ -160,7 +160,7 @@ class MyProducts extends Component {
       <View style={styles.col}>
         <TouchableOpacity
           onPress={() =>
-            goToRoute(this.props.componentId, 'ProductDetail', {
+            this.props.navigation.navigate( 'ProductDetail', {
               Id: item._id,
               data: item,
             })
@@ -220,7 +220,7 @@ class MyProducts extends Component {
             <Button
               transparent
               onPress={() => {
-                backToRoot(this.props.componentId);
+                this.props.navigation.navigate('Home');
               }}>
               <FIcon name="arrow-left" color={'white'} size={24} />
             </Button>
@@ -231,7 +231,7 @@ class MyProducts extends Component {
           </Body>
           <Right>
             <Button
-              onPress={() => goToRoute(this.props.componentId, 'AddProduct')}
+              onPress={() => this.props.navigation.navigate( 'AddProduct')}
               transparent>
               <FIcon name="plus" style={{fontSize: 27, color: 'white'}} />
             </Button>
@@ -240,14 +240,14 @@ class MyProducts extends Component {
             <Button style={{paddingHorizontal:10}}
               transparent
               onPress={() => {
-                backToRoot(this.props.componentId);
+                this.props.navigation.navigate('Home');
               }}>
               <FIcon name="arrow-left"  size={24} />
             </Button>
 
             <Input placeholder="search.." />
              <Button style={{paddingHorizontal:10}}
-              onPress={() => goToRoute(this.props.componentId, 'AddProduct')}
+              onPress={() => this.props.navigation.navigate( 'AddProduct')}
               transparent>
               <FIcon name="plus" style={{fontSize: 28, }} />
             </Button>

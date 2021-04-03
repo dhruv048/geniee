@@ -28,8 +28,6 @@ import {
 } from 'react-native';
 import {hashPassword} from '../react-native-meteor/lib/utils';
 import {colors} from '../config/styles';
-import {Navigation} from 'react-native-navigation';
-import {goBack,backToRoot} from '../Navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import {GalioProvider, Input, Button as GButton} from 'galio-framework';
 import {customGalioTheme} from '../config/themes';
@@ -50,7 +48,7 @@ class ForgotPassword extends Component {
   }
 
   componentDidMount() {
-    Navigation.events().bindComponent(this);
+    
    
   }
 
@@ -59,8 +57,8 @@ class ForgotPassword extends Component {
   }
   handleBackButton() {
     console.log('handlebackpress');
-    // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-   backToRoot(this.props.componentId);
+    // this.props.navigation.navigate('Dashboard');
+   this.props.navigation.navigate('Home');
     return true;
   }
 
@@ -135,7 +133,7 @@ class ForgotPassword extends Component {
               50,
             );
             this.setState({setPassWord: false});
-            goBack(this.this.props.componentId);
+            this.props.navigation.goBack();
           } else {
             ToastAndroid.showWithGravityAndOffset(
               err.reason,
@@ -170,9 +168,7 @@ class ForgotPassword extends Component {
                 <Button
                   transparent
                   onPress={() => {
-                    backToRoot(
-                      this.props.componentId
-                    );
+                    this.props.navigation.navigate('Home');
                   }}>
                   <Icon style={{color: '#ffffff'}} name="arrow-back" />
                 </Button>

@@ -141,14 +141,14 @@ class ContactUs extends Component {
 
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
     }
 
     handleBackButton() {
         console.log('handlebackpress')
-        // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-        backToRoot(this.props.componentId);
+        // this.props.navigation.navigate('Dashboard');
+        this.props.navigation.navigate('Home');
         return true;
     }
 
@@ -198,7 +198,7 @@ class ContactUs extends Component {
                     this.handleError(err.reason);
                 } else {
                     Alert.alert("DONE", "We will Contact you shortly!!");
-                    goToRoute(this.props.componentId, 'Dashboard');
+                    this.props.navigation.navigate( 'Dashboard');
                 }
             });
         }
@@ -213,7 +213,7 @@ class ContactUs extends Component {
                     <Container style={styles.container}>
                         <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: colors.appLayout}}>
                             <Left>
-                                {/*<Button transparent onPress={()=>{goBack(this.props.componentId)}}>*/}
+                                {/*<Button transparent onPress={()=>{this.props.navigation.goBack()}}>*/}
                                 {/*<Icon style={{color: '#ffffff'}} name="arrow-back" />*/}
                                 {/*</Button>*/}
                                 <CogMenu componentId={this.props.componentId}/>

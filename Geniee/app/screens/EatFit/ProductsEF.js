@@ -54,7 +54,7 @@ class ProductsEF extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
         Meteor.call('EFProductsByCategory',this.props.Id, (err, res) => {
             if (err) {
@@ -124,7 +124,7 @@ class ProductsEF extends Component {
                             style={{backgroundColor: colors.appLayout}}>
                         <Left>
                             <Button transparent onPress={() => {
-                                goBack(this.props.componentId)
+                                this.props.navigation.goBack()
                             }}>
                                 <FIcon name="arrow-left" color={'white'} size={24}/>
                             </Button>
@@ -134,7 +134,7 @@ class ProductsEF extends Component {
                             <Title style={styles.screenHeader}>{this.state.CategoryName}</Title>
                         </Body>
                         <Right>
-                            <Button onPress={() => goToRoute(this.props.componentId,'WishListEF')} transparent>
+                            <Button onPress={() => this.props.navigation.navigate('WishListEF')} transparent>
                                 <FIcon name='heart' style={{fontSize:24,color:'white'}} />
                                 {this.state.wishList.length > 0 ?
                                     <Badge
@@ -147,7 +147,7 @@ class ProductsEF extends Component {
                                         }}>{this.state.wishList.length}</Text></Badge>
                                     : null}
                             </Button>
-                            <Button onPress={() => goToRoute(this.props.componentId,'CartEF')} transparent>
+                            <Button onPress={() => this.props.navigation.navigate('CartEF')} transparent>
                                 <Icon name='ios-cart' style={{fontSize:27,color:'white'}} />
                                 {this.state.totalCount > 0 ?
                                     <Badge

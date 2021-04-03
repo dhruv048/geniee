@@ -47,7 +47,7 @@ class AllProducts extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
       // this._fetchData()
         this.setState({
@@ -102,7 +102,7 @@ class AllProducts extends Component {
     }
     handleBackButton() {
         console.log('handlebackpress from AllProducts');
-        backToRoot(this.props.componentId);
+        this.props.navigation.navigate('Home');
         return true;
     }
 
@@ -125,7 +125,7 @@ class AllProducts extends Component {
     }
 
     editProduct=(_product)=>{
-        goToRoute(this.props.componentId,"AddProduct",{Product:_product});
+        this.props.navigation.navigate("AddProduct",{Product:_product});
     }
 
     removeProduct=(_product)=>{
@@ -204,7 +204,7 @@ class AllProducts extends Component {
                         style={{backgroundColor: colors.appLayout}}>
                    {/*} <Left>
                         <Button transparent onPress={() => {
-                            goBack(this.props.componentId)
+                            this.props.navigation.goBack()
                         }}>
                             <FIcon name="arrow-left" color={'white'} size={24}/>
                         </Button>
@@ -215,21 +215,21 @@ class AllProducts extends Component {
                     </Body>
                     <Right>
                         {Meteor.userId()?
-                        <Button onPress={() => goToRoute(this.props.componentId,'AddProduct')} transparent>
+                        <Button onPress={() => this.props.navigation.navigate('AddProduct')} transparent>
                             <FIcon name='plus' style={{fontSize:27,color:'white'}} />
                         </Button>:null}
                     </Right> */}
 
                     <Item>
                         <Button style={{paddingHorizontal:10}} transparent onPress={() => {
-                            goBack(this.props.componentId)
+                            this.props.navigation.goBack()
                         }}>
                             <FIcon name="arrow-left"   size={24}/>
                         </Button> 
 
                         <Input placeholder="Search..." />
                         {Meteor.userId()?
-                        <Button style={{paddingHorizontal:10}} onPress={() => goToRoute(this.props.componentId,'AddProduct')} transparent>
+                        <Button style={{paddingHorizontal:10}} onPress={() => this.props.navigation.navigate('AddProduct')} transparent>
                             <FIcon name='plus' style={{fontSize:28}} />
                         </Button>:null}
 

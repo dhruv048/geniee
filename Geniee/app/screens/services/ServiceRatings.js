@@ -94,7 +94,7 @@ export default class ServiceRatings extends Component {
                             style={{backgroundColor: colors.appLayout}}>
                         <Left>
                             <Button transparent onPress={() => {
-                                goBack(this.props.componentId)
+                                this.props.navigation.goBack()
                             }}>
                                 <Icon name='arrow-left' size={24} color='#fff'/>
                             </Button>

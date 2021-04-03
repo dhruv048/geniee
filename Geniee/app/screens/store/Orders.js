@@ -49,7 +49,7 @@ class Orders extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
 
         const deviceId=DeviceInfo.getUniqueId();
@@ -70,8 +70,8 @@ class Orders extends Component {
     handleBackButton=()=>{
         if( this.isDisplaying) {
             console.log('handleback press orderList')
-            // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-            backToRoot(this.props.componentId);
+            // this.props.navigation.navigate('Dashboard');
+            this.props.navigation.navigate('Home');
             return true;
         }
 
@@ -166,7 +166,7 @@ class Orders extends Component {
         return (
             <Card key={order._id} style={customStyle.Card}>
                 <TouchableOpacity onPress={() => {
-                    goToRoute(this.props.componentId,this.state.isOwnOrders?'OrderDetailOut':'OrderDetailIn', {'Id':order._id})
+                    this.props.navigation.navigate(this.state.isOwnOrders?'OrderDetailOut':'OrderDetailIn', {'Id':order._id})
                 }} >
                     <CardItem>
                         <Grid>

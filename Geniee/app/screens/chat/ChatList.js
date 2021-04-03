@@ -17,13 +17,8 @@ import {
 import {colors} from '../../config/styles';
 import Meteor from '../../react-native-meteor';
 import Moment from 'moment/moment';
-import {Navigation} from 'react-native-navigation/lib/dist/index';
 import CogMenu from '../../components/CogMenu';
 import ChatListItem from '../../components/Chat/ChatListItem';
-import {
-  backToRoot,
-  goToRoute,
-} from '../../Navigation';
 import FooterTabs from '../../components/FooterTab';
 
 class ChatList extends Component {
@@ -37,12 +32,12 @@ class ChatList extends Component {
   }
 
   componentDidMount() {
-    Navigation.events().bindComponent(this);
+     
     this.setState({chatList: this.props.chatChannels});
   }
   handleBackButtonChat() {
     console.log('handlebackpressChatList');
-    backToRoot(this.props.componentId);
+   this.props.navigation.navigate('Home');
     return true;
   }
   componentDidAppear() {
@@ -112,7 +107,7 @@ class ChatList extends Component {
       },
       service: channel.service,
     };
-    goToRoute(this.props.componentId, 'Message', {Channel: Channel});
+    this.props.navigation.navigate('Message', {Channel: Channel});
   };
 
   _renderList = data => {
@@ -144,7 +139,7 @@ class ChatList extends Component {
           </Body>
           {/*<Right style={{margin: 7}}>*/}
           {/*<Button onPress={() => {*/}
-          {/*goToRoute(this.props.componentId,'AddHospital')*/}
+          {/*this.props.navigation.navigate('AddHospital')*/}
           {/*}} transparent>*/}
           {/*<Icon name='plus' color='white' size={25}/>*/}
           {/*</Button>*/}
@@ -157,7 +152,7 @@ class ChatList extends Component {
             keyExtractor={item => item._id}
           />
         </Content>
-        <FooterTabs route={'Chat'} componentId={this.props.componentId}/>
+        {/* <FooterTabs route={'Chat'} componentId={this.props.componentId}/> */}
       </Container>
     );
   }

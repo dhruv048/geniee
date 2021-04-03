@@ -1,11 +1,9 @@
 import React ,{Component} from 'react';
 import MapView ,{PROVIDER_GOOGLE,Marker} from 'react-native-maps';
-import {Container,Content} from 'native-base';
-import {View,Alert,StyleSheet,Dimensions,PermissionsAndroid,TouchableWithoutFeedback} from 'react-native';
+import {View,StyleSheet,Dimensions,PermissionsAndroid} from 'react-native';
 var {height, width} = Dimensions.get('window');
 import Geolocation from 'react-native-geolocation-service';
-import {goToRoute} from '../Navigation';
-import Navigation from 'react-native-navigation';
+
 
 class Map extends Component {
     constructor(props) {
@@ -88,7 +86,7 @@ class Map extends Component {
 
     handleClick=(id)=>{
         console.log(this.props.componentId,id);
-        goToRoute(this.props.componentId,'ServiceDetail',{'Id':id});
+        this.props.navigation.navigate('ServiceDetail',{'Id':id});
 }
 
     onRegionChange(region) {

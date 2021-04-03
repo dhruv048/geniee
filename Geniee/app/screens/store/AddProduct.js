@@ -91,7 +91,7 @@ class AddProduct extends React.PureComponent {
     }
 
     async componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         let myServices = await AsyncStorage.getItem('myServices');
         console.log(myServices)
@@ -156,8 +156,8 @@ class AddProduct extends React.PureComponent {
 
     handleBackButton() {
         console.log('handlebackpress')
-        // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-        backToRoot(this.props.componentId);
+        // this.props.navigation.navigate('Dashboard');
+        this.props.navigation.navigate('Home');
         return true;
     }
 
@@ -257,7 +257,7 @@ class AddProduct extends React.PureComponent {
                     // hack because react-native-meteor doesn't login right away after sign in
                     console.log('Reslut from addNewService' + res);
                     this.resetForm();
-                    goBack(this.props.componentId);
+                    this.props.navigation.goBack();
                 }
             });
         }
@@ -284,7 +284,7 @@ class AddProduct extends React.PureComponent {
                     // hack because react-native-meteor doesn't login right away after sign in
                     console.log('Reslut from addNewService' + res);
                     this.resetForm();
-                    goToRoute(this.props.componentId, "MyProducts");
+                    this.props.navigation.navigate( "MyProducts");
                 }
             });
         }

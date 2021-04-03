@@ -40,7 +40,7 @@ export default class ImageGalleryBB extends Component {
                         style={{flex: 1, backgroundColor: 'black'}}
                         images={this.state.images}
                     /> : <Spinner/>}
-                <Icon name="ios-close" style={styles.icon} onPress={() => goBack(this.props.componentId)}/>
+                <Icon name="ios-close" style={styles.icon} onPress={() => this.props.navigation.goBack()}/>
             </View>
         );
     }

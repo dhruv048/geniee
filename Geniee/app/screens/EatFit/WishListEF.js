@@ -18,7 +18,6 @@ import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
 import settings, {ProductOwner} from "../../config/settings";
 import {colors} from '../../config/styles';
-import {Navigation} from "react-native-navigation";
 import {goBack, goToRoute} from "../../Navigation";
 import FooterTabs from '../../components/FooterTab';
 class WishListEF extends Component {
@@ -37,7 +36,7 @@ class WishListEF extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
     }
 
     async componentDidAppear() {
@@ -94,9 +93,9 @@ class WishListEF extends Component {
 
     itemClicked(item) {
         if (item.productOwner === ProductOwner.EAT_FIT)
-            goToRoute(this.props.componentId, 'ProductDetailEF', {Id: item._id, data: item});
+        this.props.navigation.navigate('ProductDetailEF', {Id: item._id, data: item});
         else
-            goToRoute(this.props.componentId, 'ProductDetail', {Id: item._id, data: item})
+        this.props.navigation.navigate('ProductDetail', {Id: item._id, data: item})
     }
 
     removeItemPressed(Item) {
@@ -149,7 +148,7 @@ class WishListEF extends Component {
     render() {
         var left = (
             <Left style={{flex: 1}}>
-                <Button transparent onPress={() => goBack(this.props.componentId)}>
+                <Button transparent onPress={() => this.props.navigation.goBack()}>
                     <Icon name="x" size={24} color={'#fff'}/>
                 </Button>
             </Left>
@@ -183,7 +182,7 @@ class WishListEF extends Component {
                         />
                     </Content>
                 }
-                 <FooterTabs route={'Favourite'} componentId={this.props.componentId}/>
+                 {/* <FooterTabs route={'Favourite'} componentId={this.props.componentId}/> */}
             </Container>
         );
     }

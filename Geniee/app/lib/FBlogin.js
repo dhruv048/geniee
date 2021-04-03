@@ -1,9 +1,6 @@
 import React, { ToastAndroid } from 'react-native';
 import { AccessToken } from 'react-native-fbsdk';
 import Meteor from '../react-native-meteor';
-import {MyFunctions} from "../lib/MyFunctions";
-import {backToRoot,goBack} from "../Navigation";
-import {EventRegister} from "react-native-event-listeners";
 import AsyncStorage from '@react-native-community/async-storage';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
@@ -21,8 +18,7 @@ export const loginWithTokens = (compId,needReturn) => {
                         AsyncStorage.setItem(USER_TOKEN_TYPE, 'FACEBOOK');
                         Data._tokenIdSaved = result.token;
                         Meteor._userIdSaved = result.id;
-                        Meteor._loginWithToken(result.token)
-                        EventRegister.emit('siggnedIn',true)
+                        Meteor._loginWithToken(result.token);
                        // MyFunctions._saveDeviceUniqueId();
                         ToastAndroid.showWithGravityAndOffset(
                             "Logged In Successfully",
@@ -32,10 +28,10 @@ export const loginWithTokens = (compId,needReturn) => {
                             50,
                         );
                         if(needReturn){
-                            goBack(compId);
+                           this.props.navigation.goBack();
                         }
                         else {
-                            backToRoot(compId);
+                           this.props.navigation.navigate('Home');
                         }
 
                     };

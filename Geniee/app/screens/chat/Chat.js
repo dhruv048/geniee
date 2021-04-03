@@ -444,7 +444,7 @@ class Chat extends Component {
           <Left style={{flexDirection: 'row'}}>
             <Button
               onPress={() => {
-                goBack(this.props.componentId);
+                this.props.navigation.goBack();
               }}
               transparent>
               <Icon name="arrow-left" color="white" size={25} />

@@ -45,7 +45,7 @@ class LandingPageEF extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         BackHandler.addEventListener('hardwareBackPress', this.handleBack.bind(this));
         Meteor.call('GetEFCategories', (err, res) => {
             console.log(err, res)
@@ -65,9 +65,9 @@ class LandingPageEF extends Component {
 
     handleBack() {
         console.log('backPress')
-        // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
+        // this.props.navigation.navigate('Dashboard');
         if (this.isDisplaying) {
-            backToRoot(this.props.componentId);
+            this.props.navigation.navigate('Home');
             return true;
         }
     }
@@ -122,7 +122,7 @@ class LandingPageEF extends Component {
         );
         var right = (
             <Right style={{flex: 1}}>
-                <Button onPress={() => goToRoute(this.props.componentId, 'WishListEF')} transparent>
+                <Button onPress={() => this.props.navigation.navigate( 'WishListEF')} transparent>
                     <FIcon name='heart' style={{fontSize: 24, color: 'white'}}/>
                     {this.state.wishList.length > 0 ?
                         <Badge
@@ -135,7 +135,7 @@ class LandingPageEF extends Component {
                             }}>{this.state.wishList.length}</Text></Badge>
                         : null}
                 </Button>
-                <Button onPress={() => goToRoute(this.props.componentId, 'CartEF')} transparent>
+                <Button onPress={() => this.props.navigation.navigate( 'CartEF')} transparent>
                     <Icon name='ios-cart' style={{fontSize: 27, color: 'white'}}/>
                     {this.state.totalCount > 0 ?
                         <Badge
@@ -164,7 +164,7 @@ class LandingPageEF extends Component {
                                 //image={'https://e-flyers.co.za/wp-content/uploads/2019/09/home_page_bg.jpg'}
                                            title={item.title}
                                            count={item.hasOwnProperty('products') ? item.products.count : 0}
-                                           onPress={() => goToRoute(this.props.componentId, 'ProductsEF', {
+                                           onPress={() => this.props.navigation.navigate( 'ProductsEF', {
                                                Id: item._id,
                                                Category: item.title
                                            })}

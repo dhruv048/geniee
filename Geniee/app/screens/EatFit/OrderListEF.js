@@ -45,7 +45,7 @@ class OrderListEF extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         this.setState({chatList: this.props.chatChannels})
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
 
@@ -61,8 +61,8 @@ class OrderListEF extends Component {
     handleBackButton=()=>{
         if( this.isDisplaying) {
             console.log('handleback press orderList')
-            // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-            backToRoot(this.props.componentId);
+            // this.props.navigation.navigate('Dashboard');
+            this.props.navigation.navigate('Home');
             return true;
         }
 
@@ -149,7 +149,7 @@ class OrderListEF extends Component {
         return (
             <Card key={order._id} style={customStyle.Card}>
                 <TouchableNativeFeedback onPress={() => {
-                    goToRoute(this.props.componentId,'OrderDetailEF', {'Id':order._id,'Order': order})
+                    this.props.navigation.navigate('OrderDetailEF', {'Id':order._id,'Order': order})
                 }} background={TouchableNativeFeedback.SelectableBackground()}>
                     <CardItem>
                         <Grid>
@@ -214,7 +214,7 @@ class OrderListEF extends Component {
                     </Body>
                     {/* <Right style={{margin: 7}}>
                         <Button onPress={() => {
-                            goToRoute(this.props.componentId,'ArticleCreate')
+                            this.props.navigation.navigate('ArticleCreate')
                         }} transparent>
                             <Icon name='plus' color='white' size={25}/>
                         </Button>

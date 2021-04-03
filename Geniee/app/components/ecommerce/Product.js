@@ -122,7 +122,7 @@ export default class Product extends PureComponent {
                 },
                 service: Service
             };
-            goToRoute(this.props.componentId,"Message",{Channel});
+            this.props.navigation.navigate("Message",{Channel});
         }).catch(error => {
             console.error(error);
         });
@@ -133,7 +133,7 @@ export default class Product extends PureComponent {
         // console.log(product)
         return (
             <View style={[customStyle.Card, style.card]}>
-                {/* <TouchableOpacity onPress={() => goToRoute(this.props.componentId,"ProductDetail", {'Id': product._id,data:product})}> */}
+                {/* <TouchableOpacity onPress={() => this.props.navigation.navigate("ProductDetail", {'Id': product._id,data:product})}> */}
                 <Image source={{uri: settings.IMAGE_URL + product.images[0]}} style={style.thumbnail}/>
                 <View style={style.cardDetails}>
                     <Text style={style.productTitle}

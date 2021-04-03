@@ -3,34 +3,21 @@ import _ from 'lodash';
 import {
     Container,
     Header,
-    Left,
-    Body,
-    Subtitle,
-    Right,
     Content,
-    List,
-    ListItem,
-    Thumbnail,
-    Footer,
-    FooterTab,
     Button,
     Icon,
-    Text,
     Item,
     Input,
-    Picker,
-    Fab
 } from 'native-base';
 
 import {
     StyleSheet,
-    Image,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
+    Picker,
     ActivityIndicator,
-    Alert,BackHandler,
+    BackHandler,
     PermissionsAndroid,
-    FlatList, View
+    FlatList,
+    View, 
 } from 'react-native';
 import {BottomNavigation} from 'react-native-paper';
 import Meteor from "../react-native-meteor";
@@ -38,11 +25,7 @@ import Map from './Map';
 import settings from "../config/settings";
 import {colors, customStyle} from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
-import call from "react-native-phone-call";
 import Geolocation from 'react-native-geolocation-service';
-import StarRating from "../components/StarRating/StarRating";
-import {Navigation} from "react-native-navigation";
-import {backToRoot, goToRoute} from "../Navigation";
 import ServiceItem from  "../components/Service/ServiceItem";
 import {CogMenu} from "../components/CogMenu/CogMenu";
 import FIcon from 'react-native-vector-icons/Feather';
@@ -51,15 +34,7 @@ class Home extends Component {
 
     _handlItemPress = (service) => {
         // service.avgRate = this.averageRating(service.ratings);
-        // goToRoute(this.props.componentId,'Service', {Id: service});
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: "ServiceDetail",
-                passProps: {
-                    Id:service
-                }
-            }
-        });
+         this.props.navigation.navigate('ServiceDetail', {Id: service});
     }
 
     _fetchMarkers = () => {
@@ -212,9 +187,9 @@ class Home extends Component {
 
 
     async componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         BackHandler.addEventListener('hardwareBackPress', this.handleBackfromHome);
-        this.region=this.props.Region;
+        this.region=this.props.route.params.Region;
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
@@ -294,8 +269,8 @@ class Home extends Component {
     handleBackfromHome=()=>{
         if( this.isDisplaying) {
             console.log('handlebackpress')
-            // navigateToRoutefromSideMenu(this.props.componentId,'Dashboard');
-            backToRoot(this.props.componentId);
+            // this.props.navigation.navigate('Dashboard');
+            this.props.navigation.navigate('Home');
             return true;
         }
 
@@ -463,7 +438,7 @@ class Home extends Component {
                     {/*backgroundColor={colors.statusBar}*/}
                     {/*barStyle='light-content'*/}
                 {/*/>*/}
-                <Header searchBar rounded androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+                <Header searchBar rounded androidStatusBarColor={colors.statusBar} style={{backgroundColor: colors.primary}}>
                     {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />
@@ -536,8 +511,8 @@ class Home extends Component {
                     {/*</Right>*/}
                 </Header>
 
-                <Content
-                    contentContainerStyle={{flex: 1}} >
+                <View
+                    style={{flex: 1}} >
                     {/*{ (this.state.data.length<10 && !this.currentSearch )? <ActivityIndicator style={{ flex:1}}/>: null}*/}
                     {/*{this.renderSelectedTab()}*/}
                     {/*<List style={styles.contentList}*/}
@@ -552,7 +527,7 @@ class Home extends Component {
                     renderScene={this.renderScene}
                 />
 
-                </Content>
+                </View>
 
                 {/*<Footer>*/}
                     {/*<FooterTab style={[customStyle.footer,{paddingHorizontal:0}]}>*/}

@@ -30,7 +30,7 @@ import StarRating from "../components/StarRating/StarRating";
 import {goToChat, goToRoute} from "../Navigation";
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import CogMenu from "../components/CogMenu";
-import {Navigation} from 'react-native-navigation';
+
 import {goBack} from "../Navigation";
 import Product from "../components/ecommerce/Product";
 import MyFunctions from "../lib/MyFunctions";
@@ -62,7 +62,7 @@ class ServiceDetail extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
         const Id = this.props.Id;
         console.log(Id)
@@ -139,7 +139,7 @@ class ServiceDetail extends Component {
                 },
                 service: Service
             };
-            goToRoute(this.props.componentId,"Message",{Channel});
+            this.props.navigation.navigate("Message",{Channel});
         }).catch(error => {
             console.error(error);
         });
@@ -230,7 +230,7 @@ class ServiceDetail extends Component {
         let item=data.item;
         return(
             <View style={styles.col}>
-            <TouchableOpacity onPress={()=>{goToRoute(this.props.componentId,"ProductDetail", {'Id': item._id,data:item})}} style={styles.containerStyle}>
+            <TouchableOpacity onPress={()=>{this.props.navigation.navigate("ProductDetail", {'Id': item._id,data:item})}} style={styles.containerStyle}>
             <Product key={item._id} product={item} componentId={this.props.componentId}  bottomTab={true} />
             </TouchableOpacity>
             </View>
@@ -239,7 +239,7 @@ class ServiceDetail extends Component {
 
     _showImage=(image)=>{
         if(image) {
-            goToRoute(this.props.componentId, 'ImageGallery', {
+            this.props.navigation.navigate( 'ImageGallery', {
                 images: [image],
                 position: parseInt('0')
             })
@@ -268,7 +268,7 @@ class ServiceDetail extends Component {
                 <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
                     <Left>
                        <Button transparent onPress={() => {
-                            goBack(this.props.componentId)
+                            this.props.navigation.goBack()
                         }}>
                             <Icon name="arrow-back" style={{fontWeight: '500', fontSize: 24}}/>
                         </Button>
@@ -287,7 +287,7 @@ class ServiceDetail extends Component {
                                source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ this.state.Service.coverImage}:userImage}/>
                     </TouchableOpacity>
                     <Text style={styles.name}>{this.state.Service.title}</Text>
-                    <TouchableOpacity onPress={()=>goToRoute(this.props.componentId, 'ServiceRatings', {Id:this.state.Service._id})} style={ styles.starView }><StarRating starRate={this.state.Service.Rating.avgRate}/></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate( 'ServiceRatings', {Id:this.state.Service._id})} style={ styles.starView }><StarRating starRate={this.state.Service.Rating.avgRate}/></TouchableOpacity>
                     
                     {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
                         <Text style={styles.availableText}>{this.state.Service.location.formatted_address}

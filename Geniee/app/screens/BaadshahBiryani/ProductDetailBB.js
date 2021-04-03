@@ -134,7 +134,7 @@ class ProductDetailBB extends Component {
         let product = this.state.product;
         product['orderQuantity'] = this.state.quantity;
         product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
-        goToRoute(this.props.componentId,'CheckoutEF', {'productOrder': product});
+        this.props.navigation.navigate('CheckoutEF', {'productOrder': product});
     }
 
     _browse = (url) => {
@@ -192,7 +192,7 @@ class ProductDetailBB extends Component {
                         borderRadius: 100,
                     }}
                                       onPress={() => {
-                                          goBack(this.props.componentId)
+                                          this.props.navigation.goBack()
                                       }}>
                         <FIcon name='arrow-left' color='white' size={24}/>
                     </TouchableOpacity>
@@ -491,7 +491,7 @@ class ProductDetailBB extends Component {
         return (
             <TouchableWithoutFeedback
                 key={index}
-                onPress={() => goToRoute(this.props.componentId,'ImageGalleryBB', {
+                onPress={() => this.props.navigation.navigate('ImageGalleryBB', {
                     images: this.state.product.images,
                     position: parseInt(index)
                 })}
@@ -508,7 +508,7 @@ class ProductDetailBB extends Component {
     _renderProduct = (data, index) => {
         let item = data.item;
         return (
-            <TouchableOpacity onPress={() => goToRoute(this.props.componentId, "ProductDetailBB",{'Id': item._id, data: item})}
+            <TouchableOpacity onPress={() => this.props.navigation.navigate( "ProductDetailBB",{'Id': item._id, data: item})}
                               style={styles.containerStyle}>
                 <View style={[customStyle.Card, styles.card]}>
                     <Image source={{uri: settings.WEB_URL+'img/'  + item.images[0]}} style={styles.thumbnail}/>

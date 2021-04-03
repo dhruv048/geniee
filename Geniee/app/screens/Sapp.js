@@ -206,7 +206,7 @@ handleSignout = () => {
             {
                 text: 'Yes SignOut', onPress: () => Meteor.logout((err) => {
                     // if (!err)
-                    //    goToRoute(this.props.componentId,'Auth')
+                    //    this.props.navigation.navigate('Auth')
                 })
             },
             {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'}

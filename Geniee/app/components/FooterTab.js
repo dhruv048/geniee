@@ -4,7 +4,7 @@ import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import React, { createRef } from "react";
 import { colors } from "../config/styles";
-import { goToRoute, backToRoot } from "../Navigation";
+import FAIcon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from "react-native-actions-sheet";
 import { Headline, List, } from "react-native-paper";
 
@@ -14,48 +14,51 @@ class FooterTabs extends React.PureComponent {
     super(props);
     this.actionSheetRef = createRef();
   };
-
+  getIndex = (routeName) => {
+    return this.props.state.routes.findIndex(route => route.name == routeName)
+}
   render(){
-   
+   console.log(this.props);
+   const state=this.props.state;
     return (
       <Footer style={{ backgroundColor: colors.whiteText, borderTopWidth: 0 }}>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', backgroundColor: 'white' }}>
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => backToRoot(this.props.componentId)}
+            onPress={() =>this.props.navigation.navigate('Home')}
           >
-            <NBIcon name="home" style={{ color: this.props.route == 'Home' ? colors.appLayout : colors.gray_200 }} size={20}></NBIcon>
-            {this.props.route == 'Home' ?
+            <FAIcon name="home" style={{ color: state.index== this.getIndex('Home') ? colors.appLayout : colors.gray_200, }} size={20} ></FAIcon>
+            {state.index== this.getIndex('Home') ?
               <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Home</Text>
               : null}
           </Button >
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => goToRoute(this.props.componentId, 'Chat')}
+            onPress={() => this.props.navigation.navigate( 'Chat')}
           >
-            <Icon name="mail" style={{ color: this.props.route == 'Chat' ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
-            {this.props.route == 'Chat' ?
+            <Icon name="mail" style={{ color: state.index== this.getIndex('Chat') ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
+            {state.index== this.getIndex('Chat')?
               <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Message</Text> : null}
           </Button>
 
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ flex: 1, justifyContent:'center', width:'100%' }}>
             <Button onPress={() => { this.actionSheetRef.current?.setModalVisible(); }}
-              style={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.appLayout, height: 40, width: 40, borderRadius: 20 }} >
+              style={{ alignSelf:'center', justifyContent: 'center', backgroundColor: colors.appLayout, height: 40, width: 40, borderRadius: 20 }} >
               <Icon name="plus" style={{ color: colors.whiteText }} size={25}></Icon>
             </Button>
           </View>
 
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => goToRoute(this.props.componentId, 'WishListEF')}
+            onPress={() => this.props.navigation.navigate( 'WishListEF')}
           >
-            <Icon name="heart" style={{ color: this.props.route == 'Favourite' ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
-            {this.props.route == 'Favourite' ?
-              <Text note style={{ color: colors.appLayout, fontSize: 8 }}>WishList</Text> : null}
+            <Icon name="heart" style={{ color: state.index== this.getIndex('WishListEF') ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
+            {state.index== this.getIndex('WishListEF')?
+              <Text note style={{ color: state.index== this.getIndex('WishListEF')? colors.appLayout : colors.gray_200, fontSize: 8 }}>WishList</Text> : null}
           </Button>
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => goToRoute(this.props.componentId, 'SideMenu')}
+            onPress={() => this.props.navigation.navigate('More')}
           >
-            <Icon name="more-horizontal" style={{ color: this.props.route == 'More' ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
-            {this.props.route == 'More' ?
-              <Text note style={{ color: colors.appLayout, fontSize: 8 }}>More</Text> : null}
+            <Icon name="more-horizontal" style={{ color: state.index== this.getIndex('More')? colors.appLayout : colors.gray_200 }} size={20}></Icon>
+            {state.index== this.getIndex('More')?
+              <Text note style={{ color:state.index== this.getIndex('More')? colors.appLayout :colors.gray_200, fontSize: 8 }}>More</Text> : null}
           </Button>
         </View>
         <ActionSheet ref={this.actionSheetRef}
@@ -74,19 +77,19 @@ class FooterTabs extends React.PureComponent {
               <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false)}}/>
                <Icon  onPress={()=>{this.actionSheetRef.current?.setModalVisible(false)}} name="x" size={25} />
               </View>
-              <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),goToRoute(this.props.componentId, 'AddService')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
+              <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddService')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
                 <MIcon size={20}  name="briefcase" color={colors.gray_100}/>
                 <Text note style={{marginLeft:25}}>Business</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),goToRoute(this.props.componentId, 'AddService')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
+                <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddService')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
                 <Image style={{height:20,width:20}}  source={require("../images/ic_storefront_black_36dp.png")} />
                 <Text note style={{marginLeft:25}}>Store</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),goToRoute(this.props.componentId, 'AddProduct')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
+                <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddProduct')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
                 <Image style={{height:20,width:20}}  source={require("../images/ic_store_plus_black_36dp.png")} />
                 <Text note style={{marginLeft:25}}>Product</Text>
                 </TouchableOpacity>
-             <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),goToRoute(this.props.componentId, 'AddProduct')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
+             <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddProduct')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
                 <MIcon size={20}  name="face-agent"  color={colors.gray_100}/>
                 <Text note style={{marginLeft:25}}>Services</Text>
                 </TouchableOpacity>

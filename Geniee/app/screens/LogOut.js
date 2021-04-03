@@ -25,10 +25,10 @@ class LogOut extends Component {
         //         {
         //             text: 'Yes SignOut', onPress: () => Meteor.logout((err) => {
         //                 if (!err)
-        //                    goToRoute(this.props.componentId,'Auth')
+        //                    this.props.navigation.navigate('Auth')
         //             })
         //         },
-        //         {text: 'Cancel', onPress: () => goBack(this.props.componentId)}
+        //         {text: 'Cancel', onPress: () => this.props.navigation.goBack()}
         //     ],
         //     {cancelable: false}
         // )
@@ -40,7 +40,7 @@ class LogOut extends Component {
                 this.props.navigation.navigate('UnAuthorized');
             }
             else
-                goBack(this.props.componentId)
+                this.props.navigation.goBack()
         })
     }
 

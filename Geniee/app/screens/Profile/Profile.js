@@ -77,7 +77,7 @@ class Profile extends React.PureComponent {
                     <View>
                         <View>
                             <TouchableNativeFeedback onPress={() => {
-                                backToRoot(this.props.componentId)
+                                this.props.navigation.navigate('Home')
                             }}>
                                 <View>
                                     <Icon name='arrow-left' color={colors.primary} size={24}/>

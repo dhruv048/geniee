@@ -14,7 +14,8 @@ import {
     Image,
     TouchableWithoutFeedback,
     UIManager,
-    SafeAreaView
+    SafeAreaView,
+    StatusBar
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Geolocation from 'react-native-geolocation-service';
@@ -38,9 +39,7 @@ import {
 } from 'native-base';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, customStyle, variables } from '../config/styles';
-import { Navigation } from 'react-native-navigation';
 import { Badge, Avatar } from 'react-native-paper';
-
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 import settings from '../config/settings';
 import StarRating from '../components/StarRating/StarRating';
@@ -51,7 +50,6 @@ import SplashScreen from 'react-native-splash-screen';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
-import { goToRoute } from '../Navigation';
 import { getProfileImage } from '../config/settings';
 import LinearGradient from 'react-native-linear-gradient';
 import FooterTabs from '../components/FooterTab';
@@ -186,7 +184,6 @@ class Dashboard extends Component {
 
     async componentDidMount() {
         this.setState({ loggedUser: this.props.loggedUser });
-
         this.updateCounts();
         let MainCategories = await AsyncStorage.getItem('Categories');
         if (MainCategories) {
@@ -197,7 +194,7 @@ class Dashboard extends Component {
             MainCategories = [];
         }
         SplashScreen.hide();
-        Navigation.events().bindComponent(this);
+        // 
         Meteor.subscribe('aggChatChannels');
         if (this.props.notificationCount.length > 0)
             this.setState({
@@ -373,11 +370,11 @@ class Dashboard extends Component {
             if (notificationOpen.notification.data.navigate) {
                 console.log('subscribe & Navigate');
                 // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-                goToRoute(
-                    this.props.componentId,
-                    notificationOpen.notification.data.route,
-                    { Id: notificationOpen.notification.data.Id },
-                );
+                // goToRoute(
+                //     this.props.componentId,
+                //     notificationOpen.notification.data.route,
+                //     { Id: notificationOpen.notification.data.Id },
+                // );
                 // });
             }
         });
@@ -393,17 +390,16 @@ class Dashboard extends Component {
                 // try {
                 //     AsyncStorage.setItem(USER_TOKEN_KEY, '');
                 //     Meteor.logout();
-                //     goToRoute(this.props.componentId,'Auth');
+                //     this.props.navigation.navigate('Auth');
                 // }
                 // catch (e) {
                 //     console.log(e.message)
-                //     goToRoute(this.props.componentId,'Auth');
+                //     this.props.navigation.navigate('Auth');
                 // }
             }
             if (notificationOpen.notification.data.navigate) {
                 console.log('subscribe & Navigate');
-                goToRoute(
-                    this.props.componentId,
+                this.props.navigation.navigate(
                     notificationOpen.notification.data.route,
                     { Id: notificationOpen.notification.data.Id },
                 );
@@ -455,22 +451,22 @@ class Dashboard extends Component {
 
     _search = text => {
         if (this.state.query)
-            goToRoute(this.props.componentId, 'SearchResult', {
+            this.props.navigation.navigate( 'SearchResult', {
                 SearchText: this.state.query,
             });
     };
 
     _handlItemPress = service => {
         service.avgRate = this.averageRating(service.ratings);
-        //  this.props.navigation.navigate('Service', {Id: service});
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'ServiceDetail',
-                passProps: {
-                    Id: service._id,
-                },
-            },
-        });
+     this.props.navigation.push('ServiceDetail', {Id: service._id});
+        // Navigation.push(this.props.componentId, {
+        //     component: {
+        //         name: 'ServiceDetail',
+        //         passProps: {
+        //             Id: service._id,
+        //         },
+        //     },
+        // });
     };
     averageRating = arr => {
         let sum = 0;
@@ -485,33 +481,25 @@ class Dashboard extends Component {
         item.subCategories.map(item => {
             Ids.push(item.subCatId);
         });
-        // this.props.navigation.navigate("Home", {Id: Ids, Region: this.region})
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'ServiceList',
-                passProps: {
-                    Id: Ids,
-                    Region: this.region,
-                },
-            },
-        });
+         this.props.navigation.navigate("ServiceList", {Id: Ids, Region: this.region})
+        // Navigation.push(this.props.componentId, {
+        //     component: {
+        //         name: 'ServiceList',
+        //         passProps: {
+        //             Id: Ids,
+        //             Region: this.region,
+        //         },
+        //     },
+        // });
     };
 
     gotoEatFit = () => {
         console.log('Eat-Fit');
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'LandingPageEF',
-            },
-        });
+       this.props.navigation.navigate('LandingPageEF')
     };
 
     gotoBB = () => {
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'ProductsBB',
-            },
-        });
+        this.props.navigation.navigate('ProductsBB')
     };
     renderCategoryItem = (data, index) => {
         var item = data.item;
@@ -655,7 +643,7 @@ class Dashboard extends Component {
         //     }
         // });
 
-        goToRoute(this.props.componentId, 'ProductDetail', { data: pro });
+         this.props.navigation.navigate( 'ProductDetail', { Id: pro._id });
     };
 
     _onScroll = event => {
@@ -809,6 +797,8 @@ class Dashboard extends Component {
         const profileImage=loggedUser? loggedUser.profile.profileImage : null;
         console.log(loggedUser,profileImage)
         return (
+            <>
+            <StatusBar  backgroundColor={colors.statusBar}/>
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
                 
                 <View style={{backgroundColor:colors.appLayout, height:this.state.isActionButtonVisible ? 100 :50}}>
@@ -817,7 +807,7 @@ class Dashboard extends Component {
                         <View style={{ justifyContent:'space-around',  flexDirection:'row' }}>
                         <Button
                         style={{marginHorizontal:8 }}
-                            onPress={() => goToRoute(this.props.componentId, 'Notification')}
+                            onPress={() => this.props.navigation.navigate('Notification')}
                             transparent>
                             <Icon
                                 name="bell"
@@ -839,7 +829,7 @@ class Dashboard extends Component {
                         </Button>
                         {/* <Button
                         style={{marginHorizontal:8 }}
-                            onPress={() => goToRoute(this.props.componentId, 'WishListEF')}
+                            onPress={() => this.props.navigation.navigate( 'WishListEF')}
                             transparent>
                             <Icon name="heart" style={{ fontSize: 22, color: 'white'}} />
                             {this.state.wishList.length > 0 ? (
@@ -852,7 +842,7 @@ class Dashboard extends Component {
                         </Button> */}
                         <Button
                         style={{marginHorizontal:8 }}
-                            onPress={() => goToRoute(this.props.componentId, 'CartEF')}
+                            onPress={() =>this.props.navigation.navigate( 'CartEF')}
                             transparent>
                             <Icon name="shopping-bag" style={{ fontSize: 22, color: 'white' }} />
                             {this.state.totalCount > 0 ? (
@@ -873,7 +863,7 @@ class Dashboard extends Component {
 
                         <Button
                         style={{marginHorizontal:8 }}
-                            onPress={() => goToRoute(this.props.componentId, loggedUser ? 'Profile': 'SignIn')}
+                            onPress={() =>this.props.navigation.navigate( loggedUser ? 'Profile': 'SignIn')}
                             transparent>
                             <Icon
                                 name="user"
@@ -950,7 +940,7 @@ class Dashboard extends Component {
                                 style={{paddingRight:10}}
                                     transparent
                                     onPress={() =>
-                                        goToRoute(this.props.componentId, 'ServiceList', {
+                                        this.props.navigation.navigate( 'ServiceList', {
                                             Region: this.region,
                                         })
                                     }>
@@ -969,7 +959,7 @@ class Dashboard extends Component {
                                 renderItem={({ item, index }) => (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            goToRoute(this.props.componentId, 'ServiceDetail', {
+                                            this.props.navigation.navigate('ServiceDetail', {
                                                 Id: item,
                                             });
                                         }}>
@@ -1143,7 +1133,7 @@ class Dashboard extends Component {
                                             },
                                         ]}>
                                         <TouchableOpacity
-                                            onPress={item.hasOwnProperty('onPress') ? item.onPress : () => goToRoute(this.props.componentId, 'ServiceDetail', { Id: item })}>
+                                            onPress={item.hasOwnProperty('onPress') ? item.onPress : () => this.props.navigation.navigate('ServiceDetail', { Id: item })}>
                                             <View>
                                                 <Image
                                                     onPress={() => item.onPress}
@@ -1230,7 +1220,7 @@ class Dashboard extends Component {
                                     style={{ paddingRight: 10 }}
                                     transparent
                                     onPress={() =>
-                                        goToRoute(this.props.componentId, 'AllProducts', {
+                                        this.props.navigation.navigate('AllProducts', {
                                             Region: this.region,
                                         })
                                     }>
@@ -1293,8 +1283,9 @@ class Dashboard extends Component {
 
 
                 </Content>
-                <FooterTabs route={'Home'} componentId={this.props.componentId}/>
+                {/* <FooterTabs route={'Home'} componentId={this.props.componentId}/> */}
             </SafeAreaView>
+            </>
         );
     }
 }

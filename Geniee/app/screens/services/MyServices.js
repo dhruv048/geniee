@@ -33,7 +33,6 @@ import Meteor from '../../react-native-meteor';
 import settings from '../../config/settings';
 import {colors} from '../../config/styles';
 import MyFunctions from '../../lib/MyFunctions';
-import Geolocation from 'react-native-geolocation-service';
 import StarRating from '../../components/StarRating/StarRating';
 import {Navigation} from 'react-native-navigation/lib/dist/index';
 import {
@@ -53,7 +52,7 @@ class MyServices extends Component {
   
   _handlItemPress = service => {
     service.avgRate = this.averageRating(service.ratings);
-    goToRoute(this.props.componentId, 'ServiceDetail', {Id: service});
+    this.props.navigation.navigate( 'ServiceDetail', {Id: service});
   };
 
   _fetchMarkers = () => {
@@ -214,7 +213,7 @@ class MyServices extends Component {
   }
 
   async componentDidMount() {
-    Navigation.events().bindComponent(this);
+    
     this.fetchData();
     // this.setState({
     //     data: this.props.myServices, loading: false
@@ -224,7 +223,7 @@ class MyServices extends Component {
 
   handleBackButtonMyService() {
     console.log('handlebackpress from My Services..');
-    backToRoot(this.props.componentId);
+    this.props.navigation.navigate('Home');
     return true;
   }
 
@@ -385,7 +384,7 @@ class MyServices extends Component {
                 autoCorrect={false}
               />
 
-              <Button transparent style={{paddingHorizontal:10}} onPress={() => goToRoute(this.props.componentId,'AddService')}>
+              <Button transparent style={{paddingHorizontal:10}} onPress={() => this.props.navigation.navigate('AddService')}>
               <Icon name='plus' size={28} color={colors.primary}/>
               </Button>
             </Item>

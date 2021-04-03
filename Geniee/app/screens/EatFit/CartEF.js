@@ -79,7 +79,7 @@ class CartEF extends Component {
         var left = (
             <Left style={{flex: 1}}>
                 <Button transparent onPress={() => {
-                    goBack(this.props.componentId)
+                    this.props.navigation.goBack()
                 }}>
                     <FIcon name="x" size={24} color={'#fff'}/>
                 </Button>
@@ -254,14 +254,14 @@ class CartEF extends Component {
 
 
     checkout() {
-        goToRoute(this.props.componentId,'CheckoutEF');
+        this.props.navigation.navigate('CheckoutEF');
     }
 
     itemClicked(item) {
        if(item.productOwner==ProductOwner.EAT_FIT)
-        goToRoute(this.props.componentId,'ProductDetailEF', {Id: item._id, data: item});
+        this.props.navigation.navigate('ProductDetailEF', {Id: item._id, data: item});
        else
-        goToRoute(this.props.componentId,'ProductDetail', {Id: item._id, data: item});
+        this.props.navigation.navigate('ProductDetail', {Id: item._id, data: item});
     }
 
 }

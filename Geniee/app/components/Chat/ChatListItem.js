@@ -23,7 +23,7 @@ export default class ChatListItem extends PureComponent {
             },
             service: channel.service,
         };
-        goToRoute(this.props.componentId, 'Message', {Channel: Channel});
+        this.props.navigation.navigate( 'Message', {Channel: Channel});
     };
 
     render() {

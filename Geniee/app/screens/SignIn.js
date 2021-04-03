@@ -20,13 +20,6 @@ import {colors} from '../config/styles';
 import {customGalioTheme} from '../config/themes';
 import {LoginManager} from 'react-native-fbsdk';
 import {onLoginFinished} from '../lib/FBlogin';
-import {Navigation} from 'react-native-navigation';
-import {
-    backToRoot,
-    goToRoute,
-    goBack,
-} from '../Navigation';
-import {EventRegister} from 'react-native-event-listeners';
 import {GalioProvider, Input} from 'galio-framework';
 import {Title,Button} from 'react-native-paper';
 
@@ -47,12 +40,12 @@ class SignIn extends Component {
     }
 
     componentDidMount() {
-        Navigation.events().bindComponent(this);
+        
     }
 
     handleBackButton() {
         console.log('handlebackpressSignIn');
-        backToRoot(this.props.componentId);
+        this.props.navigation.navigate('Home');
         return true;
     };
 
@@ -160,7 +153,6 @@ class SignIn extends Component {
                                 Meteor.getData()._tokenIdSaved,
                             );
                             AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
-                            EventRegister.emit('siggnedIn', true);
                             ToastAndroid.showWithGravityAndOffset(
                                 'Logged In Successfully',
                                 ToastAndroid.LONG,
@@ -169,9 +161,9 @@ class SignIn extends Component {
                                 50,
                             );
                             if (this.props.needReturn) {
-                                goBack(this.props.componentId);
+                                this.props.navigation.goBack();
                             } else {
-                                backToRoot(this.props.componentId);
+                                this.props.navigation.navigate('Home');
                             }
                         }
                     }.bind(this),
@@ -203,7 +195,7 @@ class SignIn extends Component {
     };
 
     navigate(route) {
-        goToRoute(this.props.componentId, route);
+        this.props.navigation.navigate( route);
     }
 
     render() {
@@ -279,7 +271,7 @@ class SignIn extends Component {
                                 <View>
                                     <TouchableOpacity
                                         onPress={() =>
-                                            goToRoute(this.props.componentId, 'ForgotPassword')
+                                            this.props.navigation.navigate( 'ForgotPassword')
                                         }>
                                         <Text style={styles.forgotPwdButton}>Forgot your password?</Text>
                                     </TouchableOpacity>
@@ -290,7 +282,7 @@ class SignIn extends Component {
                                 <Text style={styles.signupText}>Don't have an account?</Text>
                                 <TouchableOpacity
                                     style={styles.navButton}
-                                    onPress={() => goToRoute(this.props.componentId, 'Register')}>
+                                    onPress={() => this.props.navigation.navigate( 'Register')}>
                                     <Text style={styles.navButtonText}>Sign Up</Text>
                                 </TouchableOpacity>
                             </View>
