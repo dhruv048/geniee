@@ -33,7 +33,7 @@ class OrderDetailIn extends Component {
     }
 
     async componentDidMount() {
-        let orderId = this.props.Id;
+        let orderId = this.props.route.params.Id;
         let _order = this.props.Order;
         let user = await AsyncStorage.getItem('loggedUser');
         this.loggedUser = JSON.parse(user);

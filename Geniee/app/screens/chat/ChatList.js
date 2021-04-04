@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
   },
   serviceList: {
     //backgroundColor: colors.inputBackground,
-    backgroundColor: '#094c6b0a',
+    backgroundColor: '#4d94ff0a',
     //marginVertical: 5,
     //marginHorizontal: '2%',
     borderRadius: 0,
-    borderBottomColor: '#094c6b',
+    borderBottomColor: '#4d94ff',
     borderBottomWidth: 5,
     paddingVertical: 10,
   },

@@ -163,7 +163,7 @@ class ForgotPassword extends Component {
           <Container style={styles.container}>
             <Header
               androidStatusBarColor={colors.statusBar}
-              style={{backgroundColor: '#094c6b'}}>
+              style={{backgroundColor: '#4d94ff'}}>
               <Left>
                 <Button
                   transparent

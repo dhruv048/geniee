@@ -38,7 +38,6 @@ import Product from '../../components/ecommerce/Product';
 import {colors, customStyle} from '../../config/styles';
 import Meteor from '../../react-native-meteor';
 import settings, {ProductType, ServiceDuration} from '../../config/settings';
-import {goToRoute,goBack} from '../../Navigation';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import MyFunctions from "../../lib/MyFunctions";
 
@@ -60,8 +59,8 @@ class ProductDetail extends Component {
   async componentDidMount() {
     
     //get the product with id of this.props.product.id from your server
-    let productId = this.props.Id;
-    let _product = this.props.data;
+    let productId = this.props.route.params.Id;
+    let _product = this.props.route.params.data;
     let wishList = await AsyncStorage.getItem('myWhishList');
     console.log('wishList', wishList);
     if (wishList) wishList = JSON.parse(wishList);
@@ -157,7 +156,7 @@ class ProductDetail extends Component {
                 opacity:0.8
             }}
             onPress={() => {
-              Navigation.pop(this.props.componentId);
+              this.props.navigation.pop();
             }}>
             <FIcon name="arrow-left" color={colors.primary} size={24} />
           </TouchableOpacity>

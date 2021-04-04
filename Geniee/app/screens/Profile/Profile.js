@@ -62,7 +62,7 @@ class Profile extends React.PureComponent {
     render() {
         return (
             <Container style={styles.container}>
-                {/*<Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}/>*/}
+                {/*<Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#4d94ff'}}/>*/}
                 <StatusBar
                     backgroundColor={colors.statusBar}
                     barStyle='light-content'

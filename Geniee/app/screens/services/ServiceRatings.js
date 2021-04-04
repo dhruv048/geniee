@@ -39,7 +39,7 @@ export default class ServiceRatings extends Component {
     }
 
     componentDidMount() {
-       Meteor.call('getRatings', this.props.Id,this.skip, (err,res)=>{
+       Meteor.call('getRatings', this.props.route.params.Id,this.skip, (err,res)=>{
            if(!err){
                this.setState({ratings:res.result});
                this.skip = this.skip + 20;
@@ -62,7 +62,7 @@ export default class ServiceRatings extends Component {
     _handleEndReach = () => {
         if(!this.state.loading) {
             this.setState({loading:true});
-            Meteor.call('getRatings', this.props.Id, this.skip, (err, res) => {
+            Meteor.call('getRatings', this.props.route.params.Id, this.skip, (err, res) => {
                 if (!err) {
                     let totalRatings = this.state.ratings.concat(res.result);
                     this.setState({ratings: totalRatings});

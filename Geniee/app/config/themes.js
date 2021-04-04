@@ -5,7 +5,7 @@ export const customPaperTheme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#094c6b',
+    primary: '#4d94ff',
     accent: '#ff8080',
   },
 };
@@ -21,9 +21,9 @@ export const customGalioTheme = {
   COLORS: {
     // PRIMARY: '#5c7aaf',
     // THEME:'#5c7aaf'
-    PRIMARY: '#094c6b',
-    THEME: '#094c6b',
-    INPUT_TEXT: '#094c6b',
+    PRIMARY: '#4d94ff',
+    THEME: '#4d94ff',
+    INPUT_TEXT: '#4d94ff',
     FACEBOOK: '#3B5998',
     INPUT: '#808080',
     PLACEHOLDER: '#9FA5AA',

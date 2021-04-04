@@ -103,7 +103,7 @@ class Home extends Component {
             // delayTimer = setTimeout(function() {
             this.currentSearch = text;
             var dataToSend = {
-                subCatIds: this.props.Id,
+                subCatIds: this.props.route.params.Id,
                 searchValue: text,
                 coords: [this.region.longitude, this.region.latitude]
             };
@@ -212,7 +212,7 @@ class Home extends Component {
                     // Meteor.subscribe('nearByService', {
                     //     limit: this.limit,
                     //     coords: [region.longitude, region.latitude],
-                    //     subCatIds: this.props.Id
+                    //     subCatIds: this.props.route.params.Id
                     // })
                 },
                 (error) => {
@@ -283,7 +283,7 @@ class Home extends Component {
             skip:this.skip,
             limit: this.limit,
             coords: [this.region.longitude ?this.region.longitude: 85.312950, this.region.latitude?this.region.latitude:27.712020],
-            subCatIds: this.props.Id ? this.props.Id: null
+            subCatIds: this.props.route.params.Id ? this.props.route.params.Id: null
         };
         this.lastSkip=this.skip;
         this.setState({loading:true})
@@ -561,11 +561,11 @@ const styles = StyleSheet.create({
     },
     serviceList: {
         //backgroundColor: colors.inputBackground,
-        backgroundColor: '#094c6b0a',
+        backgroundColor: '#4d94ff0a',
         //marginVertical: 5,
         //marginHorizontal: '2%',
         borderRadius: 0,
-        borderBottomColor: '#094c6b',
+        borderBottomColor: '#4d94ff',
         borderBottomWidth: 5
     },
     serviceTitle: {
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
     catIcon: {
         padding: 5,
         borderRadius: 100,
-        backgroundColor: '#094c6b',
+        backgroundColor: '#4d94ff',
         color: '#fff',
         width: 30,
         height: 30,
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000'
     },
     footerTab: {
-        backgroundColor: '#094c6b',
+        backgroundColor: '#4d94ff',
         borderTopWidth: 3,
         borderTopColor: '#000000',
     },

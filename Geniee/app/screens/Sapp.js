@@ -184,7 +184,7 @@ const CustomDrawerContentComponent = (props) => (
             backgroundColor={colors.statusBar}
             barStyle='light-content'
         />
-        <Header style={{height: 220, backgroundColor: '#094c6b'}}>
+        <Header style={{height: 220, backgroundColor: '#4d94ff'}}>
             <Body style={{justifyContent: 'center', alignItems: 'center'}}>
             <UploadProfilePic/>
             </Body>

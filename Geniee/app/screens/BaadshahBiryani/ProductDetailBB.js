@@ -67,7 +67,7 @@ class ProductDetailBB extends Component {
     async componentDidMount() {
         this.setInitial
         /* Select the default color and size (first ones) */
-        let productId = this.props.Id;
+        let productId = this.props.route.params.Id;
         let _product = this.props.data;
         let wishList = await AsyncStorage.getItem('myWhishList');
         console.log('wishList', wishList)

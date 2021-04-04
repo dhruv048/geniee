@@ -547,7 +547,7 @@ class Chat extends Component {
         </View>
         <Footer
           style={{
-            backgroundColor: '#094c6b',
+            backgroundColor: '#4d94ff',
             paddingTop: 5,
             height: this.state.height + 10,
             flexDirection: 'row',

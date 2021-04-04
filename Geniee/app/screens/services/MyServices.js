@@ -89,7 +89,7 @@ class MyServices extends Component {
       // Meteor.subscribe('nearByService', {
       //     limit: this.limit,
       //     coords: [this.region.longitude, this.region.latitude],
-      //     subCatIds: this.props.Id
+      //     subCatIds: this.props.route.params.Id
       // }, () => {
       //     this.setState({loading: false})
       // });
@@ -127,7 +127,7 @@ class MyServices extends Component {
       // delayTimer = setTimeout(function() {
       this.currentSearch = text;
       // var dataToSend = {
-      //     subCatIds: this.props.Id'),
+      //     subCatIds: this.props.route.params.Id'),
       //     searchValue: text,
       //     coords: [this.region.longitude, this.region.latitude]
       // };
@@ -360,7 +360,7 @@ class MyServices extends Component {
       <Container style={{backgroundColor: colors.appBackground}}>
         <Header rounded searchBar
           androidStatusBarColor={colors.statusBar}
-          style={{backgroundColor: '#094c6b'}}>
+          style={{backgroundColor: '#4d94ff'}}>
           {/*<Left>
                             <Button transparent>
                                 <Icon name="cog" />
@@ -448,11 +448,11 @@ const styles = StyleSheet.create({
   serviceList: {
     flex: 1,
     backgroundColor: colors.inputBackground,
-    backgroundColor: '#094c6b0a',
+    backgroundColor: '#4d94ff0a',
     //marginVertical: 5,
     //marginHorizontal: '2%',
     borderRadius: 5,
-    borderBottomColor: '#094c6b',
+    borderBottomColor: '#4d94ff',
     borderBottomWidth: 10,
   },
   serviceTitle: {
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   catIcon: {
     padding: 5,
     borderRadius: 100,
-    backgroundColor: '#094c6b',
+    backgroundColor: '#4d94ff',
     color: '#fff',
     width: 30,
     height: 30,
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   footerTab: {
-    backgroundColor: '#094c6b',
+    backgroundColor: '#4d94ff',
     borderTopWidth: 3,
     borderTopColor: '#000000',
   },

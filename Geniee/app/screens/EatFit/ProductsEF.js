@@ -56,7 +56,7 @@ class ProductsEF extends Component {
     componentDidMount() {
         
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
-        Meteor.call('EFProductsByCategory',this.props.Id, (err, res) => {
+        Meteor.call('EFProductsByCategory',this.props.route.params.Id, (err, res) => {
             if (err) {
                 console.log('this is due to error. '+err);
             }
@@ -116,7 +116,7 @@ class ProductsEF extends Component {
     }
 
     render() {
-        const Id = this.props.Id;
+        const Id = this.props.route.params.Id;
         return (
             
                 <Container style={styles.container}>

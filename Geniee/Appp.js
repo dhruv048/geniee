@@ -14,8 +14,6 @@ import { customPaperTheme } from './app/config/themes';
 import notifee, { EventType, AndroidStyle } from '@notifee/react-native';
 import { ButtomTabs } from './app/screens/Navigations';
 import Home from './app/screens/Home';
-
-import ChatList from './app/screens/chat/ChatList';
 import ContactUs from './app/screens/ContactUs';
 import MyServices from './app/screens/services/MyServices';
 import AddProduct from './app/screens/store/AddProduct';
@@ -46,8 +44,8 @@ import ServiceRatings from './app/screens/services/ServiceRatings';
 import MyProducts from './app/screens/store/MyProducts';
 import SearchResult from './app/screens/SearchResult';
 import AllProducts from './app/screens/store/AllProducts';
-export default function Appp({ navigation }) {
 
+export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
     const navigationRef = React.useRef();
     const Stack = createStackNavigator();
@@ -128,7 +126,6 @@ export default function Appp({ navigation }) {
     };
 
     const messageListener = async () => {
-
         this.notificationListener = messaging()
             .getInitialNotification()
             .then(notification => {
@@ -151,7 +148,6 @@ export default function Appp({ navigation }) {
                     firebase.notifications.Android.Importance.High,
                 );
                 firebase.notifications().android.createChannel(channelId);
-
                 let notification_to_be_displayed = new firebase.notifications.Notification(
                     {
                         data: notification.data,
@@ -182,7 +178,6 @@ export default function Appp({ navigation }) {
 
                     // console.log(notification_to_be_displayed)
                 }
-
                 firebase
                     .notifications()
                     .displayNotification(notification_to_be_displayed);
@@ -304,8 +299,7 @@ export default function Appp({ navigation }) {
                     if (notificationOpen.notification.data.navigate) {
                         console.log('subscribe & Navigate');
                         // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-                        goToRoute(
-                            this.props.componentId,
+                       this.props.navigation.navigate(
                             notificationOpen.notification.data.route,
                             { Id: notificationOpen.notification.data.Id },
                         );
@@ -371,7 +365,6 @@ export default function Appp({ navigation }) {
                 </Stack.Navigator>
             </PaperProvider>
         </NavigationContainer>
-
     );
 };
 

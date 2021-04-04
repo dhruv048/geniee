@@ -257,7 +257,7 @@ export default class SearchResult extends PureComponent {
         //             {/*{this.averageRating(rowData.ratings) > 0 ?
         //                             <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
         //                                 <Icon name={'star'}
-        //                                     style={{color: '#094c6b'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
+        //                                     style={{color: '#4d94ff'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
         //                         </Text> : null}*/}
         //           </View>
         //         </Body>
@@ -390,7 +390,7 @@ export default class SearchResult extends PureComponent {
                     searchBar
                     rounded
                     androidStatusBarColor={colors.statusBar}
-                    style={{backgroundColor: '#094c6b'}}>
+                    style={{backgroundColor: '#4d94ff'}}>
                     {/*<Left style={{flex: 1}}>*/}
                     {/*/!*<Button transparent onPress={() => {*!/*/}
                     {/*/!*this.props.navigation.openDrawer()*!/*/}
@@ -541,11 +541,11 @@ const styles = StyleSheet.create({
     },
     serviceList: {
         //backgroundColor: colors.inputBackground,
-        backgroundColor: '#094c6b0a',
+        backgroundColor: '#4d94ff0a',
         //marginVertical: 5,
         //marginHorizontal: '2%',
         borderRadius: 0,
-        borderBottomColor: '#094c6b',
+        borderBottomColor: '#4d94ff',
         borderBottomWidth: 5,
     },
     serviceTitle: {
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
     },
     footerTab: {
-        backgroundColor: '#094c6b',
+        backgroundColor: '#4d94ff',
         borderTopWidth: 3,
         borderTopColor: '#000000',
     },

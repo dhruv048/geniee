@@ -1,12 +1,12 @@
 import {StyleSheet} from 'react-native';
 
 export const colors = {
-    appBackground: '#e4eff5',
-    // statusBar: '#094c6b',
+    appBackground: '#fefeff',
+    // statusBar: '#4d94ff',
     statusBar: '#4d94ff',
-    inputBackground: 'rgba(9,76,107,0.5)',
+    inputBackground: '#eaf2ff',
     buttonPrimaryBackground: '#4d94ff',
-    primaryText: '#094c6b',
+    primaryText: '#4d94ff',
     redText: '#a51822',
     whiteText: '#ffffff',
     appLayout: '#4d94ff',
@@ -39,7 +39,7 @@ export const variables = {
 
     //Theme color
     //  primary: '#4FA4F3',
-    primary: '#094c6b',
+    primary: '#4d94ff',
     warning: '#EFBD6E',
     danger: '#FF7278',
     success: '#45D36B',

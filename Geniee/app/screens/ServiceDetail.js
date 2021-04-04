@@ -64,7 +64,7 @@ class ServiceDetail extends Component {
     componentDidMount() {
         
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
-        const Id = this.props.Id;
+        const Id = this.props.route.params.Id;
         console.log(Id)
         let Service = {};
         if (typeof (Id) === "string") {
@@ -246,7 +246,7 @@ class ServiceDetail extends Component {
         }
     }
     render() {
-        const Id = this.props.Id;
+        const Id = this.props.route.params.Id;
        // console.log(Id)
         // let Service = {};
         // if (typeof (Id) === "string") {
@@ -265,7 +265,7 @@ class ServiceDetail extends Component {
                     {/*backgroundColor={colors.statusBar}*/}
                     {/*barStyle='light-content'*/}
                 {/*/>*/}
-                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#094c6b'}}>
+                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#4d94ff'}}>
                     <Left>
                        <Button transparent onPress={() => {
                             this.props.navigation.goBack()
@@ -303,7 +303,7 @@ class ServiceDetail extends Component {
                             imageSize={20}
                             readonly
                             startingValue={this.state.Service.avgRate}
-                            style={{color: '#094c6b'}}
+                            style={{color: '#4d94ff'}}
                         />
                     </View>
                     <View style={styles.serviceInfo}>*/}
@@ -361,12 +361,12 @@ class ServiceDetail extends Component {
                 </Content>}
                 {  this.state.Service?
                 <Footer>
-                    <FooterTab style={{backgroundColor: '#094c6b'}}>
+                    <FooterTab style={{backgroundColor: '#4d94ff'}}>
                         {(this.state.Service.contact ||this.state.Service.contact1)?
                         <Button onPress={() => {
                             MyFunctions._callPhone(this.state.Service.contact ? this.state.Service.contact : this.state.Service.contact1)
                         }}>
-                            <Icon name="md-call"/>
+                            <Icon name="md-call" style={{color: '#ffffff'}}/>
                             <Text style={{color: '#ffffff'}}>Call</Text>
                         </Button>
                             :null}
@@ -375,14 +375,14 @@ class ServiceDetail extends Component {
                             <Button onPress={() => {
                                 this.handleChat(this.state.Service)
                             }}>
-                                <Icon name="md-chatboxes"/>
+                                <Icon name="md-chatboxes"  style={{color: '#ffffff'}}/>
                                 <Text style={{color: '#ffffff'}}>Chat</Text>
                             </Button> : null}
                         {this.props.user && this.props.user._id != this.state.Service.createdBy ?
                             <Button onPress={() => {
                                 this.setState({showModal: true})
                             }}>
-                                <Icon name="md-star"/>
+                                <Icon name="md-star" style={{color: '#ffffff'}}/>
                                 <Text style={{color: '#ffffff'}}>Rate</Text>
                             </Button>
                             : null}
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
         color: '#000',
         width: '100%',
         backgroundColor: colors.inputBackground,
-        //backgroundColor: '#094c6b0a',
+        //backgroundColor: '#4d94ff0a',
         paddingHorizontal: 10,
         padding: 5,
         textAlign: 'center',        
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         //borderRadius: 5,
-        borderBottomColor: '#094c6b',
+        borderBottomColor: '#4d94ff',
         borderBottomWidth: 2
     },
     availableText: {
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     star: {
         width: 40,
         height: 40,
-        color: '#094c6b'
+        color: '#4d94ff'
     },
 
 
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
 
     separator: {
         height: 2,
-        backgroundColor: "#094c6b",
+        backgroundColor: "#4d94ff",
         marginTop: 10,
         marginHorizontal: 10
     },
@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
 });
 
 export default Meteor.withTracker((props) => {
-    let param = props.Id;
+    let param = props.route.params.Id;
     let Id = typeof (param) === "string" ? param : param._id;
     Meteor.subscribe('products',Id);
   //  Meteor.subscribe('get-channel');

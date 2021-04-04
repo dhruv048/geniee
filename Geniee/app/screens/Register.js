@@ -304,9 +304,9 @@ class Register extends Component {
                                     {/*<View style={styles.radioView}>*/}
                                     {/*<Text style={styles.radioTypeText}>Register As</Text>*/}
                                     {/*<RadioGroup style={styles.radioGrp}*/}
-                                    {/*color='#094c6b'*/}
+                                    {/*color='#4d94ff'*/}
                                     {/*//flexDirection='row'*/}
-                                    {/*labelStyle={{fontSize: 16, color: '#094c6b'}}*/}
+                                    {/*labelStyle={{fontSize: 16, color: '#4d94ff'}}*/}
                                     {/*radioButtons={this.state.radioButtons}*/}
                                     {/*onPress={radioButtons => this.setState({radioButtons})}*/}
                                     {/*/>*/}

@@ -11,7 +11,6 @@ import { customStyle,colors } from '../../config/styles';
 import FIcon from 'react-native-vector-icons/Feather';
 import {Divider} from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
-import {goToRoute} from "../../Navigation";
 import Meteor from "../../react-native-meteor";
 //
 // import Text from './Text';

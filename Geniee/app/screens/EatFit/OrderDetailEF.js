@@ -31,7 +31,7 @@ class OrderDetailEF extends Component {
     }
 
     componentDidMount() {
-        let orderId = this.props.Id;
+        let orderId = this.props.route.params.Id;
         let _order = this.props.Order;
  
         if (_order) {

@@ -210,7 +210,7 @@ class MyProducts extends Component {
   };
 
   render() {
-    const Id = this.props.Id;
+    const Id = this.props.route.params.Id;
     return (
       <Container style={styles.container}>
         <Header searchBar rounded
