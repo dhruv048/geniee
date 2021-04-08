@@ -1,12 +1,18 @@
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import AsyncStorage from "@react-native-community/async-storage";
-import {colors, customStyle} from "../../config/styles";
+import { colors, customStyle,variables } from "../../config/styles";
 import Meteor from '../../react-native-meteor';
-import {Container, Content, Header, Item, Input, Label, Text, Radio} from "native-base";
+import { Container, Content, Header, Item, Label, Text, Radio, Left, Body, Title, Icon, Right,Button } from "native-base";
 import UploadProfilePic from '../../components/UploadProfilePic/UploadProfilePic';
-import {KeyboardAvoidingView, SafeAreaView, StatusBar, TouchableNativeFeedback, View, StyleSheet,ToastAndroid} from "react-native";
-import Icon from 'react-native-vector-icons/Feather';
-import {backToRoot} from "../../Navigation";
+import {
+    KeyboardAvoidingView, SafeAreaView, StatusBar, TouchableNativeFeedback, View,
+    StyleSheet, ToastAndroid, TouchableWithoutFeedback, Keyboard
+} from "react-native";
+// import Icon from 'react-native-vector-icons/Feather';
+import { backToRoot } from "../../Navigation";
+import { GalioProvider, Input, Checkbox, Button as GButton } from 'galio-framework';
+import { customGalioTheme } from '../../config/themes';
+import { blue100 } from 'react-native-paper/lib/typescript/styles/colors';
 
 class Profile extends React.PureComponent {
     constructor(props) {
@@ -22,8 +28,8 @@ class Profile extends React.PureComponent {
 
     async componentDidMount() {
         let user = await AsyncStorage.getItem('loggedUser');
-        this.loggedUser =  Meteor.user() ? Meteor.user():JSON.parse(user);
-       // const profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
+        this.loggedUser = Meteor.user() ? Meteor.user() : JSON.parse(user);
+        // const profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
         this._updateState(this.loggedUser.profile)
     }
 
@@ -36,18 +42,18 @@ class Profile extends React.PureComponent {
         })
     }
 
-    UpdateVisitorProfile=()=>{
-        const {name, contact, email, address} = this.state;
-        let profile=this.loggedUser.profile;
+    UpdateVisitorProfile = () => {
+        const { name, contact, email, address } = this.state;
+        let profile = this.loggedUser.profile;
         profile.name = name;
-        profile.contactNo=contact;
-        profile.email=email;
+        profile.contactNo = contact;
+        profile.email = email;
 
-        Meteor.call('updateProfile',profile,(err,res)=>{
-            if(err){
+        Meteor.call('updateProfile', profile, (err, res) => {
+            if (err) {
                 console.log(err)
             }
-            else{
+            else {
                 ToastAndroid.showWithGravityAndOffset(
                     'updated profile Successfully',
                     ToastAndroid.LONG,
@@ -61,124 +67,109 @@ class Profile extends React.PureComponent {
 
     render() {
         return (
-            <Container style={styles.container}>
-                {/*<Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#4d94ff'}}/>*/}
-                <StatusBar
-                    backgroundColor={colors.statusBar}
-                    barStyle='light-content'
-                />
-                <Header style={{
-                    backgroundColor: '#fff',
-                    elevation: 0,
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    height: 60
-                }} androidStatusBarColor={colors.statusBar}>
-                    <View>
-                        <View>
-                            <TouchableNativeFeedback onPress={() => {
-                                this.props.navigation.navigate('Home')
-                            }}>
-                                <View>
-                                    <Icon name='arrow-left' color={colors.primary} size={24}/>
-                                </View>
-                            </TouchableNativeFeedback>
-                        </View>
-                    </View>
-                    <View>
-                        <View>
-                            <TouchableNativeFeedback onPress={this.UpdateVisitorProfile}>
-                                <View>
-                                    <Icon name='check' color={colors.primary} size={24}/>
-                                </View>
-                            </TouchableNativeFeedback>
-                        </View>
-                    </View>
-                </Header>
-                <Content>
-                    <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='always'>
-                        <UploadProfilePic/>
-                        <KeyboardAvoidingView>
-                            <View style={styles.containerRegister}>
-                                <Item inlineLabel style={customStyle.formGroup}>
-                                    <Label style={customStyle.formLabel}>Name</Label>
-                                    <Input
-                                        style={customStyle.formControl}
-                                        value={this.state.name}
-                                        onChangeText={(name) => this.setState({name})}
-                                    />
-                                </Item>
-                                <Item inlineLabel style={customStyle.formGroup}>
-                                    <Label style={customStyle.formLabel}>Email</Label>
-                                    <Input
-                                        style={customStyle.formControl}
-                                        value={this.state.email}
-                                        onChangeText={(email) => this.setState({email})}
-                                    />
-                                </Item>
-                                {/*<View style={[customStyle.formGroup, {*/}
-                                {/*flexDirection: 'column'*/}
-                                {/*}]}>*/}
-                                {/*<Label style={[customStyle.formLabel, {marginBottom: 5}]}>Gender</Label>*/}
-                                {/*<View style={customStyle.radioGroup}>*/}
-                                {/*<Item onPress={() => {*/}
-                                {/*this._changeGender('Male')*/}
-                                {/*}} style={customStyle.radioInline}>*/}
-                                {/*<Radio*/}
-                                {/*style={customStyle.radioButton}*/}
-                                {/*color={colors.radioNormal}*/}
-                                {/*selectedColor={colors.radioActive}*/}
-                                {/*selected={this.state.gender === 'Male'}*/}
-                                {/*/>*/}
-                                {/*<Text>Male</Text>*/}
-                                {/*</Item>*/}
-                                {/*<Item onPress={() => {*/}
-                                {/*this._changeGender('Female')*/}
-                                {/*}} style={customStyle.radioInline}>*/}
-                                {/*<Radio*/}
-                                {/*style={customStyle.radioButton}*/}
-                                {/*color={colors.radioNormal}*/}
-                                {/*selectedColor={colors.radioActive}*/}
-                                {/*selected={this.state.gender === 'Female'}*/}
-                                {/*/>*/}
-                                {/*<Text>Female</Text>*/}
-                                {/*</Item>*/}
-                                {/*<Item onPress={() => {*/}
-                                {/*this._changeGender('Other')*/}
-                                {/*}} style={customStyle.radioInline}>*/}
-                                {/*<Radio*/}
-                                {/*style={customStyle.radioButton}*/}
-                                {/*color={colors.radioNormal}*/}
-                                {/*selectedColor={colors.radioActive}*/}
-                                {/*selected={this.state.gender === 'Other'}*/}
-                                {/*/>*/}
-                                {/*<Text>Others</Text>*/}
-                                {/*</Item>*/}
-                                {/*</View>*/}
-                                {/*</View>*/}
-                                <Item inlineLabel style={customStyle.formGroup}>
-                                    <Label style={customStyle.formLabel}>Mobile</Label>
-                                    <Input
-                                        style={customStyle.formControl}
-                                        value={this.state.contact}
-                                        keyboardType='phone-pad'
-                                        onChangeText={(contact) => this.setState({contact})}
-                                    />
-                                </Item>
-                                <Item inlineLabel style={customStyle.formGroup}>
-                                    <Label style={customStyle.formLabel}>Address</Label>
-                                    <Input
-                                        style={customStyle.formControl}
-                                        onFocus={() => this.setState({locationModal: true})}
-                                        onKeyPress={() => this.setState({locationModal: true})}
-                                        value={this.state.address}
-                                    />
-                                </Item>
-                            </View>
-                        </KeyboardAvoidingView>
-                    </SafeAreaView>
-                </Content>
-            </Container>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <GalioProvider theme={customGalioTheme}>
+                    <Container style={styles.container}>
+                        <Header androidStatusBarColor={colors.statusBar}
+                            style={{ backgroundColor: '#4d94ff' }}>
+                            <Left>
+                            <Button
+                  transparent
+                  onPress={() => {
+                    this.props.navigation.navigate('Home');
+                  }}>
+                  <Icon style={{color: '#ffffff'}} name="arrow-back" />
+                </Button>                                
+                            </Left>
+                            <Body>
+                <Title style={styles.screenHeader}>Edit Profile</Title>
+              </Body>
+                        </Header>
+                        <Content>
+                            <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+                                <UploadProfilePic />
+                                <KeyboardAvoidingView>
+                                    <View style={styles.containerRegister}>
+                                        <Input
+                                            placeholder="Name"
+                                            value={this.state.name}
+                                            onChangeText={(name) => this.setState({ name })}
+                                        />
+                                        <Input
+                                            placeholder="Email"
+                                            value={this.state.email}
+                                            onChangeText={(email) => this.setState({ email })}
+                                        />
+                                        {/*<View style={[customStyle.formGroup, {*/}
+                                        {/*flexDirection: 'column'*/}
+                                        {/*}]}>*/}
+                                        {/*<Label style={[customStyle.formLabel, {marginBottom: 5}]}>Gender</Label>*/}
+                                        {/*<View style={customStyle.radioGroup}>*/}
+                                        {/*<Item onPress={() => {*/}
+                                        {/*this._changeGender('Male')*/}
+                                        {/*}} style={customStyle.radioInline}>*/}
+                                        {/*<Radio*/}
+                                        {/*style={customStyle.radioButton}*/}
+                                        {/*color={colors.radioNormal}*/}
+                                        {/*selectedColor={colors.radioActive}*/}
+                                        {/*selected={this.state.gender === 'Male'}*/}
+                                        {/*/>*/}
+                                        {/*<Text>Male</Text>*/}
+                                        {/*</Item>*/}
+                                        {/*<Item onPress={() => {*/}
+                                        {/*this._changeGender('Female')*/}
+                                        {/*}} style={customStyle.radioInline}>*/}
+                                        {/*<Radio*/}
+                                        {/*style={customStyle.radioButton}*/}
+                                        {/*color={colors.radioNormal}*/}
+                                        {/*selectedColor={colors.radioActive}*/}
+                                        {/*selected={this.state.gender === 'Female'}*/}
+                                        {/*/>*/}
+                                        {/*<Text>Female</Text>*/}
+                                        {/*</Item>*/}
+                                        {/*<Item onPress={() => {*/}
+                                        {/*this._changeGender('Other')*/}
+                                        {/*}} style={customStyle.radioInline}>*/}
+                                        {/*<Radio*/}
+                                        {/*style={customStyle.radioButton}*/}
+                                        {/*color={colors.radioNormal}*/}
+                                        {/*selectedColor={colors.radioActive}*/}
+                                        {/*selected={this.state.gender === 'Other'}*/}
+                                        {/*/>*/}
+                                        {/*<Text>Others</Text>*/}
+                                        {/*</Item>*/}
+                                        {/*</View>*/}
+                                        {/*</View>*/}
+
+                                        <Input
+                                            placeholder="Mobile Number"
+                                            value={this.state.contact}
+                                            keyboardType='phone-pad'
+                                            onChangeText={(contact) => this.setState({ contact })}
+                                        />
+
+                                        <Input
+                                            placeholder="Address"
+                                            onFocus={() => this.setState({ locationModal: true })}
+                                            onKeyPress={() => this.setState({ locationModal: true })}
+                                            value={this.state.address}
+                                        />
+                                        <View>
+                                            <Button
+                                                // round
+                                                onPress={this.UpdateVisitorProfile}
+                                                style={styles.button}
+                                            >
+                                                <Text style={styles.buttonText}>SAVE</Text>
+                                            </Button>
+                                        </View>
+                                    </View>
+                                </KeyboardAvoidingView>
+                            </SafeAreaView>
+                        </Content>
+                    </Container>
+                </GalioProvider>
+            </TouchableWithoutFeedback>
         );
     }
 };
@@ -197,7 +188,8 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: colors.appBackground,
-        flex: 1,
+        width: '100%',
+        fontFamily: `Source Sans Pro`,
         // alignItems: 'center',
         // justifyContent: 'center'
     },
@@ -236,17 +228,17 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        width: 300,
-        backgroundColor: 'blue',
-        borderRadius: 25,
+        width: '100%',
+        backgroundColor: colors.appLayout,
+        borderRadius: 5,
         marginVertical: 10,
-        paddingVertical: 13
-    },
+        paddingVertical: 13,
+        justifyContent:'center',
+      },
     buttonText: {
-        fontSize: 16,
+        fontSize: variables.fontSizeLarge,
         fontWeight: '500',
         color: colors.whiteText,
-        textAlign: 'center'
     },
 
     signupCont: {
@@ -282,5 +274,9 @@ const styles = StyleSheet.create({
     //fontSize: 16,
     //fontWeight: '500'
     //}
+    screenHeader: {
+        fontSize: 20,
+        color: '#ffffff',
+    },
 });
 export default Profile;
