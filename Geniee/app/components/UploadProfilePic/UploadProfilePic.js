@@ -108,9 +108,9 @@ class UploadProfilePic extends React.Component {
                     this.ActionSheet.show()
                 }}>
                         <Image style={{
-                            width: 147,
-                            height: 147,
-                            borderRadius: 15,
+                            width: 150,
+                            height: 150,
+                            borderRadius: 75,
                             borderWidth: 3,
                             // height: 150,
                             justifyContent: `center`,
@@ -119,7 +119,7 @@ class UploadProfilePic extends React.Component {
                             backgroundColor:'white',
                         }} source={this.state.avatarSource? {uri:getProfileImage(this.state.avatarSource)} : require('../../images/user-icon.png')}/>
                     {this.state.user?
-                    <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}
+                    <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 90 }} />:null}
 
                 </TouchableOpacity>:
                     <Image style={{width: 150, height: 150}}
@@ -198,11 +198,11 @@ const styles = StyleSheet.create({
     imageView: {
         alignSelf: `center`,
         borderColor: `rgba(87, 150, 252, 1)`,
-        borderRadius: 15,
+        borderRadius: 75,
         borderWidth: 3,
         height: 150,
         justifyContent: `center`,
-        marginTop: 30,
+        marginTop: 50,
         width: 150
     },
     sfe09f185: {
