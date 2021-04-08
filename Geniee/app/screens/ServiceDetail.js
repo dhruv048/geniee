@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     Text,
-    View,    TouchableOpacity, Image,
-    Alert,    FlatList, StatusBar,
+    View, TouchableOpacity, Image,
+    Alert, FlatList, StatusBar,
     Modal, ToastAndroid, Linking, Dimensions
 } from 'react-native';
 import {
@@ -22,16 +22,11 @@ import {
 import Meteor from "../react-native-meteor";
 import settings from "../config/settings";
 import userImage from '../images/Image.png';
-import {AirbnbRating} from 'react-native-elements';
-import {colors,customStyle} from "../config/styles";
-import call from "react-native-phone-call";
+import { AirbnbRating } from 'react-native-elements';
+import { colors, customStyle } from "../config/styles";
 import Loading from "../components/Loading/Loading";
 import StarRating from "../components/StarRating/StarRating";
-import {goToChat, goToRoute} from "../Navigation";
-const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
-import CogMenu from "../components/CogMenu";
-
-import {goBack} from "../Navigation";
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 import Product from "../components/ecommerce/Product";
 import MyFunctions from "../lib/MyFunctions";
 import ServiceRatings from "./services/ServiceRatings";
@@ -56,24 +51,24 @@ class ServiceDetail extends Component {
             isLoading: false,
             showModal: false,
             comment: '',
-            Service:'',
+            Service: '',
         }
 
     }
 
     componentDidMount() {
-        
+
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
         const Id = this.props.route.params.Id;
         console.log(Id)
         let Service = {};
         if (typeof (Id) === "string") {
-            Meteor.call('getSingleService',Id,(err,res)=>{
-                if(!err) {
+            Meteor.call('getSingleService', Id, (err, res) => {
+                if (!err) {
                     console.log(res)
                     Service = res.result[0];
-                    this.setState({Service});
-                 //   Service.avgRate = this.averageRating(Service.ratings)
+                    this.setState({ Service });
+                    //   Service.avgRate = this.averageRating(Service.ratings)
                 }
             });
             // Service = Meteor.collection('serviceReact').findOne({_id: Id});
@@ -81,21 +76,21 @@ class ServiceDetail extends Component {
             Meteor.call('updateServiceViewCount', Id);
             Meteor.call('getMyRating', Id, (err, res) => {
                 console.log('myRating:', res);
-                this.setState({myRating: res});
+                this.setState({ myRating: res });
                 if (res && res.hasOwnProperty('rating'))
-                    this.setState({comment: res.rating.comment, starCount: res.rating.count})
+                    this.setState({ comment: res.rating.comment, starCount: res.rating.count })
             })
         }
         else {
             console.log(Id)
-           // Service = Id;
-            this.setState({Service:Id});
+            // Service = Id;
+            this.setState({ Service: Id });
             Meteor.call('updateServiceViewCount', Id._id)
             Meteor.call('getMyRating', Id._id, (err, res) => {
                 console.log('myRating:', res);
-                this.setState({myRating: res});
+                this.setState({ myRating: res });
                 if (res && res.hasOwnProperty('rating'))
-                    this.setState({comment: res.rating.comment, starCount: res.rating.count})
+                    this.setState({ comment: res.rating.comment, starCount: res.rating.count })
             })
         }
 
@@ -139,7 +134,7 @@ class ServiceDetail extends Component {
                 },
                 service: Service
             };
-            this.props.navigation.navigate("Message",{Channel});
+            this.props.navigation.navigate("Message", { Channel });
         }).catch(error => {
             console.error(error);
         });
@@ -179,7 +174,7 @@ class ServiceDetail extends Component {
             }
             else {
                 console.log('resss' + res);
-                this.setState({showModal: false});
+                this.setState({ showModal: false });
                 ToastAndroid.showWithGravityAndOffset(
                     "Rating Updated Successfully!",
                     ToastAndroid.LONG,
@@ -187,11 +182,11 @@ class ServiceDetail extends Component {
                     0,
                     50,
                 );
-                Meteor.call('getSingleService',this.state.Service._id,(err,res)=> {
+                Meteor.call('getSingleService', this.state.Service._id, (err, res) => {
                     if (!err) {
                         console.log(res)
                         let Service = res.result[0];
-                        this.setState({Service});
+                        this.setState({ Service });
                         //   Service.avgRate = this.averageRating(Service.ratings)
                     }
                 });
@@ -218,28 +213,28 @@ class ServiceDetail extends Component {
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
 
-    navigateToRoute(route,parm){
+    navigateToRoute(route, parm) {
         Navigation.push(this.props.componentId, {
             component: {
                 name: route,
                 passProps: parm
             }
         });
-}
-    _renderProduct=(data,index)=>{
-        let item=data.item;
-        return(
+    }
+    _renderProduct = (data, index) => {
+        let item = data.item;
+        return (
             <View style={styles.col}>
-            <TouchableOpacity onPress={()=>{this.props.navigation.navigate("ProductDetail", {'Id': item._id,data:item})}} style={styles.containerStyle}>
-            <Product key={item._id} product={item} componentId={this.props.componentId}  bottomTab={true} />
-            </TouchableOpacity>
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate("ProductDetail", { 'Id': item._id, data: item }) }} style={styles.containerStyle}>
+                    <Product key={item._id} product={item} componentId={this.props.componentId} bottomTab={true} />
+                </TouchableOpacity>
             </View>
         )
     };
 
-    _showImage=(image)=>{
-        if(image) {
-            this.props.navigation.navigate( 'ImageGallery', {
+    _showImage = (image) => {
+        if (image) {
+            this.props.navigation.navigate('ImageGallery', {
                 images: [image],
                 position: parseInt('0')
             })
@@ -247,7 +242,7 @@ class ServiceDetail extends Component {
     }
     render() {
         const Id = this.props.route.params.Id;
-       // console.log(Id)
+        // console.log(Id)
         // let Service = {};
         // if (typeof (Id) === "string") {
         //     Service = Meteor.collection('serviceReact').findOne({_id: Id});
@@ -262,43 +257,43 @@ class ServiceDetail extends Component {
             <Container style={styles.container}>
 
                 {/*<StatusBar*/}
-                    {/*backgroundColor={colors.statusBar}*/}
-                    {/*barStyle='light-content'*/}
+                {/*backgroundColor={colors.statusBar}*/}
+                {/*barStyle='light-content'*/}
                 {/*/>*/}
-                <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: '#4d94ff'}}>
+                <Header androidStatusBarColor={colors.statusBar} style={{ backgroundColor: '#4d94ff' }}>
                     <Left>
-                       <Button transparent onPress={() => {
+                        <Button transparent onPress={() => {
                             this.props.navigation.goBack()
                         }}>
-                            <Icon name="arrow-back" style={{fontWeight: '500', fontSize: 24}}/>
+                            <Icon name="arrow-back" style={{ fontWeight: '500', fontSize: 24 }} />
                         </Button>
                         {/* <CogMenu componentId={this.props.componentId}/> */}
                     </Left>
 
                     <Body>
-                    <Text style={styles.screenHeader}>Service Details</Text>
+                        <Text style={styles.screenHeader}>Service Details</Text>
                     </Body>
                 </Header>
-                {!this.state.Service ? <Loading/> :
-                <Content style={{marginVertical: 0, paddingVertical: 0}}>
-                    <TouchableOpacity onPress={()=>this._showImage(this.state.Service.coverImage)}>
-                        <Image style={styles.productImg}
-                               onPress={()=>this._showImage(Service.coverImage) }
-                               source={this.state.Service.coverImage ? {uri: settings.IMAGE_URL+ this.state.Service.coverImage}:userImage}/>
-                    </TouchableOpacity>
-                    <Text style={styles.name}>{this.state.Service.title}</Text>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate( 'ServiceRatings', {Id:this.state.Service._id})} style={ styles.starView }><StarRating starRate={this.state.Service.Rating.avgRate}/></TouchableOpacity>
-                    
-                    {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
-                        <Text style={styles.availableText}>{this.state.Service.location.formatted_address}
-                        </Text> :
-                        <Text style={styles.unavailableText}>
-                            {'Address Unavailable!'}
-                        </Text>
-                    }
+                {!this.state.Service ? <Loading /> :
+                    <Content style={{ marginVertical: 0, paddingVertical: 0 }}>
+                        <TouchableOpacity onPress={() => this._showImage(this.state.Service.coverImage)}>
+                            <Image style={styles.productImg}
+                                onPress={() => this._showImage(Service.coverImage)}
+                                source={this.state.Service.coverImage ? { uri: settings.IMAGE_URL + this.state.Service.coverImage } : userImage} />
+                        </TouchableOpacity>
+                        <Text style={styles.name}>{this.state.Service.title}</Text>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ServiceRatings', { Id: this.state.Service._id })} style={styles.starView}><StarRating starRate={this.state.Service.Rating.avgRate} /></TouchableOpacity>
+
+                        {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
+                            <Text style={styles.availableText}>{this.state.Service.location.formatted_address}
+                            </Text> :
+                            <Text style={styles.unavailableText}>
+                                {'Address Unavailable!'}
+                            </Text>
+                        }
 
 
-                    {/*<View style={styles.starDisplay}>
+                        {/*<View style={styles.starDisplay}>
                         <Rating
                             imageSize={20}
                             readonly
@@ -309,93 +304,93 @@ class ServiceDetail extends Component {
                     <View style={styles.serviceInfo}>*/}
 
 
-                    {(this.state.Service.hasOwnProperty('radius') && this.state.Service.radius > 0) ?
-                        <Text style={styles.serviceText}>Servie Area : Within {this.state.Service.radius} KM Radius from Address</Text> : null
-                    }
+                        {(this.state.Service.hasOwnProperty('radius') && this.state.Service.radius > 0) ?
+                            <Text style={styles.serviceText}>Servie Area : Within {this.state.Service.radius} KM Radius from Address</Text> : null
+                        }
 
-                    <Text style={styles.infoText}>
-                        Contact: {this.state.Service.contact1} {this.state.Service.contact}
-                    </Text>
-                    {/*<Text style={ styles.infoText }>
+                        <Text style={styles.infoText}>
+                            Contact: {this.state.Service.contact1} {this.state.Service.contact}
+                        </Text>
+                        {/*<Text style={ styles.infoText }>
                         {this.state.Service.contact}
                     </Text>*/}
 
-                    {this.state.Service.hasOwnProperty('email') ?
-                        <Text style={styles.infoText}>{this.state.Service.email}</Text> : null
-                    }
+                        {this.state.Service.hasOwnProperty('email') ?
+                            <Text style={styles.infoText}>{this.state.Service.email}</Text> : null
+                        }
 
-                    {this.state.Service.hasOwnProperty('website') ?
-                        <TouchableOpacity onPress={() => {
-                            this._browse(this.state.Service.website)
-                        }}>
-                            <Text style={styles.websiteLink}>
-                                {this.state.Service.website}
+                        {this.state.Service.hasOwnProperty('website') ?
+                            <TouchableOpacity onPress={() => {
+                                this._browse(this.state.Service.website)
+                            }}>
+                                <Text style={styles.websiteLink}>
+                                    {this.state.Service.website}
+                                </Text>
+                            </TouchableOpacity> : null
+                        }
+                        {/*</View>*/}
+
+                        <View style={styles.separator}></View>
+
+                        <View style={{ alignItems: 'center', marginHorizontal: 30 }}>
+                            <Text style={styles.description}>
+                                {this.state.Service.description}
                             </Text>
-                        </TouchableOpacity> : null
-                    }
-                    {/*</View>*/}
+                        </View>
 
-                    <View style={styles.separator}></View>
-
-                    <View style={{alignItems: 'center', marginHorizontal: 30}}>
-                        <Text style={styles.description}>
-                            {this.state.Service.description}
-                        </Text>
-                    </View>
-
-                    <View style={styles.separator}></View>
-                    {this.props.Products.length>0?
-                    <View style={{alignItems: 'center', marginHorizontal: 30}}>
-                        <Text style={[styles.screenHeader,{color:colors.appLayout}]}>
-                            Products
+                        <View style={styles.separator}></View>
+                        {this.props.Products.length > 0 ?
+                            <View style={{ alignItems: 'center', marginHorizontal: 30 }}>
+                                <Text style={[styles.screenHeader, { color: colors.appLayout }]}>
+                                    Products
                         </Text>
 
-                    </View>:null}
-                    <FlatList contentContainerStyle={styles.mainContainer}
-                              data={this.props.Products}
-                              keyExtracter={(item, index) => item._id}
-                              horizontal={false}
-                             // numColumns={2}
-                              renderItem={(item,index)=>this._renderProduct(item,index)}
-                    />
-                </Content>}
-                {  this.state.Service?
-                <Footer>
-                    <FooterTab style={{backgroundColor: '#4d94ff'}}>
-                        {(this.state.Service.contact ||this.state.Service.contact1)?
-                        <Button onPress={() => {
-                            MyFunctions._callPhone(this.state.Service.contact ? this.state.Service.contact : this.state.Service.contact1)
-                        }}>
-                            <Icon name="md-call" style={{color: '#ffffff'}}/>
-                            <Text style={{color: '#ffffff'}}>Call</Text>
-                        </Button>
-                            :null}
-                        {this.props.user &&
-                        this.state.Service.createdBy != null && this.props.user._id != this.state.Service.createdBy ?
-                            <Button onPress={() => {
-                                this.handleChat(this.state.Service)
-                            }}>
-                                <Icon name="md-chatboxes"  style={{color: '#ffffff'}}/>
-                                <Text style={{color: '#ffffff'}}>Chat</Text>
-                            </Button> : null}
-                        {this.props.user && this.props.user._id != this.state.Service.createdBy ?
-                            <Button onPress={() => {
-                                this.setState({showModal: true})
-                            }}>
-                                <Icon name="md-star" style={{color: '#ffffff'}}/>
-                                <Text style={{color: '#ffffff'}}>Rate</Text>
-                            </Button>
-                            : null}
-                    </FooterTab>
-                </Footer>:null}
+                            </View> : null}
+                        <FlatList contentContainerStyle={styles.mainContainer}
+                            data={this.props.Products}
+                            keyExtracter={(item, index) => item._id}
+                            horizontal={false}
+                            // numColumns={2}
+                            renderItem={(item, index) => this._renderProduct(item, index)}
+                        />
+                    </Content>}
+                {  this.state.Service ?
+                    <Footer>
+                        <FooterTab style={{ backgroundColor: '#4d94ff' }}>
+                            {(this.state.Service.contact || this.state.Service.contact1) ?
+                                <Button onPress={() => {
+                                    MyFunctions._callPhone(this.state.Service.contact ? this.state.Service.contact : this.state.Service.contact1)
+                                }}>
+                                    <Icon name="md-call" style={{ color: '#ffffff' }} />
+                                    <Text style={{ color: '#ffffff' }}>Call</Text>
+                                </Button>
+                                : null}
+                            {this.props.user &&
+                                this.state.Service.createdBy != null && this.props.user._id != this.state.Service.createdBy ?
+                                <Button onPress={() => {
+                                    this.handleChat(this.state.Service)
+                                }}>
+                                    <Icon name="md-chatboxes" style={{ color: '#ffffff' }} />
+                                    <Text style={{ color: '#ffffff' }}>Chat</Text>
+                                </Button> : null}
+                            {this.props.user && this.props.user._id != this.state.Service.createdBy ?
+                                <Button onPress={() => {
+                                    this.setState({ showModal: true })
+                                }}>
+                                    <Icon name="md-star" style={{ color: '#ffffff' }} />
+                                    <Text style={{ color: '#ffffff' }}>Rate</Text>
+                                </Button>
+                                : null}
+                        </FooterTab>
+                    </Footer> : null}
 
-                <View style={{marginTop: 0}}>
+                <View style={{ marginTop: 0 }}>
                     <Modal
                         animationType="slide"
                         transparent={true}
                         visible={this.state.showModal}
                         onRequestClose={() => {
-                            this.setState({showModal: false})
+                            this.setState({ showModal: false })
                         }}>
                         <View style={{
                             flex: 1,
@@ -418,7 +413,7 @@ class ServiceDetail extends Component {
                                 borderRadius: 4
 
                             }}>
-                                <Text style={{fontSize: 18, marginBottom: 5, textAlign: 'center'}}>
+                                <Text style={{ fontSize: 18, marginBottom: 5, textAlign: 'center' }}>
                                     How was your experience
                                     with "{this.state.Service.title}"?
                                 </Text>
@@ -433,27 +428,27 @@ class ServiceDetail extends Component {
                                     />
                                 </View>
                                 <View style={styles.formGroup}>
-                                <Textarea bordered rowSpan={4} placeholder="Comment"
-                                    //  style={styles.inputText}
-                                          placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                          underlineColorAndroid='rgba(0,0,0,0)'
-                                    //onSubmitEditing={() => this.contactNumber.focus()}
-                                          onChangeText={(comment) => this.setState({comment})}
-                                />
+                                    <Textarea bordered rowSpan={4} placeholder="Comment"
+                                        //  style={styles.inputText}
+                                        placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        //onSubmitEditing={() => this.contactNumber.focus()}
+                                        onChangeText={(comment) => this.setState({ comment })}
+                                    />
                                 </View>
                                 <Grid>
                                     <Row>
-                                        <Col style={{marginRight: 5}}>
-                                    <Button block style={customStyle.buttonPrimary} onPress={() => {
-                                        this._saveRatting(this.state.Service._id)
-                                    }}><Text style={customStyle.buttonPrimaryText}> Save </Text></Button>
+                                        <Col style={{ marginRight: 5 }}>
+                                            <Button block style={customStyle.buttonPrimary} onPress={() => {
+                                                this._saveRatting(this.state.Service._id)
+                                            }}><Text style={customStyle.buttonPrimaryText}> Save </Text></Button>
                                         </Col>
-                                        <Col style={{marginRight: 5}}>
-                                    <Button block  style={customStyle.buttonLight} onPress={() => {
-                                        this.setState({showModal: false})
-                                    }}>
-                                        <Text style={customStyle.buttonLightText}>Cancel</Text>
-                                    </Button>
+                                        <Col style={{ marginRight: 5 }}>
+                                            <Button block style={customStyle.buttonLight} onPress={() => {
+                                                this.setState({ showModal: false })
+                                            }}>
+                                                <Text style={customStyle.buttonLightText}>Cancel</Text>
+                                            </Button>
                                         </Col>
                                     </Row>
                                 </Grid>
@@ -470,7 +465,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginVertical: 0,
-        backgroundColor: '#05a5d10d',
+        backgroundColor: colors.appBackground,
     },
     screenHeader: {
         fontSize: 18,
@@ -480,8 +475,8 @@ const styles = StyleSheet.create({
     },
     productImg: {
         width: '100%',
-        height: viewportWidth/2,
-        maxHeight:300,
+        height: viewportWidth / 2,
+        maxHeight: 300,
     },
     serviceInfo: {
         width: '100%',
@@ -492,14 +487,14 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 22,
         //color: "#696969",
-        fontWeight: 'bold',        
+        fontWeight: 'bold',
         color: '#000',
         width: '100%',
         backgroundColor: colors.inputBackground,
         //backgroundColor: '#4d94ff0a',
         paddingHorizontal: 10,
         padding: 5,
-        textAlign: 'center',        
+        textAlign: 'center',
     },
     starView: {
         backgroundColor: colors.inputBackground,
@@ -559,37 +554,28 @@ const styles = StyleSheet.create({
         height: 40,
         color: '#4d94ff'
     },
-
-
-
-
-
     formGroup: {
         marginBottom: 15
     },
-
-
     separator: {
         height: 2,
         backgroundColor: "#4d94ff",
         marginTop: 10,
         marginHorizontal: 10
     },
-
-
     mainContainer: {
-        flex:1,
-             flexDirection: 'row',
-             flexWrap: 'wrap',
-         },
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
     containerStyle: {
         borderRadius: 4,
         overflow: 'hidden',
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     col: {
-        width: (viewportWidth -8)/2,
-        maxWidth:180,
+        width: (viewportWidth - 8) / 2,
+        maxWidth: 180,
         padding: 4
     }
 
@@ -598,15 +584,15 @@ const styles = StyleSheet.create({
 export default Meteor.withTracker((props) => {
     let param = props.route.params.Id;
     let Id = typeof (param) === "string" ? param : param._id;
-    Meteor.subscribe('products',Id);
-  //  Meteor.subscribe('get-channel');
+    Meteor.subscribe('products', Id);
+    //  Meteor.subscribe('get-channel');
     return {
         detailsReady: true,
         getChannel: (id) => {
             // return Meteor.collection('chatChannels').findOne({users: { "$in" : [id]}});
-            return Meteor.collection('chatChannels').findOne({$and: [{'otherUser.serviceId': id}, {createdBy: Meteor.userId()}]});
+            return Meteor.collection('chatChannels').findOne({ $and: [{ 'otherUser.serviceId': id }, { createdBy: Meteor.userId() }] });
         },
         user: Meteor.user(),
-        Products: Meteor.collection('product').find({service: Id})
+        Products: Meteor.collection('product').find({ service: Id })
     };
 })(ServiceDetail);

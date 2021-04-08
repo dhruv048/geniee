@@ -45,14 +45,15 @@ export default class SearchResult extends PureComponent {
     }
 
     _handleProductPress = pro => {
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'ProductDetail',
-                passProps: {
-                    Id: pro._id,
-                },
-            },
-        });
+        this.props.navigation.push('ProductDetail', { Id: pro._id,})
+        // Navigation.push(this.props.componentId, {
+        //     component: {
+        //         name: 'ProductDetail',
+        //         passProps: {
+        //             Id: pro._id,
+        //         },
+        //     },
+        // });
     };
 
     _itemClick = item => {
@@ -60,16 +61,16 @@ export default class SearchResult extends PureComponent {
         item.subCategories.map(item => {
             Ids.push(item.subCatId);
         });
-        // this.props.navigation.navigate("Home", {Id: Ids, Region: this.region})
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'ServiceList',
-                passProps: {
-                    Id: Ids,
-                    Region: this.region,
-                },
-            },
-        });
+        this.props.navigation.navigate("ServiceList", {Id: Ids, Region: this.region})
+        // Navigation.push(this.props.componentId, {
+        //     component: {
+        //         name: 'ServiceList',
+        //         passProps: {
+        //             Id: Ids,
+        //             Region: this.region,
+        //         },
+        //     },
+        // });
     };
     renderItem = (data, index) => {
         var item = data.item;
@@ -131,7 +132,7 @@ export default class SearchResult extends PureComponent {
         };
         console.log('fetch');
 
-        Meteor.call('searchService', dataToSend, (err, res) => {
+        Meteor.call('searchService', text, (err, res) => {
             console.log(err, res);
             if (!err) {
                 this.setState({
