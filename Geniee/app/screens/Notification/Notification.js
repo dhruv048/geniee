@@ -247,8 +247,8 @@ class Notification extends Component {
                             style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}>
                             <Menu ref={ref => (this[`menu${item._id}`] = ref)}
                                   button={
-                                      <Button transparent onPress={() => this[`menu${item._id}`].show()}>
-                                          <Icon name={'more-vertical'} size={18} color={variables.gray_200}/>
+                                      <Button transparent onPress={() => this[`menu${item._id}`].show()} style={{marginBottom:50}}>
+                                          <Icon name={'more-horizontal'} size={30} color={variables.gray_200}/>
                                       </Button>}>
                                 <MenuItem onPress={() => {
                                     this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)
@@ -359,7 +359,7 @@ class Notification extends Component {
                     <Left>
                         <Button onPress={() => this.props.navigation.goBack()
                         } transparent>
-                            <Icon name='x' color='white' size={24}/>
+                            <Icon name="arrow-left" color='white' size={24}/>
                         </Button>
                     </Left>
                     <Body>
@@ -369,7 +369,7 @@ class Notification extends Component {
                     <Right>
                         <Button onPress={this.clearAll} transparent>
                             <Icon name='trash' color='white' size={18}/>
-                            <Text>CLEAR ALL</Text>
+                            {/* <Text>CLEAR ALL</Text> */}
                         </Button>
                     </Right>
                 </Header>
