@@ -9,11 +9,9 @@ import {
     Icon as NBIcon,
     Input,
     Button,
-    Body,
-    Card,
-    CardItem,
+    Body,Left, Right
 } from 'native-base';
-import {colors, customStyle} from '../config/styles';
+import {colors} from '../config/styles';
 import {
     FlatList,
     StyleSheet,
@@ -21,11 +19,12 @@ import {
     TouchableOpacity,
     Image,
 } from 'react-native';
-import settings from '../config/settings';
 import Icon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import {goBack} from '../Navigation';
 import Meteor from '../react-native-meteor';
+import Product from '../components/Store/Product';
+import CartIcon from '../components/HeaderIcons/CartIcon';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -132,7 +131,7 @@ export default class SearchResult extends PureComponent {
         };
         console.log('fetch');
 
-        Meteor.call('searchService', text, (err, res) => {
+        Meteor.call('searchService', dataToSend, (err, res) => {
             console.log(err, res);
             if (!err) {
                 this.setState({
@@ -209,81 +208,6 @@ export default class SearchResult extends PureComponent {
     _getListItem = data => {
         let rowData = data.item;
         let distance;
-        // if (rowData.location && rowData.location.geometry)
-        //     distance = MyFunctions.calculateDistance(this.region.latitude, this.region.longitude, rowData.location.geometry.location.lat, rowData.location.geometry.location.lng);
-        // console.log(distance);
-        // return (
-        //   <View key={data.item._id} style={styles.serviceList}>
-        //     <TouchableWithoutFeedback
-        //       onPress={() => {
-        //         this._handlItemPress(data.item);
-        //       }}>
-        //       <ListItem thumbnail>
-        //         <Left>
-        //           {rowData.coverImage === null ? (
-        //             //   <Thumbnail style={styles.banner} square source={dUser}/> :
-        //             <Text />
-        //           ) : (
-        //             <Thumbnail
-        //               style={styles.banner}
-        //               source={{
-        //                 uri: settings.API_URL + 'images/' + rowData.coverImage,
-        //               }}
-        //             />
-        //           )}
-        //         </Left>
-        //         <Body>
-        //           <Text numberOfLines={1} style={styles.serviceTitle}>
-        //             {rowData.title}
-        //           </Text>
-        //           {rowData.location.formatted_address ? (
-        //             <Text note numberOfLines={1} style={styles.serviceAddress}>
-        //               {rowData.location.formatted_address}
-        //             </Text>
-        //           ) : null}
-        //
-        //           {distance ? (
-        //             <Text note style={styles.serviceDist}>
-        //               {distance} KM
-        //             </Text>
-        //           ) : null}
-        //           <View style={styles.serviceAction}>
-        //             <StarRating
-        //               starRate={
-        //                 rowData.hasOwnProperty('ratings')
-        //                   ? this.averageRating(rowData.ratings)
-        //                   : 0
-        //               }
-        //             />
-        //             {/*{this.averageRating(rowData.ratings) > 0 ?
-        //                             <Text style={{fontSize: 20, fontWeight: '400', color: '#ffffff'}}>
-        //                                 <Icon name={'star'}
-        //                                     style={{color: '#4d94ff'}}/> : {rowData.hasOwnProperty('ratings') ? this.averageRating(rowData.ratings) : 0}
-        //                         </Text> : null}*/}
-        //           </View>
-        //         </Body>
-        //         <Right>
-        //           {data.item.contact || data.item.contact1 ? (
-        //             <Button
-        //               transparent
-        //               style={styles.serviceIconBtn}
-        //               onPress={() => {
-        //                 MyFunctions._callPhone(
-        //                   data.item.contact
-        //                     ? data.item.contact
-        //                     : data.item.contact1,
-        //                 );
-        //               }}>
-        //               {/*<Icon name={'call'} color={'green'}/>*/}
-        //               <Icon name={'phone'} size={20} style={styles.catIcon} />
-        //             </Button>
-        //           ) : null}
-        //         </Right>
-        //       </ListItem>
-        //     </TouchableWithoutFeedback>
-        //   </View>
-        // );
-
         return (
             <ServiceItem componentId={this.props.componentId} service={rowData}/>
         )
@@ -291,95 +215,96 @@ export default class SearchResult extends PureComponent {
 
     _renderProduct = (data, index) => {
         let item = data.item;
-        console.log(item);
+        // console.log(item);
         return (
-            <View>
-                <TouchableOpacity
-                    onPress={() => this._handleProductPress(item)}
-                    style={styles.productContainerStyle}>
-                    {/*<Product key={item._id} product={item}/>*/}
-                    <Card key={item._id} style={customStyle.Card}>
-                        <CardItem cardBody style={{width: '100%'}}>
-                            <Image
-                                source={{uri: settings.IMAGE_URL + item.images[0]}}
-                                style={{
-                                    flex: 1,
-                                    width: undefined,
-                                    height: 70,
-                                    resizeMode: 'cover',
-                                }}
-                            />
-                            <View
-                                style={{
-                                    position: 'absolute',
-                                    top: 5,
-                                    left: 5,
-                                    right: 5,
-                                    bottom: 5,
-                                    borderWidth: 1,
-                                    borderColor: 'rgba(253, 253, 253, 0.2)',
-                                }}>
-                                {item.discount ? (
-                                    <View
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            right: 0,
-                                            backgroundColor: colors.primary,
-                                            opacity: 1,
-                                            borderRadius: 5,
-                                            textAlign: 'center',
-                                            padding: 2,
-                                        }}>
-                                        <Text style={{fontSize: 10, color: 'white'}}>
-                                            {item.discount}% off
-                                        </Text>
-                                    </View>
-                                ) : null}
-                            </View>
-                        </CardItem>
-                        <CardItem style={{paddingTop: 0}}>
-                            <Button
-                                style={{
-                                    flex: 1,
-                                    paddingLeft: 0,
-                                    paddingRight: 0,
-                                    paddingBottom: 0,
-                                    paddingTop: 0,
-                                }}
-                                transparent
-                                onPress={() => {
-                                }}>
-                                <Body>
-                                <Text
-                                    style={{fontSize: 14, color: colors.primaryText}}
-                                    numberOfLines={2}>
-                                    {item.title}
-                                </Text>
-                                <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
-                                    <Text
-                                        note
-                                        style={{
-                                            fontSize: 12,
-                                            paddingLeft: 2,
-                                            paddingRight: 2,
-                                            zIndex: 1000,
-                                            backgroundColor: '#fdfdfd',
-                                        }}>
-                                        Rs. {item.price}
-                                    </Text>
-                                </View>
-                                </Body>
-                            </Button>
-                        </CardItem>
-                    </Card>
-                </TouchableOpacity>
-            </View>
+            <Product product={item} navigation={this.props.navigation}/>
+            // <View>
+            //     <TouchableOpacity
+            //         onPress={() => this._handleProductPress(item)}
+            //         style={styles.productContainerStyle}>
+            //         {/*<Product key={item._id} product={item}/>*/}
+            //         <Card key={item._id} style={customStyle.Card}>
+            //             <CardItem cardBody style={{width: '100%'}}>
+            //                 <Image
+            //                     source={{uri: settings.IMAGE_URL + item.images[0]}}
+            //                     style={{
+            //                         flex: 1,
+            //                         width: undefined,
+            //                         height: 70,
+            //                         resizeMode: 'cover',
+            //                     }}
+            //                 />
+            //                 <View
+            //                     style={{
+            //                         position: 'absolute',
+            //                         top: 5,
+            //                         left: 5,
+            //                         right: 5,
+            //                         bottom: 5,
+            //                         borderWidth: 1,
+            //                         borderColor: 'rgba(253, 253, 253, 0.2)',
+            //                     }}>
+            //                     {item.discount ? (
+            //                         <View
+            //                             style={{
+            //                                 position: 'absolute',
+            //                                 top: 0,
+            //                                 right: 0,
+            //                                 backgroundColor: colors.primary,
+            //                                 opacity: 1,
+            //                                 borderRadius: 5,
+            //                                 textAlign: 'center',
+            //                                 padding: 2,
+            //                             }}>
+            //                             <Text style={{fontSize: 10, color: 'white'}}>
+            //                                 {item.discount}% off
+            //                             </Text>
+            //                         </View>
+            //                     ) : null}
+            //                 </View>
+            //             </CardItem>
+            //             <CardItem style={{paddingTop: 0}}>
+            //                 <Button
+            //                     style={{
+            //                         flex: 1,
+            //                         paddingLeft: 0,
+            //                         paddingRight: 0,
+            //                         paddingBottom: 0,
+            //                         paddingTop: 0,
+            //                     }}
+            //                     transparent
+            //                     onPress={() => {
+            //                     }}>
+            //                     <Body>
+            //                     <Text
+            //                         style={{fontSize: 14, color: colors.primaryText}}
+            //                         numberOfLines={2}>
+            //                         {item.title}
+            //                     </Text>
+            //                     <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
+            //                         <Text
+            //                             note
+            //                             style={{
+            //                                 fontSize: 12,
+            //                                 paddingLeft: 2,
+            //                                 paddingRight: 2,
+            //                                 zIndex: 1000,
+            //                                 backgroundColor: '#fdfdfd',
+            //                             }}>
+            //                             Rs. {item.price}
+            //                         </Text>
+            //                     </View>
+            //                     </Body>
+            //                 </Button>
+            //             </CardItem>
+            //         </Card>
+            //     </TouchableOpacity>
+            // </View>
         );
     };
 
     componentDidMount() {
-        let searchText = this.props.SearchText;
+        let searchText = this.props.route.params.SearchText;
         this.setState({query: searchText});
         this._search(searchText);
     }
@@ -392,26 +317,30 @@ export default class SearchResult extends PureComponent {
                     rounded
                     androidStatusBarColor={colors.statusBar}
                     style={{backgroundColor: '#4d94ff'}}>
-                    {/*<Left style={{flex: 1}}>*/}
-                    {/*/!*<Button transparent onPress={() => {*!/*/}
-                    {/*/!*this.props.navigation.openDrawer()*!/*/}
-                    {/*/!*}}>*!/*/}
-                    {/*/!*<Icon name={'ellipsis-v'} size={25} color={'white'}/></Button>*!/*/}
+                    <Left style={{flex: 1}}>
+                    <Button transparent onPress={() => 
+                    this.props.navigation.goBack()}>
+                    <Icon name={'arrow-left'} size={25} color={'white'}/></Button>
                     {/*<CogMenu componentId={this.props.componentId}/>*/}
-                    {/*</Left>*/}
+                    </Left>
                     {/*<Body style={{flexDirection: 'row', flex: 6}}>*/}
 
-                    <Item style={{height: 40, width: '95%', paddingLeft: 10}}>
-                        <Button
+                    <Item search style={{height: 40, width: '95%', paddingLeft: 10, flex:6.5,  backgroundColor: '#cce0ff',
+                            zIndex: 1,
+                            borderRadius:8,
+                            borderBottomWidth:0,}}>
+                        {/* <Button
                             onPress={() => this.props.navigation.goBack()}
                             style={{paddingHorizontal: 10}}
                             transparent>
                             <Icon name={'arrow-left'} size={25} color={colors.primary}/>
-                        </Button>
+                        </Button> */}
                         <Input
+                        style={{ fontFamily: 'Roboto' }}
+                        underlineColorAndroid="rgba(0,0,0,0)"
+                        returnKeyType="search"
                             placeholder="Search..."
                             style={styles.searchInput}
-                            placeholderTextColor={colors.primaryText}
                             // selectionColor='#ffffff'
                             onChangeText={searchText => {
                                 this._search(searchText), this.setState({query: searchText});
@@ -419,50 +348,66 @@ export default class SearchResult extends PureComponent {
                             value={this.state.query}
                             autoCorrect={false}
                         />
-                        {/*<Right>*/}
-                        <Button
-                            style={{paddingHorizontal: 5}}
+                       
+                       <Button
+                            style={{paddingHorizontal: 2}}
                             transparent
                             onPress={() => this.setState({query: ''})}>
                             <NBIcon
                                 name={'close'}
                                 size={25}
-                                style={{color: colors.primary}}
+                                style={{color: colors.whiteText}}
                             />
                         </Button>
-                        {/*</Right>*/}
+                        
                     </Item>
+                    <Right style={{alignItems:'center', justifyContent:'center'}}>
+                    {/* <TouchableOpacity
+                            style={{paddingHorizontal: 5}}
+                            transparent
+                            onPress={() => this.setState({query: ''})}>
+                            <Icon
+                                name={'shopping-bag'}
+                                size={25}
+                                style={{color: colors.whiteText}}v
+                            />
+                        </TouchableOpacity> */}
+                        <CartIcon navigation={this.props.navigation}/>
+                    </Right>
                     {/*</Body>*/}
                 </Header>
                 <Content style={{padding: 10, backgroundColor: colors.appBackground}}>
-                    <View style={{alignItems: 'center', marginHorizontal: 30}}>
+                    {/* <View style={{alignItems: 'center', marginHorizontal: 30}}>
                         <Text style={[styles.screenHeader, {color: colors.appLayout}]}>
                             Services
                         </Text>
-                    </View>
+                    </View> */}
                     {this.state.services.length > 0 ? (
                         <FlatList
                             style={styles.contentList}
                             data={this.state.services}
                             renderItem={this._getListItem}
                             initialNumToRender={15}
+                            numColumns={2}
                             // onEndReached={(distance) => this._onEndReached(distance)}
                             // onEndReachedThreshold={0.1}
                             // ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
                             keyExtractor={(item, index) => item._id}
                         />
-                    ) : (
-                        <View style={customStyle.noList}>
-                            <Text style={customStyle.noListTextColor}>
-                                Sorry No Services found for "{this.currentSearch}"
-                            </Text>
-                        </View>
-                    )}
-                    <View style={{alignItems: 'center', marginHorizontal: 30}}>
+                    ) : null}
+                    
+                    {/*  (
+                         <View style={customStyle.noList}>
+                             <Text style={customStyle.noListTextColor}>
+                                 Sorry No Services found for "{this.currentSearch}"
+                             </Text>
+                         </View>
+                     )} */}
+                    {/* <View style={{alignItems: 'center', marginHorizontal: 30}}>
                         <Text style={[styles.screenHeader, {color: colors.appLayout}]}>
                             Products
                         </Text>
-                    </View>
+                    </View> */}
                     {this.state.products.length > 0 ? (
                         <FlatList
                             style={styles.mainContainer}
@@ -472,13 +417,15 @@ export default class SearchResult extends PureComponent {
                             numColumns={2}
                             renderItem={(item, index) => this._renderProduct(item, index)}
                         />
-                    ) : (
+                    ) : null}
+                    
+                    {/* (
                         <View style={customStyle.noList}>
                             <Text style={customStyle.noListTextColor}>
                                 Sorry No Products found for "{this.currentSearch}"
                             </Text>
                         </View>
-                    )}
+                    )} */}
 
                     <FlatList
                             contentContainerStyle={{
@@ -486,15 +433,15 @@ export default class SearchResult extends PureComponent {
                             paddingBottom: 10,
                             //   alignItems:'center',
                             justifyContent:'space-around',
-                            flexWrap:'wrap',
-                            flexDirection:'row',
+                            // flexWrap:'wrap',
+                            // flexDirection:'row',
                         }}
                         data={this.state.categories}
                         horizontal={false}
-                        _keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item, index) => index.toString()}
                         showsHorizontalScrollIndicator={false}
                         renderItem={this.renderItem}
-                        numColumns={3}
+                        numColumns={Math.round(viewportWidth/100)}
                     />
                 </Content>
             </Container>
@@ -505,8 +452,8 @@ export default class SearchResult extends PureComponent {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        flexDirection: 'column',
-        flexWrap: 'wrap',
+        // flexDirection: 'column',
+        // flexWrap: 'wrap',
     },
     containerStyle: {
         paddingHorizontal: 5,

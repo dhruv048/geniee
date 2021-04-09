@@ -1,29 +1,20 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    BackHandler,
-    View,
-    TouchableOpacity,
     Alert,
     FlatList,
-    Dimensions, AsyncStorage
+    Dimensions, AsyncStorage, TouchableOpacity
 } from 'react-native';
 import {
     Button,
     Container,
-    Content,
-    Header,
-    Left,
-    Body, Right, Title,Item, Input} from 'native-base';
+    Header,Item, Input, Left,Right,Body} from 'native-base';
 import Meteor  from "../../react-native-meteor";
 import FIcon from 'react-native-vector-icons/Feather';
 import {colors} from "../../config/styles";
-import {Divider} from 'react-native-paper';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
-import Product from "../../components/ecommerce/Product";
-import {Navigation} from "react-native-navigation";
-import {backToRoot, goBack, goToRoute} from "../../Navigation";
-import Menu,{MenuItem} from "react-native-material-menu";
+import Product from "../../components/Store/Product";
+import CartIcon from '../../components/HeaderIcons/CartIcon';
 
 
 class AllProducts extends Component {
@@ -54,7 +45,7 @@ class AllProducts extends Component {
             //     totalCount: this.props.Count.length > 0 ? this.props.Count[0].totalCount : 0,
             CategoryName:this.props.Category
         });
-
+        this._fetchData();
     }
 
     _fetchData(){
@@ -62,7 +53,7 @@ class AllProducts extends Component {
             this.setState({loading:true})
             Meteor.call('getPopularProducts', this.skip, this.limit, (err, res) => {
                 this.setState({loading:false});
-                // console.log(err, res);
+                 console.log(err, res);
                 if (err) {
                     console.log('this is due to error. ' + err);
                 }
@@ -106,20 +97,20 @@ class AllProducts extends Component {
         return true;
     }
 
-    componentDidAppear() {
-        BackHandler.addEventListener(
-            'hardwareBackPress',
-            this.handleBackButton.bind(this),
-        );
-        this._fetchData();
-    }
+    // componentDidAppear() {
+    //     BackHandler.addEventListener(
+    //         'hardwareBackPress',
+    //         this.handleBackButton.bind(this),
+    //     );
+    //     this._fetchData();
+    // }
 
-    componentDidDisappear() {
-        BackHandler.removeEventListener(
-            'hardwareBackPress',
-            this.handleBackButton.bind(this),
-        );
-    }
+    // componentDidDisappear() {
+    //     BackHandler.removeEventListener(
+    //         'hardwareBackPress',
+    //         this.handleBackButton.bind(this),
+    //     );
+    // }
     clickEventListener() {
         Alert.alert("Success", "Product has been added to cart")
     }
@@ -168,30 +159,32 @@ class AllProducts extends Component {
 
     _renderProduct = (data, index) => {
         let item = data.item;
-        // console.log(item);
+        //  console.log(item);
         return (
-            <View style={styles.col}>
-                <View  style={styles.containerStyle}>
-                    <Product key={item._id} product={item} bottomTab={true} componentId={this.props.componentId}/>
-                    {item.serviceOwner==Meteor.userId()?
-                    <Button transparent style={{height:40,width:40}} onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
-                        {/*<Icon name={'ios-menu'} style={{fontSize:25,color:colors.danger }}/>*/}
-                        <Menu
-                            ref={ref => (this[`menu${item._id}`] = ref)}
-                            button={
-                                <Button transparent onPress={() => this[`menu${item._id}`].show()}>
-                                    <FIcon name={'more-vertical'} size={20} color={colors.whiteText}/>
-                                </Button>}>
-                            <MenuItem onPress={() => {
-                                this[`menu${item._id}`].hide(), this.editProduct(item)
-                            }}>Edit Product</MenuItem>
-                            <MenuItem onPress={() => {
-                                this[`menu${item._id}`].hide(), this.removeProduct(item)
-                            }}>Remove Product</MenuItem>
-                        </Menu>
-                    </Button>:null}
-                </View>
-            </View>
+            // <View style={styles.col}>
+            //     <View  style={styles.containerStyle}>
+            //         <Product key={item._id} product={item} bottomTab={true} componentId={this.props.componentId}/>
+            //         {item.serviceOwner==Meteor.userId()?
+            //         <Button transparent style={{height:40,width:40}} onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
+            //             {/*<Icon name={'ios-menu'} style={{fontSize:25,color:colors.danger }}/>*/}
+            //             <Menu
+            //                 ref={ref => (this[`menu${item._id}`] = ref)}
+            //                 button={
+            //                     <Button transparent onPress={() => this[`menu${item._id}`].show()}>
+            //                         <FIcon name={'more-vertical'} size={20} color={colors.whiteText}/>
+            //                     </Button>}>
+            //                 <MenuItem onPress={() => {
+            //                     this[`menu${item._id}`].hide(), this.editProduct(item)
+            //                 }}>Edit Product</MenuItem>
+            //                 <MenuItem onPress={() => {
+            //                     this[`menu${item._id}`].hide(), this.removeProduct(item)
+            //                 }}>Remove Product</MenuItem>
+            //             </Menu>
+            //         </Button>:null}
+            //     </View>
+            // </View>
+
+            <Product product={item} navigation={this.props.navigation} />
         )
     }
 
@@ -202,7 +195,7 @@ class AllProducts extends Component {
             <Container style={styles.container}>
                 <Header searchBar rounded androidStatusBarColor={colors.statusBar}
                         style={{backgroundColor: colors.appLayout}}>
-                   {/*} <Left>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => {
                             this.props.navigation.goBack()
                         }}>
@@ -210,17 +203,55 @@ class AllProducts extends Component {
                         </Button>
                     </Left>
 
-                    <Body>
-                    <Title style={styles.screenHeader}>Products</Title>
-                    </Body>
-                    <Right>
-                        {Meteor.userId()?
-                        <Button onPress={() => this.props.navigation.navigate('AddProduct')} transparent>
+                    {/* <Body style={{width:'100%'}}> */}
+                   
+                    <Item
+                        search
+                        style={{
+                            flex:6.5,
+                            backgroundColor: '#cce0ff',
+                            height: 40,
+                            zIndex: 1,
+                            borderRadius:8,
+                            borderBottomWidth:0,
+                             width:'95%'
+                        }}>
+                        
+                        <Input
+                            style={{ fontFamily: 'Roboto' }}
+                            placeholder={'Search...'}
+                            underlineColorAndroid="rgba(0,0,0,0)"
+                            returnKeyType="search"
+                            // onSubmitEditing={this._search}
+                            // onChangeText={searchText => {
+                            //     this.setState({ query: searchText });
+                            // }}
+                        />
+                        <Button
+                            transparent
+                            // onPress={this._search.bind(this)}
+                            >
+                            <FIcon
+                                style={{
+                                    paddingHorizontal: 20,
+                                    fontSize: 15,
+                                    color: colors.whiteText,
+                                }}
+                                name={'search'}
+                            />
+                        </Button>
+                    </Item>
+                    {/* </Body> */}
+                    <Right style={{alignItems:'center', justifyContent:'center'}} >
+                        {/* {Meteor.userId()?
+                        <TouchableOpacity  onPress={() => this.props.navigation.navigate('AddProduct')} transparent>
                             <FIcon name='plus' style={{fontSize:27,color:'white'}} />
-                        </Button>:null}
-                    </Right> */}
+                        </TouchableOpacity>: */}
+                        <CartIcon navigation={this.props.navigation}/>
+                        {/* } */}
+                    </Right>  
 
-                    <Item>
+                    {/* <Item>
                         <Button style={{paddingHorizontal:10}} transparent onPress={() => {
                             this.props.navigation.goBack()
                         }}>
@@ -233,20 +264,20 @@ class AllProducts extends Component {
                             <FIcon name='plus' style={{fontSize:28}} />
                         </Button>:null}
 
-                    </Item>
+                    </Item> */}
                 </Header>
-                <Content style={styles.content}>
+                {/* <Content style={styles.content}> */}
                     <FlatList contentContainerStyle={styles.mainContainer}
                         //data={this.props.Products}
                               data={this.state.Products}
                               keyExtracter={(item, index) => item._id}
-                              horizontal={false}
-                           //   numColumns={2}
+                            //   horizontal={false}
+                              numColumns={2}
                               renderItem={(item, index) => this._renderProduct(item, index)}
                               onEndReachedThreshold={0.1}
                               onEndReached={(distance) => this._onEndReached(distance)}
                     />
-                </Content>
+                {/* </Content> */}
             </Container>
 
         );
@@ -256,11 +287,14 @@ class AllProducts extends Component {
 const styles = StyleSheet.create({
     container: {
         flex:1,
-        backgroundColor: '#eee',
+        backgroundColor: colors.appBackground,
     },
     mainContainer: {
-        flexDirection:'row',
-        flexWrap:'wrap',
+        // flexDirection:'row',
+        // flexWrap:'wrap',
+        paddingHorizontal:5,
+        width:'100%',
+        flex:1,
     },
     containerStyle: {
         borderRadius: 4,

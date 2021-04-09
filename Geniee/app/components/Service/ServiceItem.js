@@ -9,8 +9,8 @@ import {
   Divider,
   Provider,
 } from 'react-native-paper';
-import {Body, Left, ListItem, Right, View, Text, Button,Icon} from 'native-base';
-import {Image, StyleSheet, TouchableOpacity,Alert,ToastAndroid} from 'react-native';
+import {Body, Left, ListItem, Right, View, Text, Thumbnail,Icon as NBIcon} from 'native-base';
+import {Image, StyleSheet, TouchableOpacity,Alert,ToastAndroid, } from 'react-native';
 import settings from '../../config/settings';
 import StarRating from '../../components/StarRating/StarRating';
 import {customGalioTheme, customPaperTheme} from '../../config/themes';
@@ -142,10 +142,10 @@ _callPhone = number => {
   };
 
   render() {
-    const {service} = this.props;
+    const {service, navigation} = this.props;
     return (
       <Provider theme={customPaperTheme}>
-        <View style={styles.listBox}>
+        {/* <View style={styles.listBox}>
           <ListItem style={{}}>
             <Left style={{flex: 3, flexDirection: 'column'}}>
               <TouchableOpacity
@@ -185,8 +185,6 @@ _callPhone = number => {
                         alignItem: 'center',
                         flexDirection: 'row',
                     }}>
-                    {/*<FIcon name={'navigation'} size={12}*/}
-                    {/*color={colors.gray_200}/>*/}
                     <Text  style={{fontSize: 12,color:colors.gray_100}}>
                         {Math.round(service.dist.calculated * 100) / 100}{' '}
                         K.M. away</Text>
@@ -279,7 +277,131 @@ _callPhone = number => {
 
             </Right>
           </ListItem>
-        </View>
+        </View> */}
+
+<TouchableOpacity style={{padding:10}}
+                                        onPress={() => {
+                                            navigation.navigate('ServiceDetail', {
+                                                Id: service,
+                                            });
+                                        }}>
+                                        <View
+                                            key={service._id}
+                                            style={{
+                                                backgroundColor: 'white',
+                                                width: '100%',
+                                                flexDirection: 'column',
+                                                borderRadius: 5
+                                            }}>
+                                            <View style={{ height: 120, width:'100%',  borderRadius: 10}}>
+                                                <Thumbnail
+                                                    style={{
+                                                        width: '100%',
+                                                        height: 120,
+                                                        marginBottom: 10,
+                                                        borderRadius:5,
+                                                        resizeMode: 'cover',
+                                                    }}
+                                                    square
+                                                    source={
+                                                        service.coverImage
+                                                            ? { uri: settings.IMAGE_URL + service.coverImage }
+                                                            : require('../../images/no-image.png')
+                                                    }
+                                                /> 
+                                            </View>
+                                            <View style={{ flexDirection: 'row', padding: 5 }}>
+                                                <View
+                                                    style={{
+                                                        flex: 3,
+                                                        alignItems: 'flex-start',
+                                                    }}>
+                                                    {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
+                                                    {/*{service.title}*/}
+                                                    {/*</Text>*/}
+                                                    {service.title ? (
+                                                        <View
+                                                            style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}>
+                                                            {/* <Icon
+                                                                name={'tag'}
+                                                                size={10}
+                                                                color={colors.gray_100}
+                                                            /> */}
+
+                                                            <Text
+                                                                numberOfLines={2}
+                                                                style={{ marginLeft: 5, fontSize: 14 }}>
+                                                                {service.title || ''}
+                                                            </Text>
+                                                        </View>
+                                                    ) : null}
+                                                    {/*<Text note style={styles.cardNote}*/}
+                                                    {/*numberOfLines={1}>{service.location.formatted_address}</Text>*/}
+                                                    <View
+                                                        style={{
+                                                            flexDirection: 'row',
+                                                            // justifyContent: 'space-between',
+                                                            width: '100%',
+                                                        }}>
+                                                             <View
+                                                            style={{
+                                                                alignItem: 'center',
+                                                                flexDirection: 'row',
+                                                            }}>
+                                                            {/*<Icon name={'location-arrow'} size={18}*/}
+                                                            {/*color={colors.gray_200}/>*/}
+                                                            {service.dist ?
+                                                            <Text note style={{ fontSize: 12 }}>
+                                                                {Math.round(service.dist.calculated * 100) / 100}{' '}
+                                                                km away
+                                                            </Text>:null}
+                                                        </View>
+                                                        <View
+                                                            style={{
+                                                                marginLeft:10,
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}>
+                                                                 <NBIcon
+                                                                name={'star'}
+                                                                style={{fontSize:14,color:colors.gray_100}}
+                                                            />
+                                                            <Text note style={{ fontSize: 12,marginLeft:5 }}>
+                                                                {service.hasOwnProperty('ratings')
+                                                                    ? Math.round(service.Rating.avgRate)
+                                                                    : 1} (
+                                                                     {service.hasOwnProperty('ratings')
+                                                                    ? tem.Rating.count
+                                                                    : 0})
+                                                            </Text>
+
+                                                           
+                                                        </View>
+                                                       
+                                                        {/*{service.Category?*/}
+                                                        {/*<View style={{*/}
+                                                        {/*flexDirection: 'row',*/}
+                                                        {/*alignItems: 'center',*/}
+                                                        {/*justifyContent: 'center',*/}
+                                                        {/*}}>*/}
+                                                        {/*<Text>*/}
+                                                        {/*<Icon name={'tag'} size={16}*/}
+                                                        {/*color={colors.warning}/></Text>*/}
+                                                        {/*<Text note>*/}
+                                                        {/*{service.Category.subCategory}*/}
+                                                        {/*</Text>*/}
+
+                                                        {/*</View>:null}*/}
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
       </Provider>
     );
   }

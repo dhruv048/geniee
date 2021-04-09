@@ -7,13 +7,26 @@ import { colors } from "../config/styles";
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from "react-native-actions-sheet";
 import { Headline, List, } from "react-native-paper";
+import Meteor from "../react-native-meteor";
 
 class FooterTabs extends React.PureComponent {
 
   constructor(props){
     super(props);
+    this.state={
+      loggedUser: Meteor.user(),
+    }
     this.actionSheetRef = createRef();
   };
+
+  componentDidMount(){
+    this.setState({loggedUser:this.props.loggedUser ? this.props.loggedUser:null})
+  }
+  componentWillReceiveProps(newProps) {
+    //  this.setState({isLogged: newProps.loggedUser ? true : false})
+      if (newProps.loggedUser)
+          this.setState({loggedUser: newProps.loggedUser})
+  }
   getIndex = (routeName) => {
     return this.props.state.routes.findIndex(route => route.name == routeName)
 }
@@ -38,13 +51,13 @@ class FooterTabs extends React.PureComponent {
             {state.index== this.getIndex('Chat')?
               <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Message</Text> : null}
           </Button>
-
+ {this.state.loggedUser?
           <View style={{ flex: 1, justifyContent:'center', width:'100%' }}>
             <Button onPress={() => { this.actionSheetRef.current?.setModalVisible(); }}
               style={{ alignSelf:'center', justifyContent: 'center', backgroundColor: colors.appLayout, height: 40, width: 40, borderRadius: 20 }} >
               <Icon name="plus" style={{ color: colors.whiteText }} size={25}></Icon>
             </Button>
-          </View>
+          </View>:null}
 
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
             onPress={() => this.props.navigation.navigate( 'WishListEF')}
@@ -103,7 +116,11 @@ class FooterTabs extends React.PureComponent {
   }
 }
 
-export default FooterTabs;
+export default Meteor.withTracker(() => {
+  return {
+      loggedUser: Meteor.user()
+  }
+})(FooterTabs);
 
 const styles = StyleSheet.create({
   footer: {

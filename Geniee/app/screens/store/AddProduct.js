@@ -3,7 +3,7 @@ import {
     View,
     StyleSheet,
     ToastAndroid,
-    TouchableOpacity,
+    Picker,
     Image,
     Modal,
     StatusBar,
@@ -24,7 +24,6 @@ import {
     Textarea,
     CheckBox,
     Button,
-    Picker,
     Header,
     Left,
     Body,
@@ -39,8 +38,6 @@ import ActionSheet from 'react-native-actionsheet';
 import _ from "lodash";
 import ImagePicker from 'react-native-image-crop-picker';
 import {CogMenu} from "../../components/CogMenu/CogMenu";
-import {Navigation} from "react-native-navigation/lib/dist/index";
-import {backToRoot, goToRoute, goBack} from "../../Navigation";
 import AsyncStorage from '@react-native-community/async-storage';
 import settings, {BusinessType, ServiceDuration} from "../../config/settings";
 import FIcon from 'react-native-vector-icons/Feather';

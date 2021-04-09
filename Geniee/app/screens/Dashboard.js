@@ -38,6 +38,7 @@ import {
     CardItem,
 } from 'native-base';
 import Icon from 'react-native-vector-icons/Feather';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
 import { colors, customStyle, variables } from '../config/styles';
 import { Badge, Avatar } from 'react-native-paper';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -47,12 +48,13 @@ import Product from '../components/Store/Product';
 import MyFunctions from '../lib/MyFunctions';
 import CogMenu from '../components/CogMenu';
 import SplashScreen from 'react-native-splash-screen';
-import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getProfileImage } from '../config/settings';
 import LinearGradient from 'react-native-linear-gradient';
 import FooterTabs from '../components/FooterTab';
+import NotificationIcon from '../components/HeaderIcons/NotificationIcon';
+import CartIcon from '../components/HeaderIcons/CartIcon';
 let isDashBoard = true;
 
 class Dashboard extends Component {
@@ -503,8 +505,9 @@ class Dashboard extends Component {
     };
     renderCategoryItem = (data, index) => {
         var item = data.item;
+        // console.log(item, index)
         return (
-            <View key={item._id} style={styles.containerStyle}>
+            <View key={data.index.toString()} style={styles.containerStyle}>
                 <TouchableOpacity onPress={() => this._itemClick(item)}>
                     {/*<ImageBackground source={require('../images/bgLogo.png')}
                     style={{justifyContent: 'center', alignItems: 'center', alignSelf: 'stretch'}}
@@ -517,7 +520,7 @@ class Dashboard extends Component {
                     }}>*/}
                     <Body>
                         <View style={styles.catIcon}>
-                            <Icon name={item.icon} size={25} color='white' />
+                            <FAIcon name={item.icon} size={25} color='white' />
                         </View>
                     </Body>
 
@@ -618,6 +621,7 @@ class Dashboard extends Component {
     };
 
     _renderItem({ item, index }) {
+        console.log(item,index)
         return (
             <View key={index} style={{ flex: 1, width: '100%' }}>
                 <Thumbnail
@@ -684,7 +688,7 @@ class Dashboard extends Component {
                 onPress={() => this._handleProductPress(item)}
                 style={[styles.productContainerStyle,{borderTopLeftRadius:5,borderTopRightRadius:5}]}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View style={[customStyle.Card, { top: 0, left: 0, rigth: 0,  }]}>
+                <View key={item._id} style={[customStyle.Card, { top: 0, left: 0, rigth: 0,  }]}>
                     <CardItem cardBody style={{ width: '100%',borderRadius:5 }}>
                         <Image
                             source={{ uri: settings.IMAGE_URL + item.images[0] }}
@@ -795,38 +799,19 @@ class Dashboard extends Component {
     render() {
         const { loggedUser } = this.state;
         const profileImage=loggedUser? loggedUser.profile.profileImage : null;
-        console.log(loggedUser,profileImage)
+        // console.log(loggedUser,profileImage)
         return (
             <>
             <StatusBar  backgroundColor={colors.statusBar}/>
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
                 
-                <View style={{backgroundColor:colors.appLayout, height:this.state.isActionButtonVisible ? 100 :50}}>
-                    <View style={{flex:1,flexDirection:'row', justifyContent:'space-between', marginHorizontal:15}}>
+                <View style={{backgroundColor:colors.appLayout, height:this.state.isActionButtonVisible ? 110 :50}}>
+                    <View style={{flex:1,flexDirection:'row', justifyContent:'space-between',alignItems:'center', marginHorizontal:15}}>
                         <Text style={{fontSize:25,  fontWeight:'bold', color:'white', fontFamily:'Roboto'}}>Geniee</Text>
-                        <View style={{ justifyContent:'space-around',  flexDirection:'row' }}>
-                        <Button
-                        style={{marginHorizontal:8 }}
-                            onPress={() => this.props.navigation.navigate('Notification')}
-                            transparent>
-                            <Icon
-                                name="bell"
-                                style={{ fontSize: 22, color: 'white' }}
-                            />
-                            {this.state.notificationCount > 0 ? (
-                                <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
-                                    {/*<Text*/}
-                                    {/*style={{*/}
-                                    {/*fontSize: 10,*/}
-                                    {/*fontWeight: '100',*/}
-                                    {/*color: 'white',*/}
-                                    {/*lineHeight: 18,*/}
-                                    {/*}}>*/}
-                                    {this.state.notificationCount}
-                                    {/*</Text>*/}
-                                </Badge>
-                            ) : null}
-                        </Button>
+                        <View style={{ justifyContent:'space-around',  alignItems:'center',   flexDirection:'row' }}>
+
+                        <NotificationIcon navigation={this.props.navigation}/>
+
                         {/* <Button
                         style={{marginHorizontal:8 }}
                             onPress={() => this.props.navigation.navigate( 'WishListEF')}
@@ -840,36 +825,18 @@ class Dashboard extends Component {
                                 </Badge>
                             ) : null}
                         </Button> */}
-                        <Button
-                        style={{marginHorizontal:8 }}
-                            onPress={() =>this.props.navigation.navigate( 'CartEF')}
-                            transparent>
-                            <Icon name="shopping-bag" style={{ fontSize: 22, color: 'white' }} />
-                            {this.state.totalCount > 0 ? (
-                                <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
-                                    {/*<Text*/}
-                                    {/*style={{*/}
-                                    {/*fontSize: 10,*/}
-                                    {/*fontWeight: '100',*/}
-                                    {/*color: 'white',*/}
-                                    {/*lineHeight: 18,*/}
-                                    {/*}}>*/}
-                                    {this.state.totalCount}
-                                    {/*</Text>*/}
-                                </Badge>
-                            ) : null}
-                        </Button>
-                       
 
-                        <Button
-                        style={{marginHorizontal:8 }}
+                       <CartIcon navigation={this.state.navigation}/ >
+
+                       <TouchableOpacity style={{marginHorizontal:5}}
                             onPress={() =>this.props.navigation.navigate( loggedUser ? 'Profile': 'SignIn')}
-                            transparent>
+                           >
                             <Icon
                                 name="user"
                                 style={{ fontSize: 22, color: 'white' }}
                             />
-                            </Button>
+                            </TouchableOpacity>
+
                         {/*<Button transparent onPress={this.handleOnPress}>*/}
                         {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
                     </View>
@@ -954,7 +921,7 @@ class Dashboard extends Component {
                                 contentContainerStyle={{ paddingBottom: 15 , paddingLeft: 0, marginLeft:0}}
                                 data={this.state.nearByservice}
                                 horizontal={true}
-                                _keyExtractor={(item, index) => index.toString()}
+                                keyExtractor={(item, index) => item._id}
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({ item, index }) => (
                                     <TouchableOpacity
@@ -1120,11 +1087,11 @@ class Dashboard extends Component {
                                 contentContainerStyle={{ paddingBottom: 15 }}
                                 data={this.state.resturants}
                                 horizontal={true}
-                                _keyExtractor={(item, index) => index.toString()}
+                                keyExtractor={(item, index) => index.toString()}
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({ item, index }) => (
                                     <View
-                                        key={item._id}
+                                        key={index.toString()}
                                         style={[
                                             styles.card,
                                             {
@@ -1234,7 +1201,7 @@ class Dashboard extends Component {
                                 contentContainerStyle={{ paddingBottom: 15 }}
                                 data={this.state.popularProducts}
                                 horizontal={true}
-                                // _keyExtractor={(item, index) => index.toString()}
+                                 keyExtractor={(item, index) => item._id}
                                 showsHorizontalScrollIndicator={false}
                                 //  numColumns={3}
                                 renderItem={(item, index) => this._renderProduct(item, index)}
@@ -1264,15 +1231,15 @@ class Dashboard extends Component {
                                     paddingBottom: 10,
                                     //   alignItems:'center',
                                     justifyContent: 'space-around',
-                                    flexWrap: 'wrap',
-                                    flexDirection: 'row',
+                                    // flexWrap: 'wrap',
+                                    // flexDirection: 'row',
                                 }}
                                 data={this.state.categories}
                                 //horizontal={true}
-                                _keyExtractor={(item, index) => index.toString()}
+                                keyExtractor={(item, index) => index.toString()}
                                 // showsHorizontalScrollIndicator={false}
-                                renderItem={this.renderCategoryItem}
-                            //  numColumns={3}
+                                renderItem={ this.renderCategoryItem}
+                              numColumns={Math.round(viewportWidth/100)}
                             />
                             {/*  {this.state.viewAll? null:
                           <Button onPress={() => {this.setViewAll()}}
@@ -1293,8 +1260,8 @@ class Dashboard extends Component {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        flexDirection: 'column',
-        flexWrap: 'wrap',
+        // flexDirection: 'column',
+        // flexWrap: 'wrap',
     },
     containerStyle: {
         paddingLeft: 5,

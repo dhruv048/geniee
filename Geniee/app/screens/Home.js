@@ -362,6 +362,7 @@ class Home extends Component {
                       onEndReached={(distance) => this._onEndReached(distance)}
                       ListFooterComponent={this.state.loading ? <ActivityIndicator style={{height: 80}}/> : null}
                       keyExtractor={(item, index) => index.toString()}
+                      numColumns={2}
             />
 
         )
@@ -559,73 +560,18 @@ const styles = StyleSheet.create({
         flex: 1
 
     },
-    serviceList: {
-        //backgroundColor: colors.inputBackground,
-        backgroundColor: '#4d94ff0a',
-        //marginVertical: 5,
-        //marginHorizontal: '2%',
-        borderRadius: 0,
-        borderBottomColor: '#4d94ff',
-        borderBottomWidth: 5
-    },
-    serviceTitle: {
-        color: '#000000',
-        fontWeight: 'bold',
-    },
-    serviceAddress: {
-        color: '#000000',
-    },
-    serviceDist: {
-        color: '#000000',
-    },
-    serviceAction: {
-        //flexDirection: 'row',
-        //justifyContent: 'center',
-        //alignItems: 'center',
-    },
-    serviceIconBtn: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    catIcon: {
-        padding: 5,
-        borderRadius: 100,
-        backgroundColor: '#4d94ff',
-        color: '#fff',
-        width: 30,
-        height: 30,
-        marginRight: 0
-    },
+ 
+ 
     contentList: {
+        backgroundColor:colors.whiteText,
       flex:1
     },
-    image: {
-        width: 50,
-        height: 56,
-        borderRadius: 25,
-        backgroundColor: '#000000'
-    },
-    banner: {
-        width: 80,
-        height: 50,
-        borderRadius: 3,
-        backgroundColor: '#000000'
-    },
-    footerTab: {
-        backgroundColor: '#4d94ff',
-        borderTopWidth: 3,
-        borderTopColor: '#000000',
-    },
+   
     activeTab: {
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
     },
-    activeTabIcon: {
-        color: '#ffffff'
-    },
-    activeTabText: {
-        color: '#ffffff'
-    },
+   
     searchInput: {
         color: '#ffffff',
         borderTopWidth: 0,

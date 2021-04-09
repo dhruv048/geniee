@@ -99,7 +99,7 @@ class SignIn extends Component {
                         result.grantedPermissions.toString(),
                     );
                     Keyboard.dismiss();
-                    onLoginFinished(result, componentId, needReturn);
+                    onLoginFinished(result, this.props, needReturn);
                     // this.setState({loadingFB: false})
                 }
             })
