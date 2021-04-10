@@ -25,7 +25,7 @@ class SideMenu extends PureComponent {
 
     async componentDidMount() {
         let Token=await AsyncStorage.getItem(USER_TOKEN_KEY);
-        BackHandler.addEventListener('hardwareBackPress', this.handleBack);
+        // BackHandler.addEventListener('hardwareBackPress', this.handleBack);
         let loggedUser=await AsyncStorage.getItem("loggedUser");
         loggedUser=loggedUser?  JSON.parse(loggedUser) : null;
         this.setState({isLogged: Token ? true : false, user: this.props.loggedUser ? this.props.loggedUser :loggedUser})
@@ -43,7 +43,7 @@ class SideMenu extends PureComponent {
             this.setState({user: newProps.loggedUser})
     }
     componentWillUnmount(){
-        BackHandler.removeEventListener('hardwareBackPress',this.handleBack);
+        // BackHandler.removeEventListener('hardwareBackPress',this.handleBack);
     }
 
     navigateToRoute(route) {

@@ -121,69 +121,6 @@ class Dashboard extends Component {
             UIManager.setLayoutAnimationEnabledExperimental(true);
         //this.onClick = this.onClick.bind(this);
     }
-
-    handleOnPress = () => this.setState({ showSearchBar: true });
-    handleOnPressUnset = () => {
-        this.setState({ showSearchBar: false, query: '' });
-        this._search('');
-    };
-    //onClick() {
-    //let { showSearchBar } = this.state.showSearchBar;
-    //this.setState({
-    //showSearchBar: !showSearchBar,
-    //});
-    //}
-
-    handleBackButton() {
-        console.log('back handle from dashboard');
-        if (isDashBoard) {
-            const { screen, navigator } = this.props;
-            console.log(screen, navigator, this.props);
-            this.state.backClickCount == 1 ? BackHandler.exitApp() : this._spring();
-            return true;
-        }
-    };
-
-    setViewAll = () => {
-        let prevState = this.state.viewAll;
-        const categories = prevState ? this.props.categories.slice(0, 6) : this.props.categories;
-        this.setState({ viewAll: !prevState, categories: categories });
-
-    }
-
-    _spring() {
-        ToastAndroid.showWithGravityAndOffset(
-            'Tap again to Exit.',
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            0,
-            50,
-        );
-
-        this.setState({ backClickCount: 1 }, () => {
-            Animated.sequence([
-                Animated.spring(this.springValue, {
-                    toValue: -0.15 * viewportHeight,
-                    friction: 5,
-                    duration: 300,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(this.springValue, {
-                    toValue: 100,
-                    duration: 300,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                this.setState({ backClickCount: 0 });
-            });
-        });
-    }
-
-    handleOnLocationSelect(location) {
-        console.log(location);
-        this.setState({ pickLocation: false });
-    }
-
     async componentDidMount() {
         this.setState({ loggedUser: this.props.loggedUser });
         this.updateCounts();
@@ -285,10 +222,6 @@ class Dashboard extends Component {
             }
         });
 
-
-        //Get Nearby services
-        this._fetchNearByServices();
-
         //Store All Catefories
         Meteor.subscribe('categories-list', () => {
             //console.log(MainCategories)
@@ -303,7 +236,29 @@ class Dashboard extends Component {
             }
         });
 
+        this.backHandler =  BackHandler.addEventListener(
+            'hardwareBackPress',
+            this.handleBackButton.bind(this),
+        );
 
+        this.focusListnier = this.props.navigation.addListener('focus',()=>{
+            console.log('Dashboard Focus');
+            this._fetchNearByServices();
+            this.backHandler =  BackHandler.addEventListener(
+                'hardwareBackPress',
+                this.handleBackButton.bind(this),
+            );
+        }
+        );
+
+        this.blurListnier= this.props.navigation.addListener('blur',()=>{
+            try{
+            this.backHandler.remove();
+            }
+            catch(e){
+                console.log(e.message)
+            }
+        });
     }
 
     _fetchNearByServices = () => {
@@ -351,7 +306,75 @@ class Dashboard extends Component {
     componentWillUnmount() {
         this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
+        this.focusListnier();
+         this.blurListnier();
+      
     }
+
+
+    handleOnPress = () => this.setState({ showSearchBar: true });
+    handleOnPressUnset = () => {
+        this.setState({ showSearchBar: false, query: '' });
+        this._search('');
+    };
+    //onClick() {
+    //let { showSearchBar } = this.state.showSearchBar;
+    //this.setState({
+    //showSearchBar: !showSearchBar,
+    //});
+    //}
+
+    handleBackButton() {
+        console.log('back handle from dashboard');
+        if (isDashBoard) {
+            const { screen, navigator } = this.props;
+            console.log(screen, navigator, this.props);
+            this.state.backClickCount == 1 ? BackHandler.exitApp() : this._spring();
+            return true;
+        }
+    };
+
+    setViewAll = () => {
+        let prevState = this.state.viewAll;
+        const categories = prevState ? this.props.categories.slice(0, 6) : this.props.categories;
+        this.setState({ viewAll: !prevState, categories: categories });
+
+    }
+
+    _spring() {
+        ToastAndroid.showWithGravityAndOffset(
+            'Tap again to Exit.',
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            0,
+            50,
+        );
+
+        this.setState({ backClickCount: 1 }, () => {
+            Animated.sequence([
+                Animated.spring(this.springValue, {
+                    toValue: -0.15 * viewportHeight,
+                    friction: 5,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(this.springValue, {
+                    toValue: 100,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+            ]).start(() => {
+                this.setState({ backClickCount: 0 });
+            });
+        });
+    }
+
+    handleOnLocationSelect(location) {
+        console.log(location);
+        this.setState({ pickLocation: false });
+    }
+
+   
 
     messageListener = async () => {
         this.notificationOpenedListener = messaging().onNotificationOpenedApp(notificationOpen => {
@@ -409,24 +432,7 @@ class Dashboard extends Component {
         }
     };
 
-    componentDidAppear() {
-        isDashBoard = true;
-        this.updateCounts();
-        BackHandler.addEventListener(
-            'hardwareBackPress',
-            this.handleBackButton.bind(this),
-        );
-        console.log('componentDidAppear-Dashboard');
 
-        // Meteor.call('getCategoriesGR', (err, res) => {
-        //     //   console.log(err,res)
-        //     if (!err) {
-        //         this.setState({categories: res.result});
-        //         this.categories=res.result;
-        //     }
-        // })
-        this._fetchNearByServices();
-    }
 
     async updateCounts() {
         let wishList = await AsyncStorage.getItem('myWhishList');
@@ -440,15 +446,6 @@ class Dashboard extends Component {
             cartList = [];
         }
         this.setState({ wishList: wishList, totalCount: cartList.length });
-    }
-
-    componentDidDisappear() {
-        isDashBoard = false;
-        BackHandler.removeEventListener(
-            'hardwareBackPress',
-            this.handleBackButton.bind(this),
-        );
-        console.log('componentDidDisappear-Dashboard');
     }
 
     _search = text => {
@@ -826,7 +823,7 @@ class Dashboard extends Component {
                             ) : null}
                         </Button> */}
 
-                       <CartIcon navigation={this.state.navigation}/ >
+                       <CartIcon navigation={this.state.navigation} />
 
                        <TouchableOpacity style={{marginHorizontal:5}}
                             onPress={() =>this.props.navigation.navigate( loggedUser ? 'Profile': 'SignIn')}
