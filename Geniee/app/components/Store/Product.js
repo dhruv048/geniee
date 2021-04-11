@@ -3,13 +3,15 @@
  **/
 
 // React native and others libraries imports
-import React, { Component, PureComponent } from 'react';
+import React, { Component, createRef, PureComponent } from 'react';
 import { Image, TouchableOpacity,ToastAndroid } from 'react-native';
 import { View, Col, Card, CardItem, Body, Button, Text, Grid } from 'native-base';
 import settings from "../../config/settings";
 import { customStyle, colors } from '../../config/styles';
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
+import Meteor from '../../react-native-meteor';
+import Menu, {MenuItem} from 'react-native-material-menu';
 //
 // import Text from './Text';
 
@@ -20,6 +22,7 @@ export default class Product extends PureComponent {
         this.state={
             liked : false,
         }
+        this.menu=createRef();
     }
 
    async componentDidMount() {
@@ -60,9 +63,54 @@ export default class Product extends PureComponent {
             50,
         );
     }
+    editProduct = _product => {
+        this.props.navigation.navigate( 'AddProduct', {Product: _product});
+      };
+    
+      removeProduct = _product => {
+        Alert.alert(
+          'Remove Product',
+          `Do you want to remove product '${_product.title}'?`,
+          [
+            {
+              text: 'Yes Remove',
+              onPress: () =>
+                Meteor.call('removeProduct', _product._id, (err, res) => {
+                  if (!err) {
+                    ToastAndroid.showWithGravityAndOffset(
+                      'Removed Successfully',
+                      ToastAndroid.SHORT,
+                      ToastAndroid.BOTTOM,
+                      0,
+                      50,
+                    );
+                  } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                      err.reason,
+                      ToastAndroid.SHORT,
+                      ToastAndroid.BOTTOM,
+                      0,
+                      50,
+                    );
+                  }
+                }),
+            },
+            {
+              text: 'Cancel',
+              onPress: () => {
+                return true;
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+      };
+    
 
     render() {
+       
         const { product, isRight, navigation } = this.props;
+        const isOwner= product.serviceOwner== Meteor.userId();
         //    console.log(product)
         return (
             <>
@@ -109,6 +157,7 @@ export default class Product extends PureComponent {
                                     borderRadius: 5
                                 }}
                             />
+                            {!isOwner?
                             <TouchableOpacity
                                 style={{
                                     position: 'absolute',
@@ -125,6 +174,54 @@ export default class Product extends PureComponent {
                                 onPress={this.addToWishlist.bind(this)}>
                                 <Icon name="heart" color={this.state.liked?colors.primary: colors.whiteText} size={20} />
                             </TouchableOpacity>
+                            :
+
+                            <TouchableOpacity
+                                style={{
+                                    zIndex: 1,
+                                    position: 'absolute',
+                                    top: 5,
+                                    right: 5,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 32,
+                                    height: 32,
+                                    borderRadius: 100,
+                                    opacity: 0.7,
+                                    backgroundColor: colors.gray_200
+                                }}
+                                onPress={()=>this.menu.show()}>
+                                {/* <Icon name="more-vertical" color={colors.whiteText} size={20} /> */}
+
+                            <Menu ref={ref => (this.menu = ref)}
+              button={
+                <Button
+                transparent
+                onPress={() => this.menu.show()}>
+                <Icon
+                  name={'more-vertical'}
+                  size={20}
+                  color={colors.whiteText}
+                />
+              </Button>
+            }>
+            <MenuItem
+              onPress={() => {
+                  this.menu.hide(), this.editProduct(item);
+              }}>
+              Edit Product
+            </MenuItem>
+            <MenuItem
+              onPress={() => {
+                  this.menu.hide(), this.removeProduct(item);
+              }}>
+              Remove Product
+            </MenuItem>
+          </Menu>
+                            </TouchableOpacity>}
+ 
+                           
+            
                         </CardItem>
                         <CardItem style={{ paddingTop: 0, paddingLeft: 5 }}>
                             <Body>

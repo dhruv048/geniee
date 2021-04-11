@@ -3,13 +3,13 @@ import {
     StyleSheet,
     Alert,
     FlatList,
-    Dimensions, AsyncStorage, TouchableOpacity, Picker
+    Dimensions, TouchableOpacity,
 } from 'react-native';
 import {
     Button,
     Container,
     Header,Item, Input, Left,Right,Body, Title, View,Text} from 'native-base';
-    import {Headline, RadioButton} from 'react-native-paper';
+    import {Provider, Headline, RadioButton, FAB} from 'react-native-paper';
 import Meteor  from "../../react-native-meteor";
 import FIcon from 'react-native-vector-icons/Feather';
 import {colors} from "../../config/styles";
@@ -17,7 +17,8 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import Product from "../../components/Store/Product";
 import CartIcon from '../../components/HeaderIcons/CartIcon';
 import ActionSheet from "react-native-actions-sheet";
-
+import AsyncStorage from '@react-native-community/async-storage';
+import { customPaperTheme } from '../../config/themes';
 class AllProducts extends Component {
     constructor(props) {
         super(props);
@@ -175,37 +176,15 @@ class AllProducts extends Component {
         let item = data.item;
         //  console.log(item);
         return (
-            // <View style={styles.col}>
-            //     <View  style={styles.containerStyle}>
-            //         <Product key={item._id} product={item} bottomTab={true} componentId={this.props.componentId}/>
-            //         {item.serviceOwner==Meteor.userId()?
-            //         <Button transparent style={{height:40,width:40}} onPress={() => this[`menu${item._id}`].show()} style={{position:'absolute', top:0,right:5}}>
-            //             {/*<Icon name={'ios-menu'} style={{fontSize:25,color:colors.danger }}/>*/}
-            //             <Menu
-            //                 ref={ref => (this[`menu${item._id}`] = ref)}
-            //                 button={
-            //                     <Button transparent onPress={() => this[`menu${item._id}`].show()}>
-            //                         <FIcon name={'more-vertical'} size={20} color={colors.whiteText}/>
-            //                     </Button>}>
-            //                 <MenuItem onPress={() => {
-            //                     this[`menu${item._id}`].hide(), this.editProduct(item)
-            //                 }}>Edit Product</MenuItem>
-            //                 <MenuItem onPress={() => {
-            //                     this[`menu${item._id}`].hide(), this.removeProduct(item)
-            //                 }}>Remove Product</MenuItem>
-            //             </Menu>
-            //         </Button>:null}
-            //     </View>
-            // </View>
-
             <Product product={item} navigation={this.props.navigation} />
         )
     }
 
     render() {
         const Id = this.props.route.params.Id;
+        const userId=Meteor.userId();
         return (
-
+            <Provider theme={customPaperTheme}>
             <Container style={styles.container}>
                 <Header searchBar rounded androidStatusBarColor={colors.statusBar}
                         style={{backgroundColor: colors.appLayout}}>
@@ -272,37 +251,11 @@ class AllProducts extends Component {
 
             </TouchableOpacity>
                     </Right>  
-
-                    {/* <Item>
-                        <Button style={{paddingHorizontal:10}} transparent onPress={() => {
-                            this.props.navigation.goBack()
-                        }}>
-                            <FIcon name="arrow-left"   size={24}/>
-                        </Button> 
-
-                        <Input placeholder="Search..." />
-                        {Meteor.userId()?
-                        <Button style={{paddingHorizontal:10}} onPress={() => this.props.navigation.navigate('AddProduct')} transparent>
-                            <FIcon name='plus' style={{fontSize:28}} />
-                        </Button>:null}
-
-                    </Item> */}
                 </Header>
                 {/* <Content style={styles.content}> */}
-                {/* <Item>
-                    <Left style={{flex:1}}>
-                        <Picker mode='dropdown' style={{width:'50%'}}>
-                        <Picker.Item label="Popular"/>
-                            <Picker.Item label="Recently Added"/>
-                            <Picker.Item label="My products"/>
-                        </Picker>
-                    </Left>
-                </Item> */}
                     <FlatList contentContainerStyle={styles.mainContainer}
-                        //data={this.props.Products}
                               data={this.state.Products}
                               keyExtracter={(item, index) => item._id}
-                            //   horizontal={false}
                               numColumns={2}
                               renderItem={(item, index) => this._renderProduct(item, index)}
                               onEndReachedThreshold={0.1}
@@ -330,14 +283,25 @@ class AllProducts extends Component {
               <RadioButton   status={this.state.filterOption=="popular"? 'checked' :'unchecked' } color={colors.primary}  />
                 <Text note style={{marginLeft:10}}>Popularity</Text>
                 </TouchableOpacity>
+                {userId?
                 <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this._setFilter('myProducts')}} 
               style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10, alignItems:'center'}}>
               <RadioButton   status={this.state.filterOption=="myProducts"? 'checked' :'unchecked'   } color={colors.primary}  />
                 <Text note style={{marginLeft:10}}>My Products</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>:null}
           </View>
         </ActionSheet>
+        <FAB
+        label={'Add New'}
+        color={colors.whiteText}
+        visible={userId}
+    style={styles.fab}
+    small
+    icon="plus"
+    onPress={() => this.props.navigation.navigate('AddProduct')}
+  />
             </Container>
+            </Provider>
 
         );
     }
@@ -373,7 +337,14 @@ const styles = StyleSheet.create({
         width: (viewportWidth-16)/ 2,
         maxWidth:180,
         padding: 4
-    }
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor:colors.appLayout
+      },
 
 });
 

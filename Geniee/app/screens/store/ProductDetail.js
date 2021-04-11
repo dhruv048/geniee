@@ -32,7 +32,7 @@ import {
 } from 'native-base';
 import FIcon from 'react-native-vector-icons/Feather';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
-
+import { EventRegister } from 'react-native-event-listeners';
 import Text from '../../components/Store/Text';
 import Product from '../../components/ecommerce/Product';
 import {colors, customStyle} from '../../config/styles';
@@ -805,6 +805,7 @@ class ProductDetail extends Component {
       50,
     );
     AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+    EventRegister.emit('cartItemsChanged', 'it works!!!')
   };
 
   async addToWishlist() {

@@ -4,6 +4,7 @@ import { Badge } from 'react-native-paper';
 import { colors } from '../../config/styles';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { EventRegister } from 'react-native-event-listeners';
 
 class CartIcon extends PureComponent {
 
@@ -14,18 +15,21 @@ class CartIcon extends PureComponent {
         };
     }
     componentDidMount(){
-        // console.log('didMountCartCount')
-    //   this.focusListnier = this.props.navigation.addListener('focus',()=>
-      this._setCartCount()
-    //   )
+        console.log('CartDidMount')
+      
+    this.listener = EventRegister.addEventListener('cartItemsChanged', (data) => {
+        this._setCartCount();
+    })
+    
     };
 
     componentWillUnmount(){
-        // this.focusListnier();
+        EventRegister.removeEventListener(this.listener)
     }
 
    async _setCartCount(){
         let cartList = await AsyncStorage.getItem('myCart');
+        cartList= JSON.parse(cartList);
         cartList= cartList? cartList:[];
         this.setState({totalCount: cartList.length})
     }
