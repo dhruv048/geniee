@@ -15,8 +15,8 @@ class CartIcon extends PureComponent {
         };
     }
     componentDidMount(){
-        console.log('CartDidMount')
-      
+        // console.log('CartDidMount')
+        this._setCartCount();
     this.listener = EventRegister.addEventListener('cartItemsChanged', (data) => {
         this._setCartCount();
     })
@@ -36,6 +36,7 @@ class CartIcon extends PureComponent {
 
 
     render() {
+        const {navigation} = this.props;
         return (
             <TouchableOpacity  style={{marginHorizontal:5}}
                 onPress={() => navigation.navigate('CartEF')}

@@ -27,7 +27,8 @@ import Product from '../components/Store/Product';
 import CartIcon from '../components/HeaderIcons/CartIcon';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
-
+const materialColors=['#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2','#AFB42B','#D32F2F','#0288D1' ,'#5D4037','#0097A7','#FBC02D','#00796B', '#388E3C', '#F57C00','#689F38','#E64A19',
+'#616161','#FFA000','#455A64' ];
 import ServiceItem from "../components/Service/ServiceItem";
 
 export default class SearchResult extends PureComponent {
@@ -77,7 +78,7 @@ export default class SearchResult extends PureComponent {
             <View key={item._id} style={styles.containerStyle}>
                 <TouchableOpacity onPress={() => this._itemClick(item)}>
                     <Body>
-                    <View style={styles.catIcon}>
+                    <View style={[styles.catIcon,{backgroundColor:materialColors[data.index]}]}>
                         <FAIcon name={item.icon} size={25} color='white'/>
                     </View>
                     </Body>
@@ -86,7 +87,7 @@ export default class SearchResult extends PureComponent {
                         style={{
                             textAlign: 'center',
                             fontWeight: '200',
-                            color: colors.appLayout,
+                            color: materialColors[data.index],
                             fontSize: 10,
                         }}>
                         {item.mainCategory}
