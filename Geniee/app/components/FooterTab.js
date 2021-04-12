@@ -20,11 +20,11 @@ class FooterTabs extends React.PureComponent {
   };
 
   componentDidMount(){
-    this.setState({loggedUser:this.props.loggedUser ? this.props.loggedUser:null})
+    this.setState({loggedUser:this.props.loggedUser})
   }
   componentWillReceiveProps(newProps) {
     //  this.setState({isLogged: newProps.loggedUser ? true : false})
-      if (newProps.loggedUser)
+      // if (newProps.loggedUser)
           this.setState({loggedUser: newProps.loggedUser})
   }
   getIndex = (routeName) => {

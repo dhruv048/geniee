@@ -44,7 +44,7 @@ class Home extends Component {
             selectedTab: 'list',
             markers: [],
             currentSearch: "",
-            loading: true,
+            loading: false,
             data: [],
             error: null,
             searchText: '',
@@ -199,8 +199,6 @@ class Home extends Component {
     };
 
     async componentDidMount() {
-
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackfromHome);
         this.region = this.props.route.params.Region;
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -221,6 +219,7 @@ class Home extends Component {
                         longitude: position.coords.longitude
                     }
                     this.region = region;
+                    this.fetchData();
                     // Meteor.subscribe('nearByService', {
                     //     limit: this.limit,
                     //     coords: [region.longitude, region.latitude],
@@ -273,23 +272,13 @@ class Home extends Component {
     }
 
     componentWillUnmount() {
-        this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackfromHome);
     }
 
-    handleBackfromHome = () => {
-        if (this.isDisplaying) {
-            console.log('handlebackpress')
-            // this.props.navigation.navigate('Dashboard');
-            this.props.navigation.navigate('Home');
-            return true;
-        }
-
-    }
 
 
     fetchData = (region) => {
+        if(!this.state.loading){
         console.log(this.region)
         const data = {
             skip: this.skip,
@@ -324,23 +313,9 @@ class Home extends Component {
               this.setState({loading: false});
             }
           });
+        }
     }
 
-    componentDidAppear() {
-        this.isDisplaying = true;
-    }
-
-    componentDidDisappear() {
-        this.isDisplaying = false
-    }
-
-    closeDrawer() {
-        this.drawer._root.close();
-    }
-
-    openDrawer() {
-        this.drawer._root.open();
-    }
 
     _getListItem = (data) => {
         let rowData = data.item;
@@ -361,9 +336,6 @@ class Home extends Component {
                 let latest = newDat.sort((a, b) => {
                     return (b.Rating.avgRate - a.Rating.avgRate);
                 });
-                // this.setState({
-                //     data: []
-                // });
                 this.setState({
                     data: latest
                 });
