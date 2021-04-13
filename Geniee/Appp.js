@@ -83,6 +83,8 @@ export default function Appp({ navigation }) {
                 }
             });
         });
+
+       
     }, [])
 
 

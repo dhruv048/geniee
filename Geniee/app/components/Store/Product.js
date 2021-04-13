@@ -84,6 +84,7 @@ export default class Product extends PureComponent {
                       0,
                       50,
                     );
+                    this.props.onDelete();
                   } else {
                     ToastAndroid.showWithGravityAndOffset(
                       err.reason,
@@ -104,6 +105,8 @@ export default class Product extends PureComponent {
           ],
           {cancelable: false},
         );
+
+        // this.props.onDelete();
       };
     
 
@@ -114,33 +117,6 @@ export default class Product extends PureComponent {
         //    console.log(product)
         return (
             <>
-                {/* <Card transparent>
-                    <CardItem cardBody style={{width:'100%'}}>
-
-                            <Image source={{uri: settings.IMAGE_URL + product.images[0]}} style={style.image}/>
-                            <View style={style.border} />
-
-                    </CardItem>
-                    <CardItem style={{paddingTop: 0}}>
-                        <Button style={{flex: 1, paddingLeft: 0, paddingRight: 0, paddingBottom: 0, paddingTop: 0}}
-                                transparent
-                                onPress={() => {}}
-                        >
-                            <Body>
-                            <Text
-                                style={{fontSize: 16}}
-                                numberOfLines={1}
-                            >{product.title}</Text>
-                            <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
-                                <View style={style.line} />
-                                <Text style={style.price}>Rs. {product.price}</Text>
-                                <View style={style.line} />
-                            </View>
-                            </Body>
-                        </Button>
-                    </CardItem>
-                </Card> */}
-
                 <TouchableOpacity key={product._id}
                     onPress={() => navigation.navigate('ProductDetail', { Id: product._id })}
                     style={[style.productContainerStyle, { borderTopLeftRadius: 5, borderTopRightRadius: 5 }]}>
@@ -207,13 +183,13 @@ export default class Product extends PureComponent {
             }>
             <MenuItem
               onPress={() => {
-                  this.menu.hide(), this.editProduct(item);
+                  this.menu.hide(), this.editProduct(product);
               }}>
               Edit Product
             </MenuItem>
             <MenuItem
               onPress={() => {
-                  this.menu.hide(), this.removeProduct(item);
+                  this.menu.hide(), this.removeProduct(product);
               }}>
               Remove Product
             </MenuItem>

@@ -376,7 +376,7 @@ _callPhone = number => {
                                                                     ? Math.round(service.Rating.avgRate)
                                                                     : 1} (
                                                                      {service.hasOwnProperty('ratings')
-                                                                    ? tem.Rating.count
+                                                                    ? service.Rating.count
                                                                     : 0})
                                                             </Text>
 

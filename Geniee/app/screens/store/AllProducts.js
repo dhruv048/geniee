@@ -52,15 +52,7 @@ class AllProducts extends Component {
             CategoryName:this.props.Category
         });
         this._fetchData();
-        Meteor.call('getMyProducts', (err, res) => {
-            console.log(err, res);
-            if (err) {
-              console.log('this is due to error. ' + err);
-            } else {
-                this.myProducts=res.result;
-            }
-          });
-        
+       
     }
 
     _fetchData(){
@@ -75,10 +67,20 @@ class AllProducts extends Component {
                 else {
                     this.skip=this.skip+this.limit;
                     // this.arrayHolder=this.arrayHolder.concat(res.result);
-                    this.popularProducts=this.arrayHolder.concat(res.result);
-                    this.setState({Products: this.popularProducts});
+                    this.popularProducts=this.popularProducts.concat(res.result);
+                    this.setState({Products: this.popularProducts, loading:false});
                 };
             });
+
+            Meteor.call('getMyProducts', (err, res) => {
+                console.log(err, res);
+                if (err) {
+                  console.log('this is due to error. ' + err);
+                } else {
+                    this.myProducts=res.result;
+                }
+              });
+            
         }
     };
     _onEndReached = (distance) => {
@@ -115,7 +117,7 @@ class AllProducts extends Component {
             this.setState({filterOption:'myProducts', Products:this.myProducts});       
         }
         else{
-            this.setState({filterOption:'myProducts', Products:this.popularProducts});
+            this.setState({filterOption:'popular', Products:this.popularProducts});
         }
     }
 
@@ -130,53 +132,22 @@ class AllProducts extends Component {
         Alert.alert("Success", "Product has been added to cart")
     }
 
-    editProduct=(_product)=>{
-        this.props.navigation.navigate("AddProduct",{Product:_product});
+    onDelete(){
+        this.setState({loading:true})
+        this.skip=0;
+        this.limit=20;
+        this.popularProducts=[];
+        this.myProducts=[];
+        this._fetchData();
+       
+        this._setFilter(this.state.filterOption);
     }
-
-    removeProduct=(_product)=>{
-        Alert.alert(
-            'Remove Product',
-            `Do you want to remove product '${_product.title}'?`,
-            [
-                {
-                    text: 'Yes Remove', onPress: () =>
-                        Meteor.call('removeProduct',_product._id,(err,res)=>{
-                            if (!err) {
-                                ToastAndroid.showWithGravityAndOffset(
-                                    "Removed Successfully",
-                                    ToastAndroid.SHORT,
-                                    ToastAndroid.BOTTOM,
-                                    0,
-                                    50,
-                                );
-                            }
-                            else {
-                                ToastAndroid.showWithGravityAndOffset(
-                                    err.reason,
-                                    ToastAndroid.SHORT,
-                                    ToastAndroid.BOTTOM,
-                                    0,
-                                    50,
-                                );
-                            }
-                        })
-                },
-                {
-                    text: 'Cancel', onPress: () => {
-                        return true;
-                    }
-                }
-            ],
-            {cancelable: false}
-        );
-    }
-
+    
     _renderProduct = (data, index) => {
         let item = data.item;
         //  console.log(item);
         return (
-            <Product product={item} navigation={this.props.navigation} />
+            <Product product={item} navigation={this.props.navigation} onDelete={this.onDelete.bind(this)} />
         )
     }
 
@@ -256,7 +227,9 @@ class AllProducts extends Component {
                     <FlatList contentContainerStyle={styles.mainContainer}
                               data={this.state.Products}
                               keyExtracter={(item, index) => item._id}
+                              refreshing={this.state.loading}
                               numColumns={2}
+                              onRefresh={()=>this.onDelete}
                               renderItem={(item, index) => this._renderProduct(item, index)}
                               onEndReachedThreshold={0.1}
                               onEndReached={(distance) => this._onEndReached(distance)}

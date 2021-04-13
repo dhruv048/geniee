@@ -50,6 +50,7 @@ import {
     Text as GText, Checkbox
 } from 'galio-framework';
 import {customGalioTheme} from '../../config/themes';
+import { Subheading } from "react-native-paper";
 
 class AddProduct extends React.PureComponent {
     constructor(props) {
@@ -88,13 +89,21 @@ class AddProduct extends React.PureComponent {
     }
 
     async componentDidMount() {
-        
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+       
+        // BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
         let myServices = await AsyncStorage.getItem('myServices');
         console.log(myServices)
         this.myServices = JSON.parse(myServices);
         this.setState({myServices: this.myServices})
         this.fillEditForm();
+        Meteor.call('geOwnServiceList', (err, res) => {
+            if (!err) {
+                // console.log('MyServices', res);
+                AsyncStorage.setItem('myServices', JSON.stringify(res));
+                this.myServices = res;
+                this.setState({myServices: this.myServices})
+            }
+        });
     };
 
     fillEditForm = () => {
@@ -159,7 +168,7 @@ class AddProduct extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress');
+        // BackHandler.removeEventListener('hardwareBackPress');
     }
 
     _handleImageUpload = (selected) => {
@@ -188,6 +197,10 @@ class AddProduct extends React.PureComponent {
             });
         }
     };
+
+    _goToCreateService=()=>{
+        this.props.navigation.navigate('AddService')
+    }
     _onImageChange = (image) => {
         image.uri = `data:${image.mime};base64,${image.data}`;
         console.log(image);
@@ -481,7 +494,7 @@ class AddProduct extends React.PureComponent {
 
                                 <Input
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    placeholder='Service (*)'
+                                    placeholder='Select Business (*)'
                                     onSubmitEditing={() => this.title.focus()}
                                     onKeyPress={() => this.setState({serviceModal: true})}
                                     onFocus={() => this.setState({serviceModal: true})}
@@ -879,6 +892,12 @@ class AddProduct extends React.PureComponent {
                             </Body>
                         </Header>
                         <Content padder>
+                        {this.state.myServices.length==0?
+                        <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                            <Subheading style={{textAlign:"center"}}>You have not created any Business. Plaese add one inorder to proceed.</Subheading>
+                            <Button style={{backgroundColor:colors.appLayout, alignSelf:'center', marginTop:20}} onPress={()=>this._goToCreateService()} ><Text>Add Now</Text></Button>
+                        </View>:null    
+                        }
                             <FlatList
                                 data={this.state.myServices}
                                 _keyExtractor={(item, index) => index.toString()}
@@ -891,6 +910,7 @@ class AddProduct extends React.PureComponent {
                                     </ListItem>
                                 }
                             />
+                            
                         </Content>
 
                     </Modal>

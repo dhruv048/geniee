@@ -21,7 +21,7 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
-import { BottomNavigation, Appbar, Divider,Headline,RadioButton } from 'react-native-paper';
+import { FAB, Appbar, Divider,Headline,RadioButton } from 'react-native-paper';
 import Meteor from "../react-native-meteor";
 import Map from './Map';
 import settings from "../config/settings";
@@ -29,9 +29,11 @@ import { colors, customStyle } from "../config/styles";
 import MyFunctions from '../lib/MyFunctions'
 import Geolocation from 'react-native-geolocation-service';
 import ServiceItem from "../components/Service/ServiceItem";
-import { CogMenu } from "../components/CogMenu/CogMenu";
 import FIcon from 'react-native-vector-icons/Feather';
-import ActionSheet from "react-native-actions-sheet";
+import ActionSheet from "react-native-actions-sheet"; 
+import { Provider } from 'react-native-paper';
+import { customPaperTheme } from '../config/themes';
+import CartIcon from '../components/HeaderIcons/CartIcon';
 
 class Home extends Component {
 
@@ -39,10 +41,10 @@ class Home extends Component {
         super(props);
         this.mounted = false;
         this.state = {
-            selectedTab: 'home',
+            selectedTab: 'list',
             markers: [],
             currentSearch: "",
-            loading: true,
+            loading: false,
             data: [],
             error: null,
             searchText: '',
@@ -52,7 +54,8 @@ class Home extends Component {
             index: 0,
             isSearch: false,
             sortByItem: '',
-            filterOption: '',
+            filterOption: 'all',
+            filterText:'All'
         }
         this.arrayholder = [];
         this.currentSearch = '';
@@ -68,6 +71,7 @@ class Home extends Component {
         this.isDisplaying = false;
         this.fetchData = this.fetchData.bind(this);
         this.actionSheetRef = createRef();
+        this.myServices=[];
     }
 
     _handlItemPress = (service) => {
@@ -104,11 +108,13 @@ class Home extends Component {
         return markers
     };
     _onEndReached = (distance) => {
+        if(this.state.filterOption=='all'){
         console.log(distance);
         if (!this.currentSearch && this.skip > this.lastSkip && !this.state.loading) {
             this.setState({ loading: true })
             this.fetchData();
         }
+    }
     }
     averageRating = (arr) => {
         let sum = 0;
@@ -193,8 +199,6 @@ class Home extends Component {
     };
 
     async componentDidMount() {
-
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackfromHome);
         this.region = this.props.route.params.Region;
         this.granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -215,6 +219,7 @@ class Home extends Component {
                         longitude: position.coords.longitude
                     }
                     this.region = region;
+                    this.fetchData();
                     // Meteor.subscribe('nearByService', {
                     //     limit: this.limit,
                     //     coords: [region.longitude, region.latitude],
@@ -246,8 +251,8 @@ class Home extends Component {
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
 
-        if (this.props.Region) {
-            this.region = this.props.Region;
+        if (this.props.route.params.Region) {
+            this.region = this.props.route.params.Region;
         }
         this.fetchData(this.region);
 
@@ -267,23 +272,13 @@ class Home extends Component {
     }
 
     componentWillUnmount() {
-        this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackfromHome);
     }
 
-    handleBackfromHome = () => {
-        if (this.isDisplaying) {
-            console.log('handlebackpress')
-            // this.props.navigation.navigate('Dashboard');
-            this.props.navigation.navigate('Home');
-            return true;
-        }
-
-    }
 
 
     fetchData = (region) => {
+        if(!this.state.loading){
         console.log(this.region)
         const data = {
             skip: this.skip,
@@ -304,68 +299,72 @@ class Home extends Component {
                 }
                 this.setState({ loading: false });
             }
-        })
+        });
+
+        Meteor.call('getMyServices', (err, res) => {
+            console.log(err, res);
+            if (!err) {
+              if (res.result.length > 0) {
+                //   this.skip = this.skip + this.limit;
+                // this.arrayholder = this.arrayholder.concat(res.result);
+                // this.setState({data: res.result});
+                this.myServices = res.result;
+              }
+              this.setState({loading: false});
+            }
+          });
+        }
     }
 
-    componentDidAppear() {
-        this.isDisplaying = true;
-    }
-
-    componentDidDisappear() {
-        this.isDisplaying = false
-    }
-
-    closeDrawer() {
-        this.drawer._root.close();
-    }
-
-    openDrawer() {
-        this.drawer._root.open();
-    }
 
     _getListItem = (data) => {
         let rowData = data.item;
         return (
-            <ServiceItem componentId={this.props.componentId} service={rowData} />
+            <ServiceItem navigation={this.props.navigation} service={rowData} />
         )
 
     }
 
     _setFilter = (value) => {
-        // if(value=="myProducts"){
-        //     this.setState({filterOption:'myProducts', Products:this.myProducts});       
-        // }
-        // else{
-        //     this.setState({filterOption:'myProducts', Products:this.popularProducts});
-        // }
-    }
-    renderSelectedTab() {
-        const home = (
-            <FlatList style={styles.contentList}
-                data={this.state.data}
-                onEndReachedThreshold={0.1}
-                renderItem={this._getListItem}
-                initialNumToRender={15}
-                onEndReached={(distance) => this._onEndReached(distance)}
-                ListFooterComponent={this.state.loading ? <ActivityIndicator style={{ height: 80 }} /> : null}
-                keyExtractor={(item, index) => index.toString()}
-            />
+        switch(value){
+            case 'all':
+                this.setState({ filterOption: value, filterText: 'All' , data: this.arrayholder,});        
+                break;
+            case 'starred':
+                this.setState({ filterOption: value, filterText: 'Starred' });
+                const newDat = this.arrayholder.slice();
+                let latest = newDat.sort((a, b) => {
+                    return (b.Rating.avgRate - a.Rating.avgRate);
+                });
+                this.setState({
+                    data: latest
+                });
+                break;
+            case 'myLocation':
+                this.setState({ filterOption: value, filterText: 'My Location' });
+                let newData = this.arrayholder.slice();
+                 newData = newData.filter(item => {
+                    if (item.location.hasOwnProperty('geometry')) {
+                        return MyFunctions.isWithinRange(item.location.geometry.location.lat, item.location.geometry.location.lng, this.region.latitude, this.region.longitude, item.radius);
+                    }
+                    else {
+                        return false
+                    }
+                });
+                this.setState({ data: newData });
+                break;
+            case 'category':
+                this.setState({ filterOption: value, filterText: 'Categories' });
+                break;
+            case 'myServices':
+                this.setState({ filterOption: value, filterText: 'My Services', data:this.myServices });
+                break;
 
-        )
-        switch (this.state.selectedTab) {
-            case 'home':
-                return home;
-                break;
-            case 'map':
-                return (<Map componentId={this.props.componentId}
-                    markers={this._fetchMarkers()} />);
-                break;
-            default:
         }
     }
 
+
     renderScene = (route) => {
-        console.log('this is test '+ route);
         const home = (
             <FlatList
                 contentContainerStyle={{ padding: 5 }}
@@ -443,26 +442,23 @@ class Home extends Component {
     };
 
     render() {
-        const routes = [
-            { key: 'list', title: 'List', icon: 'menu', color: '#FFFFFF' },
-            { key: 'grid', title: 'Grid', icon: 'grid', color: '#FFFFFF' },
-            { key: 'map', title: 'Map', icon: 'map' }
-        ];
-        const { index } = this.state;
+         
         const userId=Meteor.userId();
         return (
             <Container style={{ backgroundColor: colors.appBackground }}>
+                <Provider theme={customPaperTheme}>
                 <Appbar.Header>
-                    <Appbar.BackAction onPress={() => {
-                        this.props.navigation.navigate('Home');
+                    <Appbar.BackAction color={colors.whiteText} onPress={() => {
+                        this.props.navigation.goBack();
                     }} />
-                    <Appbar.Content title="Service/Store nearby.." />
+                    <Appbar.Content color={colors.whiteText} title="Service/Store nearby.." />
 
-                    <Appbar.Action icon="magnify" onPress={() => this.setState({ isSearch: true })} />
+                    {/* <Appbar.Action color={colors.whiteText} icon="magnify" onPress={() => this.setState({ isSearch: true })} /> */}
+                    <CartIcon  navigation={this.props.navigation} />
                 </Appbar.Header>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
                     <View style={{ flexDirection: 'row', }}>
-                        <Text style={{ marginTop: 10 }}>Recently Added</Text>
+                        <Text style={{ marginTop: 10 }}>{this.state.filterText}</Text>
                         <Button transparent style={{ marginLeft: 10 }}
                             onPress={() => this.actionSheetRef.current?.setModalVisible(true)}>
                             <FIcon name='chevron-down' size={24} />
@@ -470,21 +466,36 @@ class Home extends Component {
                     </View>
                     <View style={{ flexDirection: 'row', }}>
                         <Button transparent 
-                        onPress={() => this.renderScene('list')}>
+                        onPress={() => this.setState({selectedTab:'list'})}>
                             <FIcon name='list' size={24} />
                         </Button>
                         <Button transparent style={{ marginLeft: 16 }}
-                        onPress={() => this.renderScene('map')}>
+                        onPress={() => this.setState({selectedTab:'map'})}>
                             <FIcon name='map' size={24} />
                         </Button>
                     </View>
                 </View>
                 <Divider />
-                <View>
-                    {this.renderScene('list')}
+                <View style={{flex:1}}>
+                    {this.state.selectedTab=='list'? 
+                    <FlatList
+                    contentContainerStyle={{ padding: 5 }}
+                    style={styles.contentList}
+                    data={this.state.data}
+                    onEndReachedThreshold={0.1}
+                    renderItem={this._getListItem}
+                    initialNumToRender={15}
+                    onEndReached={(distance) => this._onEndReached(distance)}
+                    ListFooterComponent={this.state.loading ? <ActivityIndicator style={{ height: 80 }} /> : null}
+                    keyExtractor={(item, index) => index.toString()}
+                    numColumns={2}
+                />
+                :
+                <Map navigation={this.props.navigation}
+                    markers={this._fetchMarkers()} />
+                }
                 </View>
-                <View
-                    style={{ flex: 1, }} >
+              
                     <ActionSheet ref={this.actionSheetRef}
                         initialOffsetFromBottom={2}
                         statusBarTranslucent
@@ -497,32 +508,32 @@ class Home extends Component {
                             nestedScrollEnabled={true}
                             style={styles.actionContentView}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Headline>Sort By</Headline>
+                                <Headline>Filter By</Headline>
                                 <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false) }} />
                                 <FIcon onPress={() => { this.actionSheetRef.current?.setModalVisible(false) }} name="x" size={25} />
                             </View>
-                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('popular') }}
+                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('all') }}
                                 style={{ flexDirection: 'row', paddingLeft: 20, alignItems: 'center' }}>
                                 <RadioButton status={this.state.filterOption == "all" ? 'checked' : 'unchecked'} color={colors.primary} />
                                 <Text note style={{ marginLeft: 10 }}>All</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('popular') }}
+                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('starred') }}
                                 style={{ flexDirection: 'row', paddingLeft: 20, alignItems: 'center' }}>
                                 <RadioButton status={this.state.filterOption == "starred" ? 'checked' : 'unchecked'} color={colors.primary} />
                                 <Text note style={{ marginLeft: 10 }}>Starred</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('popular') }}
+                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('myLocation') }}
                                 style={{ flexDirection: 'row', paddingLeft: 20,  alignItems: 'center' }}>
                                 <RadioButton status={this.state.filterOption == "myLocation" ? 'checked' : 'unchecked'} color={colors.primary} />
                                 <Text note style={{ marginLeft: 10 }}>My Location</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('popular') }}
+                            {/* <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('category') }}
                                 style={{ flexDirection: 'row', paddingLeft: 20, alignItems: 'center' }}>
                                 <RadioButton status={this.state.filterOption == "category" ? 'checked' : 'unchecked'} color={colors.primary} />
                                 <Text note style={{ marginLeft: 10 }}>Select Categories</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             {userId ?
-                                <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('myProducts') }}
+                                <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('myServices') }}
                                     style={{ flexDirection: 'row', paddingLeft: 20, alignItems: 'center' }}>
                                     <RadioButton status={this.state.filterOption == "myServices" ? 'checked' : 'unchecked'} color={colors.primary} />
                                     <Text note style={{ marginLeft: 10 }}>My Services</Text>
@@ -543,7 +554,7 @@ class Home extends Component {
                         activeColor='#0000FF'
                     /> */}
 
-                </View>
+                 
 
                 {/*<Footer>*/}
                 {/*<FooterTab style={[customStyle.footer,{paddingHorizontal:0}]}>*/}
@@ -560,7 +571,18 @@ class Home extends Component {
                 {/*</Button>*/}
                 {/*</FooterTab>*/}
                 {/*</Footer>*/}
+                <FAB
+        label={'Add New'}
+        color={colors.whiteText}
+        visible={userId}
+    style={styles.fab}
+    small
+    icon="plus"
+    onPress={() => this.props.navigation.navigate('AddService')}
+  />
 
+
+                </Provider>
             </Container>
 
 
@@ -576,7 +598,13 @@ const styles = StyleSheet.create({
 
     },
 
-
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor:colors.appLayout
+      },
     contentList: {
         backgroundColor: colors.whiteText,
         flex: 1

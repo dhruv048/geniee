@@ -7,9 +7,7 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
     Keyboard,
-    ToastAndroid,
-    AsyncStorage,
-    BackHandler,
+    ToastAndroid,    BackHandler,
 } from 'react-native';
 import {Container, Icon as NBIcon} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -20,8 +18,13 @@ import {customGalioTheme} from '../config/themes';
 import {LoginManager} from 'react-native-fbsdk';
 import {onLoginFinished} from '../lib/FBlogin';
 import {GalioProvider, Input} from 'galio-framework';
+<<<<<<< HEAD
 import {Title,Button, TextInput} from 'react-native-paper';
 
+=======
+import {Title,Button} from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage';
+>>>>>>> b31f82d5b2f76668a611767717b275f11c4d8b2a
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
 
@@ -42,27 +45,11 @@ class SignIn extends Component {
         
     }
 
-    handleBackButton() {
-        console.log('handlebackpressSignIn');
-        this.props.navigation.navigate('Home');
-        return true;
-    };
-
-    componentDidAppear() {
-        console.log('appearSignIn');
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
-    }
-
-
     componentWillUnmount() {
         console.log('componentWillUnmount');
     }
 
-    componentDidDisappear() {
-        console.log('disappearSignIn');
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton.bind(this));
-    }
-
+   
     validInput = overrideConfirm => {
         const {email, password} = this.state;
         let valid = true;
@@ -81,7 +68,7 @@ class SignIn extends Component {
         return valid;
     };
 
-    _loginFacabook = (componentId, needReturn) => {
+    _loginFacabook = (navigation, needReturn) => {
         console.log('loginFB');
         // try {
         //  LoginManager.logInWithPermissions(["email", "user_location", "user_birthday","public_profile"]).then(function (result) {
@@ -98,7 +85,7 @@ class SignIn extends Component {
                         result.grantedPermissions.toString(),
                     );
                     Keyboard.dismiss();
-                    onLoginFinished(result, this.props, needReturn);
+                    onLoginFinished(result, navigation, needReturn);
                     // this.setState({loadingFB: false})
                 }
             })
@@ -262,7 +249,7 @@ class SignIn extends Component {
                                     style={{width: '100%', marginVertical:15}}
                                     onPress={() =>
                                         this._loginFacabook(
-                                            this.props.componentId,
+                                            this.props.navigation,
                                             this.props.needReturn,
                                         )
                                     }>

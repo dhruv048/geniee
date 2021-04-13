@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
 
-export const loginWithTokens = (props,needReturn) => {
+export const loginWithTokens = (navigation,needReturn) => {
     const Data = Meteor.getData();
     AccessToken.getCurrentAccessToken()
         .then((res) => {
@@ -28,10 +28,11 @@ export const loginWithTokens = (props,needReturn) => {
                             50,
                         );
                         if(needReturn){
-                           props.navigation.goBack();
+                           navigation.goBack();
                         }
                         else {
-                           props.navigation.navigate('Home');
+                            navigation.navigate('Home');
+                        return;
                         }
 
                     };
@@ -40,10 +41,10 @@ export const loginWithTokens = (props,needReturn) => {
         })
 };
 
-export const onLoginFinished = (result,props,needReturn) => {
+export const onLoginFinished = (result,navigation,needReturn) => {
     if (result.isCancelled) {
         console.log('login cancelled');
     } else {
-        loginWithTokens(props,needReturn);
+        loginWithTokens(navigation,needReturn);
     }
 };

@@ -34,9 +34,10 @@ class NotificationIcon extends PureComponent {
     }
 
     render() {
+        const {navigation} = this.props;
         return (
             <TouchableOpacity style={{marginHorizontal:5}}
-                onPress={() => navigation.navigate('CartEF')}
+                onPress={() => navigation.navigate('Notification')}
             >
                 <Icon name="bell" style={{ fontSize: 22, color: 'white' }} />
                 {this.state.notificationCount > 0 ? (
