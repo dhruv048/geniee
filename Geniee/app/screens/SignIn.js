@@ -5,7 +5,6 @@ import {
     View,
     StatusBar,
     TouchableOpacity,
-    TextInput,
     TouchableWithoutFeedback,
     Keyboard,
     ToastAndroid,
@@ -21,7 +20,7 @@ import {customGalioTheme} from '../config/themes';
 import {LoginManager} from 'react-native-fbsdk';
 import {onLoginFinished} from '../lib/FBlogin';
 import {GalioProvider, Input} from 'galio-framework';
-import {Title,Button} from 'react-native-paper';
+import {Title,Button, TextInput} from 'react-native-paper';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
@@ -221,12 +220,12 @@ class SignIn extends Component {
                                 <Title>Welcome,</Title>
                                 <Text>Log in to continue</Text>
                             </View>
-
                             <View style={styles.containerForm}>
                                 <Input
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     // rounded
-                                    placeholder="Email/Mobile No"
+                                    placeholder="Email or Mobile No"
+                                    placeholderTextColor='#808080'
                                     keyboardType="email-address"
                                     onSubmitEditing={() => this.password.focus()}
                                     onChangeText={email => this.setState({email})}
@@ -238,6 +237,7 @@ class SignIn extends Component {
                                     password
                                     viewPass
                                     placeholder="Password"
+                                    placeholderTextColor='#808080'
                                     ref={input => (this.password = input)}
                                     onChangeText={password => this.setState({password})}
                                     textContentType={'emailAddress'}

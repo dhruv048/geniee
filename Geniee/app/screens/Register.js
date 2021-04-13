@@ -179,7 +179,7 @@ class Register extends Component {
     }
 
     componentDidMount() {
-        
+        this.mounted = true;     
     }
 
     componentWillUnmount() {
@@ -237,6 +237,7 @@ class Register extends Component {
                                     <Input
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Full Name"
+                                        placeholderTextColor='#808080'
                                         onSubmitEditing={() => this.email.focus()}
                                         onChangeText={name => this.setState({name})}
                                     />
@@ -244,7 +245,8 @@ class Register extends Component {
                                     <Input
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Email"
-                                        keyboardType="email-address"
+                                        keyboardType="Email-Address"
+                                        placeholderTextColor='#808080'
                                         ref={input => (this.email = input)}
                                         onSubmitEditing={() => this.contact.focus()}
                                         onChangeText={email => this.setState({email})}
@@ -254,6 +256,7 @@ class Register extends Component {
                                     <Input
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Mobile No"
+                                        placeholderTextColor='#808080'
                                         keyboardType="phone-pad"
                                         onChangeText={contact => this.setState({contact})}
                                     />
@@ -266,6 +269,7 @@ class Register extends Component {
                                         iconColor="black"
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Location"
+                                        placeholderTextColor='#808080'
                                         value={location ? location.formatted_address : ''}
                                         onFocus={() => this.setState({pickLocation: true})}
                                     />
@@ -275,6 +279,7 @@ class Register extends Component {
                                         password
                                         viewPass
                                         placeholder="Password"
+                                        placeholderTextColor='#808080'
                                         ref={input => (this.password = input)}
                                         onSubmitEditing={() => this.confirmPassword.focus()}
                                         onChangeText={password => this.setState({password})}
@@ -284,6 +289,7 @@ class Register extends Component {
                                         viewPass
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Confirm Password"
+                                        placeholderTextColor='#808080'
                                         secureTextEntry
                                         ref={input => (this.confirmPassword = input)}
                                         onChangeText={confirmPassword =>
