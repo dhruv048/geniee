@@ -18,13 +18,8 @@ import {customGalioTheme} from '../config/themes';
 import {LoginManager} from 'react-native-fbsdk';
 import {onLoginFinished} from '../lib/FBlogin';
 import {GalioProvider, Input} from 'galio-framework';
-<<<<<<< HEAD
-import {Title,Button, TextInput} from 'react-native-paper';
-
-=======
 import {Title,Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
->>>>>>> b31f82d5b2f76668a611767717b275f11c4d8b2a
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
 
