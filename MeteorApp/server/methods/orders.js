@@ -32,7 +32,8 @@ Meteor.methods({
                 }
 
                 if (product.productOwner !== ProductOwner.EAT_FIT) {
-                    if (product.availabeQuantity >= item.quantity) {
+                    // if (product.availabeQuantity >= item.quantity) {
+                        if ( item.quantity) {
                         await Products.update(
                             { _id: item.productId },
                             {
@@ -49,16 +50,23 @@ Meteor.methods({
                         itemsUpdated.push(item);
                     } else {
                         resetOrderQty(itemsUpdated);
-                        throw new Meteor.Error(
-                            "",
-                            "Insufficient Available Quantity for product:" +
-                                item.title +
-                                ". Available Quantity=" +
-                                product.availabeQuantity +
-                                " " +
-                                product.unit +
-                                ". Please re-adjust quantity"
-                        );
+                        // throw new Meteor.Error(
+                        //     "",
+                        //     "Insufficient Available Quantity for product:" +
+                        //         item.title +
+                        //         ". Available Quantity=" +
+                        //         product.availabeQuantity +
+                        //         " " +
+                        //         product.unit +
+                        //         ". Please re-adjust quantity"
+                        // );
+                        done({message:"Insufficient Available Quantity for product:" +
+                        item.title +
+                        ". Available Quantity=" +
+                        product.availabeQuantity +
+                        " " +
+                        product.unit +
+                        ". Please re-adjust quantity"},null);
                         console.log(
                             "No sufficient Available Quantity for product:" +
                                 item.title

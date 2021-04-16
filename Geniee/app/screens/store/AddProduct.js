@@ -50,7 +50,8 @@ import {
     Text as GText, Checkbox
 } from 'galio-framework';
 import {customGalioTheme} from '../../config/themes';
-import { Subheading } from "react-native-paper";
+import { Subheading ,Switch} from "react-native-paper";
+ 
 
 class AddProduct extends React.PureComponent {
     constructor(props) {
@@ -82,6 +83,7 @@ class AddProduct extends React.PureComponent {
             used: false,
             numDays: '',
             duration: 3,
+            inStock:false,
         };
         this.myServices = [];
         this.imagesToRemove = [];
@@ -156,6 +158,7 @@ class AddProduct extends React.PureComponent {
                 used: _product.used,
                 numDays: _product.numDays.toString(),
                 duration: _product.duration,
+                inStock:_product.inStock,
             });
         }
     }
@@ -326,7 +329,7 @@ class AddProduct extends React.PureComponent {
     }
 
     _saveService = () => {
-        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, qty, numDays, duration} = this.state;
+        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, qty, numDays, duration, inStock} = this.state;
         let product = {
             title: title,
             description: description,
@@ -349,6 +352,7 @@ class AddProduct extends React.PureComponent {
             numDays: numDays,
             duration: duration,
             type:this.state.selectedService.businessType,
+            inStock:inStock,
         };
         if (this.state.selectedService.businessType== BusinessType.PRODUCTS_GOODS_SELLER && ( title.length === 0 || description.length === 0 ||  !selectedService._id || !price)) {
             ToastAndroid.showWithGravityAndOffset(
@@ -461,36 +465,6 @@ class AddProduct extends React.PureComponent {
 
                         <Fragment>
                             <SafeAreaView style={styles.formContainer} keyboardShouldPersistTaps='always'>
-                                {/*<View underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                {/*style={{width: '100%', minHeight: 40, marginVertical: 5, justifyContent: `center`}}>*/}
-                                {/*<Autocomplete*/}
-                                {/*autoCapitalize="none"*/}
-                                {/*style={styles.inputBoxAC}*/}
-                                {/*autoCorrect={false}*/}
-                                {/*data={myServices.length === 1 && comp(query, myServices[0].title)*/}
-                                {/*? [] : myServices}*/}
-                                {/*defaultValue={query}*/}
-                                {/*hideResults={selectedService && selectedService.title === query}*/}
-                                {/*onChangeText={text => this.setState({query: text})}*/}
-                                {/*underlineColorAndroid='rgba(0,0,0,0)'*/}
-                                {/*placeholder="Enter Service Name (*)"*/}
-                                {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
-                                {/*renderItem={ser => <View style={{maxHeight: 200}}>*/}
-                                {/*<ScrollView style={{flexGrow: 0}}>*/}
-                                {/*<TouchableOpacity*/}
-                                {/*style={styles.autosuggestCont}*/}
-                                {/*onPress={() => (*/}
-                                {/*this.setState({*/}
-                                {/*query: ser.title,*/}
-                                {/*selectedService: ser*/}
-                                {/*})*/}
-                                {/*)}*/}
-                                {/*>*/}
-                                {/*<Text style={styles.autosuggesText}>{ser.title}</Text>*/}
-                                {/*</TouchableOpacity>*/}
-                                {/*</ScrollView></View>}*/}
-                                {/*/>*/}
-                                {/*</View>*/}
 
                                 <Input
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
@@ -518,14 +492,16 @@ class AddProduct extends React.PureComponent {
                                 {this.state.selectedService.businessType == BusinessType.PRODUCTS_GOODS_SELLER ?
                                     <>
                                         <View style={styles.multiField}>
-                                            <View style={{flex: 1, marginRight: 5}}>
-                                                <Input
+                                            <View style={{flex: 1, marginRight: 5, flexDirection:'row', justifyContent:'space-around'}}>
+                                                {/* <Input
                                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                                     placeholder='Available Qty'
                                                     keyboardType='phone-pad'
                                                     onChangeText={(qty) => this.setState({qty})}
                                                     value={this.state.qty}
-                                                />
+                                                /> */}
+                                                <Subheading>In-Stock :</Subheading>
+                                                <Switch color={colors.appLayout} value={this.state.inStock} onValueChange={()=>this.setState(prevState=>{return {inStock: !prevState.inStock}})} />
                                             </View>
                                             <View style={{flex: 1, marginLeft: 5}}>
                                                 <Input
