@@ -448,12 +448,12 @@ class AddProduct extends React.PureComponent {
                 <Container style={styles.container}>
                     <Header androidStatusBarColor={colors.statusBar} style={{backgroundColor: colors.appLayout}}>
                         <Left>
-                            {/*<Button transparent onPress={() => {*/}
-                            {/*this.props.navigation.openDrawer()*/}
-                            {/*}}>*/}
-                            {/*<Icon name="md-more" style={{fontWeight:'500', fontSize: 35}}/>*/}
-                            {/*</Button>*/}
-                            <CogMenu componentId={this.props.componentId}/>
+                            <Button transparent onPress={() => {
+                            this.props.navigation.goBack()
+                            }}>
+                            <FIcon name="arrow-left" color={colors.whiteText} style={{fontWeight:'500', fontSize: 25}}/>
+                            </Button>
+                            {/* <CogMenu componentId={this.props.componentId}/> */}
                         </Left>
 
                         <Body>
@@ -467,6 +467,7 @@ class AddProduct extends React.PureComponent {
                             <SafeAreaView style={styles.formContainer} keyboardShouldPersistTaps='always'>
 
                                 <Input
+                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder='Select Business (*)'
                                     onSubmitEditing={() => this.title.focus()}
@@ -475,6 +476,7 @@ class AddProduct extends React.PureComponent {
                                     value={this.state.selectedService.title}
                                 />
                                 <Input
+                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder='Title (*)'
                                     onSubmitEditing={() => this.title.focus()}
@@ -505,6 +507,7 @@ class AddProduct extends React.PureComponent {
                                             </View>
                                             <View style={{flex: 1, marginLeft: 5}}>
                                                 <Input
+                                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                                     placeholder='Unit'
                                                     onChangeText={(unit) => this.setState({unit})}
@@ -515,6 +518,7 @@ class AddProduct extends React.PureComponent {
                                         <View style={styles.multiField}>
                                             <View style={{flex: 1, marginRight: 5}}>
                                                 <Input
+                                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                                     placeholder='Price per Unit'
                                                     keyboardType='phone-pad'
@@ -524,6 +528,7 @@ class AddProduct extends React.PureComponent {
                                             </View>
                                             <View style={{flex: 1, marginLeft: 5}}>
                                                 <Input
+                                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                                     placeholder='Discount in %'
                                                     keyboardType='phone-pad'
@@ -541,6 +546,7 @@ class AddProduct extends React.PureComponent {
                                         <View style={styles.multiField}>
                                             <View style={{flex: 1}}>
                                                 <Input
+                                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                                     placeholder='Price'
                                                     keyboardType='phone-pad'
@@ -602,6 +608,7 @@ class AddProduct extends React.PureComponent {
                                         </View>
 
                                         <Input
+                                         placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                             color={customGalioTheme.COLORS.INPUT_TEXT}
                                             placeholder='Discount in %'
                                             keyboardType='phone-pad'
@@ -663,6 +670,7 @@ class AddProduct extends React.PureComponent {
                                         </View>
                                         {!this.state.used ?
                                             <Input
+                                            placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                                 placeholder='No. of Days Used'
                                                 onSubmitEditing={() => this.title.focus()}
@@ -700,6 +708,7 @@ class AddProduct extends React.PureComponent {
 
                                     </> : null}
                                 <Input color={customGalioTheme.COLORS.INPUT_TEXT}
+                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                        placeholder='Website'
                                        onChangeText={(webLink) => this.setState({webLink})}
                                        value={this.state.webLink}
