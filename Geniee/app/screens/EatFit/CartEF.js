@@ -86,21 +86,20 @@ class CartEF extends Component {
     }
 
     _plusQuantity(_product){
+        console.log('plus');
         let cartItems= this.state.cartItems.slice();
         cartItems.forEach(item =>{
             if(item._id==_product._id)
             item.orderQuantity=item.orderQuantity+1;
-            break;
         });
         this.setState({cartItems});
-
     }
-    _minusQuantity(){
+
+    _minusQuantity(_product){
         let cartItems= this.state.cartItems.slice();
         cartItems.forEach(item =>{
             if(item._id==_product._id)
             item.orderQuantity=item.orderQuantity -1;
-            break;
         });
         this.setState({cartItems});
     }
@@ -167,18 +166,20 @@ class CartEF extends Component {
                         </Grid> */}
                     </Content>
                 }
-                {/* {this.state.cartItems.length > 0 ?
-                    <Footer style={customStyle.footer}>
-                        <View style={customStyle.row}>
+                {this.state.cartItems.length > 0 ?
+                
+                    // <Footer style={customStyle.footer}>
+                        <View style={[customStyle.row, {padding:10}]}>
                             <View style={customStyle.col}>
-                                <Button onPress={() => this.checkout()} style={customStyle.buttonPrimary}
-                                    block iconLeft>
-                                    <FIcon name='credit-card' size={18} color={'#fff'} style={{ marginRight: 10 }} />
-                                    <Text uppercase={false} style={customStyle.buttonPrimaryText}>CHECKOUT</Text>
-                                </Button>
+                            <Button onPress={() => this.checkout()} style={customStyle.buttonPrimary}
+                 block iconLeft>
+                 <FIcon name='credit-card' size={18} color={'#fff'} style={{ marginRight: 10 }} />
+                 <Text uppercase={false} style={customStyle.buttonPrimaryText}>CHECKOUT</Text>
+             </Button>
                             </View>
                         </View>
-                    </Footer> : null} */}
+                    // </Footer>
+                     : null}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginHorizontal: 10 }}>
                     <Text style={{marginTop:5}}>You may also like</Text>
                     <Button transparent>
@@ -222,13 +223,13 @@ class CartEF extends Component {
                             <Text style={{ fontSize: 12, fontWeight: '300', textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
                             <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text>
                             <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <Button block icon transparent onPress={this._minusQuantity.bind(this, item)}
+                                <Button block icon transparent onPress={this._minusQuantity.bind(this,item)}
                                 // onPress={() => this.setState({ quantity: item.orderQuantity > 1 ? item.orderQuantity - 1 : 1 })}
                                 >
                                     <FIcon name='minus' size={16} style={{ paddingRight: 16 }} />
                                 </Button>
                                 <Text style={{ fontSize: 16, marginTop: 10 }}>{item.orderQuantity}</Text>
-                                <Button block icon transparent
+                                <Button block icon transparent onPress={this._plusQuantity.bind(this,item)}
                                 // onPress={() => this.setState({ quantity: item.orderQuantity + 1 })}
                                 >
                                     <FIcon style={{ paddingLeft: 16 }} size={16} name='plus' />
