@@ -85,6 +85,26 @@ class CartEF extends Component {
         )
     }
 
+    _plusQuantity(_product){
+        let cartItems= this.state.cartItems.slice();
+        cartItems.forEach(item =>{
+            if(item._id==_product._id)
+            item.orderQuantity=item.orderQuantity+1;
+            break;
+        });
+        this.setState({cartItems});
+
+    }
+    _minusQuantity(){
+        let cartItems= this.state.cartItems.slice();
+        cartItems.forEach(item =>{
+            if(item._id==_product._id)
+            item.orderQuantity=item.orderQuantity -1;
+            break;
+        });
+        this.setState({cartItems});
+    }
+
     render() {
         var left = (
             <Left style={{ flex: 1 }}>
@@ -147,7 +167,7 @@ class CartEF extends Component {
                         </Grid> */}
                     </Content>
                 }
-                {this.state.cartItems.length > 0 ?
+                {/* {this.state.cartItems.length > 0 ?
                     <Footer style={customStyle.footer}>
                         <View style={customStyle.row}>
                             <View style={customStyle.col}>
@@ -158,7 +178,7 @@ class CartEF extends Component {
                                 </Button>
                             </View>
                         </View>
-                    </Footer> : null}
+                    </Footer> : null} */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginHorizontal: 10 }}>
                     <Text style={{marginTop:5}}>You may also like</Text>
                     <Button transparent>
@@ -202,7 +222,7 @@ class CartEF extends Component {
                             <Text style={{ fontSize: 12, fontWeight: '300', textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
                             <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text>
                             <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <Button block icon transparent
+                                <Button block icon transparent onPress={this._minusQuantity.bind(this, item)}
                                 // onPress={() => this.setState({ quantity: item.orderQuantity > 1 ? item.orderQuantity - 1 : 1 })}
                                 >
                                     <FIcon name='minus' size={16} style={{ paddingRight: 16 }} />

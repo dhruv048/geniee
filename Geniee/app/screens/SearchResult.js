@@ -188,15 +188,15 @@ export default class SearchResult extends PureComponent {
 
     _handlItemPress = service => {
         service.avgRate = this.averageRating(service.ratings);
-        //  this.props.navigation.navigate('Service', {Id: service});
-        Navigation.push(this.props.componentId, {
-            component: {
-                name: 'ServiceDetail',
-                passProps: {
-                    Id: service._id,
-                },
-            },
-        });
+          this.props.navigation.navigate('Service', {Id: service._id});
+        // Navigation.push(this.props.componentId, {
+        //     component: {
+        //         name: 'ServiceDetail',
+        //         passProps: {
+        //             Id: service._id,
+        //         },
+        //     },
+        // });
     };
     averageRating = arr => {
         let sum = 0;
@@ -210,7 +210,7 @@ export default class SearchResult extends PureComponent {
         let rowData = data.item;
         let distance;
         return (
-            <ServiceItem componentId={this.props.componentId} service={rowData}/>
+            <ServiceItem navigation={this.props.navigation} service={rowData}/>
         )
     };
 
@@ -219,88 +219,7 @@ export default class SearchResult extends PureComponent {
         // console.log(item);
         return (
             <Product product={item} navigation={this.props.navigation}/>
-            // <View>
-            //     <TouchableOpacity
-            //         onPress={() => this._handleProductPress(item)}
-            //         style={styles.productContainerStyle}>
-            //         {/*<Product key={item._id} product={item}/>*/}
-            //         <Card key={item._id} style={customStyle.Card}>
-            //             <CardItem cardBody style={{width: '100%'}}>
-            //                 <Image
-            //                     source={{uri: settings.IMAGE_URL + item.images[0]}}
-            //                     style={{
-            //                         flex: 1,
-            //                         width: undefined,
-            //                         height: 70,
-            //                         resizeMode: 'cover',
-            //                     }}
-            //                 />
-            //                 <View
-            //                     style={{
-            //                         position: 'absolute',
-            //                         top: 5,
-            //                         left: 5,
-            //                         right: 5,
-            //                         bottom: 5,
-            //                         borderWidth: 1,
-            //                         borderColor: 'rgba(253, 253, 253, 0.2)',
-            //                     }}>
-            //                     {item.discount ? (
-            //                         <View
-            //                             style={{
-            //                                 position: 'absolute',
-            //                                 top: 0,
-            //                                 right: 0,
-            //                                 backgroundColor: colors.primary,
-            //                                 opacity: 1,
-            //                                 borderRadius: 5,
-            //                                 textAlign: 'center',
-            //                                 padding: 2,
-            //                             }}>
-            //                             <Text style={{fontSize: 10, color: 'white'}}>
-            //                                 {item.discount}% off
-            //                             </Text>
-            //                         </View>
-            //                     ) : null}
-            //                 </View>
-            //             </CardItem>
-            //             <CardItem style={{paddingTop: 0}}>
-            //                 <Button
-            //                     style={{
-            //                         flex: 1,
-            //                         paddingLeft: 0,
-            //                         paddingRight: 0,
-            //                         paddingBottom: 0,
-            //                         paddingTop: 0,
-            //                     }}
-            //                     transparent
-            //                     onPress={() => {
-            //                     }}>
-            //                     <Body>
-            //                     <Text
-            //                         style={{fontSize: 14, color: colors.primaryText}}
-            //                         numberOfLines={2}>
-            //                         {item.title}
-            //                     </Text>
-            //                     <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
-            //                         <Text
-            //                             note
-            //                             style={{
-            //                                 fontSize: 12,
-            //                                 paddingLeft: 2,
-            //                                 paddingRight: 2,
-            //                                 zIndex: 1000,
-            //                                 backgroundColor: '#fdfdfd',
-            //                             }}>
-            //                             Rs. {item.price}
-            //                         </Text>
-            //                     </View>
-            //                     </Body>
-            //                 </Button>
-            //             </CardItem>
-            //         </Card>
-            //     </TouchableOpacity>
-            // </View>
+           
         );
     };
 

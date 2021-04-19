@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {colors, customStyle} from "../../config/styles";
 import Meteor from "../../react-native-meteor";
-import Icon from 'react-native-vector-icons/Feather'
+import Icon from 'react-native-vector-icons/Feather';
 import {OrderStatus} from "../../config/settings";
 import DeviceInfo from "react-native-device-info";
 import Loading from "../../components/Loading/Loading";
