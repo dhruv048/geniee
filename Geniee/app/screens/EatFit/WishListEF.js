@@ -36,7 +36,7 @@ class WishListEF extends Component {
     }
 
     componentDidMount() {
-        
+        this.getWishListItems();
     }
 
     async componentDidAppear() {

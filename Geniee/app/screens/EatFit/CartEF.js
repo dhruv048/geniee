@@ -30,13 +30,16 @@ class CartEF extends Component {
         super(props);
         this.state = {
             cartItems: '',
+            totalPrice: 0,
         };
         this.cartList = [];
+        this.skip = 0;
+        this.limit = 20;
+        this.popularProducts = [];
     }
 
     getCartItems = (products) => {
         const cartList = this.cartList;
-        console.log(products, cartList);
         if (products.length == 0) {
             this.setState({ cartItems: [] });
             return true;
@@ -55,6 +58,7 @@ class CartEF extends Component {
                     product.size = cartItem.size;
                     product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0));
                     product.shippingPrice = 25;//shippiing price hard code
+                    product.totalPrice = product.totalPrice + Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0))
                 });
                 this.setState({ cartItems: res.result });
             }
@@ -75,33 +79,46 @@ class CartEF extends Component {
         }
         this.cartList = cartList;
         this.getCartItems(products);
+
+        //Get popular products
+        Meteor.call('getPopularProducts', this.skip, this.limit, (err, res) => {
+            if (err) {
+                console.log('this is due to error. ' + err);
+            }
+            else {
+                console.log('This is result '+ res.result);
+                this.skip = this.skip + this.limit;
+                this.setState({ popularProducts: res.result });
+            };
+        });
+
+
     }
 
     renderProduct = (data, index) => {
         let item = data.item;
-        console.log('This is item ' + item);
+        console.log('This is popular Products: ' +item);
         return (
             <Product product={item} navigation={this.props.navigation} onDelete={this.onDelete.bind(this)} />
         )
     }
 
-    _plusQuantity(_product){
-        console.log('plus');
-        let cartItems= this.state.cartItems.slice();
-        cartItems.forEach(item =>{
-            if(item._id==_product._id)
-            item.orderQuantity=item.orderQuantity+1;
+    _plusQuantity(_product) {
+        let cartItems = this.state.cartItems.slice();
+        cartItems.forEach(item => {
+            if (item._id == _product._id)
+                item.orderQuantity = item.orderQuantity + 1;
         });
-        this.setState({cartItems});
+        this.setState({ cartItems });
     }
 
-    _minusQuantity(_product){
-        let cartItems= this.state.cartItems.slice();
-        cartItems.forEach(item =>{
-            if(item._id==_product._id)
-            item.orderQuantity=item.orderQuantity -1;
+    _minusQuantity(_product) {
+        let cartItems = this.state.cartItems.slice();
+        cartItems.forEach(item => {
+            if (item._id == _product._id)
+                item.orderQuantity = item.orderQuantity - 1;
         });
-        this.setState({cartItems});
+        this.setState({ cartItems });
     }
 
     render() {
@@ -164,38 +181,51 @@ class CartEF extends Component {
                                 </Button>
                             </Col>
                         </Grid> */}
-                    </Content>
-                }
-                {this.state.cartItems.length > 0 ?
-                
-                    // <Footer style={customStyle.footer}>
-                        <View style={[customStyle.row, {padding:10}]}>
-                            <View style={customStyle.col}>
-                            <Button onPress={() => this.checkout()} style={customStyle.buttonPrimary}
-                 block iconLeft>
-                 <FIcon name='credit-card' size={18} color={'#fff'} style={{ marginRight: 10 }} />
-                 <Text uppercase={false} style={customStyle.buttonPrimaryText}>CHECKOUT</Text>
-             </Button>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10, marginHorizontal: 20 }}>
+                            <View >
+                                <Text style={{ fontSize: 16, marginBottom: 5 }}>Items ({this.state.cartItems.length})</Text>
+                                <Text style={{ fontSize: 16, marginBottom: 12 }}>Shipping</Text>
+                                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>SubTotal</Text>
+                            </View>
+                            <View>
+                                <Text style={{ fontSize: 16, marginBottom: 5 }}>Rs. {this.state.cartItems.product}</Text>
+                                <Text style={{ fontSize: 16, marginBottom: 12 }}>Rs. {this.state.cartItems.shippingPrice}</Text>
+                                <Text style={{ fontSize: 16, color: 'blue' }}>Rs. {this.state.cartItems.finalPrice + this.state.cartItems.shippingPrice}</Text>
                             </View>
                         </View>
-                    // </Footer>
-                     : null}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginHorizontal: 10 }}>
-                    <Text style={{marginTop:5}}>You may also like</Text>
-                    <Button transparent>
-                        <Text style={{ color: 'blue' }}> View All</Text>
-                    </Button>
-                </View>
-                <View>
-                    <Text>This is product FlatList Commented</Text>
-                    {/* <FlatList contentContainerStyle={styles.mainContainer}
-                        data={this.state.cartItems}
-                        keyExtracter={(item, index) => item._id}
-                        numColumns={2}
-                        renderItem={(item, index) => this.renderProduct(item, index)}
-                        onEndReachedThreshold={0.1}
-                    /> */}
-                </View>
+                        {this.state.cartItems.length > 0 ?
+
+                            // <Footer style={customStyle.footer}>
+                            <View style={[customStyle.row, { padding: 10 }]}>
+                                <View style={customStyle.col}>
+                                    <Button onPress={() => this.checkout()} style={customStyle.buttonPrimary}
+                                        block iconLeft>
+                                        <FIcon name='credit-card' size={18} color={'#fff'} style={{ marginRight: 10 }} />
+                                        <Text uppercase={false} style={customStyle.buttonPrimaryText}>CHECKOUT</Text>
+                                    </Button>
+                                </View>
+                            </View>
+                            // </Footer>
+                            : null}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginHorizontal: 10 }}>
+                            <Text style={{ marginTop: 5 }}>You may also like</Text>
+                            <Button transparent>
+                                <Text style={{ color: 'blue' }}> View All</Text>
+                            </Button>
+                        </View>
+                        <View>
+                            <Text>This is product FlatList Commented</Text>
+                            <FlatList contentContainerStyle={{flex:1,paddingHorizontal:5, width:'100%',}}
+                                data={this.popularProducts}
+                                keyExtracter={(item, index) => item._id}
+                                numColumns={2}
+                                renderItem={(item, index) => this.renderProduct(item, index)}
+                                onEndReachedThreshold={0.1}
+                            />
+                        </View>
+                    </Content>
+                }
+
             </Container>
 
         );
@@ -223,13 +253,13 @@ class CartEF extends Component {
                             <Text style={{ fontSize: 12, fontWeight: '300', textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
                             <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text>
                             <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <Button block icon transparent onPress={this._minusQuantity.bind(this,item)}
+                                <Button block icon transparent onPress={this._minusQuantity.bind(this, item)}
                                 // onPress={() => this.setState({ quantity: item.orderQuantity > 1 ? item.orderQuantity - 1 : 1 })}
                                 >
                                     <FIcon name='minus' size={16} style={{ paddingRight: 16 }} />
                                 </Button>
                                 <Text style={{ fontSize: 16, marginTop: 10 }}>{item.orderQuantity}</Text>
-                                <Button block icon transparent onPress={this._plusQuantity.bind(this,item)}
+                                <Button block icon transparent onPress={this._plusQuantity.bind(this, item)}
                                 // onPress={() => this.setState({ quantity: item.orderQuantity + 1 })}
                                 >
                                     <FIcon style={{ paddingLeft: 16 }} size={16} name='plus' />
@@ -256,18 +286,6 @@ class CartEF extends Component {
                         </Right>
                     </View>
                 </ListItem>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10, marginHorizontal: 20 }}>
-                    <View >
-                        <Text style={{ fontSize: 16, marginBottom: 5 }}>Items ({item.orderQuantity})</Text>
-                        <Text style={{ fontSize: 16, marginBottom: 12 }}>Shipping</Text>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>SubTotal</Text>
-                    </View>
-                    <View>
-                        <Text style={{ fontSize: 16, marginBottom: 5 }}>Rs. {item.finalPrice}</Text>
-                        <Text style={{ fontSize: 16, marginBottom: 12 }}>Rs. {item.shippingPrice}</Text>
-                        <Text style={{ fontSize: 16, color: 'blue' }}>Rs. {item.finalPrice + item.shippingPrice}</Text>
-                    </View>
-                </View>
             </View>
         );
     }
