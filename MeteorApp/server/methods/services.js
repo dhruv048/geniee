@@ -338,6 +338,7 @@ Meteor.methods({
                 type: NotificationTypes.RATE_SERVICE,
             };
             Meteor.call("addNotification", notification);
+            try{
             const tokens =
                 Meteor.users.findOne({_id: service.owner}).devices || [];
             FIREBASE_MESSAGING.notificationToList(
@@ -352,6 +353,12 @@ Meteor.methods({
                     icon: user.profile.profileImage || "",
                 }
             );
+            }
+         catch (err) {
+            console.log(err.message);
+            // throw new Meteor.Error(403, err.message);
+        }
+
         } catch (err) {
             console.log(err.message);
             throw new Meteor.Error(403, err.message);

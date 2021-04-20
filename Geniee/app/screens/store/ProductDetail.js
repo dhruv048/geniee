@@ -40,6 +40,7 @@ import Meteor from '../../react-native-meteor';
 import settings, {ProductType, ServiceDuration} from '../../config/settings';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import MyFunctions from "../../lib/MyFunctions";
+import { Badge } from 'react-native-paper';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -275,15 +276,20 @@ class ProductDetail extends Component {
                 </Grid>
                   {this.state.product.type===ProductType.PRODUCT?
                 <Grid>
-                  <Col size={2}>
+                  
+                  <Col size={2} >
                     <View style={{flex: 1, justifyContent: 'center'}}>
-                      <Text>Available Quantity:</Text>
+                      <Text>In Stock?:</Text>
                     </View>
                   </Col>
-                  <Col size={2}>
-                    <Text style={{fontSize: 16}}>
-                      {this.state.product.availabeQuantity}
-                    </Text>
+                  <Col size={2} style={{paddingVertical:5 ,}}>
+                  {this.state.product.inStock?
+                   <Badge size={25} style={{backgroundColor:colors.success, color:'white', alignSelf:'flex-start'}}>
+                     YES
+                   </Badge>:
+                   <Badge  size={25}  style={{backgroundColor:colors.danger, color:'white', alignSelf:'flex-start'}}>
+                   NO
+                 </Badge>}
                   </Col>
                 </Grid>:null}
 
@@ -307,6 +313,7 @@ class ProductDetail extends Component {
                 {/*</Grid> : null}*/}
                 {this.state.product.contact ? (
                   <Grid>
+                  
                     <Col size={2}>
                       <View style={{flex: 1, justifyContent: 'center'}}>
                         <Text>Cntact No:</Text>
@@ -317,19 +324,27 @@ class ProductDetail extends Component {
                         {this.state.product.contact}
                       </Text>
                     </Col>
+                    
                   </Grid>
                 ) : null}
                 <Grid>
+                  
                   <Col size={2}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
                       <Text>Home Delivery ?</Text>
                     </View>
                   </Col>
-                  <Col size={2}>
-                    <Text style={{fontSize: 16}}>
-                      {this.state.product.homeDelivery ? 'YES' : 'NO'}
-                    </Text>
+                  <Col size={2} style={{paddingVertical:5 ,}}>
+                    {/* <Text style={{fontSize: 16}}> */}
+                      {this.state.product.homeDelivery ?  <Badge size={25} style={{backgroundColor:colors.success, color:'white', alignSelf:'flex-start'}}>
+                     YES
+                   </Badge>:
+                   <Badge  size={25}  style={{backgroundColor:colors.danger, color:'white', alignSelf:'flex-start'}}>
+                   NO
+                 </Badge>}
+                    {/* </Text> */}
                   </Col>
+                   
                 </Grid>
                 {this.state.product.hasOwnProperty('radius') &&
                 this.state.product.radius > 0 ? (
