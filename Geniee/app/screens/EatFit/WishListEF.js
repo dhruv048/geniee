@@ -29,14 +29,15 @@ class WishListEF extends Component {
         };
         this.wishList = [];
     }
-
-
-    componentWillMount() {
-
-    }
-
-    componentDidMount() {
-        
+ 
+    async componentDidMount() {
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        if (wishList)
+            wishList = JSON.parse(wishList);
+        else
+            wishList = [];
+        this.wishList = wishList;
+        this.getWishListItems();
     }
 
     async componentDidAppear() {
@@ -50,7 +51,7 @@ class WishListEF extends Component {
     }
 
     getWishListItems = () => {
-
+        console.log(this.wishList)
         Meteor.call('WishListItemsEF', this.wishList, (err, res) => {
             console.log(err, res)
             if (err) {

@@ -44,7 +44,7 @@ export default class Product extends PureComponent {
         if (wishList) {
             wishList = JSON.parse(wishList);
         } else {
-            wishList = [productId];
+            wishList = [];
         }
         let index = wishList.findIndex(item => {
             return item == productId;
