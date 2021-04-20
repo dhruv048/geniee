@@ -6,8 +6,6 @@ import {
     Picker,
     Image,
     Modal,
-    StatusBar,
-    TextInput,
     FlatList,
     Dimensions,
     SafeAreaView, ScrollView, BackHandler,ActionSheetIOS
@@ -22,12 +20,10 @@ import {
     Icon,
     ListItem,
     Textarea,
-    CheckBox,
     Button,
     Header,
     Left,
     Body,
-    Right,
     Footer, Spinner,
     Input as NBInput
 } from 'native-base';
@@ -84,6 +80,11 @@ class AddProduct extends React.PureComponent {
             numDays: '',
             duration: 3,
             inStock:false,
+            shippingCharge:'',
+            hasWarrenty:false,
+            warrenty:'',
+            hasExchange:false,
+            exchange:'',
         };
         this.myServices = [];
         this.imagesToRemove = [];
@@ -159,6 +160,11 @@ class AddProduct extends React.PureComponent {
                 numDays: _product.numDays.toString(),
                 duration: _product.duration,
                 inStock:_product.inStock,
+                shippingCharge: _product.shippingCharge ? _product.shippingCharge.toString() : "",
+                warrenty: _product.warrenty ? _product.warrenty.toString() : "",
+                exchange: _product.exchange ? _product.exchange.toString() : "",
+                hasExchange: _product.hasExchange,
+                hasWarrenty:_product.hasWarrenty
             });
         }
     }
@@ -236,6 +242,21 @@ class AddProduct extends React.PureComponent {
             {homeDelivery: current === false ? true : false}
         )
     };
+    _updateWarrenty=()=>{
+        this.setState(oldState=>{
+            return{
+                hasWarrenty: !oldState.hasWarrenty,
+            }
+        })
+    }
+
+    _updateExchange=()=>{
+        this.setState(oldState=>{
+            return{
+                hasExchange: !oldState.hasExchange,
+            }
+        })
+    }
     _updateUsedorNot = () => {
         let current = this.state.used;
         console.log(current)
@@ -243,7 +264,7 @@ class AddProduct extends React.PureComponent {
             {used: current ? false : true}
         )
     };
-    _callSaveServiceMethod = (product) => {
+    _callSaveProductMethod = (product) => {
         product.images = this.state.images;
         let _product = this.props.Product;
         this.setState({loading: true});
@@ -325,11 +346,17 @@ class AddProduct extends React.PureComponent {
             used: false,
             numDays: 0,
             duration: 3,
+            shippingCharge:'',
+            exchange:'',
+            warrenty:'',
+            hasExchange:false,
+            hasWarrenty:false,
         });
     }
 
-    _saveService = () => {
-        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, qty, numDays, duration, inStock} = this.state;
+    _saveProduct = () => {
+        const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, 
+            qty, numDays, duration, inStock, shippingCharge,hasExchange,hasWarrenty,exchange,warrenty} = this.state;
         let product = {
             title: title,
             description: description,
@@ -353,6 +380,11 @@ class AddProduct extends React.PureComponent {
             duration: duration,
             type:this.state.selectedService.businessType,
             inStock:inStock,
+            shippingCharge: parseInt(shippingCharge),
+            hasWarrenty :hasWarrenty,
+            warrenty : parseInt(warrenty),
+            hasExchange: hasExchange,
+            exchange: parseInt(exchange),
         };
         if (this.state.selectedService.businessType== BusinessType.PRODUCTS_GOODS_SELLER && ( title.length === 0 || description.length === 0 ||  !selectedService._id || !price)) {
             ToastAndroid.showWithGravityAndOffset(
@@ -369,7 +401,7 @@ class AddProduct extends React.PureComponent {
         }
             else
             {
-            this._callSaveServiceMethod(product)
+            this._callSaveProductMethod(product)
         }
     }
 
@@ -502,8 +534,8 @@ class AddProduct extends React.PureComponent {
                                                     onChangeText={(qty) => this.setState({qty})}
                                                     value={this.state.qty}
                                                 /> */}
-                                                <Subheading>In-Stock :</Subheading>
                                                 <Switch color={colors.appLayout} value={this.state.inStock} onValueChange={()=>this.setState(prevState=>{return {inStock: !prevState.inStock}})} />
+                                                <Subheading>: In-Stock </Subheading>
                                             </View>
                                             <View style={{flex: 1, marginLeft: 5}}>
                                                 <Input
@@ -620,7 +652,24 @@ class AddProduct extends React.PureComponent {
 
                                 {this.state.selectedService.businessType == BusinessType.PRODUCTS_GOODS_SELLER ?
                                     <>
-                                        <View style={styles.multiField}>
+                                       
+                                        <Textarea rowSpan={2} placeholder="Colors seperated ;"
+                                                  style={styles.inputTextarea}
+                                                  placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                                  underlineColorAndroid='red'
+
+                                                  onChangeText={(colors) => this.setState({colors})}
+                                                  value={this.state.colors}
+                                        />
+                                        <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
+                                                  style={styles.inputTextarea}
+                                                  placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
+                                                  underlineColorAndroid='red'
+                                                  onChangeText={(sizes) => this.setState({sizes})}
+                                                  value={this.state.sizes}
+                                        />
+
+<View style={styles.multiField}>
                                             {/*<View style={{flex: 1, marginRight: 5}}>*/}
                                             {/*/!*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}*/}
                                             {/*placeholder='Radius in K.M (*)'*/}
@@ -638,22 +687,6 @@ class AddProduct extends React.PureComponent {
                                             {/*</View>*/}
                                             <View style={styles.chkView}>
                                                 <Checkbox
-                                                    label="Home Delivery"
-                                                    initialValue={this.state.homeDelivery}
-                                                    color="primary"
-                                                    onChange={this._updateHomeDelivery}
-                                                />
-                                                {/*  <CheckBox style={{marginEnd: 20}}
-                                                                       checked={this.state.homeDelivery}
-                                                                       onPress={this._updateHomeDelivery}/>*/}
-                                                {/*<Text style={{*/}
-                                                {/*color: 'rgba(0, 0, 0, 0.44)',*/}
-                                                {/*marginLeft: 5*/}
-                                                {/*}}>{'Home Delivery'}</Text>*/}
-
-                                            </View>
-                                            <View style={styles.chkView}>
-                                                <Checkbox
                                                     label="Used (Not New)"
                                                     initialValue={this.state.used}
                                                     color="primary"
@@ -667,36 +700,99 @@ class AddProduct extends React.PureComponent {
                                                 {/*marginLeft: 5*/}
                                                 {/*}}>{'Brand New'}</Text>*/}
                                             </View>
-                                        </View>
-                                        {!this.state.used ?
+                                            <View style={{flex: 1, marginLeft: 5}}> 
+                                            {this.state.used ?
                                             <Input
                                             placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                                 placeholder='No. of Days Used'
                                                 onSubmitEditing={() => this.title.focus()}
                                                 onChangeText={(numDays) => this.setState({numDays})}
-                                                keyboardType='phone-pad'
+                                                keyboardType='number'
                                                 value={this.state.numDays}
                                             />
                                             : null
                                         }
-                                        <Textarea rowSpan={2} placeholder="Colors seperated ;"
-                                                  style={styles.inputTextarea}
-                                                  placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                                  underlineColorAndroid='red'
+                                        </View>
+                                        </View>
+                                        <View style={styles.multiField}>
+                                            
+                                            <View style={styles.chkView}>
+                                                <Checkbox
+                                                    label="Home Delivery"
+                                                    initialValue={this.state.homeDelivery}
+                                                    color="primary"
+                                                    onChange={this._updateHomeDelivery}
+                                                />
+                                             </View>
+                                             <View style={{flex: 1, marginLeft: 5}}> 
+                                             {this.state.homeDelivery ?
+                                             
+                                            <Input
+                                            placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
+                                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                placeholder='Shipping Charge'
+                                                onChangeText={(shippingCharge) => this.setState({shippingCharge})}
+                                                keyboardType='number'
+                                                value={this.state.shippingCharge}
+                                            />
+                                            : null
+                                        }
+                                        </View>
+                                      </View>
 
-                                                  onChangeText={(colors) => this.setState({colors})}
-                                                  value={this.state.colors}
-                                        />
-                                        <Textarea rowSpan={2} placeholder="Sizes seperated by ;"
-                                                  style={styles.inputTextarea}
-                                                  placeholderTextColor={`rgba(0, 0, 0, 0.44)`}
-                                                  underlineColorAndroid='red'
-                                                  onChangeText={(sizes) => this.setState({sizes})}
-                                                  value={this.state.sizes}
-                                        />
 
+                                      <View style={styles.multiField}>
+                                            
+                                            <View style={styles.chkView}>
+                                                <Checkbox
+                                                    label="Has Warrenty"
+                                                    initialValue={this.state.hasWarrenty}
+                                                    color="primary"
+                                                    onChange={this._updateWarrenty}
+                                                />
+                                             </View>
+                                             <View style={{flex: 1, marginLeft: 5}}> 
+                                             {this.state.hasWarrenty ?
+                                             
+                                            <Input
+                                            placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
+                                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                placeholder='No of Months'
+                                                onChangeText={(warrenty) => this.setState({warrenty})}
+                                                keyboardType='number'
+                                                value={this.state.warrenty}
+                                            />
+                                            : null
+                                        }
+                                        </View>
+                                        </View>
 
+                                        <View style={styles.multiField}>
+                                            
+                                            <View style={styles.chkView}>
+                                                <Checkbox
+                                                    label="Exchange Offer"
+                                                    initialValue={this.state.hasExchange}
+                                                    color="primary"
+                                                    onChange={this._updateExchange}
+                                                />
+                                             </View>
+                                             <View style={{flex: 1, marginLeft: 5}}> 
+                                             {this.state.hasExchange ?
+                                             
+                                            <Input
+                                            placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
+                                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                placeholder='No of Days'
+                                                onChangeText={(exchange) => this.setState({exchange})}
+                                                keyboardType='number'
+                                                value={this.state.exchange}
+                                            />
+                                            : null
+                                        }
+                                        </View>
+                                      </View>
                                         {/*   <Input  color={customGalioTheme.COLORS.INPUT_TEXT}
                                        placeholder='Contact No (*)'
                                        keyboardType='phone-pad'
@@ -819,12 +915,12 @@ class AddProduct extends React.PureComponent {
                         {/*<View style={styles.buttonView}>
                     <Button
                         style={styles.button}
-                        onPress={this._saveService}>
+                        onPress={this._saveProduct}>
                         <Text style={styles.buttonText}> {this.props.Product ? "Update" : "Save"} </Text>
                     </Button>
                 </View>*/}
                         <GButton
-                            onPress={this._saveService}
+                            onPress={this._saveProduct}
                             style={{width: '100%', marginVertical: 20}}
                             loading={this.state.loading}
                             disabled={this.state.loading}>
@@ -1226,7 +1322,7 @@ const styles = StyleSheet.create({
         flexDirection: `row`,
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent:"flex-start",
         width: '48%',
         height: 40,
         marginHorizontal: '1%',
