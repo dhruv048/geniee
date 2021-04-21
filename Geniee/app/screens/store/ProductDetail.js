@@ -3,18 +3,16 @@
  **/
 
 // React native and others libraries imports
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Image,
   Dimensions,
   TouchableWithoutFeedback,
-  AsyncStorage,
   FlatList,
   TouchableOpacity,
   StyleSheet,
   Linking,
   ToastAndroid,
-  BackHandler
 } from 'react-native';
 import {
   Icon as NBIcon,
@@ -27,22 +25,22 @@ import {
   Text as NBText,
   Spinner,
   Button,
-  Footer,
   Picker,
 } from 'native-base';
 import FIcon from 'react-native-vector-icons/Feather';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { EventRegister } from 'react-native-event-listeners';
 import Text from '../../components/Store/Text';
-import Product from '../../components/ecommerce/Product';
-import {colors, customStyle} from '../../config/styles';
+import Product from '../../components/Store/Product';
+import { colors, customStyle } from '../../config/styles';
 import Meteor from '../../react-native-meteor';
-import settings, {ProductType, ServiceDuration} from '../../config/settings';
+import settings, { ProductType, ServiceDuration } from '../../config/settings';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import MyFunctions from "../../lib/MyFunctions";
-import { Badge } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage';
+import CartIcon from '../../components/HeaderIcons/CartIcon';
 
-const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 class ProductDetail extends Component {
   constructor(props) {
@@ -58,7 +56,7 @@ class ProductDetail extends Component {
   }
 
   async componentDidMount() {
-    
+
     //get the product with id of this.props.product.id from your server
     let productId = this.props.route.params.Id;
     let _product = this.props.route.params.data;
@@ -96,7 +94,7 @@ class ProductDetail extends Component {
       if (err) {
         console.log('this is due to error. ' + err);
       } else {
-        this.setState({similarProducts: res});
+        this.setState({ similarProducts: res });
       }
     });
 
@@ -115,30 +113,30 @@ class ProductDetail extends Component {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
   };
 
-// componentDidAppear(){
-//     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
-// }
+  // componentDidAppear(){
+  //     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+  // }
 
-//     handleBackButton() {
-//         console.log('handlebackpress Pdetil')
-//         this.props.navigation.goBack();
-//     }
+  //     handleBackButton() {
+  //         console.log('handlebackpress Pdetil')
+  //         this.props.navigation.goBack();
+  //     }
 
-//     componentDidDisappear() {
-//         BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton.bind(this));
-//     }
+  //     componentDidDisappear() {
+  //         BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton.bind(this));
+  //     }
 
   render() {
     return (
-      <Container style={{backgroundColor: colors.appBackground}}>
+      <Container style={{ backgroundColor: colors.appBackground }}>
         <View
           style={{
-            paddingHorizontal: 16,
+            paddingHorizontal: 5,
             position: 'absolute',
             top: 0,
             right: 0,
             left: 0,
-            height: 70,
+            height: 50,
             flex: 1,
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -150,11 +148,11 @@ class ProductDetail extends Component {
               alignSelf: 'center',
               justifyContent: 'center',
               alignItems: 'center',
-              width: 40,
-              height: 40,
+              width: 35,
+              height: 35,
               borderRadius: 100,
-                backgroundColor:'white',
-                opacity:0.8
+              backgroundColor: 'white',
+              opacity: 0.8
             }}
             onPress={() => {
               this.props.navigation.pop();
@@ -162,12 +160,12 @@ class ProductDetail extends Component {
             <FIcon name="arrow-left" color={colors.primary} size={24} />
           </TouchableOpacity>
 
-          {this.state.product ? (
+          {/* {this.state.product ? (
             <Text numberOfLines={1} note style={{color: 'white',fontWeight:'bold'}}>
               {this.state.product.title}
             </Text>
-          ) : null}
-          <TouchableOpacity
+          ) : null} */}
+          {/* <TouchableOpacity
             style={{
               alignSelf: 'center',
               justifyContent: 'center',
@@ -187,12 +185,14 @@ class ProductDetail extends Component {
             ) : (
               <FIcon name="heart" size={24} color={colors.primary} />
             )}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
+          {/* <CartIcon navigation={this.props.navigation} />  */}
         </View>
         {this.state.product ? (
           <>
             <Content>
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 <Carousel
                   data={this.state.product.images}
                   renderItem={this._renderItem}
@@ -201,9 +201,11 @@ class ProductDetail extends Component {
                   }}
                   sliderWidth={Dimensions.get('window').width}
                   itemWidth={Dimensions.get('window').width}
-                  onSnapToItem={index => this.setState({activeSlide: index})}
+                  onSnapToItem={index => this.setState({ activeSlide: index })}
                   enableSnap={true}
                 />
+                {this.state.product.type === ProductType.PRODUCT && !this.state.product.inStock ?
+                  <Image style={{ resizeMode: 'contain', maxWidth: 150, height: 40, position: 'absolute', bottom: 10, right: 10 }} source={require("../../images/out-of-stock.jpg")} /> : null}
               </View>
               <Pagination
                 dotsLength={this.state.product.images.length}
@@ -226,7 +228,7 @@ class ProductDetail extends Component {
               />
               <View
                 style={{
-                  
+
                   backgroundColor: '#fdfdfd',
                   paddingTop: 10,
                   paddingBottom: 10,
@@ -235,63 +237,250 @@ class ProductDetail extends Component {
                   alignItems: 'center',
                 }}>
                 <Grid>
-                  <Col size={3}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        color: colors.appLayout,
-                      }}>
-                      {this.state.product.title}
-                    </Text>
-                  </Col>
+
                   {this.state.product.price ? (
                     <Col size={2}>
-                        {this.state.product.type===ProductType.PRODUCT?
-                      <Text
-                        style={{
-                          fontSize: 17,
-                          fontWeight: 'bold',
-                          color: colors.appLayout,
-                        }}>
-                        Rs. {this.state.product.price}
-                        {this.state.product.unit ? (
-                          <Text>/{this.state.product.unit}</Text>
-                        ) : null}
-                      </Text>:null}
+                      {this.state.product.type === ProductType.PRODUCT ?
+                        <Text
+                          style={{
+                            fontSize: 19,
+                            fontWeight: 'bold',
+                            color: colors.appLayout,
+                          }}>
+                          Rs. {this.state.product.discount ? (this.state.product.price - (this.state.product.discount * 0.01 * this.state.product.price)) : this.product.price}
+                          {this.state.product.unit ? (
+                            <Text>/{this.state.product.unit}</Text>
+                          ) : null}
+                        </Text> : null}
 
-                        {this.state.product.type===ProductType.SERVICE?
-                            <Text
-                                style={{
-                                    fontSize: 17,
-                                    fontWeight: 'bold',
-                                    color: colors.appLayout,
-                                }}>
-                                Rs. {this.state.product.price}
-                                {this.state.product.duration ? (
-                                    <Text>/{MyFunctions.getKeyByValue(ServiceDuration,this.state.product.duration)}</Text>
-                                ) : null}
-                            </Text>:null}
+                      {this.state.product.type === ProductType.SERVICE ?
+                        <Text
+                          style={{
+                            fontSize: 19,
+                            fontWeight: 'bold',
+                            color: colors.appLayout,
+                          }}>
+                          Rs. {this.state.product.price}
+                          {this.state.product.duration ? (
+                            <Text>/{MyFunctions.getKeyByValue(ServiceDuration, this.state.product.duration)}</Text>
+                          ) : null}
+                        </Text> : null}
                     </Col>
+
                   ) : null}
-                </Grid>
-                  {this.state.product.type===ProductType.PRODUCT?
-                <Grid>
-                  
-                  <Col size={2} >
-                    <View style={{flex: 1, justifyContent: 'center'}}>
-                      <Text>In Stock?:</Text>
+                  <Col size={2}>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
+                      <FIcon onPress={this.addToWishlist.bind(this)} color={this.state.liked ? colors.primary : colors.gray_200} name="heart" size={20} />
+                      {/* <FIcon  color={colors.gray_200} style={{marginLeft:10}} name="shopping-cart" size={20} /> */}
+                      <FIcon color={colors.gray_200} style={{ marginHorizontal: 15 }} name="message-square" size={20} onPress={this.handleChat.bind(this)} />
+                      {/* <FIcon  color={colors.gray_200} style={{marginRight:10}} name="phone" size={20} onPress={this.handleChat.bind(this)} /> */}
                     </View>
                   </Col>
-                  <Col size={2} style={{paddingVertical:5 ,}}>
-                  {this.state.product.inStock?
-                   <Badge size={25} style={{backgroundColor:colors.success, color:'white', alignSelf:'flex-start'}}>
-                     YES
-                   </Badge>:
-                   <Badge  size={25}  style={{backgroundColor:colors.danger, color:'white', alignSelf:'flex-start'}}>
-                   NO
-                 </Badge>}
+                </Grid>
+                {this.state.product.discount ?
+                  <>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: colors.gray_200,
+                        alignSelf: 'flex-start',
+                        textDecorationLine: 'line-through'
+                      }}>
+                      Rs. {this.state.product.price}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.success,
+                        alignSelf: 'flex-start',
+                      }}>
+                      {this.state.product.discount} % off
+                    </Text>
+                  </> : null}
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: 16,
+                    color: colors.gray_100,
+                    alignSelf: 'flex-start',
+                    fontWeight: '500'
+                  }}>
+                  {this.state.product.title}
+                </Text>
+
+
+                {this.state.product.type === ProductType.PRODUCT ?
+                  <Grid>
+                    <Col size={2}>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text>Quantity:</Text>
+                      </View>
+                    </Col>
+
+                    <Col size={2} style={{ height: 40, justifyContent: 'center' }}>
+                      <View style={{ flex: 1, flexDirection: 'row', }}>
+                        <Button
+                          block
+                          icon
+                          transparent
+                          onPress={() =>
+                            this.setState({
+                              quantity:
+                                this.state.quantity > 1
+                                  ? this.state.quantity - 1
+                                  : 1,
+                            })
+                          }>
+                          <NBIcon
+                            name="ios-remove"
+                            style={{ color: colors.appLayout }}
+                          />
+                        </Button>
+                        <View
+                          style={{
+                            flex: 4,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+
+                          }}>
+                          <Text style={{ fontSize: 18 }}>
+                            {this.state.quantity}
+                          </Text>
+                        </View>
+                        <Button
+                          block
+                          icon
+                          transparent
+                          onPress={() =>
+                            this.setState({
+                              quantity:
+                                this.state.quantity + 1
+                            })
+                          }>
+                          <NBIcon
+                            style={{ color: colors.appLayout }}
+                            name="ios-add"
+                          />
+                        </Button>
+                      </View>
+                    </Col>
+                  </Grid> : null}
+                {this.state.product.colors &&
+                  this.state.product.colors.length > 0 ? (
+                  <Grid style={{ marginTop: 15 }}  >
+                    <Col size={2}>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text>Color</Text>
+                      </View>
+                    </Col>
+
+                    <Col size={2} style={{ height: 40, justifyContent: 'center' }}>
+                      <Picker
+                        mode="dropdown"
+                        placeholder="Select a color"
+                        note={true}
+                        selectedValue={this.state.selectedColor}
+                        onValueChange={color =>
+                          this.setState({ selectedColor: color })
+                        }>
+                        {this.renderColors(this.state.product.colors)}
+                      </Picker>
+                    </Col>
+                  </Grid>
+                ) : null}
+                {this.state.product.sizes &&
+                  this.state.product.sizes.length > 0 ? (
+                  <Grid>
+                    <Col size={2}  >
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text>Size</Text>
+                      </View>
+                    </Col>
+                    <Col size={2} style={{ height: 40, justifyContent: 'center' }}>
+                      <Picker
+                        mode="dropdown"
+                        placeholder="Select a size"
+                        note={true}
+                        selectedValue={this.state.selectedSize}
+                        onValueChange={size =>
+                          this.setState({ selectedSize: size })
+                        }>
+                        {this.renderSize(this.state.product.sizes)}
+                      </Picker>
+                    </Col>
+                  </Grid>
+                ) : null}
+
+                <Grid style={{ marginTop: 10 }}>
+                  <Col size={2}></Col>
+                  <Col size={2}>
+                    <Button
+                      disabled={!this.state.product.inStock}
+                      block
+                      onPress={this.OrderNow.bind(this)}
+                      style={[customStyle.buttonPrimary, { marginRight: 5, height: 35 }]}>
+                      <Text style={customStyle.buttonPrimaryText}>Order Now</Text>
+                    </Button>
                   </Col>
-                </Grid>:null}
+                  <Col size={2}>
+                    <Button
+                      disabled={!this.state.product.inStock}
+                      transparent
+                      block
+                      onPress={this.addToCart}
+                      style={[customStyle.buttonOutlinePrimary, { marginRight: 5, height: 35 }]}>
+                      <Text style={customStyle.buttonOutlinePrimaryText}>
+                        Add to Cart
+                    </Text>
+                    </Button>
+                  </Col>
+                </Grid>
+
+
+                {/* Home DELIVERY */}
+                <Grid style={{ marginTop: 15 }}>
+                  <Col size={2}>
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                      <Text>Delivery</Text>
+                    </View>
+                  </Col>
+                  <Col size={2} style={{ paddingVertical: 5, }}>
+                    {/* <Text style={{fontSize: 16}}> */}
+                    {this.state.product.homeDelivery ? <Text>Rs. {this.state.product.shippingCharge}</Text> :
+                      <Text style={{ color: colors.danger }}>No Delivery Option</Text>}
+                  </Col>
+
+                </Grid>
+
+                {/* WARRENTY */}
+                <Grid>
+                  <Col size={2}>
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                      <Text>Warrenty</Text>
+                    </View>
+                  </Col>
+                  <Col size={2} style={{ paddingVertical: 5, }}>
+                    {/* <Text style={{fontSize: 16}}> */}
+                    {this.state.product.hasWarrenty ? <Text>{this.state.product.warrenty} months</Text> :
+                      <Text style={{ color: colors.danger }}>No Warrenty</Text>}
+                  </Col>
+
+                </Grid>
+
+                {/* EXCHANGE or REFUND */}
+                <Grid>
+                  <Col size={2}>
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                      <Text>Exchange/Refund</Text>
+                    </View>
+                  </Col>
+                  <Col size={2} style={{ paddingVertical: 5, }}>
+                    {/* <Text style={{fontSize: 16}}> */}
+                    {this.state.product.hasExchange ? <Text>within {this.state.product.exchange} days</Text> :
+                      <Text style={{ color: colors.danger }}>No Exchange or Refund</Text>}
+                  </Col>
+
+                </Grid>
 
                 {/*{this.state.product.colors ?*/}
                 {/*<Grid>*/}
@@ -313,49 +502,31 @@ class ProductDetail extends Component {
                 {/*</Grid> : null}*/}
                 {this.state.product.contact ? (
                   <Grid>
-                  
+
                     <Col size={2}>
-                      <View style={{flex: 1, justifyContent: 'center'}}>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
                         <Text>Cntact No:</Text>
                       </View>
                     </Col>
                     <Col size={2}>
-                      <Text style={{fontSize: 16}}>
+                      <Text style={{ fontSize: 16 }}>
                         {this.state.product.contact}
                       </Text>
                     </Col>
-                    
+
                   </Grid>
                 ) : null}
-                <Grid>
-                  
-                  <Col size={2}>
-                    <View style={{flex: 1, justifyContent: 'center'}}>
-                      <Text>Home Delivery ?</Text>
-                    </View>
-                  </Col>
-                  <Col size={2} style={{paddingVertical:5 ,}}>
-                    {/* <Text style={{fontSize: 16}}> */}
-                      {this.state.product.homeDelivery ?  <Badge size={25} style={{backgroundColor:colors.success, color:'white', alignSelf:'flex-start'}}>
-                     YES
-                   </Badge>:
-                   <Badge  size={25}  style={{backgroundColor:colors.danger, color:'white', alignSelf:'flex-start'}}>
-                   NO
-                 </Badge>}
-                    {/* </Text> */}
-                  </Col>
-                   
-                </Grid>
+
                 {this.state.product.hasOwnProperty('radius') &&
-                this.state.product.radius > 0 ? (
+                  this.state.product.radius > 0 ? (
                   <Grid>
                     <Col size={2}>
-                      <View style={{flex: 1, justifyContent: 'center'}}>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
                         <Text>Servie Area :</Text>
                       </View>
                     </Col>
                     <Col size={2}>
-                      <Text style={{fontSize: 16}}>
+                      <Text style={{ fontSize: 16 }}>
                         Within {this.state.product.radius} KM Radius
                       </Text>
                     </Col>
@@ -364,7 +535,7 @@ class ProductDetail extends Component {
                 {this.state.product.website ? (
                   <Grid>
                     <Col size={2}>
-                      <View style={{flex: 1, justifyContent: 'center'}}>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
                         <Text>WebLink</Text>
                       </View>
                     </Col>
@@ -373,130 +544,71 @@ class ProductDetail extends Component {
                         onPress={() => {
                           this._browse(this.state.product.website);
                         }}>
-                        <Text style={{fontSize: 16, color: colors.statusBar}}>
+                        <Text style={{ fontSize: 16, color: colors.statusBar }}>
                           {this.state.product.website}
                         </Text>
                       </TouchableOpacity>
                     </Col>
                   </Grid>
                 ) : null}
-                  {this.state.product.type===ProductType.PRODUCT?
-                <Grid>
-                  <Col size={2}>
-                    <View style={{flex: 1, justifyContent: 'center'}}>
-                      <Text>Select Quantity:</Text>
-                    </View>
-                  </Col>
 
-                  <Col size={2}>
-                    <View style={{flex: 1, flexDirection: 'row'}}>
-                      <Button
-                        block
-                        icon
-                        transparent
-                        onPress={() =>
-                          this.setState({
-                            quantity:
-                              this.state.quantity > 1
-                                ? this.state.quantity - 1
-                                : 1,
-                          })
-                        }>
-                        <NBIcon
-                          name="ios-remove"
-                          style={{color: colors.appLayout}}
-                        />
-                      </Button>
-                      <View
-                        style={{
-                          flex: 4,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          paddingLeft: 30,
-                          paddingRight: 30,
-                        }}>
-                        <Text style={{fontSize: 18}}>
-                          {this.state.quantity}
-                        </Text>
+                {this.state.product.type === ProductType.SERVICE ?
+                  <Grid>
+                    <Col size={2}>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text>Select Quantity:</Text>
                       </View>
-                      <Button
-                        block
-                        icon
-                        transparent
-                        onPress={() =>
-                          this.setState({
-                            quantity:
-                              this.state.quantity <
-                              this.state.product.availabeQuantity
-                                ? this.state.quantity + 1
-                                : this.state.product.availabeQuantity,
-                          })
-                        }>
-                        <NBIcon
-                          style={{color: colors.appLayout}}
-                          name="ios-add"
-                        />
-                      </Button>
-                    </View>
-                  </Col>
-                </Grid>:null}
-                  {this.state.product.type===ProductType.SERVICE?
-                      <Grid>
-                          <Col size={2}>
-                              <View style={{flex: 1, justifyContent: 'center'}}>
-                                  <Text>Select Quantity:</Text>
-                              </View>
-                          </Col>
+                    </Col>
 
-                          <Col size={2}>
-                              <View style={{flex: 1, flexDirection: 'row'}}>
-                                  <Button
-                                      block
-                                      icon
-                                      transparent
-                                      onPress={() =>
-                                          this.setState({
-                                              quantity:
-                                                  this.state.quantity > 1
-                                                      ? this.state.quantity - 1
-                                                      : 1,
-                                          })
-                                      }>
-                                      <NBIcon
-                                          name="ios-remove"
-                                          style={{color: colors.appLayout}}
-                                      />
-                                  </Button>
-                                  <View
-                                      style={{
-                                          flex: 4,
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          paddingLeft: 30,
-                                          paddingRight: 30,
-                                      }}>
-                                      <Text style={{fontSize: 18}}>
-                                          {this.state.quantity}
-                                      </Text>
-                                  </View>
-                                  <Button
-                                      block
-                                      icon
-                                      transparent
-                                      onPress={() =>
-                                          this.setState({
-                                              quantity:
-                                                  this.state.quantity + 1
-                                          })
-                                      }>
-                                      <NBIcon
-                                          style={{color: colors.appLayout}}
-                                          name="ios-add"
-                                      />
-                                  </Button>
-                              </View>
-                          </Col>
-                      </Grid>:null}
+                    <Col size={2}>
+                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <Button
+                          block
+                          icon
+                          transparent
+                          onPress={() =>
+                            this.setState({
+                              quantity:
+                                this.state.quantity > 1
+                                  ? this.state.quantity - 1
+                                  : 1,
+                            })
+                          }>
+                          <NBIcon
+                            name="ios-remove"
+                            style={{ color: colors.appLayout }}
+                          />
+                        </Button>
+                        <View
+                          style={{
+                            flex: 4,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingLeft: 30,
+                            paddingRight: 30,
+                          }}>
+                          <Text style={{ fontSize: 18 }}>
+                            {this.state.quantity}
+                          </Text>
+                        </View>
+                        <Button
+                          block
+                          icon
+                          transparent
+                          onPress={() =>
+                            this.setState({
+                              quantity:
+                                this.state.quantity + 1
+                            })
+                          }>
+                          <NBIcon
+                            style={{ color: colors.appLayout }}
+                            name="ios-add"
+                          />
+                        </Button>
+                      </View>
+                    </Col>
+                  </Grid> : null}
 
 
                 {/*<Grid style={{marginTop: 15}}>*/}
@@ -513,51 +625,7 @@ class ProductDetail extends Component {
                 {/*</Button>*/}
                 {/*</Col>*/}
                 {/*</Grid>*/}
-                {this.state.product.colors &&
-                this.state.product.colors.length > 0 ? (
-                  <Grid style={{marginTop: 15}}>
-                    <Col size={2}>
-                      <View style={{flex: 1, justifyContent: 'center'}}>
-                        <Text>Color:</Text>
-                      </View>
-                    </Col>
 
-                    <Col size={2}>
-                      <Picker
-                        mode="dropdown"
-                        placeholder="Select a color"
-                        note={true}
-                        selectedValue={this.state.selectedColor}
-                        onValueChange={color =>
-                          this.setState({selectedColor: color})
-                        }>
-                        {this.renderColors(this.state.product.colors)}
-                      </Picker>
-                    </Col>
-                  </Grid>
-                ) : null}
-                {this.state.product.sizes &&
-                this.state.product.sizes.length > 0 ? (
-                  <Grid>
-                    <Col size={2}>
-                      <View style={{flex: 1, justifyContent: 'center'}}>
-                        <Text>Size:</Text>
-                      </View>
-                    </Col>
-                    <Col size={2}>
-                      <Picker
-                        mode="dropdown"
-                        placeholder="Select a size"
-                        note={true}
-                        selectedValue={this.state.selectedSize}
-                        onValueChange={size =>
-                          this.setState({selectedSize: size})
-                        }>
-                        {this.renderSize(this.state.product.sizes)}
-                      </Picker>
-                    </Col>
-                  </Grid>
-                ) : null}
                 <View
                   style={{
                     flex: 1,
@@ -566,10 +634,10 @@ class ProductDetail extends Component {
                     borderWidth: 1,
                     borderRadius: 3,
                     borderColor: 'rgba(149, 165, 166, 0.3)',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                   }}>
-                  <Text style={{marginBottom: 5, alignSelf: 'center'}}>
-                    Description
+                  <Text style={{ marginBottom: 5, alignSelf: 'flex-start',  marginLeft: 7,}}>
+                    Product Description
                   </Text>
                   <View
                     style={{
@@ -593,38 +661,38 @@ class ProductDetail extends Component {
                     }}
                     customStyle={''}
                     onSizeUpdated={size => console.log(size.height)}
-                    source={{html: this.state.product.description || ' '}}
+                    source={{ html: this.state.product.description || ' ' }}
                   />
                 </View>
-                 <Text style={{marginBottom: 5, alignSelf: 'center'}}>
-                    Similar Items
+                <Text style={{ marginBottom: 5, alignSelf: 'flex-start' }}>
+                  You may also like
                   </Text>
-                  <View
-                    style={{
-                      width: 100,
-                      height: 1,
-                      backgroundColor: 'rgba(44, 62, 80, 0.5)',
-                      marginLeft: 7,
-                      marginBottom: 10,
-                      alignSelf: 'center',
-                    }}
-                  />
+                <View
+                  style={{
+                    width: 100,
+                    height: 1,
+                    backgroundColor: 'rgba(44, 62, 80, 0.5)',
+                    marginLeft: 7,
+                    marginBottom: 10,
+                    alignSelf: 'flex-start',
+                  }}
+                />
               </View>
-               <View style={{marginTop: 15, flex: 1}}>
-                
-                  <FlatList
-                    contentContainerStyle={styles.mainContainer}
-                    data={this.state.similarProducts}
-                    keyExtracter={(item, index) => item._id}
-                    horizontal={false}
-                    // numColumns={2}
-                    renderItem={(item, index) =>
-                      this._renderProduct(item, index)
-                    }
-                  />
-                </View>
+              <View style={{ marginTop: 15, flex: 1 }}>
+
+                <FlatList
+                  contentContainerStyle={styles.mainContainer}
+                  data={this.state.similarProducts}
+                  keyExtracter={(item, index) => item._id}
+                  horizontal={false}
+                  // numColumns={2}
+                  renderItem={(item, index) =>
+                    this._renderProduct(item, index)
+                  }
+                />
+              </View>
             </Content>
-            <Footer
+            {/* <Footer
               style={{
                 backgroundColor: 'white',
                 justifyContent: 'center',
@@ -681,11 +749,11 @@ class ProductDetail extends Component {
                   </Button>
                 </Col>
               </Grid>
-            </Footer>
+            </Footer> */}
           </>
         ) : (
           <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Spinner color={colors.primary} />
           </View>
         )}
@@ -693,18 +761,18 @@ class ProductDetail extends Component {
     );
   }
 
-  _renderItem = ({item, index}) => {
+  _renderItem = ({ item, index }) => {
     return (
       <TouchableWithoutFeedback
         key={index}
         onPress={() =>
-          this.props.navigation.navigate( 'ImageGallery', {
+          this.props.navigation.navigate('ImageGallery', {
             images: this.state.product.images,
             position: parseInt(index),
           })
         }>
         <Image
-          source={{uri: settings.API_URL + 'images/' + item}}
+          source={{ uri: settings.API_URL + 'images/' + item }}
           style={{
             width: Dimensions.get('window').width,
             height: 300,
@@ -724,8 +792,7 @@ class ProductDetail extends Component {
         <View style={styles.containerStyle}>
           <Product
             product={item}
-            bottomTab={true}
-            componentId={this.props.componentId}
+            navigation={this.props.navigation}
           />
         </View>
       </View>
@@ -775,7 +842,7 @@ class ProductDetail extends Component {
   // }
 
   openGallery = pos => {
-    this.props.navigation.navigate( 'ImageGallery', {
+    this.props.navigation.navigate('ImageGallery', {
       images: this.state.product.images,
       position: pos,
     });
@@ -826,7 +893,7 @@ class ProductDetail extends Component {
   async addToWishlist() {
     var productId = this.state.product._id;
     const liked = this.state.liked;
-    this.setState({liked: !liked});
+    this.setState({ liked: !liked });
     let wishList = await AsyncStorage.getItem('myWhishList');
     if (wishList) {
       wishList = JSON.parse(wishList);
@@ -862,16 +929,16 @@ class ProductDetail extends Component {
       : this.state.product.sizes[0];
     product['finalPrice'] = Math.round(
       this.state.product.price -
-        (this.state.product.discount
-          ? this.state.product.price * (this.state.product.discount / 100)
-          : 0),
+      (this.state.product.discount
+        ? this.state.product.price * (this.state.product.discount / 100)
+        : 0),
     );
-    this.props.navigation.navigate( 'CheckoutEF', {productOrder: product});
+    this.props.navigation.navigate('CheckoutEF', { productOrder: product });
   }
 
   _getChatChannel(userId) {
-    var channelId = new Promise(function(resolve, reject) {
-      Meteor.call('addChatChannel', userId, function(error, result) {
+    var channelId = new Promise(function (resolve, reject) {
+      Meteor.call('addChatChannel', userId, function (error, result) {
         if (error) {
           reject(error);
         } else {
@@ -898,7 +965,7 @@ class ProductDetail extends Component {
           },
           service: Service,
         };
-        this.props.navigation.navigate( 'Message', {Channel});
+        this.props.navigation.navigate('Message', { Channel });
       })
       .catch(error => {
         console.error(error);
@@ -914,10 +981,10 @@ class ProductDetail extends Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    width:'100%',
+    width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems:'flex-start',
+    alignItems: 'flex-start',
   },
   containerStyle: {
     borderRadius: 4,

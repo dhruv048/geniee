@@ -21,7 +21,7 @@ export default class ImageGallery extends Component {
     componentDidMount() {
         let imgs = [];
 
-        const images = this.props.images;
+        const images = this.props.route.params.images;
         console.log(images)
         images.map((img, i) => {
             imgs.push({source: {uri: settings.API_URL+"images/" + img}})

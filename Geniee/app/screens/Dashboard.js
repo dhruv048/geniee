@@ -941,7 +941,7 @@ class Dashboard extends Component {
                                                 // alignItems: 'center',
                                                 // paddingHorizontal: 10,
                                                 // paddingBottom: 10,
-                                                borderRadius: 10
+                                                borderRadius: 5
                                             }}>
                                             <View style={{ height: 120, width: 280,  borderRadius: 10,}}>
                                                 <Thumbnail
@@ -949,7 +949,7 @@ class Dashboard extends Component {
                                                         width: 280,
                                                         height: 120,
                                                         marginBottom: 10,
-                                                        borderRadius:10,
+                                                        borderRadius:5,
                                                         resizeMode: 'cover',
                                                     }}
                                                     square
@@ -967,8 +967,8 @@ class Dashboard extends Component {
                                                         width: '100%',
                                                         padding: 5,
                                                         paddingTop: 10,
-                                                       borderBottomLeftRadius:10,
-                                                       borderBottomRightRadius:10
+                                                       borderBottomLeftRadius:5,
+                                                       borderBottomRightRadius:5
                                                     }}>
                                                     <Text style={{ color: 'white', fontSize: 15 }}>{item.title}</Text>
                                                 </LinearGradient>
