@@ -20,6 +20,7 @@ import settings, {ProductOwner} from "../../config/settings";
 import {colors} from '../../config/styles';
 import {goBack, goToRoute} from "../../Navigation";
 import FooterTabs from '../../components/FooterTab';
+import CartIcon from '../../components/HeaderIcons/CartIcon';
 class WishListEF extends Component {
     constructor(props) {
         super(props);
@@ -63,6 +64,40 @@ class WishListEF extends Component {
         });
     }
 
+    addToCart = async () => {
+        var product = this.state.wishList;
+        product['orderQuantity'] = this.state.quantity;
+        let cartList = await AsyncStorage.getItem('myCart');
+        let cartItem = {
+            id: product._id,
+            orderQuantity: product.orderQuantity
+        }
+        if (cartList) {
+            cartList = JSON.parse(cartList);
+        }
+        else {
+            cartList = [];
+        }
+        let index = cartList.findIndex(item => {
+            return item.id == product.id
+        });
+        if (index > -1) {
+            cartList.splice(index, 1);
+            cartList.push(cartItem);
+        }
+        else {
+            cartList.push(cartItem);
+        }
+        ToastAndroid.showWithGravityAndOffset(
+            'Product added to your cart !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
+        AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+    }
+    
     renderItem(data, i) {
         let item = data.item;
         return (
@@ -83,10 +118,15 @@ class WishListEF extends Component {
                 <Text style={{fontSize: 14, marginBottom: 3, color: '#8E8E8E'}}>{item.isVeg ? "Veg" : "Non Veg"}</Text>
                 {/*<Text style={{color: '#8E8E8E', fontSize: 13}}>{item.availabeQuantity} pieces available</Text>*/}
                 </Body>
-                <Right style={{paddingRight: 5}}>
-                    <Button transparent onPress={() => this.removeItemPressed(item)}>
-                        <Icon name='x-circle' size={24} color={'#8E8E8E'}/>
+                <Right style={{paddingRight: 5,paddingTop:80}}>
+                    <View style={{flexDirection:'row'}}>
+                    <Button transparent onPress={() => this.addToCart()} style={{marginRight:15}}>
+                        <Icon name='shopping-bag' size={24} color={'#8E8E8E'}/>
                     </Button>
+                    <Button transparent onPress={() => this.removeItemPressed(item)}>
+                        <Icon name='trash' size={24} color={'#8E8E8E'}/>
+                    </Button>
+                    </View>
                 </Right>
             </ListItem>
         );
@@ -150,20 +190,22 @@ class WishListEF extends Component {
         var left = (
             <Left style={{flex: 1}}>
                 <Button transparent onPress={() => this.props.navigation.goBack()}>
-                    <Icon name="x" size={24} color={'#fff'}/>
+                    <Icon name="arrow-left" size={24} color={'#fff'}/>
                 </Button>
             </Left>
         );
         var right = (
             <Right style={{flex: 1}}>
-                <Button transparent onPress={this._emptyWhishList.bind(this)}>
+                {/* <Button transparent onPress={this._emptyWhishList.bind(this)}>
                     <Text style={{color: '#fff', textTransform: 'uppercase'}}>Empty</Text>
-                </Button>
+                </Button> */}
+                <CartIcon navigation={this.props.navigation} />
             </Right>
         );
+        var title = "Wishlist("+[this.wishList.length]+")";
         return (
             <Container style={styles.container}>
-                <Navbar left={left} right={right} title="My Wishlist"/>
+                <Navbar left={left} right={right} title={title}/>
                 {this.state.wishList!==null && !this.state.wishList.length > 0 ?
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                         {/* <Icon name="heart" size={48} style={{fontSize: 48, color: '#95a5a6', marginBottom: 7}}/> */}
