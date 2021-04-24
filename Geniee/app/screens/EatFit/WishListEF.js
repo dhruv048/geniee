@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, AsyncStorage, FlatList, StyleSheet, Image} from 'react-native';
+import {Alert, FlatList, StyleSheet, Image} from 'react-native';
 import {
     Container,
     Content,
@@ -17,9 +17,7 @@ import Text from '../../components/ecommerce/Text';
 import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
 import settings, {ProductOwner} from "../../config/settings";
-import {colors} from '../../config/styles';
-import {goBack, goToRoute} from "../../Navigation";
-import FooterTabs from '../../components/FooterTab';
+import AsyncStorage from '@react-native-community/async-storage';
 import CartIcon from '../../components/HeaderIcons/CartIcon';
 class WishListEF extends Component {
     constructor(props) {
@@ -31,28 +29,21 @@ class WishListEF extends Component {
         this.wishList = [];
     }
  
-    async componentDidMount() {
+     componentDidMount() {
+        
+        this.getWishListItems();
+        this.focusListiner = this.props.navigation.addListener('focus',()=>{
+            this.getWishListItems();
+        });
+    }
+
+    getWishListItems =async () => {
         let wishList = await AsyncStorage.getItem('myWhishList');
         if (wishList)
             wishList = JSON.parse(wishList);
         else
             wishList = [];
         this.wishList = wishList;
-        this.getWishListItems();
-    }
-
-    async componentDidAppear() {
-        let wishList = await AsyncStorage.getItem('myWhishList');
-        if (wishList)
-            wishList = JSON.parse(wishList);
-        else
-            wishList = [];
-        this.wishList = wishList;
-        this.getWishListItems();
-    }
-
-    getWishListItems = () => {
-        console.log(this.wishList)
         Meteor.call('WishListItemsEF', this.wishList, (err, res) => {
             console.log(err, res)
             if (err) {

@@ -898,7 +898,7 @@ class ProductDetail extends Component {
     if (wishList) {
       wishList = JSON.parse(wishList);
     } else {
-      wishList = [productId];
+      wishList = [];
     }
     let index = wishList.findIndex(item => {
       return item == productId;
