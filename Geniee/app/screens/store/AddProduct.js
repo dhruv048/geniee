@@ -33,16 +33,13 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import ActionSheet from 'react-native-actionsheet';
 import _ from "lodash";
 import ImagePicker from 'react-native-image-crop-picker';
-import {CogMenu} from "../../components/CogMenu/CogMenu";
 import AsyncStorage from '@react-native-community/async-storage';
 import settings, {BusinessType, ServiceDuration} from "../../config/settings";
 import FIcon from 'react-native-vector-icons/Feather';
-import Loading from '../../components/Loading';
 import {
     GalioProvider,
     Input,
     Button as GButton,
-    Radio,
     Text as GText, Checkbox
 } from 'galio-framework';
 import {customGalioTheme} from '../../config/themes';
@@ -357,6 +354,8 @@ class AddProduct extends React.PureComponent {
     _saveProduct = () => {
         const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, 
             qty, numDays, duration, inStock, shippingCharge,hasExchange,hasWarrenty,exchange,warrenty} = this.state;
+
+            let searchText=`${title} ${price} ${selectedService.title} ${selectedService.location.formatted_address} ${selectedService.Category.subCategory} ${Meteor.user().profile.name}`;
         let product = {
             title: title,
             description: description,
@@ -385,6 +384,9 @@ class AddProduct extends React.PureComponent {
             warrenty : parseInt(warrenty),
             hasExchange: hasExchange,
             exchange: parseInt(exchange),
+            location: selectedService.location,
+            Category: selectedService.Category,
+            searchText:searchText,
         };
         if (this.state.selectedService.businessType== BusinessType.PRODUCTS_GOODS_SELLER && ( title.length === 0 || description.length === 0 ||  !selectedService._id || !price)) {
             ToastAndroid.showWithGravityAndOffset(
@@ -984,7 +986,7 @@ class AddProduct extends React.PureComponent {
                                 _keyExtractor={(item, index) => index.toString()}
                                 keyboardShouldPersistTaps='always'
                                 renderItem={({item, index}) =>
-                                    <ListItem onPress={() => {
+                                    <ListItem onPress={() => { console.log(item),
                                         this.setState({selectedService: item, serviceModal: false})
                                     }}>
                                         <Text>{item.title}</Text>

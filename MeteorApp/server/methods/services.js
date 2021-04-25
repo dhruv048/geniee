@@ -1171,7 +1171,7 @@ Meteor.methods({
             {owner: loggedUser},
             {
                 sort: {createDate: -1},
-                fields: {_id: 1, title: 1, owner: 1, businessType: 1},
+                fields: {_id: 1, title: 1, owner: 1, businessType: 1, location:1, Category:1},
             }
         ).fetch();
     },

@@ -262,14 +262,6 @@ class Home extends Component {
         // this.arrayholder = this.props.categories;
     }
 
-    componentWillReceiveProps(newProps) {
-        // const oldProps = this.props
-        // if (oldProps.categories !== newProps.categories) {
-        //     this.setState({data: newProps.categories, loading: false})
-        //     this.arrayholder = newProps.categories;
-        //     this._search(this.currentSearch)
-        // }
-    }
 
     componentWillUnmount() {
         this.watchID != null && Geolocation.clearWatch(this.watchID);
@@ -331,7 +323,7 @@ class Home extends Component {
                 this.setState({ filterOption: value, filterText: 'All' , data: this.arrayholder,});        
                 break;
             case 'starred':
-                this.setState({ filterOption: value, filterText: 'Starred' });
+                this.setState({ filterOption: value, filterText: 'Most Rated' });
                 const newDat = this.arrayholder.slice();
                 let latest = newDat.sort((a, b) => {
                     return (b.Rating.avgRate - a.Rating.avgRate);
@@ -520,7 +512,7 @@ class Home extends Component {
                             <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('starred') }}
                                 style={{ flexDirection: 'row', paddingLeft: 20, alignItems: 'center' }}>
                                 <RadioButton status={this.state.filterOption == "starred" ? 'checked' : 'unchecked'} color={colors.primary} />
-                                <Text note style={{ marginLeft: 10 }}>Starred</Text>
+                                <Text note style={{ marginLeft: 10 }}>Most Rated</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { this.actionSheetRef.current?.setModalVisible(false), this._setFilter('myLocation') }}
                                 style={{ flexDirection: 'row', paddingLeft: 20,  alignItems: 'center' }}>

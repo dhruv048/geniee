@@ -9,16 +9,17 @@ import {
   Divider,
   Provider,
 } from 'react-native-paper';
-import {Body, Left, ListItem, Right, View, Text, Thumbnail,Icon as NBIcon} from 'native-base';
-import {Image, StyleSheet, TouchableOpacity,Alert,ToastAndroid, } from 'react-native';
+import {Button, Left, ListItem, Right, View, Text, Thumbnail,Icon as NBIcon} from 'native-base';
+import {Image, StyleSheet, TouchableOpacity,Alert,ToastAndroid,PermissionsAndroid } from 'react-native';
 import settings from '../../config/settings';
-import StarRating from '../../components/StarRating/StarRating';
+import MyFunctions from '../../lib/MyFunctions';
 import {customGalioTheme, customPaperTheme} from '../../config/themes';
 import {colors, customStyle} from '../../config/styles';
 import FIcon from 'react-native-vector-icons/Feather';
 import Meteor from '../../react-native-meteor';
 import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 import call from 'react-native-phone-call';
+import Geolocation from 'react-native-geolocation-service';
 
 export default class ServiceItem extends PureComponent {
   constructor(props) {
@@ -26,6 +27,10 @@ export default class ServiceItem extends PureComponent {
     this.state = {
       showMenu: false,
     };
+    this.region = {
+      latitude: 27.71202,
+      longitude: 85.31295,
+  };
   }
 
 _callPhone = number => {
@@ -44,7 +49,52 @@ _callPhone = number => {
     call(args).catch(console.error);
   };
 
-  componentDidMount() {}
+ async componentDidMount() {
+    this.granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+          'title': 'Location Permission',
+          'message': 'This App needs access to your location ' +
+              'so we can know where you are.'
+      }
+  )
+  if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+      // console.log("You can use locations ")
+      Geolocation.getCurrentPosition(
+          (position) => {
+              // console.log(position);
+              let region = {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude
+              }
+              this.region = region;
+          },
+          (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+  } else {
+      console.log("Location permission denied")
+  }
+  this.watchID = Geolocation.watchPosition(
+      (position) => {
+          // console.log(position);
+          let region = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+          }
+          this.region = region;
+      },
+      (error) => {
+          console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+  );
+
+
+  }
 
  removeService = _service => {
     Alert.alert(
@@ -141,8 +191,20 @@ _callPhone = number => {
     // });
   };
 
+
   render() {
+    const userId=Meteor.userId();
     const {service, navigation} = this.props;
+    let distance;
+    if (service.location && service.location.geometry)
+    distance = MyFunctions.calculateDistance(
+        this.region.latitude,
+        this.region.longitude,
+        service.location.geometry.location.lat,
+        service.location.geometry.location.lng,
+    );
+  
+    //  console.log(distance)
     return (
       <Provider theme={customPaperTheme}>
         {/* <View style={styles.listBox}>
@@ -309,6 +371,84 @@ _callPhone = number => {
                                                             : require('../../images/no-image.png')
                                                     }
                                                 /> 
+
+                                               
+                                              <TouchableOpacity
+                                              style={{
+                                                width: 40,
+                                                height: 40,
+                                                position:'absolute',
+                                                top:5,
+                                                right:5,
+                                                zIndex:1
+                                              }}
+                                              onPress={() => {}}>
+                                              <Menu
+                                                ref={ref => (this[`menu${service._id}`] = ref)}
+                                                button={
+                                                  <Button style={{alignSelf:'flex-end'}}
+                                                    transparent
+                                                    onPress={() => this[`menu${service._id}`].show()}>
+                                                    <FIcon
+                                                      name={'more-vertical'}
+                                                      size={25}
+                                                      color={colors.primary}
+                                                    />
+                                                  </Button>
+                                                }>
+                                                 {Meteor.userId() && Meteor.userId()==service.owner? null :
+                                                <MenuItem
+                                                  onPress={() => {
+                                                    this[`menu${service._id}`].hide(),
+                                                      this._callPhone(service.contact ? service.contact : service.contact1);
+                                                  }}>
+                                                  <FIcon
+                                                      name={'phone'}
+                                                      size={15}
+                                                      color={colors.gray_200}
+                                                    />  Call
+                                                </MenuItem>}
+                                                {Meteor.userId() && service.owner && Meteor.userId()!=service.owner?
+                                                <MenuItem
+                                                  onPress={() => {
+                                                    this[`menu${service._id}`].hide(),
+                                                      this._handleChat();
+                                                  }}>
+                                                  <FIcon
+                                                      name={'message-square'}
+                                                      size={15}
+                                                      color={colors.gray_200}
+                                                    />  Message
+                                                </MenuItem> : null}
+                                                {Meteor.userId() && Meteor.userId()==service.owner?
+                                                  <>
+                                                <MenuDivider/>
+                                                <MenuItem
+                                                  onPress={() => {
+                                                    this[`menu${service._id}`].hide(),
+                                                      this.editService(service);
+                                                  }}>
+                                                  <FIcon
+                                                      name={'edit'}
+                                                      size={15}
+                                                      color={colors.gray_200}
+                                                    />  Edit
+                                                </MenuItem>
+                                                <MenuItem
+                                                  onPress={() => {
+                                                    this[`menu${service._id}`].hide(),
+                                                      this.removeService(service);
+                                                  }}>
+                                                  <FIcon
+                                                      name={'trash'}
+                                                      size={15}
+                                                      color={colors.gray_200}
+                                                    />  Remove
+                                                </MenuItem>
+                                                </>:null}
+                                              </Menu>
+                                            </TouchableOpacity> 
+                                          
                                             </View>
                                             <View style={{ flexDirection: 'row', padding: 5 }}>
                                                 <View
@@ -358,7 +498,12 @@ _callPhone = number => {
                                                             <Text note style={{ fontSize: 12 }}>
                                                                 {Math.round(service.dist.calculated * 100) / 100}{' '}
                                                                 km away
-                                                            </Text>:null}
+                                                            </Text>:
+                                                             <Text note style={{ fontSize: 12 }}>
+                                                             {distance? distance+" km away" : ''}
+                                                           
+                                                         </Text>
+                                                            }
                                                         </View>
                                                         <View
                                                             style={{

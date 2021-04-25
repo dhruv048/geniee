@@ -4,9 +4,8 @@ import {
   Container,
   Content,
   View,
-  Label,
+  Text,
   Grid,
-  Col,
   Left,
   Right,
   Button,
@@ -16,12 +15,12 @@ import {
   Badge,
   Thumbnail,
   Footer,
-  Card,
-  CardItem,
+  Row,
+  Col,
   H2,
 } from 'native-base';
 // Our custom files and classes import
-import Text from '../../components/ecommerce/Text';
+// import Text from '../../components/ecommerce/Text';
 import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from '../../react-native-meteor';
 import {colors, customStyle} from '../../config/styles';
@@ -83,8 +82,48 @@ class OrderDetailOut extends Component {
             }}>
             {/*<Image height='293' width='229'*/}
             {/*source={require('../../images/verified.png')}/>*/}
-            <Text style={{fontSize: 18, marginBottom: 5, marginTop: 22}}>
-              Order ID: {order.orderId || '0000145'}
+             <Row>
+               <Col size={2}>
+               <Text >Order ID</Text>
+               </Col>
+               <Col size={3}>
+               <Text >: {order.orderId }</Text>
+               </Col>
+             </Row>
+             <Row>
+               <Col size={2}>
+               <Text >Payment</Text>
+               </Col>
+               <Col size={3}>
+               <Text >:  {order.PaymentType == PaymentType.CASH
+                ? 'Pay on Delivery'
+                : 'Paid with Esewa'}</Text>
+               </Col>
+             </Row>
+             {order.PaymentType == PaymentType.ESEWA ? (
+             <Row>
+               <Col size={2}>
+               <Text >E-Sewa Refrence Id</Text>
+               </Col>
+               <Col size={3}>
+               <Text >: {order.esewaDetail.transactionDetails.referenceId}</Text>
+               </Col>
+             </Row>)
+             :null}
+
+             <Row>
+               <Col size={2}>
+               <Text >Day</Text>
+               </Col>
+               <Col size={3}>
+               <Text >:  {Moment(order.orderDate).format('dddd, ll')}</Text>
+               </Col>
+             </Row>
+
+
+
+            {/* <Text style={{fontSize: 18, marginBottom: 5, marginTop: 22}}>
+              Order ID: {order.orderId }
             </Text>
 
             <Text style={{fontSize: 16, color: '#8E8E8E', marginBottom: 10}}>
@@ -101,7 +140,7 @@ class OrderDetailOut extends Component {
             ) : null}
             <Text style={{fontSize: 15, color: '#8E8E8E', marginBottom: 10}}>
               {Moment(order.orderDate).format('dddd, ll')}
-            </Text>
+            </Text> */}
           </View>
           {/*<CardItem style={{borderTopWidth: 1, borderTopColor: '#e8e8e8'}}>*/}
           <Text
@@ -109,8 +148,6 @@ class OrderDetailOut extends Component {
               marginTop: 15,
               fontSize: 15,
               padding: 15,
-              borderBottomColor: '#ddd',
-              borderBottomWidth: 1,
               fontWeight: 'bold',
             }}>
             Order Items
@@ -163,9 +200,9 @@ class OrderDetailOut extends Component {
                   <Button
                     block
                     light
-                    style={customStyle.buttonLight}
+                    style={customStyle.buttonOutlineSecondary}
                     onPress={this._updateOrderStatus.bind(this)}>
-                    <Text uppercase={false} style={customStyle.buttonLightText}>
+                    <Text uppercase={false} style={customStyle.buttonOutlineSecondaryText}>
                       Cancel Order
                     </Text>
                   </Button>
@@ -221,7 +258,7 @@ class OrderDetailOut extends Component {
       <ListItem key={i} style={{}}>
         <Thumbnail
           square
-          style={{width: 80, height: 80}}
+          style={{width: 100, height: 120}}
           source={
             item.productImage
               ? {uri: settings.IMAGE_URL + item.productImage}
@@ -229,27 +266,70 @@ class OrderDetailOut extends Component {
           }
         />
         <Body style={{flex: 2, paddingLeft: 10}}>
-          <Text style={{fontSize: 16, fontWeight: 'bold'}}>
-            {/*{item.quantity > 1 ? item.quantity + "x " : null}*/}
+          <Text style={{color:colors.gray_200}}>
             {item.title}
           </Text>
+          <Text style={{fontSize: 16, fontWeight: 'bold', color:colors.primary}}>
+            Rs. {item.amount}
+          </Text>
           {item.productOwner == ProductOwner.EAT_FIT ? (
-            <Text style={{color: '#8E8E8E', fontSize: 13}}>
+            <Row>
+              <Col size={2}>
+                <Text note>Variant</Text>
+              </Col>
+              <Col size={3}>
+              <Text note>:  {item.isVeg ? 'Veg' : 'Non-Veg'}</Text>
+              </Col>
+            {/* <Text style={{color: '#8E8E8E', fontSize: 13}}>
               {item.isVeg ? 'Veg' : 'Non-Veg'}
-            </Text>
+            </Text> */}
+            </Row>
           ) : null}
-          <Text style={{color: '#8E8E8E', fontSize: 13}}>
+
+          <Row>
+            <Col size={2}>
+              <Text note>Qty</Text>
+            </Col>
+            <Col size={3}>
+              <Text note>:  {item.quantity} {item.unit}</Text>
+            </Col>
+          </Row>
+          <Row>
+            <Col size={2}>
+              <Text note>Price</Text>
+            </Col>
+            <Col size={3}>
+              <Text note>: <Text note style={{textDecorationLine:'line-through'}}>Rs.  {item.price}</Text></Text>
+            </Col>
+          </Row>
+          {/* <Text style={{color: '#8E8E8E', fontSize: 13}}>
             Quantity: {item.quantity} {item.unit}
-          </Text>
-          <Text style={{color: '#8E8E8E', fontSize: 13}}>
+          </Text> */}
+          {/* <Text style={{color: '#8E8E8E', fontSize: 13}}>
             Price : Rs. {item.finalPrice}
-          </Text>
+          </Text> */}
           {item.Service ? (
-            <Text style={{color: '#8E8E8E', fontSize: 15}}>
-              Provider : {item.Service.title}
-            </Text>
+            <Row>
+            <Col size={2}>
+              <Text note>Provider</Text>
+            </Col>
+            <Col size={3}>
+              <Text note>: {item.Service.title}</Text>
+            </Col>
+          </Row>
+            // <Text style={{color: '#8E8E8E', fontSize: 15}}>
+            //   Provider : {item.Service.title}
+            // </Text>
           ) : null}
-          {item.status == OrderStatus.ORDER_REQUESTED ? (
+
+          <Row>
+            <Col size={2}>
+              <Text note>Status</Text>
+            </Col>
+            <Col size={3}>
+              <View style={{flexDirection:'row'}}>
+              <Text note>: </Text>
+              {item.status == OrderStatus.ORDER_REQUESTED ? (
             <Badge
               warning
               style={[
@@ -326,12 +406,16 @@ class OrderDetailOut extends Component {
               </Text>
             </Badge>
           ) : null}
+          </View>
+            </Col>
+          </Row>
+         
         </Body>
-        <Right style={{flex: 1, alignSelf: 'flex-start'}}>
+        {/* <Right style={{flex: 1, alignSelf: 'flex-start'}}>
           <Text style={{fontSize: 18, fontWeight: 'bold'}}>
             Rs. {item.amount}
           </Text>
-        </Right>
+        </Right> */}
       </ListItem>
     );
   }

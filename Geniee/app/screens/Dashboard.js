@@ -455,6 +455,7 @@ class Dashboard extends Component {
         if (this.state.query)
             this.props.navigation.navigate( 'SearchResult', {
                 SearchText: this.state.query,
+                Region:this.region
             });
     };
 
