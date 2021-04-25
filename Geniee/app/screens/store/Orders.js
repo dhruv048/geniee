@@ -104,7 +104,7 @@ class Orders extends Component {
     }
     _searchOrders = (searchText) => {
         if (!searchText) {
-            this.setState({ ordersByMe: this.ordersByMe });
+            this.setState({ ordersByMe: this.ordersByMe, ordersToMe: this.ordersToMe });
             return;
         }
 
@@ -113,7 +113,13 @@ class Orders extends Component {
             if (!err) {
                 this.setState({ ordersByMe: res.result })
             }
-        })
+        });
+        Meteor.call('searchMyOrders', searchText, (err, res) => {
+            console.log(err, res);
+            if (!err) {
+                this.setState({ ordersToMe: res.result })
+            }
+        });
     };
 
     _totalAmount(items) {

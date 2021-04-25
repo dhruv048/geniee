@@ -331,6 +331,17 @@ Meteor.methods({
             console.log(e.message);
         }
     },
+
+    searchMyOrders: (_searchText) => {
+        let userId = Meteor.userId();
+        try {
+            return ROrder.find({$and:[{"items.serviceOwner": userId },{searchText: {$regex: _search, $options: 'i'}}]}).fetch();
+        } catch (e) {
+            console.log(e.message);
+            //   return new Meteor.Error('',e.reason)
+        }
+    },
+
 });
 
 resetOrderQty = (Items) => {
