@@ -2,14 +2,14 @@ import React, {Component} from 'react';
 import {FlatList, Image, ToastAndroid} from 'react-native';
 import {
     Container,
-    Content, View, Label, Grid,
+    Content, View, Text, Grid,
     Col, Left,
     Right, Button,
     List, ListItem,
     Body, Badge, Thumbnail, Footer, Card, CardItem, H2
 } from 'native-base';
 // Our custom files and classes import
-import Text from '../../components/ecommerce/Text';
+// import Text from '../../components/ecommerce/Text';
 import Navbar from '../../components/ecommerce/Navbar';
 import Meteor from "../../react-native-meteor";
 import {colors, customStyle} from "../../config/styles";
@@ -125,14 +125,14 @@ class OrderDetailIn extends Component {
 
                     <View style={{
                         flexDirection: 'column',
-                        alignItems: 'center',
+                        // alignItems: 'center',
                         paddingVertical: 20,
                         paddingHorizontal: 20
                     }}>
                         {/*<Image height='293' width='229'*/}
                                {/*source={require('../../images/verified.png')}/>*/}
                         <Text style={{fontSize: 18, marginBottom: 5, marginTop: 22}}>Order
-                            ID: {order.orderId || "0000145"}</Text>
+                            ID: {order.orderId }</Text>
 
                         <Text style={{fontSize: 16, color: '#8E8E8E', marginBottom: 10}}>Payment
                             :{order.PaymentType == PaymentType.CASH ? " Pay on Delivery" : " Paid with Esewa"}</Text>
@@ -146,7 +146,7 @@ class OrderDetailIn extends Component {
                         }}>{Moment(order.orderDate).format('dddd, ll')}</Text>
                         {order.items[0].status == OrderStatus.ORDER_REQUESTED ?
                             <Badge warning style={[customStyle.badgeWarning, {
-                                alignSelf: 'center',
+                               
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }]}>
@@ -155,7 +155,7 @@ class OrderDetailIn extends Component {
 
                         {order.items[0].status == OrderStatus.ORDER_DISPATCHED ?
                             <Badge info style={[customStyle.badgePrimary, {
-                                alignSelf: 'center',
+                                // alignSelf: 'center',
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }]}>
@@ -163,7 +163,7 @@ class OrderDetailIn extends Component {
                             </Badge> : null}
                         {order.items[0].status == OrderStatus.ORDER_DELIVERED ?
                             <Badge success style={[customStyle.badgeSuccess, {
-                                alignSelf: 'center',
+                                // alignSelf: 'center',
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }]}>
@@ -172,7 +172,7 @@ class OrderDetailIn extends Component {
 
                         {order.items[0].status == OrderStatus.ORDER_CANCELLED ?
                             <Badge danger style={[customStyle.badgeDanger, {
-                                alignSelf: 'center',
+                                // alignSelf: 'center',
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }]}>
@@ -180,7 +180,7 @@ class OrderDetailIn extends Component {
                             </Badge> : null}
                             {order.items[0].status == OrderStatus.ORDER_DECLINED ?
                             <Badge danger style={[customStyle.badgeDanger, {
-                                alignSelf: 'center',
+                                // alignSelf: 'center',
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }]}>
@@ -213,8 +213,8 @@ class OrderDetailIn extends Component {
                         marginTop: 15,
                         fontSize: 15,
                         padding: 15,
-                        borderBottomColor: '#ddd',
-                        borderBottomWidth: 1,
+                        // borderBottomColor: '#ddd',
+                        // borderBottomWidth: 1,
                         fontWeight: 'bold'
                     }}>Order Items</Text>
                     <View style={styles.invoice}>

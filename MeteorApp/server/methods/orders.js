@@ -15,6 +15,8 @@ Meteor.methods({
         let EFItems = [];
         let RegularItems = [];
         let ServiceProviders=[];
+        let searchTextEF= order.orderId+" "+Meteor.user().profile.name;
+        let searchText= order.orderId+" "+Meteor.user().profile.name;
         return Async.runSync(function (done) {
             order.items.forEach(async (item, index) => {
                 let product = null;
@@ -23,10 +25,12 @@ Meteor.methods({
                 if (item.productOwner === ProductOwner.EAT_FIT) {
                     product = await EFProducts.findOne({ _id: item.productId });
                     EFItems.push(item);
+                    searchText=searchTextEF+" "+product.title
                     EFTotal = EFTotal + item.finalPrice * item.quantity;
                 } else {
                     product = await Products.findOne({ _id: item.productId });
                     RegularItems.push(item);
+                    searchText=searchText+" "+product.title
                     ServiceProviders.push(product.serviceOwner);
                     RTotal = RTotal + item.finalPrice * item.quantity;
                 }
@@ -82,6 +86,7 @@ Meteor.methods({
                         order.items = EFItems;
                         order.totalPrice = EFTotal;
                         order.productOwner = ProductOwner.EAT_FIT;
+                        order.searchText=searchTextEF;
                         EFOrder.insert(order, (err, res) => {
                             if (res) {
                                 // let notification = {
@@ -108,6 +113,7 @@ Meteor.methods({
                         order.items = RegularItems;
                         order.totalPrice = RTotal;
                         order.productOwner = ProductOwner.REGULAR_USERS;
+                        order.searchText=searchText;
                         ROrder.insert(order, (err, res) => {
                             if (res) {
                                 let notification = {
@@ -299,6 +305,30 @@ Meteor.methods({
                     }
                 }
             );
+        }
+    },
+
+
+    searchOrder:(_search, deviceId)=>{
+        let userId = Meteor.userId() ? Meteor.userId() : undefined;
+        try {
+            let EFOrderss = EFOrder.find({
+                $and:[
+                    {$or: [{ owner: userId }, { deviceId: deviceId }]},
+                    {searchText: {$regex: _search, $options: 'i'}}
+                ],
+            }).fetch();
+            let ROrders = ROrder.find({
+                $and:[
+                    {$or: [{ owner: userId }, { deviceId: deviceId }]},
+                    {ordersearchTextId: {$regex: _search, $options: 'i'}}
+                ]
+            }).fetch();
+            return Async.runSync(function (done) {
+                done(null, EFOrderss.concat(ROrders));
+            });
+        } catch (e) {
+            console.log(e.message);
         }
     },
 });
