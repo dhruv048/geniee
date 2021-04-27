@@ -31,8 +31,9 @@ class CartEF extends Component {
         this.state = {
             cartItems: '',
             totalPrice: 0,
-            popularProducts:[],
-            shippingPrice:0
+            popularProducts: [],
+            shippingPrice: 0,
+            liked : false
         };
         this.cartList = [];
         this.skip = 0;
@@ -47,28 +48,28 @@ class CartEF extends Component {
             return true;
         }
         Meteor.call('WishListItemsEF', products, (err, res) => {
-            
+
             console.log(err, res);
             if (err) {
                 console.log('this is due to error. ' + err);
             }
             else {
-                let totalPrice=0;
-            let shippingPrice=0;
+                let totalPrice = 0;
+                let shippingPrice = 0;
                 res.result.forEach((product, indx) => {
                     const cartItem = cartList.find(item => item.id == product._id);
-                    console.log(cartItem, product)
+                    //console.log(cartItem, product)
                     product.orderQuantity = cartItem.orderQuantity;
                     product.color = cartItem.color;
                     product.size = cartItem.size;
                     product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0));
                     product.shippingChage = product.homeDelivery ? (product.shippingChage ? product.shippingChage : 0) : 0;
-                    shippingPrice= shippingPrice + product.shippingChage;
+                    shippingPrice = shippingPrice + product.shippingChage;
                     // product.totalPrice = product.totalPrice + Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0))
-                    totalPrice= totalPrice+ (product.finalPrice * product.orderQuantity)+ product.shippingChage;
-                    console.log(shippingPrice, totalPrice)
+                    totalPrice = totalPrice + (product.finalPrice * product.orderQuantity) + product.shippingChage;
+                    //console.log(shippingPrice, totalPrice);
                 });
-                this.setState({ cartItems: res.result, totalPrice, shippingPrice });
+                this.setState({ cartItems: res.result, totalPrice, shippingPrice, });
             }
         });
     };
@@ -94,24 +95,38 @@ class CartEF extends Component {
                 console.log('this is due to error. ' + err);
             }
             else {
-                console.log('This is result ', res.result);
                 this.skip = this.skip + this.limit;
                 this.setState({ popularProducts: res.result });
             };
         });
+
+        //Get Wishlist Items
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        
+        if (wishList) wishList = JSON.parse(wishList);
+        else wishList = [];
+        wishList.forEach((x)=>{
+            products.liked = x.includes(products) ? true : false;
+            console.log('Product Id '+products);
+            console.log('Wishlist Id '+x);
+            console.log('Product Id liked '+products.liked);
+        })
+        // this.setState({
+        //     liked: wishList.includes(products) ? true : false,
+        //     // liked: false
+        // });
 
 
     }
 
     renderProduct = (data, index) => {
         let item = data.item;
-        console.log('This is popular Products: ' +item);
         return (
             <Product product={item} navigation={this.props.navigation} onDelete={this.onDelete.bind(this)} />
         )
     }
 
-    onDelete(){
+    onDelete() {
         //Rerender popular Items
     }
 
@@ -227,7 +242,7 @@ class CartEF extends Component {
                         </View>
                         <View>
                             {/* <Text>This is product FlatList Commented</Text> */}
-                            <FlatList contentContainerStyle={{flex:1,paddingHorizontal:5, width:'100%',}}
+                            <FlatList contentContainerStyle={{ flex: 1, paddingHorizontal: 5, width: '100%', }}
                                 data={this.state.popularProducts}
                                 keyExtracter={(item, index) => item._id}
                                 numColumns={2}
@@ -288,8 +303,8 @@ class CartEF extends Component {
                         </Body>
                         <Right >
                             <View style={{ flexDirection: 'row', marginTop: 110 }}>
-                                <Button transparent onPress={() => this.removeItemPressed(data.item)}>
-                                    <FIcon name='heart' size={24} color={'#8E8E8E'} style={{ paddingRight: 20 }} />
+                                <Button transparent onPress={() => this.addToWishlist(data.item)}>
+                                <FIcon name="heart" color={item.liked?colors.primary: '#8E8E8E'} size={24} style={{ paddingRight: 20 }} />
                                 </Button>
                                 <Button transparent onPress={() => this.removeItemPressed(data.item)}>
                                     <FIcon name='trash' size={24} color={'#8E8E8E'} />
@@ -340,6 +355,35 @@ class CartEF extends Component {
             ]
         )
     }
+
+    async addToWishlist(item) {
+        var productId = item._id;
+        const liked = this.state.liked;
+        this.setState({ liked: !liked });
+        let wishList = await AsyncStorage.getItem('myWhishList');
+        if (wishList) {
+            wishList = JSON.parse(wishList);
+        } else {
+            wishList = [];
+        }
+        let index = wishList.findIndex(item => {
+            return item == productId;
+        });
+        if (index > -1) wishList.splice(index, 1);
+        else wishList.push(productId);
+
+        AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
+        ToastAndroid.showWithGravityAndOffset(
+            liked
+                ? 'Product removed from  Wishlist !'
+                : 'Product added to  Wishlist !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
+    }
+
 
 
     removeAllPressed() {
