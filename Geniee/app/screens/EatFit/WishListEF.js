@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, FlatList, StyleSheet, Image} from 'react-native';
+import {Alert, FlatList, StyleSheet, Image, ToastAndroid} from 'react-native';
 import {
     Container,
     Content,
@@ -19,14 +19,20 @@ import Meteor from "../../react-native-meteor";
 import settings, {ProductOwner} from "../../config/settings";
 import AsyncStorage from '@react-native-community/async-storage';
 import CartIcon from '../../components/HeaderIcons/CartIcon';
+import Product from "../../components/Store/Product";
+
 class WishListEF extends Component {
     constructor(props) {
         super(props);
         this.state = {
             items: [],
-            wishList:null
+            wishList:null,
+            popularProducts: [],
         };
         this.wishList = [];
+        this.popularProducts = [];
+        this.skip = 0;
+        this.limit = 20;
     }
  
      componentDidMount() {
@@ -35,6 +41,18 @@ class WishListEF extends Component {
         this.focusListiner = this.props.navigation.addListener('focus',()=>{
             this.getWishListItems();
         });
+
+        //Get popular products
+        Meteor.call('getPopularProducts', this.skip, this.limit, (err, res) => {
+            if (err) {
+                console.log('this is due to error. ' + err);
+            }
+            else {
+                this.skip = this.skip + this.limit;
+                this.setState({ popularProducts: res.result });
+            };
+        });
+        console.log('this is popular Products ' + this.state.popularProducts +'List');
     }
 
     getWishListItems =async () => {
@@ -57,7 +75,7 @@ class WishListEF extends Component {
 
     addToCart = async () => {
         var product = this.state.wishList;
-        product['orderQuantity'] = this.state.quantity;
+        product['orderQuantity'] = 1;
         let cartList = await AsyncStorage.getItem('myCart');
         let cartItem = {
             id: product._id,
@@ -78,14 +96,14 @@ class WishListEF extends Component {
         }
         else {
             cartList.push(cartItem);
+            ToastAndroid.showWithGravityAndOffset(
+                'Product added to your cart !',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
         }
-        ToastAndroid.showWithGravityAndOffset(
-            'Product added to your cart !',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-            0,
-            50,
-        );
         AsyncStorage.setItem('myCart', JSON.stringify(cartList));
     }
     
@@ -177,6 +195,17 @@ class WishListEF extends Component {
         )
     }
 
+    renderProduct = (data, index) => {
+        let item = data.item;
+        return (
+            <Product product={item} navigation={this.props.navigation} onDelete={this.onDelete.bind(this)} />
+        )
+    }
+
+    onDelete() {
+        //Rerender popular Items
+    }
+
     render() {
         var left = (
             <Left style={{flex: 1}}>
@@ -214,6 +243,22 @@ class WishListEF extends Component {
                                 return item._id
                             }}
                         />
+                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, marginHorizontal: 10 }}>
+                            <Text style={{ marginTop: 5 }}>You may also like</Text>
+                            <Button transparent>
+                                <Text style={{ color: 'blue' }}> View All</Text>
+                            </Button>
+                        </View>
+                        <View>
+                            {/* <Text>This is product FlatList Commented</Text> */}
+                            <FlatList contentContainerStyle={{ flex: 1, paddingHorizontal: 5, width: '100%', }}
+                                data={this.state.popularProducts}
+                                keyExtracter={(item, index) => item._id}
+                                numColumns={2}
+                                renderItem={(item, index) => this.renderProduct(item, index)}
+                                onEndReachedThreshold={0.1}
+                            />
+                        </View>
                     </Content>
                 }
                  {/* <FooterTabs route={'Favourite'} componentId={this.props.componentId}/> */}

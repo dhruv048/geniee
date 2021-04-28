@@ -234,7 +234,7 @@ class CartEF extends Component {
                             </View>
                             // </Footer>
                             : null}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginHorizontal: 10 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, marginHorizontal: 10 }}>
                             <Text style={{ marginTop: 5 }}>You may also like</Text>
                             <Button transparent>
                                 <Text style={{ color: 'blue' }}> View All</Text>
