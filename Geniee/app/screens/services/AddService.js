@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import {
     View,
     StyleSheet,
@@ -11,7 +11,7 @@ import {
     FlatList,
 } from 'react-native';
 import Autocomplete from 'native-base-autocomplete';
-import {colors, customStyle} from '../../config/styles';
+import { colors, customStyle } from '../../config/styles';
 import {
     Container,
     Content,
@@ -42,8 +42,8 @@ import {
     goBack,
 } from '../../Navigation';
 import CogMenu from '../../components/CogMenu';
-import {Navigation} from 'react-native-navigation/lib/dist/index';
-import settings, {BusinessType} from '../../config/settings';
+import { Navigation } from 'react-native-navigation/lib/dist/index';
+import settings, { BusinessType } from '../../config/settings';
 import ImageResizer from 'react-native-image-resizer';
 import AsyncStorage from '@react-native-community/async-storage';
 import Loading from '../../components/Loading';
@@ -55,7 +55,7 @@ import {
     Radio,
     Text as GText,
 } from 'galio-framework';
-import {customGalioTheme} from '../../config/themes';
+import { customGalioTheme } from '../../config/themes';
 
 const RNFS = require('react-native-fs');
 
@@ -257,8 +257,8 @@ const styles = StyleSheet.create({
     openingText: {
         textAlign: 'center',
     },
-    buttonContainer: {flex: 1, alignSelf: 'center', paddingTop: 20},
-    centerButton: {margin: 10, alignSelf: 'center'},
+    buttonContainer: { flex: 1, alignSelf: 'center', paddingTop: 20 },
+    centerButton: { margin: 10, alignSelf: 'center' },
 
     checkBokView: {
         //sbackgroundColor: `rgba(243, 247, 255, 1)`,
@@ -367,7 +367,7 @@ class AddService extends React.PureComponent {
         this.mounted = false;
         this.state = {
             query: '',
-            selectedCategory: {subCategory: ''},
+            selectedCategory: { subCategory: '' },
             title: '',
             homeDelivery: false,
             radius: "0",
@@ -401,8 +401,8 @@ class AddService extends React.PureComponent {
         MainCategories.forEach(item => {
             this.categories = this.categories.concat(item.subCategories);
         });
-        this.setState({categories: this.categories});
-        
+        this.setState({ categories: this.categories });
+
         BackHandler.addEventListener(
             'hardwareBackPress',
             this.handleBackButton.bind(this),
@@ -429,7 +429,7 @@ class AddService extends React.PureComponent {
                 price: _serviceToEdit.price,
                 unit: _serviceToEdit.unit,
                 webLink: _serviceToEdit.website,
-                avatarSource: {uri: settings.IMAGE_URL + _serviceToEdit.coverImage},
+                avatarSource: { uri: settings.IMAGE_URL + _serviceToEdit.coverImage },
                 businessType: _serviceToEdit.businessType,
             });
         }
@@ -504,23 +504,23 @@ class AddService extends React.PureComponent {
         // });
 
         this.setState({
-            avatarSource: {uri: `data:${image.mime};base64,${image.data}`},
+            avatarSource: { uri: `data:${image.mime};base64,${image.data}` },
             // avatarSource:{ uri:  response.uri },
             Image: image,
         });
     };
     _updateHomeDelivery = () => {
         let current = this.state.homeDelivery;
-        this.setState({homeDelivery: current === false ? true : false});
+        this.setState({ homeDelivery: current === false ? true : false });
     };
     _callSaveServiceMethod = service => {
         service.Image = this.state.Image;
         let _service = this.props.Service;
         if (_service) {
             service.coverImage = _service.coverImage;
-            this.setState({loading: true});
+            this.setState({ loading: true });
             Meteor.call('updateService', _service._id, service, (err, res) => {
-                this.setState({loading: false});
+                this.setState({ loading: false });
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -542,7 +542,7 @@ class AddService extends React.PureComponent {
                     console.log('Reslut from addNewService' + res);
                     this.setState({
                         query: '',
-                        selectedCategory: {subCategory: ''},
+                        selectedCategory: { subCategory: '' },
                         title: '',
                         homeDelivery: false,
                         radius: "0",
@@ -566,9 +566,9 @@ class AddService extends React.PureComponent {
             });
         } else {
             service.owner = Meteor.userId();
-            this.setState({loading: true});
+            this.setState({ loading: true });
             Meteor.call('addNewService', service, (err, res) => {
-                this.setState({loading: false});
+                this.setState({ loading: false });
                 if (err) {
                     ToastAndroid.showWithGravityAndOffset(
                         err.reason,
@@ -583,7 +583,7 @@ class AddService extends React.PureComponent {
                     console.log('Reslut from addNewService' + res);
                     this.setState({
                         query: '',
-                        selectedCategory: {subCategory: ''},
+                        selectedCategory: { subCategory: '' },
                         title: '',
                         homeDelivery: false,
                         radius: "0",
@@ -594,7 +594,7 @@ class AddService extends React.PureComponent {
                         unit: null,
                         webLink: '',
                     });
-                    this.props.navigation.navigate( 'MyServices');
+                    this.props.navigation.navigate('MyServices');
                 }
             });
         }
@@ -649,7 +649,7 @@ class AddService extends React.PureComponent {
                 //         console.log(err)
                 //     }
                 //     else {
-                service.Category = {subCatId: null, subCategory: query};
+                service.Category = { subCatId: null, subCategory: query };
                 this._callSaveServiceMethod(service);
                 //     }
                 // })
@@ -676,21 +676,21 @@ class AddService extends React.PureComponent {
 
     handleOnLocationSelect(location) {
         console.log(location);
-        this.setState({location: location, pickLocation: false});
+        this.setState({ location: location, pickLocation: false });
     }
 
     closePickLocation() {
         console.log('method Called');
-        this.setState({pickLocation: false});
+        this.setState({ pickLocation: false });
     }
 
     setModalVisible(visible) {
-        this.setState({modalVisible: visible});
+        this.setState({ modalVisible: visible });
     }
 
     _findCategory(query) {
         if (query === '') {
-            this.setState({categories: this.categories});
+            this.setState({ categories: this.categories });
         }
 
         let categories = this.categories;
@@ -698,38 +698,43 @@ class AddService extends React.PureComponent {
         categories = categories.filter(
             category => category.subCategory.search(regex) >= 0,
         );
-        this.setState({categories});
+        this.setState({ categories });
     }
 
     typeChanged = type => {
-        this.setState({type});
+        this.setState({ type });
     };
     businessTypeChange = businessType => {
-        this.setState({businessType});
+        this.setState({ businessType });
     };
 
     render() {
-        const {query, selectedCategory, location} = this.state;
+        const { query, selectedCategory, location } = this.state;
         // const categories = this._findCategory(query);
         // const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={styles.container}>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{backgroundColor: colors.appLayout}}>
+                    style={{ backgroundColor: colors.appLayout }}>
                     <Left>
                         {/*<Button transparent onPress={() => {*/}
                         {/*this.props.navigation.openDrawer()*/}
                         {/*}}>*/}
                         {/*<Icon name="md-more" style={{fontWeight: '500', fontSize: 35}}/>*/}
                         {/*</Button>*/}
-                        <CogMenu componentId={this.props.componentId}/>
+                        {/* <CogMenu componentId={this.props.componentId} /> */}
+                        <Button transparent onPress={() => {
+                            this.props.navigation.goBack()
+                        }}>
+                            <FIcon name="arrow-left" size={24} color={'#fff'} />
+                        </Button>
                     </Left>
 
                     <Body>
-                    <Text style={styles.screenHeader}>
-                        {this.props.Service ? 'Update service' : 'New Service'}
-                    </Text>
+                        <Text style={styles.screenHeader}>
+                            {this.props.Service ? 'Update service' : 'New Service'}
+                        </Text>
                     </Body>
                     {/*<Right>
                         <Button transparent onPress={() => navigate('Home')}>
@@ -741,7 +746,7 @@ class AddService extends React.PureComponent {
                     </Right>*/}
                 </Header>
                 <GalioProvider theme={customGalioTheme}>
-                    <Content style={{padding:Platform.OS==='ios'?20:0}}>
+                    <Content style={{ padding: Platform.OS === 'ios' ? 20 : 0 }}>
                         <Fragment>
                             {/*<ImageBackground*/}
                             {/*style={styles.sbf9e8383}*/}
@@ -755,6 +760,116 @@ class AddService extends React.PureComponent {
                                 style={styles.formContainer}
                                 keyboardShouldPersistTaps="always">
                                 {/*<Item style={styles.sbc83915f}>*/}
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder="Category (*)"
+                                    placeholderTextColor='#808080'
+                                    onSubmitEditing={() => this.title.focus()}
+                                    onKeyPress={() => this.setState({ categoryModal: true })}
+                                    onFocus={() => this.setState({ categoryModal: true })}
+                                    value={this.state.selectedCategory.subCategory}
+                                />
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder="Title (*)"
+                                    placeholderTextColor='#808080'
+                                    onSubmitEditing={() => this.title.focus()}
+                                    onChangeText={title => this.setState({ title })}
+                                    value={this.state.title}
+                                />
+                                <View
+                                    style={{
+                                        width: '100%',
+                                        backgroundColor: customGalioTheme.COLORS.WHITE,
+                                        borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
+                                        borderWidth: customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
+                                        borderColor: customGalioTheme.COLORS.PLACEHOLDER,
+                                    }}>
+                                    <Picker
+                                        mode="dropdown"
+                                        iosIcon={<Icon name="arrow-down" />}
+                                        placeholder="Select Service Type"
+                                        placeholderTextColor='#808080'
+                                        placeholderStyle={{
+                                            color: customGalioTheme.COLORS.PLACEHOLDER,
+                                        }}
+                                        placeholderIconColor={customGalioTheme.COLORS.PLACEHOLDER}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.businessType}
+                                        itemTextStyle={{ color: customGalioTheme.COLORS.INPUT_TEXT }}
+                                        onValueChange={this.businessTypeChange}>
+                                        {/*          {for (let [key, value] of Object.entries(BusinessType)) {
+  (<Picker.Item label={key} value={value} />)
+}}*/}
+                                        <Picker.Item
+                                            label="Service Provider"
+                                            value={BusinessType.SERVICE_PROVIDER}
+                                        />
+                                        <Picker.Item
+                                            label="Products/Goods Seller"
+                                            value={BusinessType.PRODUCTS_GOODS_SELLER}
+                                        />
+                                        {/*<Picker.Item*/}
+                                        {/*label="Resturant"*/}
+                                        {/*value={BusinessType.RESTURANT}*/}
+                                        {/*/>*/}
+                                    </Picker>
+                                </View>
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    //   onBlur={()=>this.setState({pickLocation:true})}
+                                    onFocus={() => this.setState({ pickLocation: true })}
+                                    placeholder="Location(*)"
+                                    placeholderTextColor='#808080'
+                                    value={location ? location.formatted_address : ""}
+                                //   onChangeText={(radius) => this.setState({radius})}
+                                />
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder="Radius for Service Area in KiloMeter (*)"
+                                    keyboardType="phone-pad"
+                                    placeholderTextColor='#808080'
+                                    onChangeText={radius => this.setState({ radius })}
+                                    value={this.state.radius}
+                                />
+                                <Textarea
+                                    rowSpan={3}
+                                    placeholder="Description (*)"
+                                    style={styles.inputTextarea}
+                                    placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
+                                    //onSubmitEditing={() => this.contactNumber.focus()}
+                                    onChangeText={description => this.setState({ description })}
+                                    value={this.state.description}
+                                />
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    // style={{width:'90%'}}
+                                    placeholder="Contact No (*)"
+                                    placeholderTextColor='#808080'
+                                    keyboardType="phone-pad"
+                                    onChangeText={contact => this.setState({ contact })}
+                                    value={this.state.contact}
+                                />
+                                {/* </View>
+                 <View style={styles.chkView}>
+                    <CheckBox
+                      style={{marginEnd: 20}}
+                      checked={this.state.homeDelivery}
+                      onPress={this._updateHomeDelivery}
+                    />
+                    <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>
+                      {'Home Delivery'}
+                    </Text>
+                  </View>
+                </View>*/}
+
+                                <Input
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder="Website"
+                                    placeholderTextColor='#808080'
+                                    onChangeText={webLink => this.setState({ webLink })}
+                                    value={this.state.webLink}
+                                />
                                 <View style={styles.sbc83915f}>
                                     {/*<Text style={styles.s1f0fdd20}>{`Add Service`}</Text>*/}
                                     <TouchableOpacity
@@ -776,7 +891,7 @@ class AddService extends React.PureComponent {
                                                 source={this.state.avatarSource}
                                             />
                                         ) : (
-                                            <Icon style={styles.sfe09f185} name="camera"/>
+                                            <Icon style={styles.sfe09f185} name="camera" />
                                         )}
                                     </TouchableOpacity>
                                 </View>
@@ -809,67 +924,6 @@ class AddService extends React.PureComponent {
                                 {/*/>*/}
                                 {/*</View>*/}
 
-                                <Input
-                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    placeholder="Category (*)"
-                                    onSubmitEditing={() => this.title.focus()}
-                                    onKeyPress={() => this.setState({categoryModal: true})}
-                                    onFocus={() => this.setState({categoryModal: true})}
-                                    value={this.state.selectedCategory.subCategory}
-                                />
-                                <View
-                                    style={{
-                                        width: '100%',
-                                        backgroundColor: customGalioTheme.COLORS.WHITE,
-                                        borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,
-                                        borderWidth: customGalioTheme.SIZES.INPUT_BORDER_WIDTH,
-                                        borderColor: customGalioTheme.COLORS.PLACEHOLDER,
-                                    }}>
-                                    <Picker
-                                        mode="dropdown"
-                                        iosIcon={<Icon name="arrow-down"/>}
-                                        placeholder="Select Service Type"
-                                        placeholderStyle={{
-                                            color: customGalioTheme.COLORS.PLACEHOLDER,
-                                        }}
-                                        placeholderIconColor={customGalioTheme.COLORS.PLACEHOLDER}
-                                        style={{width: '100%'}}
-                                        selectedValue={this.state.businessType}
-                                        itemTextStyle={{color: customGalioTheme.COLORS.INPUT_TEXT}}
-                                        onValueChange={this.businessTypeChange}>
-                                        {/*          {for (let [key, value] of Object.entries(BusinessType)) {
-  (<Picker.Item label={key} value={value} />)
-}}*/}
-                                        <Picker.Item
-                                            label="Service Provider"
-                                            value={BusinessType.SERVICE_PROVIDER}
-                                        />
-                                        <Picker.Item
-                                            label="Products/Goods Seller"
-                                            value={BusinessType.PRODUCTS_GOODS_SELLER}
-                                        />
-                                        {/*<Picker.Item*/}
-                                        {/*label="Resturant"*/}
-                                        {/*value={BusinessType.RESTURANT}*/}
-                                        {/*/>*/}
-                                    </Picker>
-                                </View>
-                                <Input
-                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    placeholder="Title (*)"
-                                    onSubmitEditing={() => this.title.focus()}
-                                    onChangeText={title => this.setState({title})}
-                                    value={this.state.title}
-                                />
-                                <Textarea
-                                    rowSpan={3}
-                                    placeholder="Description (*)"
-                                    style={styles.inputTextarea}
-                                    placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
-                                    //onSubmitEditing={() => this.contactNumber.focus()}
-                                    onChangeText={description => this.setState({description})}
-                                    value={this.state.description}
-                                />
                                 {/*<Input disabled*/}
                                 {/*style={styles.inputText}*/}
                                 {/*placeholderTextColor={`rgba(0, 0, 0, 0.44)`}*/}
@@ -890,22 +944,6 @@ class AddService extends React.PureComponent {
                                 {/*styles={GooglePlaceSerachStyle}*/}
                                 {/*/>*/}
 
-                                <Input
-                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    //   onBlur={()=>this.setState({pickLocation:true})}
-                                    onFocus={() => this.setState({pickLocation: true})}
-                                    placeholder="Location"
-                                    value={location ? location.formatted_address : ""}
-                                    //   onChangeText={(radius) => this.setState({radius})}
-                                />
-
-                                <Input
-                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    placeholder="Radius for Service Area in KiloMeter (*)"
-                                    keyboardType="phone-pad"
-                                    onChangeText={radius => this.setState({radius})}
-                                    value={this.state.radius}
-                                />
                                 {/*   <Label>Business Type: </Label>
                 <View
                   style={{
@@ -956,33 +994,7 @@ class AddService extends React.PureComponent {
 
                 <View style={styles.multiField}>
                 <View style={{flex:1,marginRight:5}} > */}
-                                <Input
-                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    // style={{width:'90%'}}
-                                    placeholder="Contact No (*)"
-                                    keyboardType="phone-pad"
-                                    onChangeText={contact => this.setState({contact})}
-                                    value={this.state.contact}
-                                />
-                                {/* </View>
-                 <View style={styles.chkView}>
-                    <CheckBox
-                      style={{marginEnd: 20}}
-                      checked={this.state.homeDelivery}
-                      onPress={this._updateHomeDelivery}
-                    />
-                    <Text style={{color: `rgba(0, 0, 0, 0.44)`}}>
-                      {'Home Delivery'}
-                    </Text>
-                  </View>
-                </View>*/}
 
-                                <Input
-                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                    placeholder="Website"
-                                    onChangeText={webLink => this.setState({webLink})}
-                                    value={this.state.webLink}
-                                />
                                 {/* <View style={styles.buttonView}>
                   <Button style={styles.button} onPress={this._saveService}>
                     <Text style={styles.buttonText}>
@@ -1003,10 +1015,10 @@ class AddService extends React.PureComponent {
                             ref={o => (this.ActionSheet = o)}
                             title={'Please select the option'}
                             options={[
-                                <Text style={{color: colors.appLayout}}>
+                                <Text style={{ color: colors.appLayout }}>
                                     Take Picture from Camera
                                 </Text>,
-                                <Text style={{color: colors.appLayout}}>
+                                <Text style={{ color: colors.appLayout }}>
                                     Pick Image from Gallery
                                 </Text>,
                                 'Cancel',
@@ -1034,7 +1046,7 @@ class AddService extends React.PureComponent {
                     }}>
                         <GButton
                             onPress={this._saveService}
-                            style={{width: '100%', marginVertical: 20}}
+                            style={{ width: '100%', marginVertical: 20 }}
                             loading={this.state.loading}
                             disabled={this.state.loading}>
                             {this.props.Service ? 'Update' : 'Save'}
@@ -1048,10 +1060,10 @@ class AddService extends React.PureComponent {
                     // transparent={true}
                     visible={this.state.categoryModal}
                     onRequestClose={() => {
-                        this.setState({categoryModal: false});
+                        this.setState({ categoryModal: false });
                     }}>
                     <Header
-                        style={{backgroundColor: colors.appLayout}}>
+                        style={{ backgroundColor: colors.appLayout }}>
                         {/*<Left style={{flex: 1}}>*/}
                         {/*<Button*/}
                         {/*transparent*/}
@@ -1062,44 +1074,44 @@ class AddService extends React.PureComponent {
                         {/*<FIcon name="arrow-left" size={20} color={'white'}/>*/}
                         {/*</Button>*/}
                         {/*</Left>*/}
-                        <Body style={{flex: 7, width: '100%',}}>
-                        <Item
+                        <Body style={{ flex: 7, width: '100%', }}>
+                            <Item
 
-                            searchBar
-                            boadered
-                            style={{
-                                width: '100%',
-                                backgroundColor: 'white',
-                                height: 40,
-                            }}>
-                            <Button
-                                transparent
-                                style={{paddingHorizontal: 15}}
-                                onPress={() => {
-                                    this.setState({categoryModal: false});
+                                searchBar
+                                boadered
+                                style={{
+                                    width: '100%',
+                                    backgroundColor: 'white',
+                                    height: 40,
                                 }}>
-                                <FIcon name="arrow-left" size={20}/>
-                            </Button>
-                            <NBInput
-                                style={{width: '100%',}}
-                                value={this.state.query}
-                                placeholder="Search.."
-                                onChangeText={text => {
-                                    this._debouncedFindCategory(text),
-                                        this.setState({query: text});
-                                }}
-                            />
-                            {this.state.query ? (
                                 <Button
-                                    style={{paddingHorizontal: 10}}
+                                    transparent
+                                    style={{ paddingHorizontal: 15 }}
                                     onPress={() => {
-                                        this.setState({query: ''});
-                                    }}
-                                    transparent>
-                                    <FIcon name="x" size={20}/>
+                                        this.setState({ categoryModal: false });
+                                    }}>
+                                    <FIcon name="arrow-left" size={20} />
                                 </Button>
-                            ) : null}
-                        </Item>
+                                <NBInput
+                                    style={{ width: '100%', }}
+                                    value={this.state.query}
+                                    placeholder="Search.."
+                                    onChangeText={text => {
+                                        this._debouncedFindCategory(text),
+                                            this.setState({ query: text });
+                                    }}
+                                />
+                                {this.state.query ? (
+                                    <Button
+                                        style={{ paddingHorizontal: 10 }}
+                                        onPress={() => {
+                                            this.setState({ query: '' });
+                                        }}
+                                        transparent>
+                                        <FIcon name="x" size={20} />
+                                    </Button>
+                                ) : null}
+                            </Item>
                         </Body>
                     </Header>
                     <Content padder>
@@ -1107,7 +1119,7 @@ class AddService extends React.PureComponent {
                             data={this.state.categories}
                             _keyExtractor={(item, index) => index.toString()}
                             keyboardShouldPersistTaps="always"
-                            renderItem={({item, index}) => (
+                            renderItem={({ item, index }) => (
                                 <ListItem
                                     onPress={() => {
                                         this.setState({
@@ -1130,7 +1142,7 @@ class AddService extends React.PureComponent {
 
 AddService.defaultProps = {};
 
-export {styles};
+export { styles };
 export default Meteor.createContainer(() => {
     Meteor.subscribe('categories');
     return {
