@@ -30,6 +30,7 @@ const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window'
 import Product from "../components/ecommerce/Product";
 import MyFunctions from "../lib/MyFunctions";
 import ServiceRatings from "./services/ServiceRatings";
+import FIcon from "react-native-vector-icons/Feather";
 
 
 //const { RNEsewaSdk } = NativeModules;
@@ -60,7 +61,7 @@ class ServiceDetail extends Component {
 
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
         const Id = this.props.route.params.Id;
-        console.log(Id)
+        //console.log(Id)
         let Service = {};
         if (typeof (Id) === "string") {
             Meteor.call('getSingleService', Id, (err, res) => {
@@ -75,14 +76,14 @@ class ServiceDetail extends Component {
 
             Meteor.call('updateServiceViewCount', Id);
             Meteor.call('getMyRating', Id, (err, res) => {
-                console.log('myRating:', res);
+                //console.log('myRating:', res);
                 this.setState({ myRating: res });
                 if (res && res.hasOwnProperty('rating'))
                     this.setState({ comment: res.rating.comment, starCount: res.rating.count })
             })
         }
         else {
-            console.log(Id)
+            //console.log(Id)
             // Service = Id;
             this.setState({ Service: Id });
             Meteor.call('updateServiceViewCount', Id._id)
@@ -242,7 +243,6 @@ class ServiceDetail extends Component {
     }
     render() {
         const Id = this.props.route.params.Id;
-        // console.log(Id)
         // let Service = {};
         // if (typeof (Id) === "string") {
         //     Service = Meteor.collection('serviceReact').findOne({_id: Id});
@@ -282,15 +282,24 @@ class ServiceDetail extends Component {
                                 source={this.state.Service.coverImage ? { uri: settings.IMAGE_URL + this.state.Service.coverImage } : userImage} />
                         </TouchableOpacity>
                         <Text style={styles.name}>{this.state.Service.title}</Text>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ServiceRatings', { Id: this.state.Service._id })} style={styles.starView}><StarRating starRate={this.state.Service.Rating.avgRate} /></TouchableOpacity>
-
-                        {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
-                            <Text style={styles.availableText}>{this.state.Service.location.formatted_address}
-                            </Text> :
-                            <Text style={styles.unavailableText}>
-                                {'Address Unavailable!'}
-                            </Text>
-                        }
+                        <View style={{ flexDirection: 'row' }}>
+                            {(this.state.Service.hasOwnProperty('radius') && this.state.Service.radius > 0) ?
+                                <Text style={styles.serviceText}>{this.state.Service.radius} km away</Text> : null
+                            }
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ServiceRatings', { Id: this.state.Service._id })} style={styles.starView}>
+                                <StarRating starRate={this.state.Service.Rating.avgRate} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <FIcon name="map-pin" style={{ fontSize: 20, marginLeft: 5, marginTop: 5 }} />
+                            {(this.state.Service.location.hasOwnProperty('formatted_address')) ?
+                                <Text style={styles.availableText}>{this.state.Service.location.formatted_address}
+                                </Text> :
+                                <Text style={styles.unavailableText}>
+                                    {'Address Unavailable!'}
+                                </Text>
+                            }
+                        </View>
 
 
                         {/*<View style={styles.starDisplay}>
@@ -304,21 +313,24 @@ class ServiceDetail extends Component {
                     <View style={styles.serviceInfo}>*/}
 
 
-                        {(this.state.Service.hasOwnProperty('radius') && this.state.Service.radius > 0) ?
+                        {/* {(this.state.Service.hasOwnProperty('radius') && this.state.Service.radius > 0) ?
                             <Text style={styles.serviceText}>Servie Area : Within {this.state.Service.radius} KM Radius from Address</Text> : null
-                        }
-
-                        <Text style={styles.infoText}>
-                            Contact: {this.state.Service.contact1} {this.state.Service.contact}
-                        </Text>
+                        } */}
+                        <View style={{ flexDirection: 'row' }}>
+                            <FIcon name="phone" style={{ fontSize: 20, marginLeft: 5, marginTop: 5 }} />
+                            <Text style={styles.infoText}>
+                                {this.state.Service.contact1} {this.state.Service.contact}
+                            </Text>
+                        </View>
                         {/*<Text style={ styles.infoText }>
                         {this.state.Service.contact}
                     </Text>*/}
-
-                        {this.state.Service.hasOwnProperty('email') ?
-                            <Text style={styles.infoText}>{this.state.Service.email}</Text> : null
-                        }
-
+                        <View style={{ flexDirection: 'row' }}>
+                            <FIcon name="mail" style={{ fontSize: 20, marginLeft: 5, marginTop: 5 }} />
+                            {this.state.Service.hasOwnProperty('email') ?
+                                <Text style={styles.infoText}>{this.state.Service.email}</Text> : 'NA'
+                            }
+                        </View>
                         {this.state.Service.hasOwnProperty('website') ?
                             <TouchableOpacity onPress={() => {
                                 this._browse(this.state.Service.website)
@@ -328,33 +340,62 @@ class ServiceDetail extends Component {
                                 </Text>
                             </TouchableOpacity> : null
                         }
-                        {/*</View>*/}
-
-                        <View style={styles.separator}></View>
-
-                        <View style={{ alignItems: 'center', marginHorizontal: 30 }}>
-                            <Text style={styles.description}>
-                                {this.state.Service.description}
-                            </Text>
+                        <View style={{ alignItems: 'center', alignContent: 'center' }}>
+                            <Button
+                                onPress={() => MyFunctions._callPhone(this.state.Service.contact ? this.state.Service.contact : this.state.Service.contact1)}
+                                block
+                                iconLeft
+                                style={{ marginHorizontal: 5, marginVertical: 20, backgroundColor: '#4d94ff' }}>
+                                <Icon name="md-call" style={{ color: '#ffffff', fontSize: 25 }} />
+                                <Text style={{ color: '#ffffff', fontSize: 25, marginLeft: 20 }}>Call</Text>
+                            </Button>
                         </View>
 
                         <View style={styles.separator}></View>
-                        {this.props.Products.length > 0 ?
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 5,marginVertical:10 }}>
+                            <Text>Description</Text>
+                            <TouchableOpacity onPress={() => {
+                                this._browse(this.state.Service.website)
+                            }}>
+                                <Text style={{color:'#4d94ff'}}>View All</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                        {this.state.Service.description != "" ?
+                            <View style={{ alignItems: 'center', marginHorizontal: 30 }}>
+                                <Text style={styles.description}>
+                                    {this.state.Service.description}
+                                </Text>
+                            </View> : <Text>Not available</Text>
+                        }
+
+                        <View style={styles.separator}></View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 5, marginVertical:10 }}>
+                            <Text>Similar Products</Text>
+                            <TouchableOpacity onPress={() => {
+                                this._browse(this.state.Service.website)
+                            }}>
+                                <Text style={{color:'#4d94ff'}}>View All</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                        {/* {this.props.Products.length > 0 ?
                             <View style={{ alignItems: 'center', marginHorizontal: 30 }}>
                                 <Text style={[styles.screenHeader, { color: colors.appLayout }]}>
                                     Products
                         </Text>
 
-                            </View> : null}
-                        <FlatList contentContainerStyle={styles.mainContainer}
-                            data={this.props.Products}
-                            keyExtracter={(item, index) => item._id}
-                            horizontal={false}
-                            // numColumns={2}
-                            renderItem={(item, index) => this._renderProduct(item, index)}
-                        />
+                            </View> : null} */}
+                        {this.props.Products.length > 0 ?
+                            <FlatList contentContainerStyle={styles.mainContainer}
+                                data={this.props.Products}
+                                keyExtracter={(item, index) => item._id}
+                                horizontal={false}
+                                // numColumns={2}
+                                renderItem={(item, index) => this._renderProduct(item, index)}
+                            /> : <Text>No Similar Product found</Text>}
                     </Content>}
-                {  this.state.Service ?
+                {/* {  this.state.Service ?
                     <Footer>
                         <FooterTab style={{ backgroundColor: '#4d94ff' }}>
                             {(this.state.Service.contact || this.state.Service.contact1) ?
@@ -382,7 +423,7 @@ class ServiceDetail extends Component {
                                 </Button>
                                 : null}
                         </FooterTab>
-                    </Footer> : null}
+                    </Footer> : null} */}
 
                 <View style={{ marginTop: 0 }}>
                     <Modal
@@ -494,10 +535,10 @@ const styles = StyleSheet.create({
         //backgroundColor: '#4d94ff0a',
         paddingHorizontal: 10,
         padding: 5,
-        textAlign: 'center',
+        //textAlign: 'center',
     },
     starView: {
-        backgroundColor: colors.inputBackground,
+        // backgroundColor: colors.inputBackground,
         textAlign: 'center',
         paddingHorizontal: 10,
         padding: 5,
@@ -505,8 +546,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         //borderRadius: 5,
-        borderBottomColor: '#4d94ff',
-        borderBottomWidth: 2
+        //borderBottomColor: '#4d94ff',
+        //borderBottomWidth: 2
     },
     availableText: {
         marginTop: 5,
