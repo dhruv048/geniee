@@ -1,5 +1,5 @@
 
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import {
   Title,
   Surface,
@@ -9,15 +9,15 @@ import {
   Divider,
   Provider,
 } from 'react-native-paper';
-import {Button, Left, ListItem, Right, View, Text, Thumbnail,Icon as NBIcon} from 'native-base';
-import {Image, StyleSheet, TouchableOpacity,Alert,ToastAndroid,PermissionsAndroid } from 'react-native';
+import { Button, Left, ListItem, Right, View, Text, Thumbnail, Icon as NBIcon } from 'native-base';
+import { Image, StyleSheet, TouchableOpacity, Alert, ToastAndroid, PermissionsAndroid } from 'react-native';
 import settings from '../../config/settings';
 import MyFunctions from '../../lib/MyFunctions';
-import {customGalioTheme, customPaperTheme} from '../../config/themes';
-import {colors, customStyle} from '../../config/styles';
+import { customGalioTheme, customPaperTheme } from '../../config/themes';
+import { colors, customStyle } from '../../config/styles';
 import FIcon from 'react-native-vector-icons/Feather';
 import Meteor from '../../react-native-meteor';
-import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import call from 'react-native-phone-call';
 import Geolocation from 'react-native-geolocation-service';
 
@@ -30,10 +30,10 @@ export default class ServiceItem extends PureComponent {
     this.region = {
       latitude: 27.71202,
       longitude: 85.31295,
-  };
+    };
   }
 
-_callPhone = number => {
+  _callPhone = number => {
     // let res=  this.onEsewaComplete();
     // alert(res);
     console.log(number);
@@ -49,58 +49,57 @@ _callPhone = number => {
     call(args).catch(console.error);
   };
 
- async componentDidMount() {
+  async componentDidMount() {
     this.granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-          'title': 'Location Permission',
-          'message': 'This App needs access to your location ' +
-              'so we can know where you are.'
+        'title': 'Location Permission',
+        'message': 'This App needs access to your location ' +
+          'so we can know where you are.'
       }
-  )
-  if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
+    )
+    if (this.granted === PermissionsAndroid.RESULTS.GRANTED) {
       // console.log("You can use locations ")
       Geolocation.getCurrentPosition(
-          (position) => {
-              // console.log(position);
-              let region = {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
-              }
-              this.region = region;
-          },
-          (error) => {
-              // See error code charts below.
-              console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-      );
-  } else {
-      console.log("Location permission denied")
-  }
-  this.watchID = Geolocation.watchPosition(
-      (position) => {
+        (position) => {
           // console.log(position);
           let region = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
           }
           this.region = region;
+        },
+        (error) => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+    } else {
+      console.log("Location permission denied")
+    }
+    this.watchID = Geolocation.watchPosition(
+      (position) => {
+        // console.log(position);
+        let region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        }
+        this.region = region;
       },
       (error) => {
-          console.log(error.code, error.message);
+        console.log(error.code, error.message);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-  );
+    );
 
 
   }
 
- removeService = _service => {
+  removeService = _service => {
     Alert.alert(
       'Remove Service',
-      `Do you want to remove service '${
-        _service.title
+      `Do you want to remove service '${_service.title
       }'? All the products under service will also be removed`,
       [
         {
@@ -133,19 +132,19 @@ _callPhone = number => {
           },
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
 
   editService = serv => {
-    this.props.navigation.navigate( 'AddService', {Service: serv});
+    this.props.navigation.navigate('AddService', { Service: serv });
   };
 
 
 
   _getChatChannel(userId) {
-    var channelId = new Promise(function(resolve, reject) {
-      Meteor.call('addChatChannel', userId, function(error, result) {
+    var channelId = new Promise(function (resolve, reject) {
+      Meteor.call('addChatChannel', userId, function (error, result) {
         if (error) {
           reject(error);
         } else {
@@ -157,7 +156,7 @@ _callPhone = number => {
     return channelId;
   }
 
-  _handleChat=() =>{
+  _handleChat = () => {
     let Service = this.props.service;
     // console.log('service' + Service._id);
     this._getChatChannel(Service._id)
@@ -172,7 +171,7 @@ _callPhone = number => {
           },
           service: Service,
         };
-        this.props.navigation.navigate( 'Message', {Channel});
+        this.props.navigation.navigate('Message', { Channel });
       })
       .catch(error => {
         console.error(error);
@@ -180,7 +179,7 @@ _callPhone = number => {
   }
 
   _handlItemPress = service => {
-    this.props.navigation.navigate('ServiceDetail',{ Id: service,})
+    this.props.navigation.navigate('ServiceDetail', { Id: service, })
     // Navigation.push(this.props.componentId, {
     //   component: {
     //     name: 'ServiceDetail',
@@ -193,17 +192,17 @@ _callPhone = number => {
 
 
   render() {
-    const userId=Meteor.userId();
-    const {service, navigation} = this.props;
+    const userId = Meteor.userId();
+    const { service, navigation } = this.props;
     let distance;
     if (service.location && service.location.geometry)
-    distance = MyFunctions.calculateDistance(
+      distance = MyFunctions.calculateDistance(
         this.region.latitude,
         this.region.longitude,
         service.location.geometry.location.lat,
         service.location.geometry.location.lng,
-    );
-  
+      );
+
     //  console.log(distance)
     return (
       <Provider theme={customPaperTheme}>
@@ -341,212 +340,212 @@ _callPhone = number => {
           </ListItem>
         </View> */}
 
-<TouchableOpacity style={{padding:10}}
-                                        onPress={() => {
-                                            navigation.navigate('ServiceDetail', {
-                                                Id: service,
-                                            });
-                                        }}>
-                                        <View
-                                            key={service._id}
-                                            style={{
-                                                backgroundColor: 'white',
-                                                width: '100%',
-                                                flexDirection: 'column',
-                                                borderRadius: 5
-                                            }}>
-                                            <View style={{ height: 120, width:'100%',  borderRadius: 10}}>
-                                                <Thumbnail
-                                                    style={{
-                                                        width: '100%',
-                                                        height: 120,
-                                                        marginBottom: 10,
-                                                        borderRadius:5,
-                                                        resizeMode: 'cover',
-                                                    }}
-                                                    square
-                                                    source={
-                                                        service.coverImage
-                                                            ? { uri: settings.IMAGE_URL + service.coverImage }
-                                                            : require('../../images/no-image.png')
-                                                    }
-                                                /> 
+        <TouchableOpacity style={{ padding: 10 }}
+          onPress={() => {
+            this.props.navigation.navigate('ServiceDetail', {
+              Id: service,
+            });
+          }}>
+          <View
+            key={service._id}
+            style={{
+              backgroundColor: 'white',
+              width: '100%',
+              flexDirection: 'column',
+              borderRadius: 5
+            }}>
+            <View style={{ height: 120, width: '100%', borderRadius: 10 }}>
+              <Thumbnail
+                style={{
+                  width: '100%',
+                  height: 120,
+                  marginBottom: 10,
+                  borderRadius: 5,
+                  resizeMode: 'cover',
+                }}
+                square
+                source={
+                  service.coverImage
+                    ? { uri: settings.IMAGE_URL + service.coverImage }
+                    : require('../../images/no-image.png')
+                }
+              />
 
-                                               
-                                              <TouchableOpacity
-                                              style={{
-                                                width: 40,
-                                                height: 40,
-                                                position:'absolute',
-                                                top:5,
-                                                right:5,
-                                                zIndex:1
-                                              }}
-                                              onPress={() => {}}>
-                                              <Menu
-                                                ref={ref => (this[`menu${service._id}`] = ref)}
-                                                button={
-                                                  <Button style={{alignSelf:'flex-end'}}
-                                                    transparent
-                                                    onPress={() => this[`menu${service._id}`].show()}>
-                                                    <FIcon
-                                                      name={'more-vertical'}
-                                                      size={25}
-                                                      color={colors.primary}
-                                                    />
-                                                  </Button>
-                                                }>
-                                                 {Meteor.userId() && Meteor.userId()==service.owner? null :
-                                                <MenuItem
-                                                  onPress={() => {
-                                                    this[`menu${service._id}`].hide(),
-                                                      this._callPhone(service.contact ? service.contact : service.contact1);
-                                                  }}>
-                                                  <FIcon
-                                                      name={'phone'}
-                                                      size={15}
-                                                      color={colors.gray_200}
-                                                    />  Call
+
+              <TouchableOpacity
+                style={{
+                  width: 40,
+                  height: 40,
+                  position: 'absolute',
+                  top: 5,
+                  right: 5,
+                  zIndex: 1
+                }}
+                onPress={() => { }}>
+                <Menu
+                  ref={ref => (this[`menu${service._id}`] = ref)}
+                  button={
+                    <Button style={{ alignSelf: 'flex-end' }}
+                      transparent
+                      onPress={() => this[`menu${service._id}`].show()}>
+                      <FIcon
+                        name={'more-vertical'}
+                        size={25}
+                        color={colors.primary}
+                      />
+                    </Button>
+                  }>
+                  {Meteor.userId() && Meteor.userId() == service.owner ? null :
+                    <MenuItem
+                      onPress={() => {
+                        this[`menu${service._id}`].hide(),
+                          this._callPhone(service.contact ? service.contact : service.contact1);
+                      }}>
+                      <FIcon
+                        name={'phone'}
+                        size={15}
+                        color={colors.gray_200}
+                      />  Call
                                                 </MenuItem>}
-                                                {Meteor.userId() && service.owner && Meteor.userId()!=service.owner?
-                                                <MenuItem
-                                                  onPress={() => {
-                                                    this[`menu${service._id}`].hide(),
-                                                      this._handleChat();
-                                                  }}>
-                                                  <FIcon
-                                                      name={'message-square'}
-                                                      size={15}
-                                                      color={colors.gray_200}
-                                                    />  Message
+                  {Meteor.userId() && service.owner && Meteor.userId() != service.owner ?
+                    <MenuItem
+                      onPress={() => {
+                        this[`menu${service._id}`].hide(),
+                          this._handleChat();
+                      }}>
+                      <FIcon
+                        name={'message-square'}
+                        size={15}
+                        color={colors.gray_200}
+                      />  Message
                                                 </MenuItem> : null}
-                                                {Meteor.userId() && Meteor.userId()==service.owner?
-                                                  <>
-                                                <MenuDivider/>
-                                                <MenuItem
-                                                  onPress={() => {
-                                                    this[`menu${service._id}`].hide(),
-                                                      this.editService(service);
-                                                  }}>
-                                                  <FIcon
-                                                      name={'edit'}
-                                                      size={15}
-                                                      color={colors.gray_200}
-                                                    />  Edit
+                  {Meteor.userId() && Meteor.userId() == service.owner ?
+                    <>
+                      <MenuDivider />
+                      <MenuItem
+                        onPress={() => {
+                          this[`menu${service._id}`].hide(),
+                            this.editService(service);
+                        }}>
+                        <FIcon
+                          name={'edit'}
+                          size={15}
+                          color={colors.gray_200}
+                        />  Edit
                                                 </MenuItem>
-                                                <MenuItem
-                                                  onPress={() => {
-                                                    this[`menu${service._id}`].hide(),
-                                                      this.removeService(service);
-                                                  }}>
-                                                  <FIcon
-                                                      name={'trash'}
-                                                      size={15}
-                                                      color={colors.gray_200}
-                                                    />  Remove
+                      <MenuItem
+                        onPress={() => {
+                          this[`menu${service._id}`].hide(),
+                            this.removeService(service);
+                        }}>
+                        <FIcon
+                          name={'trash'}
+                          size={15}
+                          color={colors.gray_200}
+                        />  Remove
                                                 </MenuItem>
-                                                </>:null}
-                                              </Menu>
-                                            </TouchableOpacity> 
-                                          
-                                            </View>
-                                            <View style={{ flexDirection: 'row', padding: 5 }}>
-                                                <View
-                                                    style={{
-                                                        flex: 3,
-                                                        alignItems: 'flex-start',
-                                                    }}>
-                                                    {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
-                                                    {/*{service.title}*/}
-                                                    {/*</Text>*/}
-                                                    {service.title ? (
-                                                        <View
-                                                            style={{
-                                                                flexDirection: 'row',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}>
-                                                            {/* <Icon
+                    </> : null}
+                </Menu>
+              </TouchableOpacity>
+
+            </View>
+            <View style={{ flexDirection: 'row', padding: 5 }}>
+              <View
+                style={{
+                  flex: 3,
+                  alignItems: 'flex-start',
+                }}>
+                {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
+                {/*{service.title}*/}
+                {/*</Text>*/}
+                {service.title ? (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    {/* <Icon
                                                                 name={'tag'}
                                                                 size={10}
                                                                 color={colors.gray_100}
                                                             /> */}
 
-                                                            <Text
-                                                                numberOfLines={2}
-                                                                style={{ marginLeft: 5, fontSize: 14 }}>
-                                                                {service.title || ''}
-                                                            </Text>
-                                                        </View>
-                                                    ) : null}
-                                                    {/*<Text note style={styles.cardNote}*/}
-                                                    {/*numberOfLines={1}>{service.location.formatted_address}</Text>*/}
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            // justifyContent: 'space-between',
-                                                            width: '100%',
-                                                        }}>
-                                                             <View
-                                                            style={{
-                                                                alignItem: 'center',
-                                                                flexDirection: 'row',
-                                                            }}>
-                                                            {/*<Icon name={'location-arrow'} size={18}*/}
-                                                            {/*color={colors.gray_200}/>*/}
-                                                            {service.dist ?
-                                                            <Text note style={{ fontSize: 12 }}>
-                                                                {Math.round(service.dist.calculated * 100) / 100}{' '}
+                    <Text
+                      numberOfLines={2}
+                      style={{ marginLeft: 5, fontSize: 14 }}>
+                      {service.title || ''}
+                    </Text>
+                  </View>
+                ) : null}
+                {/*<Text note style={styles.cardNote}*/}
+                {/*numberOfLines={1}>{service.location.formatted_address}</Text>*/}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    // justifyContent: 'space-between',
+                    width: '100%',
+                  }}>
+                  <View
+                    style={{
+                      alignItem: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    {/*<Icon name={'location-arrow'} size={18}*/}
+                    {/*color={colors.gray_200}/>*/}
+                    {service.dist ?
+                      <Text note style={{ fontSize: 12 }}>
+                        {Math.round(service.dist.calculated * 100) / 100}{' '}
                                                                 km away
-                                                            </Text>:
-                                                             <Text note style={{ fontSize: 12 }}>
-                                                             {distance? distance+" km away" : ''}
-                                                           
-                                                         </Text>
-                                                            }
-                                                        </View>
-                                                        <View
-                                                            style={{
-                                                                marginLeft:10,
-                                                                flexDirection: 'row',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}>
-                                                                 <NBIcon
-                                                                name={'star'}
-                                                                style={{fontSize:14,color:colors.gray_100}}
-                                                            />
-                                                            <Text note style={{ fontSize: 12,marginLeft:5 }}>
-                                                                {service.hasOwnProperty('ratings')
-                                                                    ? Math.round(service.Rating.avgRate)
-                                                                    : 1} (
+                                                            </Text> :
+                      <Text note style={{ fontSize: 12 }}>
+                        {distance ? distance + " km away" : ''}
+
+                      </Text>
+                    }
+                  </View>
+                  <View
+                    style={{
+                      marginLeft: 10,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <NBIcon
+                      name={'star'}
+                      style={{ fontSize: 14, color: colors.gray_100 }}
+                    />
+                    <Text note style={{ fontSize: 12, marginLeft: 5 }}>
+                      {service.hasOwnProperty('ratings')
+                        ? Math.round(service.Rating.avgRate)
+                        : 1} (
                                                                      {service.hasOwnProperty('ratings')
-                                                                    ? service.Rating.count
-                                                                    : 0})
+                        ? service.Rating.count
+                        : 0})
                                                             </Text>
 
-                                                           
-                                                        </View>
-                                                       
-                                                        {/*{service.Category?*/}
-                                                        {/*<View style={{*/}
-                                                        {/*flexDirection: 'row',*/}
-                                                        {/*alignItems: 'center',*/}
-                                                        {/*justifyContent: 'center',*/}
-                                                        {/*}}>*/}
-                                                        {/*<Text>*/}
-                                                        {/*<Icon name={'tag'} size={16}*/}
-                                                        {/*color={colors.warning}/></Text>*/}
-                                                        {/*<Text note>*/}
-                                                        {/*{service.Category.subCategory}*/}
-                                                        {/*</Text>*/}
 
-                                                        {/*</View>:null}*/}
-                                                    </View>
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
+                  </View>
+
+                  {/*{service.Category?*/}
+                  {/*<View style={{*/}
+                  {/*flexDirection: 'row',*/}
+                  {/*alignItems: 'center',*/}
+                  {/*justifyContent: 'center',*/}
+                  {/*}}>*/}
+                  {/*<Text>*/}
+                  {/*<Icon name={'tag'} size={16}*/}
+                  {/*color={colors.warning}/></Text>*/}
+                  {/*<Text note>*/}
+                  {/*{service.Category.subCategory}*/}
+                  {/*</Text>*/}
+
+                  {/*</View>:null}*/}
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
       </Provider>
     );
   }

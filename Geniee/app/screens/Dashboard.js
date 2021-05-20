@@ -56,8 +56,8 @@ import FooterTabs from '../components/FooterTab';
 import NotificationIcon from '../components/HeaderIcons/NotificationIcon';
 import CartIcon from '../components/HeaderIcons/CartIcon';
 let isDashBoard = true;
-const materialColors=['#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2','#AFB42B','#D32F2F','#0288D1' ,'#5D4037','#0097A7','#FBC02D','#00796B', '#388E3C', '#F57C00','#689F38','#E64A19',
-'#616161','#FFA000','#455A64' ];
+const materialColors = ['#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2', '#AFB42B', '#D32F2F', '#0288D1', '#5D4037', '#0097A7', '#FBC02D', '#00796B', '#388E3C', '#F57C00', '#689F38', '#E64A19',
+    '#616161', '#FFA000', '#455A64'];
 
 
 class Dashboard extends Component {
@@ -87,13 +87,13 @@ class Dashboard extends Component {
                     title: 'Baadshah Briyani',
                     imgSource: require('../images/baadshah_logo.jpg'),
                     onPress: this.gotoBB,
-                    description:'Baadshah Biryani serves the most authentic Biryani in Kathmandu prepared by our expertise.Our Biryani will give you a burst of flavour in every bite as we use in-house spices'
+                    description: 'Baadshah Biryani serves the most authentic Biryani in Kathmandu prepared by our expertise.Our Biryani will give you a burst of flavour in every bite as we use in-house spices'
                 },
                 {
                     title: 'Eat-Fit',
                     imgSource: require('../images/EF2.jpg'),
                     onPress: this.gotoEatFit,
-                    description:'At cure.fit, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation, and medical & lifestyle care hassle-free. #BeBetterEveryDay'
+                    description: 'At cure.fit, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation, and medical & lifestyle care hassle-free. #BeBetterEveryDay'
                 },
             ],
         };
@@ -148,6 +148,17 @@ class Dashboard extends Component {
             }
         });
 
+        //Services/Store Nearby
+        //   Meteor.call('getServicesNearBy', data, (err, res) => {
+        Meteor.call('getRandomServices', [this.region.longitude, this.region.latitude], 15, 10, (err, res) => {
+            console.log(err, res)
+            this.setState({ loading: false });
+            if (!err) {
+                this.setState({ nearByservice: res.result });
+            } else {
+                console.log(err);
+            }
+        });
 
         //Get Popular Products
         Meteor.call('getPopularProducts', 0, 6, (err, res) => {
@@ -239,26 +250,26 @@ class Dashboard extends Component {
             }
         });
 
-        this.backHandler =  BackHandler.addEventListener(
+        this.backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
             this.handleBackButton.bind(this),
         );
 
-        this.focusListnier = this.props.navigation.addListener('focus',()=>{
+        this.focusListnier = this.props.navigation.addListener('focus', () => {
             console.log('Dashboard Focus');
             this._fetchNearByServices();
-            this.backHandler =  BackHandler.addEventListener(
+            this.backHandler = BackHandler.addEventListener(
                 'hardwareBackPress',
                 this.handleBackButton.bind(this),
             );
         }
         );
 
-        this.blurListnier= this.props.navigation.addListener('blur',()=>{
-            try{
-            this.backHandler.remove();
+        this.blurListnier = this.props.navigation.addListener('blur', () => {
+            try {
+                this.backHandler.remove();
             }
-            catch(e){
+            catch (e) {
                 console.log(e.message)
             }
         });
@@ -309,9 +320,9 @@ class Dashboard extends Component {
     componentWillUnmount() {
         this.mounted = false;
         this.watchID != null && Geolocation.clearWatch(this.watchID);
-        this.focusListnier();
-         this.blurListnier();
-      
+        this.focusListnier;
+        this.blurListnier;
+
     }
 
 
@@ -377,7 +388,7 @@ class Dashboard extends Component {
         this.setState({ pickLocation: false });
     }
 
-   
+
 
     messageListener = async () => {
         this.notificationOpenedListener = messaging().onNotificationOpenedApp(notificationOpen => {
@@ -453,15 +464,15 @@ class Dashboard extends Component {
 
     _search = text => {
         if (this.state.query)
-            this.props.navigation.navigate( 'SearchResult', {
+            this.props.navigation.navigate('SearchResult', {
                 SearchText: this.state.query,
-                Region:this.region
+                Region: this.region
             });
     };
 
     _handlItemPress = service => {
         service.avgRate = this.averageRating(service.ratings);
-     this.props.navigation.push('ServiceDetail', {Id: service._id});
+        this.props.navigation.push('ServiceDetail', { Id: service._id });
         // Navigation.push(this.props.componentId, {
         //     component: {
         //         name: 'ServiceDetail',
@@ -484,7 +495,7 @@ class Dashboard extends Component {
         item.subCategories.map(item => {
             Ids.push(item.subCatId);
         });
-         this.props.navigation.navigate("ServiceList", {Id: Ids, Region: this.region})
+        this.props.navigation.navigate("ServiceList", { Id: Ids, Region: this.region })
         // Navigation.push(this.props.componentId, {
         //     component: {
         //         name: 'ServiceList',
@@ -498,7 +509,7 @@ class Dashboard extends Component {
 
     gotoEatFit = () => {
         console.log('Eat-Fit');
-       this.props.navigation.navigate('LandingPageEF')
+        this.props.navigation.navigate('LandingPageEF')
     };
 
     gotoBB = () => {
@@ -520,7 +531,7 @@ class Dashboard extends Component {
                         padding: 10
                     }}>*/}
                     <Body>
-                        <View style={[styles.catIcon,{backgroundColor:materialColors[data.index]}]}>
+                        <View style={[styles.catIcon, { backgroundColor: materialColors[data.index] }]}>
                             <FAIcon name={item.icon} size={25} color='white' />
                         </View>
                     </Body>
@@ -622,7 +633,7 @@ class Dashboard extends Component {
     };
 
     _renderItem({ item, index }) {
-        console.log(item,index)
+        console.log(item, index)
         return (
             <View key={index} style={{ flex: 1, width: '100%' }}>
                 <Thumbnail
@@ -648,7 +659,7 @@ class Dashboard extends Component {
         //     }
         // });
 
-         this.props.navigation.navigate( 'ProductDetail', { Id: pro._id });
+        this.props.navigation.navigate('ProductDetail', { Id: pro._id });
     };
 
     _onScroll = event => {
@@ -687,10 +698,10 @@ class Dashboard extends Component {
         return (
             <TouchableOpacity key={item._id}
                 onPress={() => this._handleProductPress(item)}
-                style={[styles.productContainerStyle,{borderTopLeftRadius:5,borderTopRightRadius:5}]}>
+                style={[styles.productContainerStyle, { borderTopLeftRadius: 5, borderTopRightRadius: 5 }]}>
                 {/*<Product key={item._id} product={item}/>*/}
-                <View key={item._id} style={[customStyle.Card, { top: 0, left: 0, rigth: 0,  }]}>
-                    <CardItem cardBody style={{ width: '100%',borderRadius:5 }}>
+                <View key={item._id} style={[customStyle.Card, { top: 0, left: 0, rigth: 0, }]}>
+                    <CardItem cardBody style={{ width: '100%', borderRadius: 5 }}>
                         <Image
                             source={{ uri: settings.IMAGE_URL + item.images[0] }}
                             style={{
@@ -698,7 +709,7 @@ class Dashboard extends Component {
                                 width: undefined,
                                 height: 100,
                                 resizeMode: 'cover',
-                                borderRadius:5 
+                                borderRadius: 5
                             }}
                         />
                         {/* <View
@@ -731,21 +742,21 @@ class Dashboard extends Component {
                             </Text>
                         </View>
                     ) : null} */}
-                    <CardItem style={{ paddingTop: 0,paddingLeft:5}}>
+                    <CardItem style={{ paddingTop: 0, paddingLeft: 5 }}>
                         <Body>
-                        <View style={{height:35}}>
-                            <Text note numberOfLines={2} style={{fontWeight:'bold'}}>
-                                 {/* style={{ fontSize: 12, color: colors.primaryText }}
+                            <View style={{ height: 35 }}>
+                                <Text note numberOfLines={2} style={{ fontWeight: 'bold' }}>
+                                    {/* style={{ fontSize: 12, color: colors.primaryText }}
                                  numberOfLines={1}> */}
-                                {item.title}
-                            </Text>
+                                    {item.title}
+                                </Text>
                             </View>
-                            <Text style={{color:colors.appLayout, fontWeight:'700' ,fontSize:14}}>Rs. {(item.price-(item.price*item.discount)/100)}</Text>
-                            {item.discount ? 
-                            <>
-                            <Text style={{color:colors.gray_200, fontWeight:'500' ,fontSize:12, textDecorationLine: 'line-through',textDecorationStyle: 'solid'}}>Rs. {item.price }</Text>
-                            <Text style={{color:colors.gray_200, fontWeight:'300' ,fontSize:10,}}>{item.discount}% off</Text>
-                            </> :null}
+                            <Text style={{ color: colors.appLayout, fontWeight: '700', fontSize: 14 }}>Rs. {(item.price - (item.price * item.discount) / 100)}</Text>
+                            {item.discount ?
+                                <>
+                                    <Text style={{ color: colors.gray_200, fontWeight: '500', fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
+                                    <Text style={{ color: colors.gray_200, fontWeight: '300', fontSize: 10, }}>{item.discount}% off</Text>
+                                </> : null}
                             {/* <View
                                 style={{
                                     flexDirection: 'row',
@@ -799,21 +810,21 @@ class Dashboard extends Component {
 
     render() {
         const { loggedUser } = this.state;
-        const profileImage=loggedUser? loggedUser.profile.profileImage : null;
+        const profileImage = loggedUser ? loggedUser.profile.profileImage : null;
         // console.log(loggedUser,profileImage)
         return (
             <>
-            <StatusBar  backgroundColor={colors.statusBar}/>
-            <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
-                
-                <View style={{backgroundColor:colors.appLayout, height:this.state.isActionButtonVisible ? 110 :50}}>
-                    <View style={{flex:1,flexDirection:'row', justifyContent:'space-between',alignItems:'center', marginHorizontal:15}}>
-                        <Text style={{fontSize:25,  fontWeight:'bold', color:'white', fontFamily:'Roboto'}}>Geniee</Text>
-                        <View style={{ justifyContent:'space-around',  alignItems:'center',   flexDirection:'row' }}>
+                <StatusBar backgroundColor={colors.statusBar} />
+                <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
 
-                        <NotificationIcon navigation={this.props.navigation}/>
+                    <View style={{ backgroundColor: colors.appLayout, height: this.state.isActionButtonVisible ? 110 : 50 }}>
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 15 }}>
+                            <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'white', fontFamily: 'Roboto' }}>Geniee</Text>
+                            <View style={{ justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row' }}>
 
-                        {/* <Button
+                                <NotificationIcon navigation={this.props.navigation} />
+
+                                {/* <Button
                         style={{marginHorizontal:8 }}
                             onPress={() => this.props.navigation.navigate( 'WishListEF')}
                             transparent>
@@ -827,298 +838,298 @@ class Dashboard extends Component {
                             ) : null}
                         </Button> */}
 
-                       <CartIcon navigation={this.props.navigation} />
+                                <CartIcon navigation={this.props.navigation} />
 
-                       <TouchableOpacity style={{marginHorizontal:5}}
-                            onPress={() =>this.props.navigation.navigate( loggedUser ? 'Profile': 'SignIn')}
-                           >
-                            <Icon
-                                name="user"
-                                style={{ fontSize: 22, color: 'white' }}
-                            />
-                            </TouchableOpacity>
+                                <TouchableOpacity style={{ marginHorizontal: 5 }}
+                                    onPress={() => this.props.navigation.navigate(loggedUser ? 'Profile' : 'SignIn')}
+                                >
+                                    <Icon
+                                        name="user"
+                                        style={{ fontSize: 22, color: 'white' }}
+                                    />
+                                </TouchableOpacity>
 
-                        {/*<Button transparent onPress={this.handleOnPress}>*/}
-                        {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
-                    </View>
-                    </View>
-                {this.state.isActionButtonVisible ? (
-                    <Item
-                        search
-                        style={{
-                            backgroundColor: '#cce0ff',
-                            marginLeft: 10,
-                            marginRight: 10,
-                            marginVertical: 10,
-                            marginTop: 15,
-                            height: 40,
-                            zIndex: 1,
-                            borderRadius:8,
-                            borderBottomWidth:0
-                            // position: 'absolute',
-                            // top: Platform.OS == 'android' ? 70 : 90,
-                            // left: 0,
-                            // right: 0,
-                        }}>
-                        <Button
-                            transparent
-                            disabled={this.state.query.length < 3}
-                            onPress={this._search.bind(this)}>
-                            <Icon
+                                {/*<Button transparent onPress={this.handleOnPress}>*/}
+                                {/*<Icon name={'search'} size={25} color={'white'}/></Button>*/}
+                            </View>
+                        </View>
+                        {this.state.isActionButtonVisible ? (
+                            <Item
+                                search
                                 style={{
-                                    paddingHorizontal: 20,
-                                    fontSize: this.state.query.length > 2 ? 20 : 15,
-                                    color:
-                                        this.state.query.length > 2 ? colors.primary : undefined,
-                                }}
-                                name={'search'}
-                            />
-                        </Button>
-                        <Input
-                            style={{ fontFamily: 'Roboto' }}
-                            placeholder={'Search anything...'}
-                            underlineColorAndroid="rgba(0,0,0,0)"
-                            returnKeyType="search"
-                            onSubmitEditing={this._search}
-                            onChangeText={searchText => {
-                                this.setState({ query: searchText });
-                            }}
-                        />
-                    </Item>
-                ) : null}
-
-                </View>
-                {/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
-                
-
-                <Content
-                    onScroll={this._onScroll}
-                    style={{
-                        width: '100%',
-                        flex: 1,
-                        paddingLeft: 10,
-                         paddingTop: 10,
-                    }}>
-                    {/*NEARBY SERVICE PROVIDERS LIST START*/}
-                    {this.state.nearByservice.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Services/Store nearby</Text>
+                                    backgroundColor: '#cce0ff',
+                                    marginLeft: 10,
+                                    marginRight: 10,
+                                    marginVertical: 10,
+                                    marginTop: 15,
+                                    height: 40,
+                                    zIndex: 1,
+                                    borderRadius: 8,
+                                    borderBottomWidth: 0
+                                    // position: 'absolute',
+                                    // top: Platform.OS == 'android' ? 70 : 90,
+                                    // left: 0,
+                                    // right: 0,
+                                }}>
                                 <Button
-                                style={{paddingRight:10}}
                                     transparent
-                                    onPress={() =>
-                                        this.props.navigation.navigate( 'ServiceList', {
-                                            Region: this.region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
+                                    disabled={this.state.query.length < 3}
+                                    onPress={this._search.bind(this)}>
+                                    <Icon
+                                        style={{
+                                            paddingHorizontal: 20,
+                                            fontSize: this.state.query.length > 2 ? 20 : 15,
+                                            color:
+                                                this.state.query.length > 2 ? colors.primary : undefined,
+                                        }}
+                                        name={'search'}
+                                    />
+                                </Button>
+                                <Input
+                                    style={{ fontFamily: 'Roboto' }}
+                                    placeholder={'Search anything...'}
+                                    underlineColorAndroid="rgba(0,0,0,0)"
+                                    returnKeyType="search"
+                                    onSubmitEditing={this._search}
+                                    onChangeText={searchText => {
+                                        this.setState({ query: searchText });
+                                    }}
+                                />
+                            </Item>
+                        ) : null}
+
+                    </View>
+                    {/*{this.state.loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
+
+
+                    <Content
+                        onScroll={this._onScroll}
+                        style={{
+                            width: '100%',
+                            flex: 1,
+                            paddingLeft: 10,
+                            paddingTop: 10,
+                        }}>
+                        {/*NEARBY SERVICE PROVIDERS LIST START*/}
+                        {this.state.nearByservice.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={styles.blockTitle}>Services/Store nearby</Text>
+                                    <Button
+                                        style={{ paddingRight: 10 }}
+                                        transparent
+                                        onPress={() =>
+                                            this.props.navigation.navigate('ServiceList', {
+                                                Region: this.region,
+                                            })
+                                        }>
+                                        {/* <Text style={customStyle.buttonOutlinePrimaryText}>
                                         View All
                                     </Text> */}
-                                    <Icon name="arrow-right" size={20} color={colors.gray_200}/>
-                                </Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{ paddingBottom: 15 , paddingLeft: 0, marginLeft:0}}
-                                data={this.state.nearByservice}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({ item, index }) => (
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            this.props.navigation.navigate('ServiceDetail', {
-                                                Id: item,
-                                            });
-                                        }}>
-                                        <View
-                                            key={item._id}
-                                            style={{
-                                                backgroundColor: 'white',
-                                                marginRight: 5,
-                                                // height: 120,
-                                                width: 280,
-                                                flexDirection: 'column',
-                                                // alignItems: 'center',
-                                                // paddingHorizontal: 10,
-                                                // paddingBottom: 10,
-                                                borderRadius: 5
+                                        <Icon name="arrow-right" size={20} color={colors.gray_200} />
+                                    </Button>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{ paddingBottom: 15, paddingLeft: 0, marginLeft: 0 }}
+                                    data={this.state.nearByservice}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item, index }) => (
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                this.props.navigation.navigate('ServiceDetail', {
+                                                    Id: item,
+                                                });
                                             }}>
-                                            <View style={{ height: 120, width: 280,  borderRadius: 10,}}>
-                                                <Thumbnail
-                                                    style={{
-                                                        width: 280,
-                                                        height: 120,
-                                                        marginBottom: 10,
-                                                        borderRadius:5,
-                                                        resizeMode: 'cover',
-                                                    }}
-                                                    square
-                                                    source={
-                                                        item.coverImage
-                                                            ? { uri: settings.IMAGE_URL + item.coverImage }
-                                                            : require('../images/no-image.png')
-                                                    }
-                                                />
-                                                <LinearGradient
-                                                    colors={['transparent', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.6)']}
-                                                    style={{
-                                                        position: 'absolute',
-                                                        bottom: 0,
-                                                        width: '100%',
-                                                        padding: 5,
-                                                        paddingTop: 10,
-                                                       borderBottomLeftRadius:5,
-                                                       borderBottomRightRadius:5
-                                                    }}>
-                                                    <Text style={{ color: 'white', fontSize: 15 }}>{item.title}</Text>
-                                                </LinearGradient>
-                                            </View>
-                                            <View style={{ flexDirection: 'row', padding: 5 }}>
-                                                <View
-                                                    style={{
-                                                        flex: 3,
-                                                        alignItems: 'flex-start',
-                                                    }}>
-                                                    {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
-                                                    {/*{item.title}*/}
-                                                    {/*</Text>*/}
-                                                    {item.category ? (
-                                                        <View
-                                                            style={{
-                                                                flexDirection: 'row',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}>
-                                                            <Icon
-                                                                name={'tag'}
-                                                                size={10}
-                                                                color={colors.gray_100}
-                                                            />
-
-                                                            <Text
-                                                                numberOfLines={1}
-                                                                style={{ marginLeft: 5, fontSize: 14 }}>
-                                                                {item.category.mainCategory || ''}
-                                                            </Text>
-                                                        </View>
-                                                    ) : null}
-                                                    {/*<Text note style={styles.cardNote}*/}
-                                                    {/*numberOfLines={1}>{item.location.formatted_address}</Text>*/}
+                                            <View
+                                                key={item._id}
+                                                style={{
+                                                    backgroundColor: 'white',
+                                                    marginRight: 5,
+                                                    // height: 120,
+                                                    width: 280,
+                                                    flexDirection: 'column',
+                                                    // alignItems: 'center',
+                                                    // paddingHorizontal: 10,
+                                                    // paddingBottom: 10,
+                                                    borderRadius: 5
+                                                }}>
+                                                <View style={{ height: 120, width: 280, borderRadius: 10, }}>
+                                                    <Thumbnail
+                                                        style={{
+                                                            width: 280,
+                                                            height: 120,
+                                                            marginBottom: 10,
+                                                            borderRadius: 5,
+                                                            resizeMode: 'cover',
+                                                        }}
+                                                        square
+                                                        source={
+                                                            item.coverImage
+                                                                ? { uri: settings.IMAGE_URL + item.coverImage }
+                                                                : require('../images/no-image.png')
+                                                        }
+                                                    />
+                                                    <LinearGradient
+                                                        colors={['transparent', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.6)']}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            bottom: 0,
+                                                            width: '100%',
+                                                            padding: 5,
+                                                            paddingTop: 10,
+                                                            borderBottomLeftRadius: 5,
+                                                            borderBottomRightRadius: 5
+                                                        }}>
+                                                        <Text style={{ color: 'white', fontSize: 15 }}>{item.title}</Text>
+                                                    </LinearGradient>
+                                                </View>
+                                                <View style={{ flexDirection: 'row', padding: 5 }}>
                                                     <View
                                                         style={{
-                                                            flexDirection: 'row',
-                                                            // justifyContent: 'space-between',
-                                                            width: '100%',
+                                                            flex: 3,
+                                                            alignItems: 'flex-start',
                                                         }}>
-                                                             <View
-                                                            style={{
-                                                                alignItem: 'center',
-                                                                flexDirection: 'row',
-                                                            }}>
-                                                            {/*<Icon name={'location-arrow'} size={18}*/}
-                                                            {/*color={colors.gray_200}/>*/}
-                                                            <Text note style={{ fontSize: 12 }}>
-                                                                {Math.round(item.dist.calculated * 100) / 100}{' '}
-                                                                km away
-                                                            </Text>
-                                                        </View>
+                                                        {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
+                                                        {/*{item.title}*/}
+                                                        {/*</Text>*/}
+                                                        {item.category ? (
+                                                            <View
+                                                                style={{
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                }}>
+                                                                <Icon
+                                                                    name={'tag'}
+                                                                    size={10}
+                                                                    color={colors.gray_100}
+                                                                />
+
+                                                                <Text
+                                                                    numberOfLines={1}
+                                                                    style={{ marginLeft: 5, fontSize: 14 }}>
+                                                                    {item.category.mainCategory || ''}
+                                                                </Text>
+                                                            </View>
+                                                        ) : null}
+                                                        {/*<Text note style={styles.cardNote}*/}
+                                                        {/*numberOfLines={1}>{item.location.formatted_address}</Text>*/}
                                                         <View
                                                             style={{
-                                                                marginLeft:10,
                                                                 flexDirection: 'row',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
+                                                                // justifyContent: 'space-between',
+                                                                width: '100%',
                                                             }}>
-                                                                 <NBIcon
-                                                                name={'star'}
-                                                                style={{fontSize:14,color:colors.gray_100}}
-                                                            />
-                                                            <Text note style={{ fontSize: 12,marginLeft:5 }}>
-                                                                {item.hasOwnProperty('ratings')
-                                                                    ? Math.round(item.Rating.avgRate)
-                                                                    : 1} (
+                                                            <View
+                                                                style={{
+                                                                    alignItem: 'center',
+                                                                    flexDirection: 'row',
+                                                                }}>
+                                                                {/*<Icon name={'location-arrow'} size={18}*/}
+                                                                {/*color={colors.gray_200}/>*/}
+                                                                <Text note style={{ fontSize: 12 }}>
+                                                                    {Math.round(item.dist.calculated * 100) / 100}{' '}
+                                                                km away
+                                                            </Text>
+                                                            </View>
+                                                            <View
+                                                                style={{
+                                                                    marginLeft: 10,
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                }}>
+                                                                <NBIcon
+                                                                    name={'star'}
+                                                                    style={{ fontSize: 14, color: colors.gray_100 }}
+                                                                />
+                                                                <Text note style={{ fontSize: 12, marginLeft: 5 }}>
+                                                                    {item.hasOwnProperty('ratings')
+                                                                        ? Math.round(item.Rating.avgRate)
+                                                                        : 1} (
                                                                      {item.hasOwnProperty('ratings')
-                                                                    ? tem.Rating.count
-                                                                    : 0})
+                                                                        ? tem.Rating.count
+                                                                        : 0})
                                                             </Text>
 
-                                                           
-                                                        </View>
-                                                       
-                                                        {/*{item.Category?*/}
-                                                        {/*<View style={{*/}
-                                                        {/*flexDirection: 'row',*/}
-                                                        {/*alignItems: 'center',*/}
-                                                        {/*justifyContent: 'center',*/}
-                                                        {/*}}>*/}
-                                                        {/*<Text>*/}
-                                                        {/*<Icon name={'tag'} size={16}*/}
-                                                        {/*color={colors.warning}/></Text>*/}
-                                                        {/*<Text note>*/}
-                                                        {/*{item.Category.subCategory}*/}
-                                                        {/*</Text>*/}
 
-                                                        {/*</View>:null}*/}
+                                                            </View>
+
+                                                            {/*{item.Category?*/}
+                                                            {/*<View style={{*/}
+                                                            {/*flexDirection: 'row',*/}
+                                                            {/*alignItems: 'center',*/}
+                                                            {/*justifyContent: 'center',*/}
+                                                            {/*}}>*/}
+                                                            {/*<Text>*/}
+                                                            {/*<Icon name={'tag'} size={16}*/}
+                                                            {/*color={colors.warning}/></Text>*/}
+                                                            {/*<Text note>*/}
+                                                            {/*{item.Category.subCategory}*/}
+                                                            {/*</Text>*/}
+
+                                                            {/*</View>:null}*/}
+                                                        </View>
                                                     </View>
                                                 </View>
                                             </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                )}
-                            />
-                        </View>
-                    ) : null}
+                                        </TouchableOpacity>
+                                    )}
+                                />
+                            </View>
+                        ) : null}
 
-                    {/*NEARBY SERVICE PROVIDERS LIST END*/}
+                        {/*NEARBY SERVICE PROVIDERS LIST END*/}
 
-                    {/*SPECIAL RESTURANT LISTING START*/}
-                    <View style={styles.block}>
-                        <View style={styles.blockHeader}>
-                            <Text style={styles.blockTitle}>
-                                Hungry? Order delicious foods now.
+                        {/*SPECIAL RESTURANT LISTING START*/}
+                        <View style={styles.block}>
+                            <View style={styles.blockHeader}>
+                                <Text style={styles.blockTitle}>
+                                    Hungry? Order delicious foods now.
                             </Text>
-                        </View>
-                        <View
-                            style={[
-                                styles.blockBody,
-                                { marginTop: 10, marginBottom: 15, padding: 0 },
-                            ]}>
-                            <FlatList
-                                contentContainerStyle={{ paddingBottom: 15 }}
-                                data={this.state.resturants}
-                                horizontal={true}
-                                keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({ item, index }) => (
-                                    <View
-                                        key={index.toString()}
-                                        style={[
-                                            styles.card,
-                                            {
-                                                marginHorizontal: 5,
-                                                width: viewportWidth/2.5,
-                                            },
-                                        ]}>
-                                        <TouchableOpacity
-                                            onPress={item.hasOwnProperty('onPress') ? item.onPress : () => this.props.navigation.navigate('ServiceDetail', { Id: item })}>
-                                            <View>
-                                                <Image
-                                                    onPress={() => item.onPress}
-                                                    source={
-                                                        item.hasOwnProperty('coverImage')
-                                                            ? { uri: settings.IMAGE_URL + item.coverImage }
-                                                            : item.imgSource
-                                                    }
-                                                    style={{
-                                                        flex: 1,
-                                                        height: 100,
-                                                        width: '100%',
-                                                        resizeMode: 'cover',
-                                                        // margin: 5,
-                                                    }}
-                                                />
-                                                {/* {item.title ? (
+                            </View>
+                            <View
+                                style={[
+                                    styles.blockBody,
+                                    { marginTop: 10, marginBottom: 15, padding: 0 },
+                                ]}>
+                                <FlatList
+                                    contentContainerStyle={{ paddingBottom: 15 }}
+                                    data={this.state.resturants}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item, index }) => (
+                                        <View
+                                            key={index.toString()}
+                                            style={[
+                                                styles.card,
+                                                {
+                                                    marginHorizontal: 5,
+                                                    width: viewportWidth / 2.5,
+                                                },
+                                            ]}>
+                                            <TouchableOpacity
+                                                onPress={item.hasOwnProperty('onPress') ? item.onPress : () => this.props.navigation.navigate('ServiceDetail', { Id: item })}>
+                                                <View>
+                                                    <Image
+                                                        onPress={() => item.onPress}
+                                                        source={
+                                                            item.hasOwnProperty('coverImage')
+                                                                ? { uri: settings.IMAGE_URL + item.coverImage }
+                                                                : item.imgSource
+                                                        }
+                                                        style={{
+                                                            flex: 1,
+                                                            height: 100,
+                                                            width: '100%',
+                                                            resizeMode: 'cover',
+                                                            // margin: 5,
+                                                        }}
+                                                    />
+                                                    {/* {item.title ? (
                                                     <View
                                                         style={{
                                                             top: 0,
@@ -1140,119 +1151,119 @@ class Dashboard extends Component {
                                                     </View>
                                                 ) : null} */}
 
-                                                <Text numberOfLines={1} style={{fontSize:14,fontWeight:'bold', color:colors.gray_200}} >{item.title}</Text>
-                                                <Text note numberOfLines={2}>{item.description}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                            />
-                        </View>
-                    </View>
-
-                    {/*SPECIAL RESTURANT LISTING END*/}
-
-                    <View style={[styles.block, { marginVertical: 20, }]}>
-                        {this.state.Adds.length > 0 ? (
-                            <View
-                                style={{
-                                    minHeight: Math.round(viewportWidth * 0.29),
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                }}>
-                                <Carousel
-                                    ref={c => {
-                                        this._carousel = c;
-                                    }}
-                                    data={this.state.Adds}
-                                    renderItem={this._renderItem}
-                                    sliderWidth={viewportWidth - 20}
-                                    itemWidth={viewportWidth - 20}
-                                    //  slideStyle={{ viewportWidth: viewportWidth }}
-                                    inactiveSlideOpacity={1}
-                                    inactiveSlideScale={1}
-                                    autoplay={true}
-                                    loop={true}
+                                                    <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_200 }} >{item.title}</Text>
+                                                    <Text note numberOfLines={2}>{item.description}</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
                                 />
                             </View>
-                        ) : null}
-                    </View>
+                        </View>
 
-                    {/*POPULAR PRODUCTS LIST START*/}
-                    {this.state.popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        this.props.navigation.navigate('AllProducts', {
-                                            Region: this.region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
+                        {/*SPECIAL RESTURANT LISTING END*/}
+
+                        <View style={[styles.block, { marginVertical: 20, }]}>
+                            {this.state.Adds.length > 0 ? (
+                                <View
+                                    style={{
+                                        minHeight: Math.round(viewportWidth * 0.29),
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        width: '100%',
+                                    }}>
+                                    <Carousel
+                                        ref={c => {
+                                            this._carousel = c;
+                                        }}
+                                        data={this.state.Adds}
+                                        renderItem={this._renderItem}
+                                        sliderWidth={viewportWidth - 20}
+                                        itemWidth={viewportWidth - 20}
+                                        //  slideStyle={{ viewportWidth: viewportWidth }}
+                                        inactiveSlideOpacity={1}
+                                        inactiveSlideScale={1}
+                                        autoplay={true}
+                                        loop={true}
+                                    />
+                                </View>
+                            ) : null}
+                        </View>
+
+                        {/*POPULAR PRODUCTS LIST START*/}
+                        {this.state.popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={styles.blockTitle}>Popular</Text>
+                                    <Button
+                                        style={{ paddingRight: 10 }}
+                                        transparent
+                                        onPress={() =>
+                                            this.props.navigation.navigate('AllProducts', {
+                                                Region: this.region,
+                                            })
+                                        }>
+                                        {/* <Text style={customStyle.buttonOutlinePrimaryText}>
                                         View All
                                     </Text> */}
-                                    <Icon name="arrow-right" size={20} color={colors.gray_200} />
-                                </Button>
+                                        <Icon name="arrow-right" size={20} color={colors.gray_200} />
+                                    </Button>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{ paddingBottom: 15 }}
+                                    data={this.state.popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => this._renderProduct(item, index)}
+                                />
+
+                                {/*<View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start',marginBottom:20}}>*/}
+                                {/*{this.state.popularProducts.map((item)=>this._renderProduct(item))}*/}
+                                {/*</View>*/}
                             </View>
-                            <FlatList
-                                contentContainerStyle={{ paddingBottom: 15 }}
-                                data={this.state.popularProducts}
-                                horizontal={true}
-                                 keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => this._renderProduct(item, index)}
-                            />
+                        ) : null}
 
-                            {/*<View style={{flex:1,flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start',justifyContent:'flex-start',marginBottom:20}}>*/}
-                            {/*{this.state.popularProducts.map((item)=>this._renderProduct(item))}*/}
-                            {/*</View>*/}
-                        </View>
-                    ) : null}
+                        {/*POPULAR PRODUCTS LIST LIST END*/}
 
-                    {/*POPULAR PRODUCTS LIST LIST END*/}
-
-                    {/*CATEGORIES LIST START*/}
-                    {this.state.categories.length > 0 ? (
-                        <View style={[styles.block, { marginBottom: 80 }]}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Categories</Text>
-                                <Button transparent
-                                    onPress={() => this.setViewAll()}>
-                                    <Text
-                                        style={customStyle.buttonOutlinePrimaryText}>{this.state.viewAll ? 'Vew Less' : 'View All'}</Text></Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    marginTop: 10,
-                                    paddingBottom: 10,
-                                    //   alignItems:'center',
-                                    justifyContent: 'space-around',
-                                    // flexWrap: 'wrap',
-                                    // flexDirection: 'row',
-                                }}
-                                data={this.state.categories}
-                                //horizontal={true}
-                                keyExtractor={(item, index) => index.toString()}
-                                // showsHorizontalScrollIndicator={false}
-                                renderItem={ this.renderCategoryItem}
-                              numColumns={Math.round(viewportWidth/100)}
-                            />
-                            {/*  {this.state.viewAll? null:
+                        {/*CATEGORIES LIST START*/}
+                        {this.state.categories.length > 0 ? (
+                            <View style={[styles.block, { marginBottom: 80 }]}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={styles.blockTitle}>Categories</Text>
+                                    <Button transparent
+                                        onPress={() => this.setViewAll()}>
+                                        <Text
+                                            style={customStyle.buttonOutlinePrimaryText}>{this.state.viewAll ? 'Vew Less' : 'View All'}</Text></Button>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        marginTop: 10,
+                                        paddingBottom: 10,
+                                        //   alignItems:'center',
+                                        justifyContent: 'space-around',
+                                        // flexWrap: 'wrap',
+                                        // flexDirection: 'row',
+                                    }}
+                                    data={this.state.categories}
+                                    //horizontal={true}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    // showsHorizontalScrollIndicator={false}
+                                    renderItem={this.renderCategoryItem}
+                                    numColumns={Math.round(viewportWidth / 100)}
+                                />
+                                {/*  {this.state.viewAll? null:
                           <Button onPress={() => {this.setViewAll()}}
                             style={[customStyle.buttonOutlinePrimary,{height:25,marginBottom:30,width:130,alignSelf:'center',backgroundColor:'white'}]}>
                             <Text style={customStyle.buttonOutlinePrimaryText}>View All</Text></Button>} */}
-                        </View>
-                    ) : null}
+                            </View>
+                        ) : null}
 
 
-                </Content>
-                {/* <FooterTabs route={'Home'} componentId={this.props.componentId}/> */}
-            </SafeAreaView>
+                    </Content>
+                    {/* <FooterTabs route={'Home'} componentId={this.props.componentId}/> */}
+                </SafeAreaView>
             </>
         );
     }

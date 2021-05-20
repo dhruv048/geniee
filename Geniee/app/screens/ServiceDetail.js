@@ -327,8 +327,8 @@ class ServiceDetail extends Component {
                     </Text>*/}
                         <View style={{ flexDirection: 'row' }}>
                             <FIcon name="mail" style={{ fontSize: 20, marginLeft: 5, marginTop: 5 }} />
-                            {this.state.Service.hasOwnProperty('email') ?
-                                <Text style={styles.infoText}>{this.state.Service.email}</Text> : 'NA'
+                            {this.state.Service.hasOwnProperty('email') && this.state.Service.email ?
+                                <Text style={styles.infoText}>{this.state.Service.email}</Text> : <Text style={styles.infoText}>Not Available</Text>
                             }
                         </View>
                         {this.state.Service.hasOwnProperty('website') ?
@@ -347,7 +347,7 @@ class ServiceDetail extends Component {
                                 iconLeft
                                 style={{ marginHorizontal: 5, marginVertical: 20, backgroundColor: '#4d94ff' }}>
                                 <Icon name="md-call" style={{ color: '#ffffff', fontSize: 25 }} />
-                                <Text style={{ color: '#ffffff', fontSize: 25, marginLeft: 20 }}>Call</Text>
+                                <Text style={{ color: '#ffffff', fontSize: 25, marginLeft: 20, marginRight:20 }}>Call</Text>
                             </Button>
                         </View>
 
@@ -355,7 +355,7 @@ class ServiceDetail extends Component {
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 5,marginVertical:10 }}>
                             <Text>Description</Text>
                             <TouchableOpacity onPress={() => {
-                                this._browse(this.state.Service.website)
+                                //this._browse(this.state.Service.website)
                             }}>
                                 <Text style={{color:'#4d94ff'}}>View All</Text>
                             </TouchableOpacity>
@@ -373,7 +373,7 @@ class ServiceDetail extends Component {
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 5, marginVertical:10 }}>
                             <Text>Similar Products</Text>
                             <TouchableOpacity onPress={() => {
-                                this._browse(this.state.Service.website)
+                                //this._browse(this.state.Service.website)
                             }}>
                                 <Text style={{color:'#4d94ff'}}>View All</Text>
                             </TouchableOpacity>
