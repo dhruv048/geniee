@@ -354,8 +354,8 @@ class AddProduct extends React.PureComponent {
     _saveProduct = () => {
         const {title, description, radius, contact, homeDelivery, selectedService, images, price, discount, unit, used, webLink, colors, sizes, 
             qty, numDays, duration, inStock, shippingCharge,hasExchange,hasWarrenty,exchange,warrenty} = this.state;
-
-            let searchText=`${title} ${price} ${selectedService.title} ${selectedService.location.formatted_address} ${selectedService.Category.subCategory} ${Meteor.user().profile.name}`;
+            //let searchText=`${title} ${price} ${selectedService.title} ${selectedService.location.formatted_address} ${selectedService.Category.subCategory} ${Meteor.user().profile.name}`;
+            let searchText=`${title} ${price} ${selectedService.title} ${Meteor.user().profile.name}`;
         let product = {
             title: title,
             description: description,
