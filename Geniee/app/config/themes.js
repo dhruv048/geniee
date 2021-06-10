@@ -5,7 +5,7 @@ export const customPaperTheme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#4d94ff',
+    primary: '#397CCD',
     accent: '#ff8080',
   },
 };

@@ -10,7 +10,7 @@ export const colors = {
     redText: '#a51822',
     whiteText: '#ffffff',
     appLayout: '#4d94ff',
-    primary: '#4d94ff',
+    primary: '#397CCD',
     warning: '#EFBD6E',
     danger: '#FF7278',
     success: '#45D36B',
@@ -39,7 +39,7 @@ export const variables = {
 
     //Theme color
     //  primary: '#4FA4F3',
-    primary: '#4d94ff',
+    primary: '#397CCD',
     warning: '#EFBD6E',
     danger: '#FF7278',
     success: '#45D36B',

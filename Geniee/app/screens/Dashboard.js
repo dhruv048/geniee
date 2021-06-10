@@ -855,39 +855,30 @@ class Dashboard extends Component {
                         </View>
                         {this.state.isActionButtonVisible ? (
                             <Item
-                                search
-                                style={{
-                                    backgroundColor: '#cce0ff',
-                                    marginLeft: 10,
-                                    marginRight: 10,
-                                    marginVertical: 10,
-                                    marginTop: 15,
-                                    height: 40,
-                                    zIndex: 1,
-                                    borderRadius: 8,
-                                    borderBottomWidth: 0
-                                    // position: 'absolute',
-                                    // top: Platform.OS == 'android' ? 70 : 90,
-                                    // left: 0,
-                                    // right: 0,
-                                }}>
+                                search style={styles.searchWrapper}
+                                >
                                 <Button
-                                    transparent
+                                  transparent
                                     disabled={this.state.query.length < 3}
                                     onPress={this._search.bind(this)}>
                                     <Icon
-                                        style={{
-                                            paddingHorizontal: 20,
-                                            fontSize: this.state.query.length > 2 ? 20 : 15,
-                                            color:
-                                                this.state.query.length > 2 ? colors.primary : undefined,
-                                        }}
+                                    style={styles.searchIcon}
+                                        // style={{
+                                        //     paddingHorizontal: 20,
+                                        //     fontSize: this.state.query.length > 2 ? 20 : 15,
+                                        //     color:
+                                        //         this.state.query.length > 2 ? colors.unset : undefined,
+                                        //         opacity:0.5,
+                                        // }}
+                                     
                                         name={'search'}
+                                        color="rgba(255,255,255,0.87)"
                                     />
                                 </Button>
                                 <Input
-                                    style={{ fontFamily: 'Roboto' }}
+                                    style={{ fontFamily: 'Roboto',fontWeight:'300' }}
                                     placeholder={'Search anything...'}
+                                    placeholderTextColor="rgba(255,255,255,0.87)" 
                                     underlineColorAndroid="rgba(0,0,0,0)"
                                     returnKeyType="search"
                                     onSubmitEditing={this._search}
@@ -1360,13 +1351,30 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
     },
-
+    searchWrapper:{
+        backgroundColor:'rgba(255,255,255,0.2)',
+        marginLeft: 14,
+        marginRight: 14,
+        marginVertical: 10,
+        marginTop: 15,
+        height: 40,
+        zIndex: 1,
+        borderRadius: 10,
+        borderBottomWidth: 0,
+        color:'rgba(255,255,255,0.2)'
+    },
+    searchIcon:{
+        marginLeft:14,
+        marginRight:16,
+        fontSize:16
+    },
     searchInput: {
-        // color: '#ffffff',
+        // color:'rgba(255,255,255,0.87)',
         borderTopWidth: 0,
         borderRightWidth: 0,
         borderLeftWidth: 0,
         borderBottomWidth: 0,
+        // backgroundColor:rgba(255,255,255,0.2)
     },
 
     productContainerStyle: {
