@@ -100,7 +100,8 @@ class ProductsEF extends Component {
     }
     _productPress=(componentId,item)=>{
         // Alert.alert('Pressed')
-        goToRoute(componentId,"ProductDetailEF", {'Id': item._id,data:item})
+        //goToRoute(componentId,"ProductDetailEF", {'Id': item._id,data:item})
+        this.props.navigation.navigate("ProductDetailEF", {'Id': item._id,data:item})
     }
 
     _renderProduct = ( data, index,compId) => {

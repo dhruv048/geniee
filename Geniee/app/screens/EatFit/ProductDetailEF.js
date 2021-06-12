@@ -643,7 +643,8 @@ const styles = StyleSheet.create({
 
 export default Meteor.withTracker((props) => {
     let param = props.Id;
-    let Id = typeof (param) === "string" ? param : param._id;
+    //let Id = typeof (param) === "string" ? param : param._id; this is commented as _id is not available
+    let Id = typeof (param) === "string" ? param : null;
     console.log(Id)
     //Meteor.subscribe('singleProduct', Id);
     //Meteor.subscribe('similarProducts', Id);
