@@ -818,9 +818,9 @@ class Dashboard extends Component {
                 <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
 
                     <View style={{ backgroundColor: colors.appLayout, height: this.state.isActionButtonVisible ? 110 : 50 }}>
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 15 }}>
-                            <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'white', fontFamily: 'Roboto' }}>Geniee</Text>
-                            <View style={{ justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row' }}>
+                        <View style={customStyle.topbarHeader}>
+                            <Text style={customStyle.topbarLogo}>Geniee</Text>
+                            <View style={customStyle.topbarActionIcons }>
 
                                 <NotificationIcon navigation={this.props.navigation} />
 
@@ -838,14 +838,14 @@ class Dashboard extends Component {
                             ) : null}
                         </Button> */}
 
-                                <CartIcon navigation={this.props.navigation} />
+                                <CartIcon navigation={this.props.navigation} style={customStyle.actionIcon}  />
 
-                                <TouchableOpacity style={{ marginHorizontal: 5 }}
+                                <TouchableOpacity style={{ marginHorizontal: 0}}
                                     onPress={() => this.props.navigation.navigate(loggedUser ? 'Profile' : 'SignIn')}
                                 >
                                     <Icon
                                         name="user"
-                                        style={{ fontSize: 22, color: 'white' }}
+                                        style={customStyle.actionIcon}
                                     />
                                 </TouchableOpacity>
 
@@ -904,8 +904,8 @@ class Dashboard extends Component {
                         {/*NEARBY SERVICE PROVIDERS LIST START*/}
                         {this.state.nearByservice.length > 0 ? (
                             <View style={styles.block}>
-                                <View style={styles.blockHeader}>
-                                    <Text style={styles.blockTitle}>Services/Store nearby</Text>
+                                <View style={customStyle.blockHeader}>
+                                    <Text style={customStyle.blockTitle}>Services/Store nearby</Text>
                                     <Button
                                         style={{ paddingRight: 10 }}
                                         transparent
@@ -917,7 +917,7 @@ class Dashboard extends Component {
                                         {/* <Text style={customStyle.buttonOutlinePrimaryText}>
                                         View All
                                     </Text> */}
-                                        <Icon name="arrow-right" size={20} color={colors.gray_200} />
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
                                     </Button>
                                 </View>
                                 <FlatList
@@ -1282,13 +1282,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+  
+
     catIcon: {
+        
+        opacity:0.5,
         padding: 10,
         borderRadius: 100,
         // backgroundColor: colors.appLayout,
         color: 'white',
-        width: 50,
-        height: 50,
+        width: 20,
+        height: 20,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -1398,12 +1402,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // borderBottomWidth: 1,
         borderColor: '#E2E2E2',
+        marginHorizontal:16
         // paddingHorizontal: 15,
         //  backgroundColor:'white'
     },
     blockTitle: {
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 20,
+        fontWeight: '700',
         fontFamily: 'Roboto',
         color: colors.gray_100,
     },

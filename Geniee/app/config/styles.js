@@ -92,7 +92,46 @@ export const customStyle = StyleSheet.create({
         color: variables.gray_200,
         marginTop: 20
     },
-
+//topbar header
+topbarActionIcons:{
+    justifyContent: 'space-between',
+    alignItems: 'center', 
+    flexDirection: 'row',
+   
+    
+},
+topbarHeader:{ flex: 1, flexDirection: 'row',
+ justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16 },
+actionIcon:{
+    opacity:0.75,
+    marginLeft:21,
+    color:"#ffffff",
+    fontSize:20,
+    height:20,
+    width:20
+},
+topbarLogo:{ fontSize: 25, fontWeight: 'bold', color: 'white', fontFamily: 'Roboto' },
+blockHeader: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // borderBottomWidth: 1,
+    borderColor: '#E2E2E2',
+    // paddingHorizontal: 15,
+    //  backgroundColor:'white'
+},
+blockTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    fontFamily: 'Roboto',
+    color: colors.gray_100,
+},
+blockHeaderArrow:{
+    color:'#767676',
+    fontSize:20,
+    fontWeight:'700',
+},
     // Custom Tabs
     //<Tabs>
     tabsContainerStyle: {

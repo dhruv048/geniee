@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { Badge } from 'react-native-paper';
-import { colors } from '../../config/styles';
+import { colors, customStyle } from '../../config/styles';
 import { TouchableOpacity } from 'react-native';
 import Meteor from '../../react-native-meteor';
+
 
 
 class NotificationIcon extends PureComponent {
@@ -39,7 +40,7 @@ class NotificationIcon extends PureComponent {
             <TouchableOpacity style={{marginHorizontal:5}}
                 onPress={() => navigation.navigate('Notification')}
             >
-                <Icon name="bell" style={{ fontSize: 22, color: 'white' }} />
+                <Icon name="bell" style={customStyle.actionIcon} />
                 {this.state.notificationCount > 0 ? (
                     <Badge  style={{ position: 'absolute', top: -10, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
                         {this.state.notificationCount}
