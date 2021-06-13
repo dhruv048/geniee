@@ -253,24 +253,17 @@ class ProductDetailEF extends Component {
                             />
 
                             <View style={{padding: 16, backgroundColor: '#fff'}}>
-
-                                <Text style={{
-                                    fontSize: 20,
-                                    marginBottom: 7,
-                                    color: colors.primaryText
-                                }}>{this.state.product.title}
-                                    <Text style={{fontSize: 16}}
-                                          note> ({this.state.product.isVeg ? "Veg" : "Non-Veg"})</Text>
-                                </Text>
-                                <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end', marginBottom: 7}}>
+                                <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start', marginBottom: 7}}>
                                     {this.state.product.price ?
                                         <Text style={{
-                                            fontSize: 24,
-                                            fontWeight: 'bold'
+                                            fontSize: 18,
+                                            fontWeight: 'bold',
+                                            color: colors.primaryText
                                         }}>Rs. {(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)))}{this.state.product.unit ?
                                             <Text style={{
-                                                fontSize: 16,
-                                                fontWeight: 'normal'
+                                                fontSize: 18,
+                                                fontWeight: 'bold',
+                                                color: colors.primaryText
                                             }}> / {this.state.product.unit}</Text> : null}</Text>
                                         : null}
                                     <Text style={{
@@ -278,17 +271,61 @@ class ProductDetailEF extends Component {
                                         color: '#8E8E8E',
                                         textDecorationLine: 'line-through',
                                         paddingBottom: 2,
-                                        marginLeft: 14
-                                    }}>MRP Rs {this.state.product.price}</Text>
+                                        marginLeft: 7
+                                    }}>Rs {this.state.product.price}</Text>
                                     <Text
                                         style={{
                                             fontSize: 16,
-                                            color: colors.success,
+                                            color: '#8E8E8E',
+                                            // color: colors.success,
                                             paddingBottom: 2,
                                             marginLeft: 7
                                         }}>{this.state.product.discount ? this.state.product.discount : 0}% off</Text>
                                 </View>
+                                <Text style={{
+                                    fontSize: 16,
+                                    marginBottom: 10,
+                                    color: '#8E8E8E',
+                                    //color: colors.primaryText,
+                                    fontWeight: 'bold'
+                                }}>{this.state.product.title}
+                                    <Text style={{fontSize: 16}}
+                                          note> ({this.state.product.isVeg ? "Veg" : "Non-Veg"})</Text>
+                                </Text>
+                                <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0,marginBottom:10}}>
+                                    <Col size={2}>
+                                        <View style={{flex: 1, justifyContent: 'center'}}>
+                                            <Text style={{fontSize: 15}}>Select Quantity</Text>
+                                        </View>
+                                    </Col>
 
+                                    <Col size={1}>
+                                        <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <Button block icon transparent
+                                                    onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>
+                                                <FIcon name='minus' size={20} style={{color: colors.appLayout}}/>
+                                            </Button>
+                                            <View style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                paddingLeft: 20,
+                                                paddingRight: 20
+                                            }}>
+                                                <Text style={{fontSize: 15}}>{this.state.quantity}</Text>
+                                            </View>
+                                            <Button block icon transparent
+                                                    onPress={() => this.setState({quantity: this.state.quantity + 1})}>
+                                                <FIcon style={{color: colors.appLayout}} size={20} name='plus'/>
+                                            </Button>
+                                        </View>
+                                    </Col>
+                                </Grid>
+                                <View>
+                                <Button block onPress={this.OrderNow.bind(this)}
+                                            style={[customStyle.buttonPrimary, {marginRight: 5, marginBottom:10}]}>
+                                        <Text style={customStyle.buttonPrimaryText}>Order Now</Text>
+                                    </Button>
+                                </View>
                                 {/* <Grid>
                                 <Col size={3}>
                                     <Text style={{
@@ -384,34 +421,7 @@ class ProductDetailEF extends Component {
                                 {/*</Picker>*/}
                                 {/*</Col> : null}*/}
                                 {/*</Grid>*/}
-                                <Grid style={{borderBottomColor: '#ddd', borderBottomWidth: 0}}>
-                                    <Col size={2}>
-                                        <View style={{flex: 1, justifyContent: 'center'}}>
-                                            <Text style={{fontSize: 15}}>Select Quantity</Text>
-                                        </View>
-                                    </Col>
-
-                                    <Col size={1}>
-                                        <View style={{flex: 1, flexDirection: 'row'}}>
-                                            <Button block icon transparent
-                                                    onPress={() => this.setState({quantity: this.state.quantity > 1 ? this.state.quantity - 1 : 1})}>
-                                                <FIcon name='minus' size={24} style={{color: colors.appLayout}}/>
-                                            </Button>
-                                            <View style={{
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                paddingLeft: 20,
-                                                paddingRight: 20
-                                            }}>
-                                                <Text style={{fontSize: 18}}>{this.state.quantity}</Text>
-                                            </View>
-                                            <Button block icon transparent
-                                                    onPress={() => this.setState({quantity: this.state.quantity + 1})}>
-                                                <FIcon style={{color: colors.appLayout}} size={24} name='plus'/>
-                                            </Button>
-                                        </View>
-                                    </Col>
-                                </Grid>
+                                
 
                             </View>
                             <View style={{padding: 16, marginTop: 7, backgroundColor: '#fff'}}>
@@ -455,7 +465,7 @@ class ProductDetailEF extends Component {
                                 />
                             </View>
                         </Content>
-                        <Footer style={{
+                        {/* <Footer style={{
                             backgroundColor: 'white',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -482,7 +492,7 @@ class ProductDetailEF extends Component {
                                     </Button>
                                 </Col>
                             </Grid>
-                        </Footer>
+                        </Footer> */}
                     </>
                     :
                     <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
