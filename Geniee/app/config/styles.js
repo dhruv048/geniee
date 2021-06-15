@@ -48,6 +48,7 @@ export const variables = {
     //Gray scale color
     gray_100: '#2E2E2E',
     gray_200: '#8E8E8E',
+    gray_300: '#767676',
 
     //Shadow
     elavation_0: 0,
@@ -121,6 +122,18 @@ blockHeader: {
     // paddingHorizontal: 15,
     //  backgroundColor:'white'
 },
+blockHeader:{
+    flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // borderBottomWidth: 1,
+        borderColor: '#E2E2E2',
+        marginHorizontal:14
+        // paddingHorizontal: 15,
+        //  backgroundColor:'white'
+},
+
 blockTitle: {
     fontSize: 20,
     fontWeight: '700',
