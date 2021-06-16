@@ -988,7 +988,6 @@ class Dashboard extends Component {
                                                         {item.category ? (
                                                             <View
                                                                 style={{
-                                                                    marginTop:16,
                                                                     flexDirection: 'row',
                                                                     alignItems: 'center',
                                                                     justifyContent: 'center',
@@ -1002,7 +1001,7 @@ class Dashboard extends Component {
 
                                                                 <Text
                                                                     numberOfLines={1}
-                                                                    style={{ marginLeft: 5, fontSize: 14 },variables.black}>
+                                                                    style={customStyle.itemTitle}>
                                                                     {item.category.mainCategory || ''}
                                                                 </Text>
                                                             </View>
@@ -1022,7 +1021,7 @@ class Dashboard extends Component {
                                                                 }}>
                                                                 {/*<Icon name={'location-arrow'} size={18}*/}
                                                                 {/*color={colors.gray_200}/>*/}
-                                                                <Text note style={{ fontSize: 12 },variables.gray_300}>
+                                                                <Text note style={{ fontSize: 12 ,colors:colors.text_muted}}>
                                                                     {Math.round(item.dist.calculated * 100) / 100}{' '}
                                                                 km away
                                                             </Text>
@@ -1036,9 +1035,9 @@ class Dashboard extends Component {
                                                                 }}>
                                                                 <NBIcon
                                                                     name={'star'}
-                                                                    style={{ fontSize: 14, color: variables.gray_300 }}
+                                                                    style={{ fontSize: 14, color: colors.text_muted }}
                                                                 />
-                                                                <Text note style={{ fontSize: 12, marginLeft: 4 ,color: variables.gray_300}}>
+                                                                <Text note style={{ fontSize: 12, marginLeft: 4 ,color: colors.text_muted}}>
                                                                     {item.hasOwnProperty('ratings')
                                                                         ? Math.round(item.Rating.avgRate)
                                                                         : 1} (
@@ -1079,9 +1078,16 @@ class Dashboard extends Component {
                         {/*SPECIAL RESTURANT LISTING START*/}
                         <View style={styles.block}>
                             <View style={customStyle.blockHeader}>
-                                <Text style={[styles.blockTitle,{marginRight:30}]}>
+                                <Text style={[styles.blockTitle,{marginRight:37,width:278,paddingRight:20}]}>
                                     Hungry? Order delicious foods now.
-                            </Text>
+                                </Text>
+                                <Button
+                                        style={{ paddingRight:0 }}
+                                        transparent
+                                      >
+                                       
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </Button>
                             </View>
                             <View
                                 style={[
@@ -1117,7 +1123,7 @@ class Dashboard extends Component {
                                                         style={{
                                                             flex: 1,
                                                             height: 100,
-                                                            width: '100%',
+                                                            width: 158,
                                                             resizeMode: 'cover',
                                                             // margin: 5,
                                                         }}
@@ -1144,7 +1150,12 @@ class Dashboard extends Component {
                                                     </View>
                                                 ) : null} */}
 
-                                                    <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_200 }} >{item.title}</Text>
+                                                    <Text numberOfLines={1} style={customStyle.itemTitle} >{item.title}</Text>
+                                                    {/* needs to be made dynamic */}
+                                                    <Text style={{fontSize:12,color:colors.text_muted,marginVertical:2}}>Fast Food Resturant</Text>
+                                                    {/* needs to be made dynamic */}
+                                                    <Text style={{fontSize:10,color:colors.text_muted}}>Durbarmarg</Text>
+
                                                     <Text note numberOfLines={2}>{item.description}</Text>
                                                 </View>
                                             </TouchableOpacity>

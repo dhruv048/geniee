@@ -16,8 +16,13 @@ export const colors = {
     success: '#45D36B',
     info: 'blue',
     light: '#F2FAFF',
+    
+    //Gray scale color
     gray_100: '#2E2E2E',
     gray_200: '#8E8E8E',
+    gray_300: '#767676',
+    body_color:'#000000de',
+    text_muted:'#00000099'
 };
 
 export const variables = {
@@ -45,10 +50,7 @@ export const variables = {
     success: '#45D36B',
     info: 'blue',
 
-    //Gray scale color
-    gray_100: '#2E2E2E',
-    gray_200: '#8E8E8E',
-    gray_300: '#767676',
+    
 
     //Shadow
     elavation_0: 0,
@@ -144,6 +146,12 @@ blockHeaderArrow:{
     color:'#767676',
     fontSize:20,
     fontWeight:'700',
+},
+itemTitle:{
+    marginTop:10,
+    fontSize: 14 ,
+    color:variables.black,
+    
 },
     // Custom Tabs
     //<Tabs>
