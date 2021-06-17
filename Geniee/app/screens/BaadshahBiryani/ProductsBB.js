@@ -56,7 +56,7 @@ class ProductsBB extends Component {
         
         // this.handler= DeviceEventEmitter.addListener('onEsewaComplete', this.onEsewaComplete);
         Meteor.call('getProductsBB', (err, res) => {
-            console.log(err,res)
+            //console.log(err,res)
             if (err) {
                 console.log('this is due to error. '+err);
             }
@@ -123,7 +123,8 @@ class ProductsBB extends Component {
     }
 
     render() {
-        const Id = this.props.route.params.Id;
+        //this is not required
+        //let Id = this.props.route.params.Id;
         return (
             
                 <Container style={styles.container}>

@@ -70,12 +70,12 @@ class ProductDetailBB extends Component {
         let productId = this.props.route.params.Id;
         let _product = this.props.data;
         let wishList = await AsyncStorage.getItem('myWhishList');
-        console.log('wishList', wishList)
+        //console.log('wishList', wishList)
         if (wishList)
             wishList = JSON.parse(wishList);
         else
             wishList = [];
-        console.log(_product)
+        //console.log(_product)
         if (_product) {
             this.setState({
                 product: _product,
@@ -85,22 +85,25 @@ class ProductDetailBB extends Component {
         }
         else {
             Meteor.call('getSingleProductEF', productId, (err, res) => {
+                //console.log('This is for single Product EF '+res);
                 if (err) {
                     console.log('this is due to error. ' + err);
                 }
                 else {
-                    this.setState({
-                        product: res,
-                        liked: wishList.includes(res._id) ? true : false
-                        // liked: false
-                    });
+                    if(typeof res != 'undefined'){
+                        this.setState({
+                            product: res,
+                            liked: wishList.includes(res._id) ? true : false
+                            // liked: false
+                        });
+                    }                   
                 }
             });
         }
         ;
         //Get Similar products
         Meteor.call('getSimilarProductBB', productId, (err, res) => {
-            console.log(err,res);
+            //console.log(err,res);
             if (err) {
                 console.log('this is due to error. ' + err);
             }
@@ -117,7 +120,7 @@ class ProductDetailBB extends Component {
             selectedColor: defColor,
             selectedSize: defSize
         });
-        console.log(defColor, defSize)
+        //console.log(defColor, defSize)
     }
 
     componentWillReceiveProps(newProps) {
@@ -651,8 +654,9 @@ const styles = StyleSheet.create({
 
 export default Meteor.withTracker((props) => {
     let param = props.Id;
-    let Id = typeof (param) === "string" ? param : param._id;
-    console.log(Id)
+    //let Id = typeof (param) === "string" ? param : param._id;
+    let Id = typeof (param) === "string" ? param : null;
+    //console.log(Id)
     //Meteor.subscribe('singleProduct', Id);
     //Meteor.subscribe('similarProducts', Id);
     return {
