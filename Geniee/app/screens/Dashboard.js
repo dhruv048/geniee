@@ -55,6 +55,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FooterTabs from '../components/FooterTab';
 import NotificationIcon from '../components/HeaderIcons/NotificationIcon';
 import CartIcon from '../components/HeaderIcons/CartIcon';
+import { customPaperTheme } from '../config/themes';
 let isDashBoard = true;
 const materialColors = ['#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2', '#AFB42B', '#D32F2F', '#0288D1', '#5D4037', '#0097A7', '#FBC02D', '#00796B', '#388E3C', '#F57C00', '#689F38', '#E64A19',
     '#616161', '#FFA000', '#455A64'];
@@ -87,12 +88,14 @@ class Dashboard extends Component {
                     title: 'Baadshah Briyani',
                     imgSource: require('../images/baadshah_logo.jpg'),
                     onPress: this.gotoBB,
+                    tags:'Fast food restaurant',
                     description: 'Baadshah Biryani serves the most authentic Biryani in Kathmandu prepared by our expertise.Our Biryani will give you a burst of flavour in every bite as we use in-house spices'
                 },
                 {
                     title: 'Eat-Fit',
                     imgSource: require('../images/EF2.jpg'),
                     onPress: this.gotoEatFit,
+                    tags:'Hotel & Restaurant',
                     description: 'At cure.fit, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation, and medical & lifestyle care hassle-free. #BeBetterEveryDay'
                 },
             ],
@@ -698,7 +701,7 @@ class Dashboard extends Component {
         return (
             <TouchableOpacity key={item._id}
                 onPress={() => this._handleProductPress(item)}
-                style={[styles.productContainerStyle, { borderTopLeftRadius: 5, borderTopRightRadius: 5 }]}>
+                style={[customStyle.productContainerStyle, { borderTopLeftRadius: 4, borderTopRightRadius: 5 }]}>
                 {/*<Product key={item._id} product={item}/>*/}
                 <View key={item._id} style={[customStyle.Card, { top: 0, left: 0, rigth: 0, }]}>
                     <CardItem cardBody style={{ width: '100%', borderRadius: 5 }}>
@@ -707,9 +710,11 @@ class Dashboard extends Component {
                             style={{
                                 flex: 1,
                                 width: undefined,
-                                height: 100,
+                                height: 104,
+                                width:104,
                                 resizeMode: 'cover',
-                                borderRadius: 5
+                                borderRadius: 4,
+                                marginBottom:8
                             }}
                         />
                         {/* <View
@@ -745,17 +750,17 @@ class Dashboard extends Component {
                     <CardItem style={{ paddingTop: 0, paddingLeft: 5 }}>
                         <Body>
                             <View style={{ height: 35 }}>
-                                <Text note numberOfLines={2} style={{ fontWeight: 'bold' }}>
+                                <Text note  numberOfLines={2} style={customStyle.itemTitle,{fontSize:12,lineHeight:16, color:colors.body_color,marginBottom:4}}>
                                     {/* style={{ fontSize: 12, color: colors.primaryText }}
                                  numberOfLines={1}> */}
                                     {item.title}
                                 </Text>
                             </View>
-                            <Text style={{ color: colors.appLayout, fontWeight: '700', fontSize: 14 }}>Rs. {(item.price - (item.price * item.discount) / 100)}</Text>
+                            <Text style={{ color: colors.primary, fontWeight: '700', fontSize: 14 }}>Rs. {(item.price - (item.price * item.discount) / 100)}</Text>
                             {item.discount ?
                                 <>
-                                    <Text style={{ color: colors.gray_200, fontWeight: '500', fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
-                                    <Text style={{ color: colors.gray_200, fontWeight: '300', fontSize: 10, }}>{item.discount}% off</Text>
+                                    <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
+                                    <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 10, }}>{item.discount}% off</Text>
                                 </> : null}
                             {/* <View
                                 style={{
@@ -1021,7 +1026,7 @@ class Dashboard extends Component {
                                                                 }}>
                                                                 {/*<Icon name={'location-arrow'} size={18}*/}
                                                                 {/*color={colors.gray_200}/>*/}
-                                                                <Text note style={{ fontSize: 12 ,colors:colors.text_muted}}>
+                                                                <Text note style={{ fontSize: 12 ,color:colors.text_muted}}>
                                                                     {Math.round(item.dist.calculated * 100) / 100}{' '}
                                                                 km away
                                                             </Text>
@@ -1152,9 +1157,9 @@ class Dashboard extends Component {
 
                                                     <Text numberOfLines={1} style={customStyle.itemTitle} >{item.title}</Text>
                                                     {/* needs to be made dynamic */}
-                                                    <Text style={{fontSize:12,color:colors.text_muted,marginVertical:2}}>Fast Food Resturant</Text>
+                                                    <Text style={{fontSize:12,color:colors.text_muted,marginVertical:2}}>{item.tags}</Text>
                                                     {/* needs to be made dynamic */}
-                                                    <Text style={{fontSize:10,color:colors.text_muted}}>Durbarmarg</Text>
+                                                    {/* <Text style={{fontSize:10,color:colors.text_muted}}>Durbarmarg</Text> */}
 
                                                     <Text note numberOfLines={2}>{item.description}</Text>
                                                 </View>
@@ -1167,8 +1172,8 @@ class Dashboard extends Component {
 
                         {/*SPECIAL RESTURANT LISTING END*/}
 
-                        <View style={[styles.block, { marginVertical: 20, }]}>
                             {this.state.Adds.length > 0 ? (
+                        <View style={[styles.block, { marginVertical: 20, }]}>
                                 <View
                                     style={{
                                         minHeight: Math.round(viewportWidth * 0.29),
@@ -1191,8 +1196,9 @@ class Dashboard extends Component {
                                         loop={true}
                                     />
                                 </View>
-                            ) : null}
                         </View>
+                            ) : null}
+
 
                         {/*POPULAR PRODUCTS LIST START*/}
                         {this.state.popularProducts.length > 0 ? (
@@ -1214,7 +1220,7 @@ class Dashboard extends Component {
                                     </Button>
                                 </View>
                                 <FlatList
-                                    contentContainerStyle={{ paddingBottom: 15 }}
+                                    contentContainerStyle={{ paddingBottom: 15 ,marginHorizontal:8}}
                                     data={this.state.popularProducts}
                                     horizontal={true}
                                     keyExtractor={(item, index) => item._id}
@@ -1394,19 +1400,7 @@ const styles = StyleSheet.create({
         // backgroundColor:rgba(255,255,255,0.2)
     },
 
-    productContainerStyle: {
-        height: 200,
-        // flex: 1,
-        borderWidth: 0,
-        marginHorizontal: 2,
-        marginVertical: 4,
-        borderColor: '#ffffff',
-        // elevation: 1,
-        width: (viewportWidth) / 3.5,
-        // width: '32%',
-        maxWidth: 130,
-        backgroundColor: 'white'
-    },
+   
     block: {},
     blockHeader: {
         flex: 1,

@@ -1,4 +1,5 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet,Dimensions} from 'react-native';
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 export const colors = {
     appBackground: '#ffffff',
@@ -153,6 +154,21 @@ itemTitle:{
     color:variables.black,
     
 },
+//product popular
+productContainerStyle: {
+    height: 200,
+    // flex: 1,
+    borderWidth: 0,
+    marginHorizontal:8,
+    marginVertical: 4,
+    borderColor: '#ffffff',
+    // elevation: 1,
+    width: (viewportWidth) / 3.5,
+    // width: '32%',
+    maxWidth: 130,
+    backgroundColor: 'white'
+},
+
     // Custom Tabs
     //<Tabs>
     tabsContainerStyle: {

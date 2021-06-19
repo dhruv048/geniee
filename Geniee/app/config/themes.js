@@ -7,6 +7,13 @@ export const customPaperTheme = {
     ...DefaultTheme.colors,
     primary: '#397CCD',
     accent: '#ff8080',
+    text:'#000, 60%',
+    title:'#000,87%',
+    
+  },
+  fonts: {
+    regular: 'Helvetica Neue',
+    medium: 'Helvetica Neue Light',
   },
 };
 
