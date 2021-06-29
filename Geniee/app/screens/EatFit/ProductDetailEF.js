@@ -94,6 +94,7 @@ class ProductDetailEF extends Component {
                         // liked: false
                     });
                 }
+                console.log('This is testing : '+ this.state.product)
             });
         }
         ;
@@ -533,7 +534,7 @@ class ProductDetailEF extends Component {
     _renderProduct = (data, index) => {
         let item = data.item;
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.push("ProductDetail", {'Id': item._id, data: item})}
+            <TouchableOpacity onPress={() => this.props.navigation.push("ProductDetailEF", {'Id': item._id, data: item})}
                               style={styles.containerStyle}>
                 <ProductComponent key={item._id} product={item}/>
             </TouchableOpacity>

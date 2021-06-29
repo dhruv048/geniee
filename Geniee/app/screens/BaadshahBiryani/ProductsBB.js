@@ -99,12 +99,16 @@ class ProductsBB extends Component {
         Alert.alert("Success", "Product has been added to cart")
     }
 
+    _productPress=(componentId,item)=>{
+        //goToRoute(componentId,"ProductDetailEF", {'Id': item._id,data:item})
+        this.props.navigation.navigate("ProductDetailBB", {'Id': item._id,data:item})
+    }
 
-    _renderProduct = (data, index) => {
+    _renderProduct = (data, index,compId) => {
         let item = data.item;
         return (
             <View style={styles.col}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("ProductDetailBB", {'Id': item._id,data:item})} style={styles.containerStyle}>
+                <TouchableOpacity onPress={() => this._productPress(this.props.componentId,item)} style={styles.containerStyle}>
                     <View style={[customStyle.Card, styles.card]}>
                         <Image source={{uri: settings.WEB_URL+'img/'+item.images[0]}} style={styles.thumbnail}/>
                         <View style={styles.cardDetails}>
@@ -124,7 +128,7 @@ class ProductsBB extends Component {
 
     render() {
         //this is not required
-        //let Id = this.props.route.params.Id;
+        //const Id = this.props.route.params.Id;
         return (
             
                 <Container style={styles.container}>
@@ -176,7 +180,7 @@ class ProductsBB extends Component {
                                   keyExtracter={(item, index) => item._id}
                                   horizontal={false}
                                   numColumns={2}
-                                  renderItem={(item, index) => this._renderProduct(item, index)}
+                                  renderItem={(item, index) => this._renderProduct(item, index,this.props.componentId)}
                         />
                     </Content>
                 </Container>
