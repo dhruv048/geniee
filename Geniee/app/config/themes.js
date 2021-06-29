@@ -27,9 +27,9 @@ export const customGalioTheme = {
   COLORS: {
     // PRIMARY: '#5c7aaf',
     // THEME:'#5c7aaf'
-    PRIMARY: '#4d94ff',
-    THEME: '#4d94ff',
-    INPUT_TEXT: '#4d94ff',
+    PRIMARY: '#397CCD',
+    THEME: '#397CCD',
+    INPUT_TEXT: 'rgba(0,0,0,0.6)',
     FACEBOOK: '#3B5998',
     INPUT: '#808080',
     PLACEHOLDER: '#9FA5AA',
