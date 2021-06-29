@@ -34,5 +34,6 @@ export const customGalioTheme = {
     INPUT: '#808080',
     PLACEHOLDER: '#9FA5AA',
     WHITE: '#FFFFFF',
+    Transparent: 'transparent',
   },
 };

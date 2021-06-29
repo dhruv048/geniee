@@ -191,21 +191,39 @@ class SignIn extends Component {
               />
               <View style={{width: '100%', alignItems: 'flex-end'}}>
                 <Button mode="text">
-                  <NBIcon name="close" size={20} />
+                  <NBIcon
+                    name="close"
+                    size={20}
+                    style={{color: 'rgba(0, 0, 0, 0.6)'}}
+                  />
                 </Button>
               </View>
               {/* <Logo /> */}
               <Text
                 style={
                   (customStyle.topbarLogo,
-                  {color: colors.primary, fontSize: 50, paddingHorizontal: 16})
+                  {
+                    color: colors.primary,
+                    fontSize: 50,
+                    paddingHorizontal: 16,
+                    marginBottom: 39,
+                    marginTop: 71,
+                  })
                 }>
                 Geniee
               </Text>
 
               <View style={styles.welcomeText}>
-                <Title style={{fontSize: 24}}>Welcome,</Title>
-                <Text>Log in to continue</Text>
+                <Title style={{fontSize: 24, marginBottom: 5}}>Welcome,</Title>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'rgba(0,0,0,0.87)',
+                    letterSpacing: 0.15,
+                    marginBottom: 22,
+                  }}>
+                  Log in to continue
+                </Text>
               </View>
               <View style={styles.containerForm}>
                 <Input
@@ -226,6 +244,8 @@ class SignIn extends Component {
                   viewPass
                   placeholder="Password"
                   placeholderTextColor="#808080"
+                  iconColor={colors.primary}
+                  iconSize={24}
                   ref={input => (this.password = input)}
                   onChangeText={password => this.setState({password})}
                   textContentType={'emailAddress'}
@@ -237,24 +257,36 @@ class SignIn extends Component {
                   mode="contained"
                   color={customGalioTheme.COLORS.PRIMARY}
                   onPress={this.handleSignIn}
-                  style={{width: '100%', marginVertical: 20}}
+                  style={{width: '100%', marginBottom: 28}}
                   loading={this.state.loading}>
                   LOG IN
                 </Button>
                 <Button
                   // round
                   icon="facebook"
-                  mode="contained"
+                  mode="outlined"
                   loading={this.state.loadingFB}
                   color={customGalioTheme.COLORS.FACEBOOK}
-                  style={{width: '100%', marginVertical: 15}}
+                  uppercase={false}
+                  style={{
+                    width: '100%',
+                    marginBottom: 28,
+                    borderColor: '#E0E0E0',
+                  }}
                   onPress={() =>
                     this._loginFacabook(
                       this.props.navigation,
                       this.props.needReturn,
                     )
                   }>
-                  <Text>Continue with Facebook</Text>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      fontSize: 14,
+                      fontWeight: '500',
+                    }}>
+                    Continue with Facebook
+                  </Text>
                 </Button>
                 <View>
                   <TouchableOpacity
@@ -266,15 +298,15 @@ class SignIn extends Component {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
 
-              <View style={styles.signupCont}>
-                <Text style={styles.signupText}>Don't have an account?</Text>
-                <TouchableOpacity
-                  style={styles.navButton}
-                  onPress={() => this.props.navigation.navigate('Register')}>
-                  <Text style={styles.navButtonText}>Sign Up</Text>
-                </TouchableOpacity>
+                <View style={styles.signupCont}>
+                  <Text style={styles.signupText}>Don't have an account?</Text>
+                  <TouchableOpacity
+                    style={styles.navButton}
+                    onPress={() => this.props.navigation.navigate('Register')}>
+                    <Text style={styles.navButtonText}>Sign Up</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </GalioProvider>
@@ -307,8 +339,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
     color: 'rgba(0, 0, 0, 0.6)',
-    marginVertical: 5,
+    marginBottom: 17,
     borderColor: colors.borderColor,
+    height: 54,
   },
 
   button: {
@@ -326,21 +359,21 @@ const styles = StyleSheet.create({
   },
   forgotPwdButton: {
     color: colors.primary,
-    fontSize: 14,
-    fontWeight: '500',
-    paddingVertical: 20,
+    fontSize: 16,
+    fontWeight: '400',
+    marginBottom: 15,
   },
 
   signupCont: {
     flexGrow: 1,
     flexDirection: 'row',
-    paddingHorizontal: 30,
+    // paddingHorizontal: 30,
     paddingBottom: 100,
   },
   signupText: {
-    color: colors.gray_200,
+    color: 'rgba(0, 0, 0, 0.87)',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '400',
     paddingVertical: 2,
   },
   navButton: {
@@ -352,10 +385,10 @@ const styles = StyleSheet.create({
   },
   navButtonText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '400',
     color: colors.primary,
-    textAlign: 'center',
-    alignSelf: 'center',
+    // textAlign: 'center',
+    // alignSelf: 'center',
   },
 
   //signupButton: {
