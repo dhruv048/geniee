@@ -520,7 +520,6 @@ class Dashboard extends Component {
     };
     renderCategoryItem = (data, index) => {
         var item = data.item;
-        // console.log(item, index)
         return (
             <View key={data.index.toString()} style={styles.containerStyle}>
                 <TouchableOpacity onPress={() => this._itemClick(item)}>
@@ -534,8 +533,8 @@ class Dashboard extends Component {
                         padding: 10
                     }}>*/}
                     <Body>
-                        <View style={[styles.catIcon, { backgroundColor: materialColors[data.index] }]}>
-                            <FAIcon name={item.icon} size={25} color='white' />
+                        <View style={[styles.categoriesIcon,{backgroundColor: materialColors[data.index]}]}>
+                            <FAIcon name={item.icon} size={25}/>
                         </View>
                     </Body>
 
@@ -1288,7 +1287,7 @@ const styles = StyleSheet.create({
     containerStyle: {
         paddingLeft: 5,
         paddingVertical: 5,
-        backgroundColor: 'white',
+        //backgroundColor: 'white',
         borderWidth: 0,
         // marginVertical: 4,
         borderColor: '#808080',
@@ -1308,10 +1307,17 @@ const styles = StyleSheet.create({
         opacity:0.5,
         padding: 10,
         borderRadius: 100,
-        // backgroundColor: colors.appLayout,
+        //backgroundColor: colors.appLayout,
         color: 'white',
         width: 20,
         height: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    categoriesIcon : {
+        opacity:0.5,
+        padding :10,
+        borderRadius :100,
         alignItems: 'center',
         justifyContent: 'center'
     },

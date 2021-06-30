@@ -124,9 +124,8 @@ export const customStyle = StyleSheet.create({
   },
   topbarLogo: {
     fontSize: 25,
-    fontWeight: 'bold',
     color: 'white',
-    fontFamily: 'Roboto',
+    fontFamily: 'BlackHanSans-Regular',
   },
   blockHeader: {
     flex: 1,
