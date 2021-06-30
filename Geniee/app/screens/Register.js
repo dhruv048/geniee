@@ -13,7 +13,7 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import {Button as NBButton, Icon as NBIcon} from 'native-base';
+import {Button as NBButton, Icon as NBIcon, Row} from 'native-base';
 import {RadioGroup} from 'react-native-btr';
 import Icon from 'react-native-vector-icons/Feather';
 import Meteor from '../react-native-meteor';
@@ -28,8 +28,7 @@ import {privacyPolicy} from '../lib/PrivacyPolicy';
 import {TermsCondition} from '../lib/Terms&Condition';
 import {customGalioTheme} from '../config/themes';
 import {GalioProvider, Input, Checkbox, Button} from 'galio-framework';
-
-import {Title} from 'react-native-paper';
+import {Title, Button as RNPButton} from 'react-native-paper';
 
 class Register extends Component {
   validInput = overrideConfirm => {
@@ -234,13 +233,13 @@ class Register extends Component {
               <View style={{paddingTop: 0}}>
                 {/* <Logo />*/}
                 <View style={{width: '100%', alignItems: 'flex-end'}}>
-                  <Button mode="text">
+                  <RNPButton mode="text">
                     <NBIcon
                       name="close"
                       size={20}
                       style={{color: 'rgba(0, 0, 0, 0.6)'}}
                     />
-                  </Button>
+                  </RNPButton>
                 </View>
 
                 <View style={styles.welcomeText}>
@@ -356,53 +355,6 @@ class Register extends Component {
                   {/*onPress={radioButtons => this.setState({radioButtons})}*/}
                   {/*/>*/}
                   {/*</View>*/}
-                  <View
-                    style={{
-                      paddingTop: 16,
-                      paddingBottom: 16,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textAlign: 'center',
-                      color: '#8E8E8E',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                    }}>
-                    {/* <Checkbox
-                      label=""
-                      initialValue={this.state.termsChecked}
-                      color="primary"
-                      onChange={this._updateUsersAgreeStatus}
-                    /> */}
-
-                    <Text
-                      style={{
-                        marginLeft: 15,
-                        color: 'rgba(0, 0, 0, 0.87)',
-                        fontSize: 12,
-                      }}>
-                      I agree & accept Geniee's{' '}
-                    </Text>
-                    <Text
-                      style={{color: colors.primaryText, fontSize: 12}}
-                      onPress={() => {
-                        this.setState({termsModal: true});
-                      }}>
-                      Terms of Service
-                    </Text>
-                    <Text
-                      note
-                      style={{color: 'rgba(0, 0, 0, 0.87)', fontSize: 12}}>
-                      {' '}
-                      &{' '}
-                    </Text>
-                    <Text
-                      style={{color: colors.primaryText, fontSize: 12}}
-                      onPress={() => {
-                        this.setState({privacyModal: true});
-                      }}>
-                      Privacy Policy.
-                    </Text>
-                  </View>
 
                   <Button
                     // round
@@ -438,6 +390,53 @@ class Register extends Component {
                     style={styles.navButton}
                     onPress={() => this.props.navigation.goBack()}>
                     <Text style={styles.navButtonText}>Login</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View
+                  style={{
+                    paddingTop: 16,
+                    paddingBottom: 16,
+                    color: '#8E8E8E',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    alignItems: 'flex-end',
+                    marginLeft: 16,
+                  }}>
+                  {/* <Checkbox
+                      label=""
+                      initialValue={this.state.termsChecked}
+                      color="primary"
+                      onChange={this._updateUsersAgreeStatus}
+                    /> */}
+
+                  <Text style={{color: 'rgba(0, 0, 0, 0.87)', fontSize: 12}}>
+                    By proceeding, you agree to our{' '}
+                  </Text>
+
+                  <TouchableOpacity>
+                    <Text
+                      style={{color: colors.primaryText, fontSize: 12}}
+                      onPress={() => {
+                        this.setState({termsModal: true});
+                      }}>
+                      Terms of Use
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text style={{color: 'rgba(0, 0, 0, 0.87)', fontSize: 12}}>
+                    {' '}
+                    and confirm you have read our{' '}
+                  </Text>
+
+                  <TouchableOpacity>
+                    <Text
+                      style={{color: colors.primaryText, fontSize: 12}}
+                      onPress={() => {
+                        this.setState({privacyModal: true});
+                      }}>
+                      Privacy Policy.
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -640,7 +639,7 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.6)',
     borderColor: colors.borderColor,
     height: 54,
-    marginBottom: 17,
+    marginBottom: 10,
   },
 
   radioView: {
