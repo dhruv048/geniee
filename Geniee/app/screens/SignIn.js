@@ -257,7 +257,12 @@ class SignIn extends Component {
                   mode="contained"
                   color={customGalioTheme.COLORS.PRIMARY}
                   onPress={this.handleSignIn}
-                  style={{width: '100%', marginBottom: 28}}
+                  style={{
+                    width: '100%',
+                    marginBottom: 28,
+                    paddingVertical: 5,
+                    paddingHorizontal: 15,
+                  }}
                   loading={this.state.loading}>
                   LOG IN
                 </Button>
