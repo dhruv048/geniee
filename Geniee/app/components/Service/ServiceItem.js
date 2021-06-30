@@ -473,7 +473,7 @@ export default class ServiceItem extends PureComponent {
 
                     <Text
                       numberOfLines={2}
-                      style={{ marginLeft: 5, fontSize: 14 }}>
+                      style={customStyle.itemTitle}>
                       {service.title || ''}
                     </Text>
                   </View>
@@ -494,11 +494,11 @@ export default class ServiceItem extends PureComponent {
                     {/*<Icon name={'location-arrow'} size={18}*/}
                     {/*color={colors.gray_200}/>*/}
                     {service.dist ?
-                      <Text note style={{ fontSize: 12 }}>
+                      <Text note style={{ fontSize: 12 ,color:colors.text_muted}}>
                         {Math.round(service.dist.calculated * 100) / 100}{' '}
                                                                 km away
                                                             </Text> :
-                      <Text note style={{ fontSize: 12 }}>
+                      <Text note style={{ fontSize: 12 ,color:colors.text_muted}}>
                         {distance ? distance + " km away" : ''}
 
                       </Text>
@@ -513,9 +513,9 @@ export default class ServiceItem extends PureComponent {
                     }}>
                     <NBIcon
                       name={'star'}
-                      style={{ fontSize: 14, color: colors.gray_100 }}
+                      style={{ fontSize: 14, color: colors.text_muted }}
                     />
-                    <Text note style={{ fontSize: 12, marginLeft: 5 }}>
+                    <Text note style={{ fontSize: 12, marginLeft: 4 ,color: colors.text_muted}}>
                       {service.hasOwnProperty('ratings')
                         ? Math.round(service.Rating.avgRate)
                         : 1} (
