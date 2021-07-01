@@ -439,14 +439,15 @@ class Home extends Component {
         return (
             <Container style={{ backgroundColor: colors.appBackground }}>
                 <Provider theme={customPaperTheme}>
-                <Appbar.Header>
-                    <Appbar.BackAction color={colors.whiteText} onPress={() => {
+                <Appbar.Header style={{backgroundColor:colors.appLayout,marginHorizontal:16}}>
+                    <Appbar.BackAction style={{marginLeft:0}} color={colors.whiteText} onPress={() => {
                         this.props.navigation.goBack();
                     }} />
                     <Appbar.Content color={colors.whiteText} title="Service/Store nearby.." />
 
                     {/* <Appbar.Action color={colors.whiteText} icon="magnify" onPress={() => this.setState({ isSearch: true })} /> */}
-                    <CartIcon  navigation={this.props.navigation} />
+                    <FIcon name="search" style={customStyle.actionIcon} />
+                    {/* <CartIcon  navigation={this.props.navigation} /> */}
                 </Appbar.Header>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
                     <View style={{ flexDirection: 'row', }}>

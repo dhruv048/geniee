@@ -9,10 +9,10 @@ import {
     Button,
     Container,
     Header,Item, Input, Left,Right,Body, Title, View,Text} from 'native-base';
-    import {Provider, Headline, RadioButton, FAB} from 'react-native-paper';
+    import {Provider, Headline, RadioButton, FAB,Appbar} from 'react-native-paper';
 import Meteor  from "../../react-native-meteor";
 import FIcon from 'react-native-vector-icons/Feather';
-import {colors} from "../../config/styles";
+import { colors, customStyle } from '../../config/styles';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import Product from "../../components/Store/Product";
 import CartIcon from '../../components/HeaderIcons/CartIcon';
@@ -157,8 +157,8 @@ class AllProducts extends Component {
         return (
             <Provider theme={customPaperTheme}>
             <Container style={styles.container}>
-                <Header searchBar rounded androidStatusBarColor={colors.statusBar}
-                        style={{backgroundColor: colors.appLayout}}>
+                <Appbar.Header searchBar rounded androidStatusBarColor={colors.statusBar}
+                        style={{backgroundColor: colors.appLayout,marginHorizontal:16}}>
                     <Left style={{flex:1}}>
                         <Button transparent onPress={() => {
                             this.props.navigation.goBack()
@@ -215,14 +215,17 @@ class AllProducts extends Component {
                 <FIcon name="search" style={{ fontSize: 22, color: 'white' }} />
 
             </TouchableOpacity>:null} */}
+            <View style={customStyle.topbarActionIcons }>
+            <FIcon name="search" style={customStyle.actionIcon} />
                         <CartIcon navigation={this.props.navigation}/>
-                        <TouchableOpacity  style={{marginHorizontal:5}}  onPress={() =>this.actionSheetRef.current?.setModalVisible(true)}
+                        <TouchableOpacity    onPress={() =>this.actionSheetRef.current?.setModalVisible(true)}
             >
-                <FIcon name="filter" style={{ fontSize: 22, color: 'white' }} />
+                {/* <FIcon name="filter" style={customStyle.actionIcon} /> */}
 
             </TouchableOpacity>
+            </View>
                     </Right>  
-                </Header>
+                </Appbar.Header>
                 {/* <Content style={styles.content}> */}
                     <FlatList contentContainerStyle={styles.mainContainer}
                               data={this.state.Products}
