@@ -23,8 +23,8 @@ export const colors = {
   gray_100: '#2E2E2E',
   gray_200: '#8E8E8E',
   gray_300: '#767676',
-  body_color: '#000000de',
-  text_muted: '#00000099',
+  body_color: 'rgba(0, 0, 0, 0.87)',
+  text_muted: 'rgba(0, 0, 0, 0.6)',
 
   borderColor: 'rgba(0, 0, 0, 0.25)',
   transparent: 'transparent',
