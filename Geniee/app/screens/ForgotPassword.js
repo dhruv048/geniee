@@ -43,27 +43,30 @@ class ForgotPassword extends Component {
       password: '',
       confirmPassword: '',
       setPassWord: false,
-      loading:false,
+      loading: false,
     };
   }
 
-  componentDidMount() {
-    
-   
-  }
+  componentDidMount() {}
 
-  componentDidAppear(){
-     BackHandler.addEventListener('hardwareBackPress',  this.handleBackButton.bind(this));
+  componentDidAppear() {
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButton.bind(this),
+    );
   }
   handleBackButton() {
     console.log('handlebackpress');
     // this.props.navigation.navigate('Dashboard');
-   this.props.navigation.navigate('Home');
+    this.props.navigation.navigate('Home');
     return true;
   }
 
   componentDidDisappear() {
-    BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton.bind(this));
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButton.bind(this),
+    );
   }
 
   _forgotPassword = () => {
@@ -79,9 +82,9 @@ class ForgotPassword extends Component {
     }
     console.log('sds');
     try {
-      this.setState({loading:true});
+      this.setState({loading: true});
       Meteor.call('forgotPasswordCustom', this.state.email, (err, res) => {
-        this.setState({loading:false});
+        this.setState({loading: false});
         if (err) {
           ToastAndroid.showWithGravityAndOffset(
             err.message,
@@ -120,10 +123,10 @@ class ForgotPassword extends Component {
           80,
         );
       } else {
-        this.setState({loading:true});
+        this.setState({loading: true});
         // Meteor.Accounts.resetPassword(token,password,(err,res)=>{
         Meteor.call('setPasswordCustom', email, token, password, (err, res) => {
-          this.setState({loading:false});
+          this.setState({loading: false});
           if (!err) {
             ToastAndroid.showWithGravityAndOffset(
               'Password Reset Successfully!!',
@@ -181,8 +184,16 @@ class ForgotPassword extends Component {
             {this.state.setPassWord === false ? (
               <View style={styles.contentContainer}>
                 <KeyboardAvoidingView style={{padding: 20}}>
+                  <Title
+                    style={{
+                      fontSize: 24,
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      marginBottom: 5,
+                    }}>
+                    Forgot Password
+                  </Title>
                   {/*<Text style={{fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: colors.primaryText}}>Forgot password</Text>*/}
-                  <Text style={{marginBottom: 14, color: colors.primaryText}}>
+                  <Text style={{marginBottom: 14, color: colors.text_muted}}>
                     Please enter your email address. You will receive a 6-digit
                     code to Reset Password
                   </Text>
@@ -193,11 +204,13 @@ class ForgotPassword extends Component {
 
                   <View>
                     <Input
-                    placeholder="Email Address"
+                      placeholder="Email Address"
                       color={customGalioTheme.COLORS.INPUT_TEXT}
+                      placeholderTextColor="#808080"
                       keyboardType="email-address"
                       onChangeText={email => this.setState({email})}
                       textContentType={'emailAddress'}
+                      style={styles.inputBox}
                     />
                   </View>
 
@@ -211,13 +224,37 @@ class ForgotPassword extends Component {
                       onPress={() => {
                         this._forgotPassword();
                       }}
-                      style={{width: '100%', marginVertical: 20}}
+                      style={{
+                        width: '100%',
+                        marginBottom: 10,
+                        borderRadius: 4,
+                        height: 36,
+                      }}
                       loading={this.state.loading}
                       disabled={this.state.loading}>
-                      Send
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: '500',
+                          color: colors.whiteText,
+                        }}>
+                        Send
+                      </Text>
                     </GButton>
                   </View>
-                  <View
+
+                  <View style={styles.codeCont}>
+                    <Text style={styles.codeText}>Already have code?</Text>
+                    <TouchableOpacity
+                      style={styles.navButton}
+                      onPress={() => {
+                        this.setState({setPassWord: true});
+                      }}>
+                      <Text style={styles.navButtonText}>click here</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* <View
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'center',
@@ -234,7 +271,7 @@ class ForgotPassword extends Component {
                         Already have code, please click here
                       </Text>
                     </Button>
-                  </View>
+                  </View> */}
                 </KeyboardAvoidingView>
               </View>
             ) : (
@@ -353,15 +390,15 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   inputBox: {
-    flexDirection: 'row',
     width: '100%',
-    height: 40,
-    backgroundColor: colors.inputBackground,
-    borderRadius: 25,
-    paddingHorizontal: 16,
+    backgroundColor: colors.transparent,
+    borderRadius: 3.5,
+    paddingHorizontal: 10,
     fontSize: 16,
-    color: colors.whiteText,
-    marginVertical: 5,
+    color: 'rgba(0, 0, 0, 0.6)',
+    borderColor: colors.borderColor,
+    height: 54,
+    marginBottom: 10,
   },
   priText: {
     color: colors.primaryText,
@@ -381,6 +418,32 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.whiteText,
     textAlign: 'center',
+  },
+  codeCont: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    flexDirection: 'row',
+  },
+  codeText: {
+    color: 'rgba(0, 0, 0, 0.87);',
+    fontSize: 16,
+    paddingVertical: 2,
+  },
+
+  navButton: {
+    width: 80,
+    // backgroundColor: customGalioTheme.COLORS.PRIMARY,
+    borderRadius: 25,
+    paddingVertical: 2,
+    marginLeft: 5,
+  },
+  navButtonText: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: colors.primary,
+    // textAlign: 'center',
+    // alignSelf: 'center',
   },
 });
 
