@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,16 +10,16 @@ import {
   ToastAndroid,
   BackHandler,
 } from 'react-native';
-import {Container, Icon as NBIcon} from 'native-base';
+import { Container, Icon as NBIcon } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Meteor from '../react-native-meteor';
 import Logo from '../components/Logo/Logo';
-import {colors, customStyle} from '../config/styles';
-import {customGalioTheme} from '../config/themes';
-import {LoginManager} from 'react-native-fbsdk';
-import {onLoginFinished} from '../lib/FBlogin';
-import {GalioProvider, Input} from 'galio-framework';
-import {Title, Button} from 'react-native-paper';
+import { colors, customStyle } from '../config/styles';
+import { customGalioTheme } from '../config/themes';
+import { LoginManager } from 'react-native-fbsdk';
+import { onLoginFinished } from '../lib/FBlogin';
+// import {GalioProvider, Input} from 'galio-framework';
+import { Title, Button, TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 const USER_TOKEN_TYPE = 'USER_TOKEN_TYPE';
@@ -34,17 +34,18 @@ class SignIn extends Component {
       password: '',
       loading: false,
       loadingFB: false,
+      showPassword: false,
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   componentWillUnmount() {
     console.log('componentWillUnmount');
   }
 
   validInput = overrideConfirm => {
-    const {email, password} = this.state;
+    const { email, password } = this.state;
     let valid = true;
 
     if (email.length === 0 || password.length === 0) {
@@ -75,7 +76,7 @@ class SignIn extends Component {
         } else {
           console.log(
             'Login success with permissions: ' +
-              result.grantedPermissions.toString(),
+            result.grantedPermissions.toString(),
           );
           Keyboard.dismiss();
           onLoginFinished(result, navigation, needReturn);
@@ -85,7 +86,7 @@ class SignIn extends Component {
       .catch(function (error) {
         console.log(
           'There has been a problem with your fetch operation: ' +
-            error.message,
+          error.message,
         );
         ToastAndroid.showWithGravityAndOffset(
           error.message,
@@ -94,27 +95,20 @@ class SignIn extends Component {
           0,
           50,
         );
-        // this.setState({loadingFB: false})
-        // ADD THIS THROW error
-        //  throw error;
       });
-    // }
-    // catch (e) {
-    //     console.log(e,e.message)
-    // }
   };
 
   handleSignIn = () => {
     if (this.validInput(true)) {
-      const {email, password} = this.state;
+      const { email, password } = this.state;
 
       try {
-        this.setState({loading: true});
+        this.setState({ loading: true });
         Meteor.loginWithPassword(
           email.toLowerCase(),
           password,
           function (err, res) {
-            this.setState({loading: false});
+            this.setState({ loading: false });
             if (err) {
               console.log('err::' + err.message);
               ToastAndroid.showWithGravityAndOffset(
@@ -146,27 +140,7 @@ class SignIn extends Component {
               }
             }
           }.bind(this),
-        );
-        // Meteor.call('login',{data: {email: email, password:hashPassword(password), type:'meteor'}}, (err, result) => {
-        //     if (!err) {//save user id and token
-        //         console.log('result', result)
-        //         AsyncStorage.setItem(USER_TOKEN_KEY, result.token);
-        //         AsyncStorage.setItem(USER_TOKEN_TYPE, 'METEOR');
-        //         Data._tokenIdSaved = result.token;
-        //         Meteor._userIdSaved = result.id;
-        //        // Meteor._loginWithToken(result.token)
-        //         this.props.navigation.navigate('App')
-        //     }
-        //     else{
-        //         ToastAndroid.showWithGravityAndOffset(
-        //                     err.reason,
-        //                     ToastAndroid.LONG,
-        //                     ToastAndroid.TOP,
-        //                     0,
-        //                     50,
-        //                 );
-        //     }
-        // });
+        );       
       } catch (e) {
         console.log(e.message);
       }
@@ -182,51 +156,51 @@ class SignIn extends Component {
     return (
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <GalioProvider theme={customGalioTheme}>
-            <View style={styles.container} keyboardShouldPersistTaps="always">
-              <StatusBar
-                hidden
-                backgroundColor={colors.appBackground}
-                barStyle="dark-content"
-              />
-              <View style={{width: '100%', alignItems: 'flex-end'}}>
-                <Button mode="text">
-                  <NBIcon
-                    name="close"
-                    size={20}
-                    style={{color: 'rgba(0, 0, 0, 0.6)'}}
-                  />
-                </Button>
-              </View>
-              {/* <Logo /> */}
-              <Text
-                style={
-                  (customStyle.topbarLogo,
-                  {
-                    color: colors.primary,
-                    fontSize: 50,
-                    paddingHorizontal: 16,
-                    marginBottom: 39,
-                    marginTop: 71,
-                  })
-                }>
-                Geniee
-              </Text>
+          {/* <GalioProvider theme={customGalioTheme}> */}
+          <View style={styles.container} keyboardShouldPersistTaps="always">
+            <StatusBar
+              hidden
+              backgroundColor={colors.appBackground}
+              barStyle="dark-content"
+            />
+            <View style={{ width: '100%', alignItems: 'flex-end' }}>
+              <Button mode="text">
+                <NBIcon
+                  name="close"
+                  size={20}
+                  style={{ color: 'rgba(0, 0, 0, 0.6)' }}
+                />
+              </Button>
+            </View>
+            {/* <Logo /> */}
+            <Text
+              style={
+                (customStyle.topbarLogo,
+                {
+                  color: colors.primary,
+                  fontSize: 50,
+                  paddingHorizontal: 16,
+                  marginBottom: 39,
+                  marginTop: 71,
+                })
+              }>
+              Geniee
+            </Text>
 
-              <View style={styles.welcomeText}>
-                <Title style={{fontSize: 24, marginBottom: 5}}>Welcome,</Title>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: 'rgba(0,0,0,0.87)',
-                    letterSpacing: 0.15,
-                    marginBottom: 22,
-                  }}>
-                  Log in to continue
-                </Text>
-              </View>
-              <View style={styles.containerForm}>
-                <Input
+            <View style={styles.welcomeText}>
+              <Title style={{ fontSize: 24, marginBottom: 5 }}>Welcome,</Title>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: 'rgba(0,0,0,0.87)',
+                  letterSpacing: 0.15,
+                  marginBottom: 22,
+                }}>
+                Log in to continue
+              </Text>
+            </View>
+            <View style={styles.containerForm}>
+              {/* <Input
                   color={customGalioTheme.COLORS.INPUT_TEXT}
                   // rounded
                   placeholder="Email or Mobile No"
@@ -236,12 +210,21 @@ class SignIn extends Component {
                   onChangeText={email => this.setState({email})}
                   textContentType={'emailAddress'}
                   style={styles.inputBox}
-                />
-                <Input
+                /> */}
+              <TextInput
+                mode="outlined"
+                placeholder="Email"
+                dense
+                label="Email"
+                value={this.state.email}
+                onChangeText={email => this.setState({ email })}
+                style={styles.inputBox}
+              />
+              {/* <Input
                   color={customGalioTheme.COLORS.INPUT_TEXT}
                   // rounded
                   password
-                  viewPass
+                  //viewPass
                   placeholder="Password"
                   placeholderTextColor="#808080"
                   iconColor={colors.primary}
@@ -250,71 +233,81 @@ class SignIn extends Component {
                   onChangeText={password => this.setState({password})}
                   textContentType={'emailAddress'}
                   style={styles.inputBox}
-                />
+                /> */}
+              <TextInput
+                mode="outlined"
+                secureTextEntry = {!this.state.showPassword}
+                right={<TextInput.Icon name="eye" onPress={() => this.setState({showPassword : true})}/>}
+                placeholder="Password"
+                label="Password"
+                value={this.state.password}
+                onChangeText={password => this.setState({ password })}
+                style={styles.inputBox}
+              />
 
-                <Button
-                  // round
-                  mode="contained"
-                  color={customGalioTheme.COLORS.PRIMARY}
-                  onPress={this.handleSignIn}
+              <Button
+                // round
+                mode="contained"
+                color={customGalioTheme.COLORS.PRIMARY}
+                onPress={this.handleSignIn}
+                style={{
+                  width: '100%',
+                  marginBottom: 28,
+                  paddingVertical: 5,
+                  paddingHorizontal: 15,
+                }}
+                loading={this.state.loading}>
+                LOG IN
+              </Button>
+              <Button
+                // round
+                icon="facebook"
+                mode="outlined"
+                loading={this.state.loadingFB}
+                color={customGalioTheme.COLORS.FACEBOOK}
+                uppercase={false}
+                style={{
+                  width: '100%',
+                  marginBottom: 28,
+                  borderColor: '#E0E0E0',
+                }}
+                onPress={() =>
+                  this._loginFacabook(
+                    this.props.navigation,
+                    this.props.needReturn,
+                  )
+                }>
+                <Text
                   style={{
-                    width: '100%',
-                    marginBottom: 28,
-                    paddingVertical: 5,
-                    paddingHorizontal: 15,
-                  }}
-                  loading={this.state.loading}>
-                  LOG IN
-                </Button>
-                <Button
-                  // round
-                  icon="facebook"
-                  mode="outlined"
-                  loading={this.state.loadingFB}
-                  color={customGalioTheme.COLORS.FACEBOOK}
-                  uppercase={false}
-                  style={{
-                    width: '100%',
-                    marginBottom: 28,
-                    borderColor: '#E0E0E0',
-                  }}
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    fontSize: 14,
+                    fontWeight: '500',
+                  }}>
+                  Continue with Facebook
+                </Text>
+              </Button>
+              <View>
+                <TouchableOpacity
                   onPress={() =>
-                    this._loginFacabook(
-                      this.props.navigation,
-                      this.props.needReturn,
-                    )
+                    this.props.navigation.navigate('ForgotPassword')
                   }>
-                  <Text
-                    style={{
-                      color: 'rgba(0, 0, 0, 0.87)',
-                      fontSize: 14,
-                      fontWeight: '500',
-                    }}>
-                    Continue with Facebook
+                  <Text style={styles.forgotPwdButton}>
+                    Forgot your password?
                   </Text>
-                </Button>
-                <View>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('ForgotPassword')
-                    }>
-                    <Text style={styles.forgotPwdButton}>
-                      Forgot your password?
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
+              </View>
 
-                <View style={styles.signupCont}>
-                  <Text style={styles.signupText}>Don't have an account?</Text>
-                  <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => this.props.navigation.navigate('Register')}>
-                    <Text style={styles.navButtonText}>Sign Up</Text>
-                  </TouchableOpacity>
-                </View>
+              <View style={styles.signupCont}>
+                <Text style={styles.signupText}>Don't have an account?</Text>
+                <TouchableOpacity
+                  style={styles.navButton}
+                  onPress={() => this.props.navigation.navigate('Register')}>
+                  <Text style={styles.navButtonText}>Sign Up</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </GalioProvider>
+          </View>
+          {/* </GalioProvider> */}
         </TouchableWithoutFeedback>
       </Container>
     );

@@ -11,7 +11,7 @@ export const customPaperTheme = {
     title: 'rgba(0,0,0,0.87)',
   },
   fonts: {
-    regular: 'Helvetica Neue',
+    regular: 'Roboto',
     medium: 'Helvetica Neue Light',
   },
 };
