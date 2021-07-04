@@ -27,8 +27,7 @@ import AutoHeightWebView from 'react-native-autoheight-webview';
 import {privacyPolicy} from '../lib/PrivacyPolicy';
 import {TermsCondition} from '../lib/Terms&Condition';
 import {customGalioTheme} from '../config/themes';
-import {GalioProvider, Input, Checkbox, Button} from 'galio-framework';
-import {Title, Button as RNPButton} from 'react-native-paper';
+import {Title, Button as RNPButton, TextInput, Checkbox} from 'react-native-paper';
 
 class Register extends Component {
   validInput = overrideConfirm => {
@@ -69,9 +68,9 @@ class Register extends Component {
     return valid;
   };
   handleCreateAccount = () => {
-    console.log('handleCreateAccount');
     if (this.validInput()) {
       const {email, password, name, contact, userType, location} = this.state;
+
       if (name.length === 0 || contact.length === 0 || !location) {
         console.log('Empty');
         ToastAndroid.showWithGravityAndOffset(
@@ -173,6 +172,8 @@ class Register extends Component {
       pickLocation: false,
       privacyModal: false,
       termsModal: false,
+      showPassword: false,
+      showConfirmPassword: false,
     };
   }
 
@@ -225,7 +226,6 @@ class Register extends Component {
           backgroundColor={colors.appBackground}
           barStyle="dark-content"
         />
-        <GalioProvider theme={customGalioTheme}>
           <Content style={{backgroundColor: colors.appBackground}}>
             <TouchableWithoutFeedback
               onPress={Keyboard.dismiss}
@@ -262,39 +262,44 @@ class Register extends Component {
                   </Text>
                 </View>
                 <View style={styles.containerRegister}>
-                  <Input
+                  <TextInput
+                    mode="outlined"
                     color={customGalioTheme.COLORS.INPUT_TEXT}
                     placeholder="Full Name"
                     placeholderTextColor="#808080"
-                    onSubmitEditing={() => this.email.focus()}
+                    value={this.state.name}
                     onChangeText={name => this.setState({name})}
+                    onSubmitEditing={() => this.email.focus()}
                     style={styles.inputBox}
                   />
 
-                  <Input
+                  <TextInput
+                    mode="outlined"
                     color={customGalioTheme.COLORS.INPUT_TEXT}
                     placeholder="Email"
-                    keyboardType="Email-Address"
                     placeholderTextColor="#808080"
+                    keyboardType="Email-Address"
+                    value={this.state.email}
                     ref={input => (this.email = input)}
                     onSubmitEditing={() => this.contact.focus()}
                     onChangeText={email => this.setState({email})}
-                    textContentType={'emailAddress'}
                     style={styles.inputBox}
                   />
 
-                  <Input
+                  <TextInput
+                    mode="outlined"
                     color={customGalioTheme.COLORS.INPUT_TEXT}
                     placeholder="Mobile No"
                     placeholderTextColor="#808080"
                     keyboardType="phone-pad"
+                    value={this.state.contact}
                     onChangeText={contact => this.setState({contact})}
                     style={styles.inputBox}
                   />
 
-                  <Input
-                    right
-                    icon="map-pin"
+                  <TextInput
+                    mode="outlined"
+                    right={<TextInput.Icon name="map-marker" />}
                     family="feather"
                     iconSize={20}
                     iconColor={colors.primary}
@@ -306,76 +311,75 @@ class Register extends Component {
                     style={styles.inputBox}
                   />
                   {/*</View>*/}
-                  <Input
+                  <TextInput
+                    mode="outlined"
                     color={customGalioTheme.COLORS.INPUT_TEXT}
-                    password
-                    viewPass
+                    secureTextEntry={!this.state.showPassword}
+                    right={
+                      <TextInput.Icon
+                        name="eye"
+                        onPress={() =>
+                          this.setState({
+                            showPassword: !this.state.showPassword,
+                          })
+                        }
+                      />
+                    }
                     iconColor={colors.primary}
                     iconSize={24}
                     placeholder="Password"
                     placeholderTextColor="#808080"
+                    value={this.state.password}
                     ref={input => (this.password = input)}
                     onSubmitEditing={() => this.confirmPassword.focus()}
                     onChangeText={password => this.setState({password})}
                     style={styles.inputBox}
                   />
-                  <Input
-                    password
-                    viewPass
+                  <TextInput
+                    mode="outlined"
+                    secureTextEntry={!this.state.showConfirmPassword}
+                    right={
+                      <TextInput.Icon
+                        name="eye"
+                        onPress={() =>
+                          this.setState({
+                            showConfirmPassword: !this.state.showConfirmPassword,
+                          })
+                        }
+                      />
+                    }
                     iconColor={colors.primary}
                     iconSize={24}
                     color={customGalioTheme.COLORS.INPUT_TEXT}
                     placeholder="Confirm Password"
                     placeholderTextColor="#808080"
-                    secureTextEntry
+                    value={this.state.confirmPassword}
                     ref={input => (this.confirmPassword = input)}
                     onChangeText={confirmPassword =>
                       this.setState({confirmPassword})
                     }
                     style={styles.inputBox}
                   />
-
-                  {/*<View style={styles.pickerView}><Picker style={styles.selectBox}
-                            selectedValue={this.state.userType}
-                            onValueChange={(itemValue, itemIndex) =>
-                                this.setState({userType:itemValue})
-                            }
-                        >
-                            <Picker.Item label="Register As" value=""/>
-                            <Picker.Item label="User" value="0"/>
-                            <Picker.Item label="Service Provider" value="1"/>
-                        </Picker></View>*/}
-                  {/*<View style={styles.radioView}>*/}
-                  {/*<Text style={styles.radioTypeText}>Register As</Text>*/}
-                  {/*<RadioGroup style={styles.radioGrp}*/}
-                  {/*color='#4d94ff'*/}
-                  {/*//flexDirection='row'*/}
-                  {/*labelStyle={{fontSize: 16, color: '#4d94ff'}}*/}
-                  {/*radioButtons={this.state.radioButtons}*/}
-                  {/*onPress={radioButtons => this.setState({radioButtons})}*/}
-                  {/*/>*/}
-                  {/*</View>*/}
-
-                  <Button
-                    // round
+                  <RNPButton
+                    mode='contained'
                     onPress={this.handleCreateAccount}
                     style={{
                       width: '100%',
                       marginBottom: 35,
                       borderRadius: 4,
-                      height: 36,
+                      height: 50,
                     }}
                     loading={this.state.loading}
                     disabled={this.state.loading}>
                     <Text
                       style={{
-                        fontSize: 14,
+                        fontSize: 20,
                         fontWeight: '500',
                         color: colors.whiteText,
                       }}>
                       SIGN UP
                     </Text>
-                  </Button>
+                  </RNPButton>
 
                   {/*       <TouchableOpacity style={styles.button} onPress={this.handleCreateAccount}>
                                     <Text style={styles.buttonText}>Register</Text>
@@ -403,13 +407,14 @@ class Register extends Component {
                     alignItems: 'flex-end',
                     marginLeft: 16,
                   }}>
-                  {/* <Checkbox
-                      label=""
-                      initialValue={this.state.termsChecked}
-                      color="primary"
-                      onChange={this._updateUsersAgreeStatus}
-                    /> */}
-
+                  <Checkbox
+                      // label=""
+                      // initialValue={this.state.termsChecked}
+                      // color="primary"
+                      // onChange={this._updateUsersAgreeStatus}
+                      status={this.state.termsChecked ? 'checked' : 'unchecked'}
+                      onPress={this._updateUsersAgreeStatus}
+                    />
                   <Text style={{color: 'rgba(0, 0, 0, 0.87)', fontSize: 12}}>
                     By proceeding, you agree to our{' '}
                   </Text>
@@ -442,7 +447,6 @@ class Register extends Component {
               </View>
             </TouchableWithoutFeedback>
           </Content>
-        </GalioProvider>
         {/*PRIVACY POLICY MODAL START */}
         <Modal
           style={customStyle.modal}

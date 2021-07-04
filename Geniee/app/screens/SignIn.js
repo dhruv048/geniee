@@ -99,9 +99,8 @@ class SignIn extends Component {
   };
 
   handleSignIn = () => {
-    if (this.validInput(true)) {
+    if (this.validInput(true)) {    
       const { email, password } = this.state;
-
       try {
         this.setState({ loading: true });
         Meteor.loginWithPassword(
@@ -140,7 +139,7 @@ class SignIn extends Component {
               }
             }
           }.bind(this),
-        );       
+        );
       } catch (e) {
         console.log(e.message);
       }
@@ -200,48 +199,31 @@ class SignIn extends Component {
               </Text>
             </View>
             <View style={styles.containerForm}>
-              {/* <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  // rounded
-                  placeholder="Email or Mobile No"
-                  placeholderTextColor="#808080"
-                  keyboardType="email-address"
-                  onSubmitEditing={() => this.password.focus()}
-                  onChangeText={email => this.setState({email})}
-                  textContentType={'emailAddress'}
-                  style={styles.inputBox}
-                /> */}
               <TextInput
                 mode="outlined"
-                placeholder="Email"
-                dense
-                label="Email"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Email or Mobile No"
+                placeholderTextColor="#808080"
+                keyboardType="email-address"
                 value={this.state.email}
+                onSubmitEditing={() => this.password.focus()}
                 onChangeText={email => this.setState({ email })}
+                textContentType={'emailAddress'}
                 style={styles.inputBox}
               />
-              {/* <Input
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  // rounded
-                  password
-                  //viewPass
-                  placeholder="Password"
-                  placeholderTextColor="#808080"
-                  iconColor={colors.primary}
-                  iconSize={24}
-                  ref={input => (this.password = input)}
-                  onChangeText={password => this.setState({password})}
-                  textContentType={'emailAddress'}
-                  style={styles.inputBox}
-                /> */}
               <TextInput
                 mode="outlined"
-                secureTextEntry = {!this.state.showPassword}
-                right={<TextInput.Icon name="eye" onPress={() => this.setState({showPassword : true})}/>}
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                secureTextEntry={!this.state.showPassword}
+                right={<TextInput.Icon name="eye" onPress={() => this.setState({ showPassword: !this.state.showPassword })} />}
                 placeholder="Password"
-                label="Password"
+                placeholderTextColor="#808080"
+                iconColor={colors.primary}
+                iconSize={24}
                 value={this.state.password}
+                ref={input => (this.password = input)}
                 onChangeText={password => this.setState({ password })}
+                textContentType={'emailAddress'}
                 style={styles.inputBox}
               />
 
