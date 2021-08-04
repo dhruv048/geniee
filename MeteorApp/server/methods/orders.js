@@ -342,6 +342,57 @@ Meteor.methods({
         }
     },
 
+    getProductOrderForAdmin: () => {
+        console.log(Meteor.userId());
+        const collection = ROrder.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const pipeline = [
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "orderedBy"
+                }
+            },
+            {
+                $addFields: {
+                    OrderBy: {
+                        $arrayElemAt: ["$orderedBy", 0]
+                    },
+                },
+            },
+            { $sort: { "orderDate": -1 } },
+            {
+                $project: {
+                    _id: 1,
+                    Id: 1,
+                    contact: 1,
+                    totalPrice: 1,
+                    items: 1,
+                    PaymentType: 1,
+                    orderDate: 1,
+                    owner: 1,
+                    status: 1,
+                    transactionId: 1,
+                    OrderBy: 1,
+                    esewaDetail: 1,
+                    shippingCharge: 1
+                }
+            }
+
+        ];
+        return Async.runSync(function (done) {
+            aggregate(pipeline, { cursor: {} }).toArray(function (err, doc) {
+                if (doc) {
+                    // console.log(doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
+
 });
 
 resetOrderQty = (Items) => {
@@ -369,4 +420,6 @@ resetOrderQty = (Items) => {
         }
         // }
     });
+
+    
 };

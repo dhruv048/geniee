@@ -9,7 +9,9 @@ Template.verifyEmail.onCreated(function () {
 
 Template.topBar.helpers({
     loggedUser: () => {
+        console.log(Meteor.user())
         return Meteor.user();
+        
     }
 });
 

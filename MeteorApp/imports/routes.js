@@ -28,7 +28,7 @@ var loggedIn = FlowRouter.group({
 
 Accounts.onLogin(function () {
     console.log('OnLogin',Meteor.user());
-    Session.set('loggedUserRole',222)
+    Session.set('loggedUserRole',Meteor.user().profile.role)
     redirect = Session.get("redirectAfterLogin");
     // if (redirect != null) {
     //     if (redirect != '/admin/login')
