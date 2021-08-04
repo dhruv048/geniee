@@ -12,6 +12,7 @@ export const {
   setPasswordChanged,
   setTokenValidated,
   setRequirePasswordChange,
+  setToken,
 } = createActions(
   'WRONG_EMAIL_PASSWORD',
   'EMAIL_NOT_FOUND',
@@ -24,4 +25,5 @@ export const {
   'SET_PASSWORD_CHANGED',
   'SET_TOKEN_VALIDATED',
   'SET_REQUIRE_PASSWORD_CHANGE',
+  'SET_TOKEN',
 );

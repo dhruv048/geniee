@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import authHandlers from '../../../../store/effects/auth/handlers';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, useRouteMatch } from 'react-router-dom';
 import { ROUTES } from '../../../../settings/routes';
 const Nav = ({history}) => {
   const handleLogOut=(e)=>{
@@ -9,6 +9,7 @@ const Nav = ({history}) => {
       authHandlers.handleSignOut();
       history.push(ROUTES.SIGNIN);
   }
+  let { path, url } = useRouteMatch();
     return (
         <nav className="navbar navbar-default navbar-static-top" role="navigation" style={{marginBottom: 0}}>
         <div className="navbar-header">
@@ -18,7 +19,9 @@ const Nav = ({history}) => {
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
           </button>
+          <Link to={ROUTES.ADMIN}>
           <a className="navbar-brand" href="/">Geniee</a>
+          </Link>
         </div>
         {/* <!-- /.navbar-header --> */}
   
@@ -251,7 +254,9 @@ const Nav = ({history}) => {
                 {/* <!-- /input-group --> */}
               </li>
               <li>
-                <a href="/dashboard"><i className="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                <Link to={ROUTES.ADMIN}>
+                <a href="/admin"><i className="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                </Link>
               </li>
               <li>
                 <a href="#"><i className="fa fa-bar-chart-o fa-fw"></i> Charts<span className="fa arrow"></span></a>
@@ -266,7 +271,9 @@ const Nav = ({history}) => {
                 {/* <!-- /.nav-second-level --> */}
               </li>
               <li>
-                <a href="/tables"><i className="fa fa-table fa-fw"></i> Tables</a>
+                <Link to={`${ROUTES.ADMIN}/${ROUTES.ADMIN_ORDERS}`}>
+                <a><i className="fa fa-table fa-fw"></i> Orders</a>
+                </Link>
               </li>
               <li>
                 <a href="/forms"><i className="fa fa-edit fa-fw"></i> Forms</a>

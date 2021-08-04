@@ -13,6 +13,7 @@ import {
   setSignedUp,
   setPasswordChanged,
   setTokenValidated,
+  setToken,
   setRequirePasswordChange,
 } from './actions';
 
@@ -57,14 +58,17 @@ export default handleActions(
         [action]: false,
       },
     }),
-    [setSignedIn]: (state) => ({
+    [setSignedIn]: (state,{ payload: { userId } }) => ({
       ...state,
       actions: {
         ...state.actions,
         signedIn: true,
-        userId: Meteor.userId(),
-        user: Meteor.user(),
       },
+      userId: userId,
+    }),
+    [setToken]: (state, { payload: { token } }) => ({
+      ...state,
+      token: token,
     }),
     [setSignedOut]: (state) => ({
       ...state,

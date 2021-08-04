@@ -1,7 +1,7 @@
 // import Meteor  from 'meteor-react-js';
 import cookie from 'react-cookies';
 import { dispatch } from '../../../store';
-
+import { hashPassword } from '../../../../node_modules/meteor-react-js/dist/lib/utils';
 import {
   wrongEmailPassword,
   emailNotFound,
@@ -14,6 +14,7 @@ import {
   setTokenValidated,
   setPasswordChanged,
   setRequirePasswordChange,
+  setToken,
 } from '../../actions';
 
 import { getExpireDate } from '../../../helpers';
@@ -23,7 +24,8 @@ const handleResetActions = ({ action }) => dispatch(resetActions({ action }));
 
 const handleSignIn = ({ email, password, rememberMe }) => {
   // Validate email/password
-  Meteor.loginWithPassword({username: email}, password, function (err,res) {
+  // Meteor.loginWithPassword({username: email}, password, function (err,res) {
+    Meteor.call('customLogin',{email, password:hashPassword(password)}, function (err,res) {
     console.log(err,res)
     if (err) dispatch(wrongEmailPassword());
   
@@ -45,9 +47,11 @@ const handleSignIn = ({ email, password, rememberMe }) => {
       // Authorize
       const expireSignIn = getExpireDate(60 * 12);
       cookie.save('authorized', true, { path: '/', expires: expireSignIn });
-      cookie.save('genieeUserId', Meteor.userId(), { path: '/', expires: expireSignIn });
+      cookie.save('genieeUserId', res.uesrId, { path: '/', expires: expireSignIn });
       // Redux
-      dispatch(setSignedIn());
+      dispatch(setSignedIn({userId: res.userId}));
+      dispatch(setToken({token: res.token}));
+      localStorage.setItem('authToken', res.token);
     }
   });
 };
@@ -141,7 +145,6 @@ const handleSignIn = ({ email, password, rememberMe }) => {
 // });
 
 const handleSignOut = () => {
-  dispatch(setSignedOut());
   dispatch(setSignedOut());
   cookie.save('authorized', false, { path: '/', expires: null });
   cookie.save('genieeUserId', 0, { path: '/', expires: null });

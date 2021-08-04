@@ -1,9 +1,3 @@
 export * from './user/actions';
-export * from './options/actions';
-export * from './userType/actions';
-export * from './templates/actions';
-export * from './fieldTypes/actions';
-export * from './customFields/actions';
-export * from './fieldsMapping/actions';
-export * from './optionSources/actions';
-export * from './customProtocolRules/actions';
+export * from './orders/actions';
+

@@ -25,7 +25,7 @@ export default handleActions(
   },
   {
     users: {},
-    options: {},
+    orders: [],
     userTypes: {},
     templates: {},
     loggedUser: {
