@@ -19,7 +19,8 @@ import MyServices from './app/screens/services/MyServices';
 import AddProduct from './app/screens/store/AddProduct';
 import AddService from './app/screens/services/AddService';
 import ForgotPassword from './app/screens/ForgotPassword';
-import SignIn from './app/screens/SignIn';
+import SignIn from './app/componentsG/Auth/components/SignIn';
+//import SignIn from './app/screens/SignIn';
 import Register from './app/screens/Register';
 import ProductDetail from './app/screens/store/ProductDetail';
 import ServiceDetail from './app/screens/ServiceDetail';
@@ -44,12 +45,15 @@ import ServiceRatings from './app/screens/services/ServiceRatings';
 import MyProducts from './app/screens/store/MyProducts';
 import SearchResult from './app/screens/SearchResult';
 import AllProducts from './app/screens/store/AllProducts';
+import { Provider } from 'react-redux';
+import { store, persistor } from './app/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
     const navigationRef = React.useRef();
     const Stack = createStackNavigator();
-
+    LogBox.ignoreAllLogs(['warnings']);
     React.useEffect(() => {
         LogBox.ignoreLogs(['warnings']);
         const deviceId = DeviceInfo.getUniqueId();
@@ -84,7 +88,7 @@ export default function Appp({ navigation }) {
             });
         });
 
-       
+
     }, [])
 
 
@@ -184,67 +188,12 @@ export default function Appp({ navigation }) {
                     .notifications()
                     .displayNotification(notification_to_be_displayed);
             });
-        // this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
-        //     const {title, body} = notificationOpen.notification;
-        //     // this.showAlert(title, body);
-        //     console.log('onNotificationOpened', notificationOpen)
-        //     // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
-        //     //     try {
-        //     //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
-        //     //         Meteor.logout();
-        //     //         goToRoute(this.props.componentId'Auth');
-        //     //     }
-        //     //     catch (e) {
-        //     //         console.log(e.message)
-        //     //         goToRoute(this.props.componentId'Auth');
-        //     //     }
-        //     // }
-        //     if (notificationOpen.notification.data.navigate) {
-        //         console.log("subscribe & Navigate");
-        //         // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-        //         goToRoute(this.props.componentId,notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
-        //         // });
-        //     }
-        // });
-        //
-        // const notificationOpen = await firebase.notifications().getInitialNotification();
-        // if (notificationOpen) {
-        //
-        //     const {title, body} = notificationOpen.notification;
-        //     //  this.showAlert(title, body);
-        //     console.log('notificationOpen', notificationOpen.notification);
-        //     if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
-        //         try {
-        //             AsyncStorage.setItem(USER_TOKEN_KEY, '');
-        //             Meteor.logout();
-        //             goToRoute(this.props.componentId,'Auth');
-        //         }
-        //         catch (e) {
-        //             console.log(e.message)
-        //             goToRoute(this.props.componentId,'Auth');
-        //         }
-        //     }
-        //     if (notificationOpen.notification.data.navigate && Meteor.user()) {
-        //         console.log("subscribe & Navigate");
-        //         goToRoute(this.props.componentId,notificationOpen.notification.data.route, {Id: notificationOpen.notification.data.Id})
-        //     }
-        //
-        // }
-
         this.messageListener = messaging().onMessage(async message => {
             console.log('onMessage', message);
             console.log(JSON.stringify(message));
             let notification = message.notification;
             if (message.data.title == 'REMOVE_AUTH_TOKEN') {
-                // try {
-                //     AsyncStorage.setItem(USER_TOKEN_KEY, '');
-                //     Meteor.logout();
-                //     goToRoute(this.props.componentId,'Auth');
-                // }
-                // catch (e) {
-                //     console.log(e.message)
-                //     goToRoute(this.props.componentId,'Auth');
-                // }
+                
             }
             // Create a channel
             const channelId = await notifee.createChannel({
@@ -287,21 +236,11 @@ export default function Appp({ navigation }) {
                 case EventType.PRESS:
                     console.log('User pressed notification', detail.notification);
                     const notificationOpen = detail;
-                    // if (notificationOpen.notification.data.title == "REMOVE_AUTH_TOKEN") {
-                    //     try {
-                    //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
-                    //         Meteor.logout();
-                    //         goToRoute(this.props.componentId'Auth');
-                    //     }
-                    //     catch (e) {
-                    //         console.log(e.message)
-                    //         goToRoute(this.props.componentId'Auth');
-                    //     }
-                    // }
+                    
                     if (notificationOpen.notification.data.navigate) {
                         console.log('subscribe & Navigate');
                         // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
-                       this.props.navigation.navigate(
+                        this.props.navigation.navigate(
                             notificationOpen.notification.data.route,
                             { Id: notificationOpen.notification.data.Id },
                         );
@@ -313,60 +252,64 @@ export default function Appp({ navigation }) {
     };
 
     return (
-        <NavigationContainer ref={navigationRef}
-            onReady={() => routeNameRef.current = navigationRef.current.getCurrentRoute().name}
-            onStateChange={() => {
-                const previousRouteName = routeNameRef.current;
-                const currentRouteName = navigationRef.current.getCurrentRoute().name
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <NavigationContainer ref={navigationRef}
+                    onReady={() => routeNameRef.current = navigationRef.current.getCurrentRoute().name}
+                    onStateChange={() => {
+                        const previousRouteName = routeNameRef.current;
+                        const currentRouteName = navigationRef.current.getCurrentRoute().name
 
-                if (previousRouteName !== currentRouteName) {
-                    // The line below uses the expo-firebase-analytics tracker
-                    // https://docs.expo.io/versions/latest/sdk/firebase-analytics/
-                    // Change this line to use another Mobile analytics SDK
-                    //Analytics.setCurrentScreen(currentRouteName);
-                }
+                        if (previousRouteName !== currentRouteName) {
+                            // The line below uses the expo-firebase-analytics tracker
+                            // https://docs.expo.io/versions/latest/sdk/firebase-analytics/
+                            // Change this line to use another Mobile analytics SDK
+                            //Analytics.setCurrentScreen(currentRouteName);
+                        }
 
-                // Save the current route name for later comparision
-                routeNameRef.current = currentRouteName;
-            }}
-        >
-            <PaperProvider theme={customPaperTheme}>
-                <Stack.Navigator initialRouteName={'Dashboard'} screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name='Dashboard' component={ButtomTabs} ></Stack.Screen>
-                    <Stack.Screen name='Message' component={Chat} ></Stack.Screen>
-                    <Stack.Screen name='AddService' component={AddService} ></Stack.Screen>
-                    <Stack.Screen name='AddProduct' component={AddProduct} ></Stack.Screen>
-                    <Stack.Screen name='ProductDetail' component={ProductDetail} ></Stack.Screen>
-                    <Stack.Screen name='MyServices' component={MyServices} ></Stack.Screen>
-                    <Stack.Screen name='MyProducts' component={MyProducts} ></Stack.Screen>
-                    <Stack.Screen name='ServiceList' component={Home} ></Stack.Screen>
-                    <Stack.Screen name='ServiceDetail' component={ServiceDetail} ></Stack.Screen>
-                    <Stack.Screen name='LandingPageEF' component={LandingPageEF} ></Stack.Screen>
-                    <Stack.Screen name='Orders' component={Orders} ></Stack.Screen>
-                    <Stack.Screen name='OrderDetailEF' component={OrderDetailEF} ></Stack.Screen>
-                    <Stack.Screen name='OrderDetailIn' component={OrderDetailIn} ></Stack.Screen>
-                    <Stack.Screen name='OrderDetailOut' component={OrderDetailOut} ></Stack.Screen>
-                    <Stack.Screen name='WishListEF' component={WishListEF} ></Stack.Screen>
-                    <Stack.Screen name='CartEF' component={CartEF} ></Stack.Screen>
-                    <Stack.Screen name='CheckoutEF' component={CheckoutEF} ></Stack.Screen>
-                    <Stack.Screen name='ProductsEF' component={ProductsEF} ></Stack.Screen>
-                    <Stack.Screen name='ProductDetailEF' component={ProductDetailEF} ></Stack.Screen>
-                    <Stack.Screen name='ProductsBB' component={ProductsBB} ></Stack.Screen>
-                    <Stack.Screen name='ProductDetailBB' component={ProductDetailBB} ></Stack.Screen>
-                    <Stack.Screen name='AllProducts' component={AllProducts} ></Stack.Screen>
-                    <Stack.Screen name='ContactUs' component={ContactUs} ></Stack.Screen>
-                    <Stack.Screen name='ForgotPassword' component={ForgotPassword} ></Stack.Screen>
-                    <Stack.Screen name='SignIn' component={SignIn} ></Stack.Screen>
-                    <Stack.Screen name='Register' component={Register} ></Stack.Screen>
-                    <Stack.Screen name='ImageGallery' component={ImageGallery} ></Stack.Screen>
-                    <Stack.Screen name='ImageGalleryBB' component={ImageGalleryBB} ></Stack.Screen>
-                    <Stack.Screen name='Profile' component={Profile} ></Stack.Screen>
-                    <Stack.Screen name='Notification' component={Notification} ></Stack.Screen>
-                    <Stack.Screen name='ServiceRatings' component={ServiceRatings} ></Stack.Screen>
-                    <Stack.Screen name='SearchResult' component={SearchResult} ></Stack.Screen>
-                </Stack.Navigator>
-            </PaperProvider>
-        </NavigationContainer>
+                        // Save the current route name for later comparision
+                        routeNameRef.current = currentRouteName;
+                    }}
+                >
+                    <PaperProvider theme={customPaperTheme}>
+                        <Stack.Navigator initialRouteName={'Dashboard'} screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name='Dashboard' component={ButtomTabs} ></Stack.Screen>
+                            <Stack.Screen name='Message' component={Chat} ></Stack.Screen>
+                            <Stack.Screen name='AddService' component={AddService} ></Stack.Screen>
+                            <Stack.Screen name='AddProduct' component={AddProduct} ></Stack.Screen>
+                            <Stack.Screen name='ProductDetail' component={ProductDetail} ></Stack.Screen>
+                            <Stack.Screen name='MyServices' component={MyServices} ></Stack.Screen>
+                            <Stack.Screen name='MyProducts' component={MyProducts} ></Stack.Screen>
+                            <Stack.Screen name='ServiceList' component={Home} ></Stack.Screen>
+                            <Stack.Screen name='ServiceDetail' component={ServiceDetail} ></Stack.Screen>
+                            <Stack.Screen name='LandingPageEF' component={LandingPageEF} ></Stack.Screen>
+                            <Stack.Screen name='Orders' component={Orders} ></Stack.Screen>
+                            <Stack.Screen name='OrderDetailEF' component={OrderDetailEF} ></Stack.Screen>
+                            <Stack.Screen name='OrderDetailIn' component={OrderDetailIn} ></Stack.Screen>
+                            <Stack.Screen name='OrderDetailOut' component={OrderDetailOut} ></Stack.Screen>
+                            <Stack.Screen name='WishListEF' component={WishListEF} ></Stack.Screen>
+                            <Stack.Screen name='CartEF' component={CartEF} ></Stack.Screen>
+                            <Stack.Screen name='CheckoutEF' component={CheckoutEF} ></Stack.Screen>
+                            <Stack.Screen name='ProductsEF' component={ProductsEF} ></Stack.Screen>
+                            <Stack.Screen name='ProductDetailEF' component={ProductDetailEF} ></Stack.Screen>
+                            <Stack.Screen name='ProductsBB' component={ProductsBB} ></Stack.Screen>
+                            <Stack.Screen name='ProductDetailBB' component={ProductDetailBB} ></Stack.Screen>
+                            <Stack.Screen name='AllProducts' component={AllProducts} ></Stack.Screen>
+                            <Stack.Screen name='ContactUs' component={ContactUs} ></Stack.Screen>
+                            <Stack.Screen name='ForgotPassword' component={ForgotPassword} ></Stack.Screen>
+                            <Stack.Screen name='SignIn' component={SignIn} ></Stack.Screen>
+                            <Stack.Screen name='Register' component={Register} ></Stack.Screen>
+                            <Stack.Screen name='ImageGallery' component={ImageGallery} ></Stack.Screen>
+                            <Stack.Screen name='ImageGalleryBB' component={ImageGalleryBB} ></Stack.Screen>
+                            <Stack.Screen name='Profile' component={Profile} ></Stack.Screen>
+                            <Stack.Screen name='Notification' component={Notification} ></Stack.Screen>
+                            <Stack.Screen name='ServiceRatings' component={ServiceRatings} ></Stack.Screen>
+                            <Stack.Screen name='SearchResult' component={SearchResult} ></Stack.Screen>
+                        </Stack.Navigator>
+                    </PaperProvider>
+                </NavigationContainer>
+            </PersistGate>
+        </Provider>
     );
 };
 
