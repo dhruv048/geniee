@@ -20,6 +20,7 @@
     "@react-navigation/bottom-tabs": "^5.11.8",
     "@react-navigation/native": "^5.9.3",
     "@react-navigation/stack": "^5.14.3",
+    "axios": "^0.21.1",
     "galio-framework": "^0.8.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
@@ -54,7 +55,13 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-splash-screen": "^3.2.0",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-webview": "^11.3.2"
+    "react-native-webview": "^11.3.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
+    "redux-actions": "^2.6.5",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
