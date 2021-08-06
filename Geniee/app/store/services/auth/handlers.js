@@ -7,6 +7,7 @@ import {
   wrongEmailPassword,
   setSignedOut,
   setLoggedInUser,
+  setSignedUp,
 } from '../../../store/actions';
 
 import { apiUrl } from 'settings';
@@ -32,7 +33,7 @@ const handleSignIn = ({ email, password }, callBack) => {
 };
 
 
-const handleSignOut = (callBack) => {
+const handleSignOut = ({user},callBack) => {
   Meteor.logout((res,err)=>{
       console.log('This is result from handler '+res);
       dispatch(setSignedOut());
@@ -41,6 +42,18 @@ const handleSignOut = (callBack) => {
   
   //AsyncStorage.removeItem('loggedInUser');
   //AsyncStorage.removeItem('userToken');
+};
+
+const handleSignUp = ({user}, callBack) => {
+  Meteor.call('signUpUser',user, (err,res) =>{
+    if (err) {
+      console.log('Please contact administrator.')
+      callBack(err);
+    } else {
+      dispatch(setSignedUp());
+      callBack(true);
+    }
+  })
 };
 
 // axios({
@@ -161,7 +174,7 @@ const handleSignOut = (callBack) => {
 export default {
   handleSignIn,
   handleSignOut,
-  // handleSignUp,
+  handleSignUp,
   //handleValidateToken,
   // handleResetActions,
   // handleResetPassword,

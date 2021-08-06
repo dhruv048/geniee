@@ -29,108 +29,52 @@ import { TermsCondition } from '../lib/Terms&Condition';
 import { customGalioTheme } from '../config/themes';
 import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
 import useRegisterForm from '../hooks/useRegisterForm';
+import connect from '../react-native-meteor/components/ReactMeteorData';
+import { authActionsSelector } from '../store/selectors';
+import authHandlers from '../store/services/auth/handlers';
 
-const Register = () => {
+const Register = ({ navigation }) => {
 
-  const { values, setValues,handleInputChange,validateRegisterForm, resetRegisterForm } = useRegisterForm();
+  const { values, handleInputChange, validateRegisterForm, resetRegisterForm } = useRegisterForm();
 
-  // const initialState = {
-  //   loading: false,
-  //   termsChecked: false,
-  //   name: '',
-  //   email: '',
-  //   contact: '',
-  //   password: '',
-  //   location: null,
-  //   confirmPassword: '',
-  //   confirmPasswordVisible: false,
-  //   userType: null,
-  //   pickLocation: false,
-  //   privacyModal: false,
-  //   termsModal: false,
-  //   showPassword: false,
-  //   showConfirmPassword: false,
-  // };
-
-  // const [values, setValues] = useState(initialState);
-
-//   const handleInputChange = (name, value) => {
-//     setValues({
-//         ...values,
-//         [name]: value
-//     })
-//     console.log('value '+ values.name);
-// }
-
-  const validInput = () => {
-    // const {
-    //   email,
-    //   password,
-    //   confirmPassword,
-    //   confirmPasswordVisible,
-    // } = this.state;
-    let valid = true;
-
-    if (values.email.value.length === 0 || values.password.value.length === 0) {
-      ToastAndroid.showWithGravityAndOffset(
-        'Email or password cannot be empty.',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        0,
-        50,
-      );
-      valid = false;
+  const validateWithPassword = () => {
+    let isValidConfirmPassword = true;
+    if (values.password.value != values.confirmPassword.value) {
+      isValidConfirmPassword = false;
     }
+    return isValidConfirmPassword;
+  }
 
-    if (
-      values.password.value !== values.confirmPassword.value
-    ) {
-      ToastAndroid.showWithGravityAndOffset(
-        'Password mismatch.',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        0,
-        50,
-      );
-      valid = false;
-    }
-    return valid;
-  };
-  
   const handleCreateAccount = () => {
-    if (validInput()) {
-      // const { email, password, name, contact, userType, location } = this.state;
-
-      if (values.name.value.length === 0 || values.contact.value.length === 0 || !values.location.value) {
-        console.log('Empty');
-        ToastAndroid.showWithGravityAndOffset(
-          'Name, Location or Contact cannot be empty.',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-          0,
-          50,
-        );
-        //valid = false;
-      } else {
+    if (validateRegisterForm()) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Please fill all required field',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        50,
+      );
+    }
+    else {
+      if (validateWithPassword()) {
         if (values.termsChecked.value) {
           let user = {
-            password: password,
-            username: contact,
-            email: email,
+            password: values.password.value,
+            username: values.contact.value,
+            email: values.email.value,
             createdAt: new Date(),
-            //createdBy: new Date(),
             profile: {
               name: capitalzeFirstLetter(values.name.value),
-              contactNo: contact,
+              contactNo: values.contact.value,
               profileImage: null,
-              location: location,
-              primaryEmail: email,
-              email: email,
+              location: values.location.value,
+              primaryEmail: values.email.value,
+              email: values.email.value,
             },
           };
-          setValues({ loading: true });
-          Meteor.call('signUpUser1', user, (err, res) => {
-            setValues({ loading: false });
+          handleInputChange('loading', true);
+          authHandlers.handleSignUp({ user }, (err, res) => {
+            handleInputChange('loading', false);
             if (err) {
               console.log(err.reason);
               ToastAndroid.showWithGravityAndOffset(
@@ -150,7 +94,6 @@ const Register = () => {
                 0,
                 50,
               );
-              //  this.handleSignIn();
               this.props.navigation.navigate('SignIn');
             }
           });
@@ -163,326 +106,355 @@ const Register = () => {
             50,
           );
         }
+      } else {
+        ToastAndroid.showWithGravityAndOffset(
+          'Password and Confirm Password mismatch',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          50,
+        );
       }
     }
-  };
+  }
+
   const _updateUsersAgreeStatus = () => {
-    console.log(this.mounted);
     if (this.mounted) {
-      let termsChecked = values.termsChecked;
+      let termsChecked = values.termsChecked.value;
       termsChecked = !termsChecked;
-      setValues({termsChecked : termsChecked });
+      handleInputChange('termsChecked', termsChecked);
     }
   };
 
   const handleLocation = (data, Detail) => {
-    setValues({location: data});
+    setValues({ location: data });
   };
 
   const handleOnLocationSelect = (location) => {
-    setValues({ location: location, pickLocation: false });
+    handleInputChange('location', location.formatted_address);
+    handleInputChange('pickLocation', false);
   }
 
   const closePickLocation = () => {
-    console.log('Before '+values.pickLocation.value)
-    setValues({ pickLocation: false });
-    console.log('After '+values.pickLocation.value)
+    handleInputChange('pickLocation', false);
   }
-    //const { location } = this.state;
-    return (
-      <Container>
-        <StatusBar
-          backgroundColor={colors.appBackground}
-          barStyle="dark-content"
-        />
-        <Content style={{ backgroundColor: colors.appBackground }}>
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={false}>
-            <View style={{ paddingTop: 0 }}>
-              {/* <Logo />*/}
-              <View style={{ width: '100%', alignItems: 'flex-end' }}>
-                <RNPButton mode="text">
-                  <NBIcon
-                    name="close"
-                    size={20}
-                    style={{ color: 'rgba(0, 0, 0, 0.6)' }}
-                  />
-                </RNPButton>
-              </View>
+  //const { location } = this.state;
+  return (
+    <Container>
+      <StatusBar
+        backgroundColor={colors.appBackground}
+        barStyle="dark-content"
+      />
+      <Content style={{ backgroundColor: colors.appBackground }}>
+        <TouchableWithoutFeedback
+          onPress={Keyboard.dismiss}
+          accessible={false}>
+          <View style={{ paddingTop: 0 }}>
+            {/* <Logo />*/}
+            <View style={{ width: '100%', alignItems: 'flex-end' }}>
+              <RNPButton mode="text">
+                <NBIcon
+                  name="close"
+                  size={20}
+                  style={{ color: 'rgba(0, 0, 0, 0.6)' }}
+                />
+              </RNPButton>
+            </View>
 
-              <View style={styles.welcomeText}>
-                <Title
-                  style={{
-                    fontSize: 24,
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    marginBottom: 5,
-                    marginTop: 71,
-                  }}>
-                  Welcome to Geniee,
-                </Title>
+            <View style={styles.welcomeText}>
+              <Title
+                style={{
+                  fontSize: 24,
+                  color: 'rgba(0, 0, 0, 0.87)',
+                  marginBottom: 5,
+                  marginTop: 71,
+                }}>
+                Welcome to Geniee,
+              </Title>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: 'rgba(0, 0, 0, 0.87)',
+                  marginBottom: 28,
+                }}>
+                Sign up with email
+              </Text>
+            </View>
+            <View style={styles.containerRegister}>
+              <TextInput
+                mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="First Name"
+                placeholderTextColor="#808080"
+                name="firstName"
+                value={values.firstName.value}
+                onChangeText={(value) => handleInputChange('firstName', value)}
+                //onSubmitEditing={() => values.middleName.focus()}
+                style={styles.inputBox}
+              />
+              <TextInput
+                mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Middle Name"
+                placeholderTextColor="#808080"
+                name="middleName"
+                value={values.middleName.value}
+                onChangeText={(value) => handleInputChange('middleName', value)}
+                //onSubmitEditing={() => values.lastName.focus()}
+                style={styles.inputBox}
+              />
+              <TextInput
+                mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Last Name"
+                placeholderTextColor="#808080"
+                name="lastName"
+                value={values.lastName.value}
+                onChangeText={(value) => handleInputChange('lastName', value)}
+                //onSubmitEditing={() => values.email.focus()}
+                style={styles.inputBox}
+              />
+
+              <TextInput
+                mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Email"
+                placeholderTextColor="#808080"
+                keyboardType="Email-Address"
+                value={values.email.value}
+                //ref={input => (values.email.value = input)}
+                onSubmitEditing={() => values.contact.focus()}
+                onChangeText={(value) => handleInputChange('email', value)}
+                style={styles.inputBox}
+              />
+
+              <TextInput
+                mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Mobile No"
+                placeholderTextColor="#808080"
+                keyboardType="phone-pad"
+                value={values.contact.value}
+                onChangeText={(value) => handleInputChange('contact', value)}
+                style={styles.inputBox}
+              />
+
+              <TextInput
+                mode="outlined"
+                right={<TextInput.Icon name="map-marker" />}
+                family="feather"
+                iconSize={20}
+                iconColor={colors.primary}
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Location"
+                placeholderTextColor="#808080"
+                value={values.location.value}
+                onFocus={() => handleInputChange('pickLocation', true)}
+                style={styles.inputBox}
+              />
+              {/*</View>*/}
+              <TextInput
+                mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                secureTextEntry={!values.showPassword.value}
+                right={
+                  <TextInput.Icon
+                    name="eye"
+                    onPress={() => handleInputChange('showPassword', !values.showPassword.value)}
+                  />
+                }
+                iconColor={colors.primary}
+                iconSize={24}
+                placeholder="Password"
+                placeholderTextColor="#808080"
+                value={values.password.value}
+                ref={input => (values.password = input)}
+                //onSubmitEditing={() => values.confirmPassword.focus()}
+                onChangeText={(value) => handleInputChange('password', value)}
+                style={styles.inputBox}
+              />
+              <TextInput
+                mode="outlined"
+                secureTextEntry={!values.showConfirmPassword.value}
+                right={
+                  <TextInput.Icon
+                    name="eye"
+                    onPress={() => handleInputChange('showConfirmPassword', !values.showConfirmPassword)}
+                  />
+                }
+                iconColor={colors.primary}
+                iconSize={24}
+                color={customGalioTheme.COLORS.INPUT_TEXT}
+                placeholder="Confirm Password"
+                placeholderTextColor="#808080"
+                value={values.confirmPassword.value}
+                ref={input => (values.confirmPassword = input)}
+                onChangeText={(value) => handleInputChange('confirmPassword', value)}
+                onSubmitEditing={validateWithPassword}
+                style={styles.inputBox}
+              />
+              <RNPButton
+                mode='contained'
+                onPress={handleCreateAccount}
+                style={{
+                  width: '100%',
+                  marginBottom: 35,
+                  borderRadius: 4,
+                  height: 50,
+                }}
+                loading={values.loading.value}
+                disabled={values.loading.value}
+              >
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    marginBottom: 28,
+                    fontSize: 20,
+                    fontWeight: '500',
+                    color: colors.whiteText,
                   }}>
-                  Sign up with email
+                  SIGN UP
                 </Text>
-              </View>
-              <View style={styles.containerRegister}>
-                <TextInput
-                  mode="outlined"
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="Full Name"
-                  placeholderTextColor="#808080"
-                  name="name"
-                  value={values.name}
-                  onChangeText={(value) => handleInputChange('name',value)}
-                  onSubmitEditing={() => values.email.focus()}
-                  style={styles.inputBox}
-                />
+              </RNPButton>
+            </View>
 
-                <TextInput
-                  mode="outlined"
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="Email"
-                  placeholderTextColor="#808080"
-                  keyboardType="Email-Address"
-                  value={values.email}
-                  //ref={input => (values.email.value = input)}
-                  onSubmitEditing={() => values.contact.value.focus()}
-                  onChangeText={(value) => handleInputChange('email',value)}
-                  style={styles.inputBox}
-                />
+            <View style={styles.signupCont}>
+              <Text style={styles.signupText}>
+                Already have an account?
+              </Text>
+              <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => navigation.navigate('SignIn')}>
+                <Text style={styles.navButtonText}>Login</Text>
+              </TouchableOpacity>
+            </View>
 
-                <TextInput
-                  mode="outlined"
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="Mobile No"
-                  placeholderTextColor="#808080"
-                  keyboardType="phone-pad"
-                  value={values.contact}
-                  onChangeText={(value) => handleInputChange('contact',value)}
-                  style={styles.inputBox}
-                />
+            <View
+              style={{
+                paddingTop: 16,
+                paddingBottom: 16,
+                color: '#8E8E8E',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                alignItems: 'flex-end',
+                marginLeft: 16,
+              }}>
+              <Checkbox
+                status={values.termsChecked.value ? 'checked' : 'unchecked'}
+                onPress={() => _updateUsersAgreeStatus}
+              />
+              <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
+                By proceeding, you agree to our{' '}
+              </Text>
 
-                <TextInput
-                  mode="outlined"
-                  right={<TextInput.Icon name="map-marker" />}
-                  family="feather"
-                  iconSize={20}
-                  iconColor={colors.primary}
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="Location"
-                  placeholderTextColor="#808080"
-                  value={values.location ? values.location.formatted_address : ''}
-                  onFocus={() => setValues({pickLocation : true})}
-                  style={styles.inputBox}
-                />
-                {/*</View>*/}
-                <TextInput
-                  mode="outlined"
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  secureTextEntry={!values.showPassword.value}
-                  right={
-                    <TextInput.Icon
-                      name="eye"
-                      onPress={() => setValues({showPassword : !values.showPassword.value})}
-                    />
-                  }
-                  iconColor={colors.primary}
-                  iconSize={24}
-                  placeholder="Password"
-                  placeholderTextColor="#808080"
-                  value={values.password}
-                  ref={input => (values.password = input)}
-                  onSubmitEditing={() => values.confirmPassword.focus()}
-                  onChangeText={(value) => handleInputChange('password',value)}
-                  style={styles.inputBox}
-                />
-                <TextInput
-                  mode="outlined"
-                  secureTextEntry={!values.showConfirmPassword}
-                  right={
-                    <TextInput.Icon
-                      name="eye"
-                      onPress={() => setValues({showConfirmPassword : !values.showConfirmPassword})}
-                    />
-                  }
-                  iconColor={colors.primary}
-                  iconSize={24}
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="Confirm Password"
-                  placeholderTextColor="#808080"
-                  value={values.confirmPassword}
-                  ref={input => (values.confirmPassword = input)}
-                  onChangeText={(value) => handleInputChange('confirmPassword',value)}
-                  style={styles.inputBox}
-                />
-                <RNPButton
-                  mode='contained'
-                  onPress={handleCreateAccount}
-                  style={{
-                    width: '100%',
-                    marginBottom: 35,
-                    borderRadius: 4,
-                    height: 50,
-                  }}
-                  loading={values.loading}
-                  disabled={values.loading}
-                  >
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: '500',
-                      color: colors.whiteText,
-                    }}>
-                    SIGN UP
-                  </Text>
-                </RNPButton>
-              </View>
-
-              <View style={styles.signupCont}>
-                <Text style={styles.signupText}>
-                  Already have an account?
+              <TouchableOpacity>
+                <Text
+                  style={{ color: colors.primaryText, fontSize: 12 }}
+                  onPress={() => handleInputChange('termsModal', true)}>
+                  Terms of Use
                 </Text>
-                <TouchableOpacity
-                  style={styles.navButton}
-                  onPress={() => this.props.navigation.goBack()}>
-                  <Text style={styles.navButtonText}>Login</Text>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
 
-              <View
+              <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
+                {' '}
+                and confirm you have read our{' '}
+              </Text>
+
+              <TouchableOpacity>
+                <Text
+                  style={{ color: colors.primaryText, fontSize: 12 }}
+                  onPress={() => handleInputChange('privacyModal', true)}>
+                  Privacy Policy.
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Content>
+      {/*PRIVACY POLICY MODAL START */}
+      <Modal
+        style={customStyle.modal}
+        animationType="slide"
+        // transparent={true}
+        visible={values.privacyModal.value}
+        onRequestClose={() => handleInputChange('privacyModal', false)}>
+        <View style={customStyle.modalDialog}>
+          <View style={customStyle.modalHeader}>
+            <NBButton
+              transparent
+              onPress={() => handleInputChange('privacyModal', false)}>
+              <Icon name={'x'} size={24} color={'#2E2E2E'} />
+            </NBButton>
+            <View style={[customStyle.modalTitleHolder, { marginLeft: 30 }]}>
+              <Text style={customStyle.modalTitle}>Privacy Policy</Text>
+              <Text note />
+            </View>
+          </View>
+
+          <ScrollView style={customStyle.modalScrollView}>
+            <View style={{ paddingBottom: 30 }}>
+              <AutoHeightWebView
                 style={{
-                  paddingTop: 16,
-                  paddingBottom: 16,
-                  color: '#8E8E8E',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  alignItems: 'flex-end',
-                  marginLeft: 16,
-                }}>
-                <Checkbox
-                  status={values.termsChecked ? 'checked' : 'unchecked'}
-                  onPress={() => _updateUsersAgreeStatus}
-                />
-                <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
-                  By proceeding, you agree to our{' '}
-                </Text>
-
-                <TouchableOpacity>
-                  <Text
-                    style={{ color: colors.primaryText, fontSize: 12 }}
-                    onPress={() =>  setValues({termsModal : true})}>
-                    Terms of Use
-                  </Text>
-                </TouchableOpacity>
-
-                <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
-                  {' '}
-                  and confirm you have read our{' '}
-                </Text>
-
-                <TouchableOpacity>
-                  <Text
-                    style={{ color: colors.primaryText, fontSize: 12 }}
-                    onPress={() => setValues({privacyModal: true})}>
-                    Privacy Policy.
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  width: Dimensions.get('window').width - 60,
+                  margin: 10,
+                  marginTop: 10,
+                }}
+                customStyle={''}
+                onSizeUpdated={size => console.log(size.height)}
+                source={{ html: privacyPolicy.content }}
+              />
             </View>
-          </TouchableWithoutFeedback>
-        </Content>
-        {/*PRIVACY POLICY MODAL START */}
-        <Modal
-          style={customStyle.modal}
-          animationType="slide"
-          // transparent={true}
-          visible={values.privacyModal}
-          onRequestClose={() => setValues({privacyModal: false})}>
-          <View style={customStyle.modalDialog}>
-            <View style={customStyle.modalHeader}>
-              <NBButton
-                transparent
-                onPress={() => setValues({privacyModal: false})}>
-                <Icon name={'x'} size={24} color={'#2E2E2E'} />
-              </NBButton>
-              <View style={[customStyle.modalTitleHolder, { marginLeft: 30 }]}>
-                <Text style={customStyle.modalTitle}>Privacy Policy</Text>
-                <Text note />
-              </View>
-            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+      {/* PRIVACY POLICY MODAL STOP */}
 
-            <ScrollView style={customStyle.modalScrollView}>
-              <View style={{ paddingBottom: 30 }}>
-                <AutoHeightWebView
-                  style={{
-                    width: Dimensions.get('window').width - 60,
-                    margin: 10,
-                    marginTop: 10,
-                  }}
-                  customStyle={''}
-                  onSizeUpdated={size => console.log(size.height)}
-                  source={{ html: privacyPolicy.content }}
-                />
-              </View>
-            </ScrollView>
+      {/*TERMS&CONDITION MODAL START */}
+      <Modal
+        style={customStyle.modal}
+        animationType="slide"
+        // transparent={true}
+        visible={values.termsModal}
+        onRequestClose={() => handleInputChange('termsModal', false)}>
+        <View style={customStyle.modalDialog}>
+          <View style={customStyle.modalHeader}>
+            <NBButton
+              transparent
+              onPress={() => handleInputChange('termsModal', false)}>
+              <Icon name={'x'} size={24} color={'#2E2E2E'} />
+            </NBButton>
+            <View style={[customStyle.modalTitleHolder, { marginLeft: 30 }]}>
+              <Text style={customStyle.modalTitle}>Terms and Condition</Text>
+              <Text note />
+            </View>
           </View>
-        </Modal>
-        {/* PRIVACY POLICY MODAL STOP */}
 
-        {/*TERMS&CONDITION MODAL START */}
-        <Modal
-          style={customStyle.modal}
-          animationType="slide"
-          // transparent={true}
-          visible={values.termsModal}
-          onRequestClose={() => setValues({termsModal : false})
-             }>
-          <View style={customStyle.modalDialog}>
-            <View style={customStyle.modalHeader}>
-              <NBButton
-                transparent
-                onPress={() => setValues({termsModal : false})}>
-                <Icon name={'x'} size={24} color={'#2E2E2E'} />
-              </NBButton>
-              <View style={[customStyle.modalTitleHolder, { marginLeft: 30 }]}>
-                <Text style={customStyle.modalTitle}>Terms and Condition</Text>
-                <Text note />
-              </View>
+          <ScrollView style={customStyle.modalScrollView}>
+            <View style={{ paddingBottom: 30 }}>
+
+              <AutoHeightWebView
+                style={{
+                  width: Dimensions.get('window').width - 60,
+                  margin: 10,
+                  marginTop: 10,
+                }}
+                customStyle={''}
+                onSizeUpdated={size => console.log(size.height)}
+                source={{ html: TermsCondition.content }}
+              />
             </View>
-
-            <ScrollView style={customStyle.modalScrollView}>
-              <View style={{ paddingBottom: 30 }}>
-
-                <AutoHeightWebView
-                  style={{
-                    width: Dimensions.get('window').width - 60,
-                    margin: 10,
-                    marginTop: 10,
-                  }}
-                  customStyle={''}
-                  onSizeUpdated={size => console.log(size.height)}
-                  source={{ html: TermsCondition.content }}
-                />
-              </View>
-            </ScrollView>
-          </View>
-        </Modal>
-        {/* TERMS&CONDITION MODAL STOP */}
-        <LocationPicker
-          close={closePickLocation}
-          onLocationSelect={handleOnLocationSelect}
-          modalVisible={values.pickLocation}
-        />
-      </Container>
-    );
+          </ScrollView>
+        </View>
+      </Modal>
+      {/* TERMS&CONDITION MODAL STOP */}
+      <LocationPicker
+        close={closePickLocation}
+        onLocationSelect={handleOnLocationSelect}
+        modalVisible={values.pickLocation.value}
+      />
+    </Container>
+  );
 }
 
-export default Register;
+export default connect(authActionsSelector)(Register);
 
 const capitalzeFirstLetter = str => {
   var splitStr = str.toLowerCase().split(' ');

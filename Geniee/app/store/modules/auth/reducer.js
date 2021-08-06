@@ -7,6 +7,7 @@ import {
   wrongEmailPassword,
   setSignedOut,
   setLoggedInUser,
+  setSignedUp,
 } from './actions';
 
 export default handleActions(
@@ -39,6 +40,10 @@ export default handleActions(
     [setLoggedInUser]: (state, {payload:{user}}) => ({
       ...state,
       loggedUser: user,
+    }),
+    [setSignedUp]: (state, {payload:{user}}) => ({
+      ...state,
+      signedUp: true,
     }),
   },
   {

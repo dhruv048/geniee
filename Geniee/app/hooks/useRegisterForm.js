@@ -4,14 +4,16 @@ import moment from 'moment';
 const useRegisterForm = () => {
     const initialState = {
         loading: { value: false, error: false },
-        termsChecked: { false: null, error: false },
-        name: { value: '', error: false },
+        termsChecked: { value: false, error: false },
+        firstName: { value: '', error: false },
+        middleName: { value: '', error: false },
+        lastName: { value: '', error: false },
         email: { value: '', error: false },
         contact: { value: '', error: false },
         password: { value: '', error: false },
         location: { value: null, error: false },
         confirmPassword: { value: false, error: false },
-        confirmPasswordVisible: { false: null, error: false },
+        confirmPasswordVisible: { value: false, error: false },
         userType: { value: null, error: false },
         pickLocation: { value: false, error: false },
         privacyModal: { value: false, error: false },
@@ -26,19 +28,18 @@ const useRegisterForm = () => {
             ...s,
             [field]: { value, error },
         }));
-        console.log('this is field '+ field + ' this is value '+value);
     };
 
     const validateRegisterForm = () => {
         let hasError = false;
-        //const ignorableFields = ['serviceDetail', 'eventDetail', 'teamIdForServices', 'equipment', 'quantity', 'cost', 'providedBy', 'addOnService', 'eventStatus', 'isDefaultRoom', 'isDefaultService', 'isDefaultEvent', 'noteToGuest', 'noteToTherapist', 'id', 'isEvent', 'room', 'defaultRoom', 'defaultEventServices', 'cleanUp', 'eventCleanUp'];
+        const ignorableFields = ['middleName'];
         // eslint-disable-next-line array-callback-return
         Object.keys(values).map((key) => {
             if (ignorableFields.includes(key)) {
                 // do Nothing
             }
             else { }
-            if (appointment[key].value.length < 0) {
+            if (values[key].value === '') {
                 handleInputChange(key, values[key].value, true);
                 hasError = true;
             } else {
@@ -52,7 +53,7 @@ const useRegisterForm = () => {
         setValues(initialState);
     };
 
-    return { values, setValues, handleInputChange, validateRegisterForm, resetRegisterForm };
+    return { values, handleInputChange, validateRegisterForm, resetRegisterForm };
 };
 
 export default useRegisterForm;
