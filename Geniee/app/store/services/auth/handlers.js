@@ -33,11 +33,15 @@ const handleSignIn = ({ email, password }, callBack) => {
 };
 
 
-const handleSignOut = ({user},callBack) => {
+const handleSignOut = (callBack) => {
   Meteor.logout((res,err)=>{
-      console.log('This is result from handler '+res);
+    if(err){
+      console.log('Please contact administrator.')
+      callBack(err);
+    }else{
       dispatch(setSignedOut());
       callBack(true);
+    }
   })
   
   //AsyncStorage.removeItem('loggedInUser');
@@ -45,11 +49,12 @@ const handleSignOut = ({user},callBack) => {
 };
 
 const handleSignUp = ({user}, callBack) => {
-  Meteor.call('signUpUser',user, (err,res) =>{
+  Meteor.signUpUser(user, (err,res) =>{
     if (err) {
       console.log('Please contact administrator.')
       callBack(err);
     } else {
+      console.log('SignedUp successfully')
       dispatch(setSignedUp());
       callBack(true);
     }

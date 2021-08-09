@@ -44,7 +44,7 @@ const SideMenu = ({ navigation, loggedUser }) => {
             [
                 {
                     text: 'Yes SignOut',
-                    onPress: () => authHandlers.handleSignOut((res) => {
+                    onPress: authHandlers.handleSignOut((res) => {
                         if (res === true) {
                             setIsLogged(false);
                             setUser('');

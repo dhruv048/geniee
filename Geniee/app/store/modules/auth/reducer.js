@@ -31,6 +31,7 @@ export default handleActions(
       ...state,
       loggedUser:'',
       actions: {
+        ...state.actions,
         loginError: false,
         signedIn: false,
         signedUp: false,
@@ -41,9 +42,12 @@ export default handleActions(
       ...state,
       loggedUser: user,
     }),
-    [setSignedUp]: (state, {payload:{user}}) => ({
+    [setSignedUp]: (state) => ({
       ...state,
-      signedUp: true,
+      actions: {
+        ...state.actions,
+        signedUp: true,
+      },
     }),
   },
   {

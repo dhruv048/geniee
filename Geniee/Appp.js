@@ -21,7 +21,7 @@ import AddService from './app/screens/services/AddService';
 import ForgotPassword from './app/screens/ForgotPassword';
 import SignIn from './app/componentsG/Auth/components/SignIn';
 //import SignIn from './app/screens/SignIn';
-import Register from './app/screens/Register';
+import Register from './app/componentsG/Auth/components/Register';
 import ProductDetail from './app/screens/store/ProductDetail';
 import ServiceDetail from './app/screens/ServiceDetail';
 import LandingPageEF from './app/screens/EatFit/LandingPageEF';

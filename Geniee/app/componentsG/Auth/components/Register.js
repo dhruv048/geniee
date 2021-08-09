@@ -16,22 +16,21 @@ import {
 import { Button as NBButton, Icon as NBIcon, Row } from 'native-base';
 import { RadioGroup } from 'react-native-btr';
 import Icon from 'react-native-vector-icons/Feather';
-import Meteor from '../react-native-meteor';
-import Logo from '../components/Logo/Logo';
-import { colors, customStyle, variables } from '../config/styles';
-import { userType } from '../config/settings';
+import Meteor from '../../../react-native-meteor';
+import Logo from '../../../components/Logo/Logo';
+import { colors, customStyle, variables } from '../../../config/styles';
+import { userType } from '../../../config/settings';
 import { Container, Content, Item, Label } from 'native-base';
-import LocationPicker from '../components/LocationPicker';
-import { goBack, goToRoute } from '../Navigation';
+import LocationPicker from '../../../components/LocationPicker';
+import { goBack, goToRoute } from '../../../Navigation';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import { privacyPolicy } from '../lib/PrivacyPolicy';
-import { TermsCondition } from '../lib/Terms&Condition';
-import { customGalioTheme } from '../config/themes';
+import { privacyPolicy } from '../../../lib/PrivacyPolicy';
+import { TermsCondition } from '../../../lib/Terms&Condition';
+import { customGalioTheme } from '../../../config/themes';
 import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
-import useRegisterForm from '../hooks/useRegisterForm';
-import connect from '../react-native-meteor/components/ReactMeteorData';
-import { authActionsSelector } from '../store/selectors';
-import authHandlers from '../store/services/auth/handlers';
+import useRegisterForm from '../../../hooks/useRegisterForm';
+import connect from '../../../react-native-meteor/components/ReactMeteorData';
+import authHandlers from '../../../store/services/auth/handlers';
 
 const Register = ({ navigation }) => {
 
@@ -64,7 +63,9 @@ const Register = ({ navigation }) => {
             email: values.email.value,
             createdAt: new Date(),
             profile: {
-              name: capitalzeFirstLetter(values.name.value),
+              firstName: capitalzeFirstLetter(values.firstName.value),
+              middleName: capitalzeFirstLetter(values.middleName.value),
+              lastName: capitalzeFirstLetter(values.lastName.value),
               contactNo: values.contact.value,
               profileImage: null,
               location: values.location.value,
@@ -74,9 +75,10 @@ const Register = ({ navigation }) => {
           };
           handleInputChange('loading', true);
           authHandlers.handleSignUp({ user }, (err, res) => {
+            debugger;
             handleInputChange('loading', false);
             if (err) {
-              console.log(err.reason);
+              console.log('result from signup error ' + err.reason);
               ToastAndroid.showWithGravityAndOffset(
                 err.reason,
                 ToastAndroid.LONG,
@@ -86,7 +88,7 @@ const Register = ({ navigation }) => {
               );
             } else {
               // hack because react-native-meteor doesn't login right away after sign in
-              console.log('Reslut from register' + res);
+              console.log('Result from register' + res);
               ToastAndroid.showWithGravityAndOffset(
                 'Registered Successfully',
                 ToastAndroid.LONG,
@@ -94,7 +96,8 @@ const Register = ({ navigation }) => {
                 0,
                 50,
               );
-              this.props.navigation.navigate('SignIn');
+              resetRegisterForm();
+              navigation.navigate('SignIn');
             }
           });
         } else {
@@ -115,15 +118,14 @@ const Register = ({ navigation }) => {
           50,
         );
       }
+      handleInputChange('loading', false);
     }
   }
 
   const _updateUsersAgreeStatus = () => {
-    if (this.mounted) {
-      let termsChecked = values.termsChecked.value;
-      termsChecked = !termsChecked;
-      handleInputChange('termsChecked', termsChecked);
-    }
+    let termsChecked = values.termsChecked.value;
+    termsChecked = !termsChecked;
+    handleInputChange('termsChecked', termsChecked);
   };
 
   const handleLocation = (data, Detail) => {
@@ -131,14 +133,15 @@ const Register = ({ navigation }) => {
   };
 
   const handleOnLocationSelect = (location) => {
-    handleInputChange('location', location.formatted_address);
+    delete location.address_components;
+    console.log('location is '+ location);
+    handleInputChange('location', location);
     handleInputChange('pickLocation', false);
   }
 
   const closePickLocation = () => {
     handleInputChange('pickLocation', false);
   }
-  //const { location } = this.state;
   return (
     <Container>
       <StatusBar
@@ -189,7 +192,6 @@ const Register = ({ navigation }) => {
                 name="firstName"
                 value={values.firstName.value}
                 onChangeText={(value) => handleInputChange('firstName', value)}
-                //onSubmitEditing={() => values.middleName.focus()}
                 style={styles.inputBox}
               />
               <TextInput
@@ -211,7 +213,6 @@ const Register = ({ navigation }) => {
                 name="lastName"
                 value={values.lastName.value}
                 onChangeText={(value) => handleInputChange('lastName', value)}
-                //onSubmitEditing={() => values.email.focus()}
                 style={styles.inputBox}
               />
 
@@ -222,8 +223,6 @@ const Register = ({ navigation }) => {
                 placeholderTextColor="#808080"
                 keyboardType="Email-Address"
                 value={values.email.value}
-                //ref={input => (values.email.value = input)}
-                onSubmitEditing={() => values.contact.focus()}
                 onChangeText={(value) => handleInputChange('email', value)}
                 style={styles.inputBox}
               />
@@ -248,7 +247,7 @@ const Register = ({ navigation }) => {
                 color={customGalioTheme.COLORS.INPUT_TEXT}
                 placeholder="Location"
                 placeholderTextColor="#808080"
-                value={values.location.value}
+                value={values.location.value ? values.location.value.formatted_address : ''}
                 onFocus={() => handleInputChange('pickLocation', true)}
                 style={styles.inputBox}
               />
@@ -268,8 +267,6 @@ const Register = ({ navigation }) => {
                 placeholder="Password"
                 placeholderTextColor="#808080"
                 value={values.password.value}
-                ref={input => (values.password = input)}
-                //onSubmitEditing={() => values.confirmPassword.focus()}
                 onChangeText={(value) => handleInputChange('password', value)}
                 style={styles.inputBox}
               />
@@ -279,7 +276,7 @@ const Register = ({ navigation }) => {
                 right={
                   <TextInput.Icon
                     name="eye"
-                    onPress={() => handleInputChange('showConfirmPassword', !values.showConfirmPassword)}
+                    onPress={() => handleInputChange('showConfirmPassword', !values.showConfirmPassword.value)}
                   />
                 }
                 iconColor={colors.primary}
@@ -288,7 +285,6 @@ const Register = ({ navigation }) => {
                 placeholder="Confirm Password"
                 placeholderTextColor="#808080"
                 value={values.confirmPassword.value}
-                ref={input => (values.confirmPassword = input)}
                 onChangeText={(value) => handleInputChange('confirmPassword', value)}
                 onSubmitEditing={validateWithPassword}
                 style={styles.inputBox}
@@ -338,8 +334,9 @@ const Register = ({ navigation }) => {
                 marginLeft: 16,
               }}>
               <Checkbox
+
                 status={values.termsChecked.value ? 'checked' : 'unchecked'}
-                onPress={() => _updateUsersAgreeStatus}
+                onPress={_updateUsersAgreeStatus}
               />
               <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
                 By proceeding, you agree to our{' '}
@@ -454,7 +451,7 @@ const Register = ({ navigation }) => {
   );
 }
 
-export default connect(authActionsSelector)(Register);
+export default Register;
 
 const capitalzeFirstLetter = str => {
   var splitStr = str.toLowerCase().split(' ');
@@ -509,8 +506,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.whiteText,
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   content: {
     backgroundColor: colors.appBackground,
