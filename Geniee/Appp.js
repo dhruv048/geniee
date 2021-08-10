@@ -18,7 +18,7 @@ import ContactUs from './app/screens/ContactUs';
 import MyServices from './app/screens/services/MyServices';
 import AddProduct from './app/screens/store/AddProduct';
 import AddService from './app/screens/services/AddService';
-import ForgotPassword from './app/screens/ForgotPassword';
+import ForgotPassword from './app/componentsG/Auth/components/ForgotPassword';
 import SignIn from './app/componentsG/Auth/components/SignIn';
 //import SignIn from './app/screens/SignIn';
 import Register from './app/componentsG/Auth/components/Register';

@@ -4,7 +4,7 @@ import { Body, Container, Content, Header, Icon, Item, Right, Text } from "nativ
 import { colors } from "../../../config/styles";
 import { StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity, SafeAreaView, BackHandler } from "react-native";
 import ContactUs from '../../../screens/ContactUs';
-import ForgotPassword from "../../../screens/ForgotPassword";
+import ForgotPassword from './ForgotPassword';
 import Meteor from "../../../react-native-meteor";
 import AsyncStorage from "@react-native-community/async-storage";
 import MessageCount from "../../../components/MessageCount/MessageCount";
