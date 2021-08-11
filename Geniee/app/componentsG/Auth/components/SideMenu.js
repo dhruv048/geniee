@@ -27,12 +27,6 @@ const SideMenu = ({ navigation, loggedUser }) => {
         setUser(loggedUser);
     }, [loggedUser])
 
-    const handleBack = () => {
-        console.log('handlebackpress')
-        navigation.navigate('Dashboard');
-        return true;
-    }
-
     const navigateToRoute = (route) => {
         navigation.navigate(route)
     }

@@ -8,6 +8,7 @@ import {
   setSignedOut,
   setLoggedInUser,
   setSignedUp,
+  emailSent,
 } from '../../../store/actions';
 
 import { apiUrl } from 'settings';
@@ -15,16 +16,12 @@ import { getExpireDate } from 'helpers';
 import Meteor from '../../../react-native-meteor';
 
 const handleSignIn = ({ email, password }, callBack) => {
-  // Validate email/password
-  //new Promise((resolve, reject) => {
   Meteor.loginWithPassword(email, password, (err, res) => {
     if (err) {
       dispatch(wrongEmailPassword());
       callBack(err);
     } else {
       dispatch(setSignedIn());
-      //AsyncStorage.setItem('userToken', Meteor.getData()._tokenIdSaved);
-      //AsyncStorage.setItem('loggedInUser', JSON.stringify(Meteor.user()));
       dispatch(setLoggedInUser({ user : Meteor.user() }))
       callBack(true);
     }
@@ -43,9 +40,6 @@ const handleSignOut = (callBack) => {
       callBack(true);
     }
   })
-  
-  //AsyncStorage.removeItem('loggedInUser');
-  //AsyncStorage.removeItem('userToken');
 };
 
 const handleSignUp = ({user}, callBack) => {
@@ -56,6 +50,27 @@ const handleSignUp = ({user}, callBack) => {
     } else {
       console.log('SignedUp successfully')
       dispatch(setSignedUp());
+      callBack(true);
+    }
+  })
+};
+
+const forgetPassword = (email,callBack) => {
+  Meteor.call('forgotPasswordCustom', email,(res,err)=>{
+    if(err){
+      console.log('Please contact administrator.')
+    }else{
+      callBack(true);
+    }
+  })
+};
+
+const changeNewPassword = (email, confirmationcode, password,callBack) => {
+  debugger;
+  Meteor.call('setPasswordCustom',email,confirmationcode,password,(res,err)=>{
+    if(err){
+      console.log('Please contact administrator.')
+    }else{
       callBack(true);
     }
   })
@@ -180,6 +195,8 @@ export default {
   handleSignIn,
   handleSignOut,
   handleSignUp,
+  forgetPassword,
+  changeNewPassword,
   //handleValidateToken,
   // handleResetActions,
   // handleResetPassword,

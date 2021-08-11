@@ -75,7 +75,6 @@ const Register = ({ navigation }) => {
           };
           handleInputChange('loading', true);
           authHandlers.handleSignUp({ user }, (err, res) => {
-            debugger;
             handleInputChange('loading', false);
             if (err) {
               console.log('result from signup error ' + err.reason);

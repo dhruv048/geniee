@@ -34,8 +34,11 @@ import UseForgetPasswordForm from '../../../hooks/useForgetPasswordForm';
 import { mapValues } from 'lodash';
 //import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import { Button as RNPButton, TextInput } from 'react-native-paper';
+import { loggedUserSelector } from '../../../store/selectors/auth';
+import authHandlers from '../../../store/services/auth/handlers';
+import { connect } from 'react-redux';
 
-const ForgotPassword = ({ navigation }) => {
+const ForgotPassword = ({loggedUser, navigation}) => {
 
   const { values, handleInputChange, validateForgetPasswordForm, resetForgetPasswordForm } = UseForgetPasswordForm();
 
@@ -50,20 +53,11 @@ const ForgotPassword = ({ navigation }) => {
       );
       return;
     }
-    console.log('sds');
     try {
       handleInputChange('loading', true);
-      Meteor.call('forgotPasswordCustom', values.email.value, (err, res) => {
+      authHandlers.forgetPassword(values.email.value, (res,err) => {
         handleInputChange('loading', false);
-        if (err) {
-          ToastAndroid.showWithGravityAndOffset(
-            err.message,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-            0,
-            50,
-          );
-        } else {
+        if (res === true) {
           ToastAndroid.showWithGravityAndOffset(
             'Password Reset Code has been sent to email:' + values.email.value,
             ToastAndroid.LONG,
@@ -71,18 +65,30 @@ const ForgotPassword = ({ navigation }) => {
             0,
             50,
           );
-          AsyncStorage.setItem('Forgot_pss_email', values.email.value);
+          //AsyncStorage.setItem('Forgot_pss_email', values.email.value);
           handleInputChange('setPassword', true);
           handleInputChange('email', '');
+        } else {
+          ToastAndroid.showWithGravityAndOffset(
+            err.message,
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+          );
         }
       });
     } catch (e) {
       alert(e.message);
     }
+    handleInputChange('loading', false);
   };
 
-  const _setNewPassword = async () => {
-    let email = await AsyncStorage.getItem('Forgot_pss_email');
+  const _setNewPassword = () => {
+    debugger;
+    console.log('This is logged user :'+loggedUser)
+    //let email = await AsyncStorage.getItem('Forgot_pss_email');
+    let email = loggedUser.emails[0].address;
     if (values.token.value && values.password.value && values.confirmPassword.value) {
       if (values.password.value !== values.confirmPassword.value) {
         ToastAndroid.showWithGravityAndOffset(
@@ -94,10 +100,9 @@ const ForgotPassword = ({ navigation }) => {
         );
       } else {
         handleInputChange('loading', true);
-        // Meteor.Accounts.resetPassword(token,password,(err,res)=>{
-        Meteor.call('setPasswordCustom', email, values.token.value, values.password.value, (err, res) => {
+        authHandlers.changeNewPassword(email, values.token.value, values.password.value, (err, res) => {
           handleInputChange('loading', false);
-          if (!err) {
+          if (res === true) {
             ToastAndroid.showWithGravityAndOffset(
               'Password Reset Successfully!!',
               ToastAndroid.LONG,
@@ -106,7 +111,7 @@ const ForgotPassword = ({ navigation }) => {
               50,
             );
             handleInputChange('setPassword', false)
-            navigation.navigate('Home')
+            navigation.navigate('SignIn')
           } else {
             ToastAndroid.showWithGravityAndOffset(
               err.reason,
@@ -116,17 +121,19 @@ const ForgotPassword = ({ navigation }) => {
               50,
             );
           }
+          handleInputChange('loading', false);
         });
       }
     } else {
       ToastAndroid.showWithGravityAndOffset(
-        'Please type 6-digit Code and Password',
+        'Please Enter Valid 6-digit Code and Password',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
         0,
         50,
       );
     }
+    handleInputChange('loading', false);
   };
 
   return (
@@ -179,7 +186,8 @@ const ForgotPassword = ({ navigation }) => {
               </View>
               <View>
                 <RNPButton
-                  onPress={_forgotPassword}
+                  mode='contained'
+                  onPress={() => _forgotPassword()}
                   style={{
                     width: '100%',
                     marginBottom: 10,
@@ -222,7 +230,6 @@ const ForgotPassword = ({ navigation }) => {
                 color={customGalioTheme.COLORS.INPUT_TEXT}
                 placeholder="Token(6-digit Code)"
                 keyboardType="phone-pad"
-                placeholder="Password"
                 placeholderTextColor="#808080"
                 value={values.token.value}
                 onChangeText={(value) => handleInputChange('token', value)}
@@ -266,7 +273,8 @@ const ForgotPassword = ({ navigation }) => {
               />
               <View>
                 <RNPButton
-                  onPress={() =>_setNewPassword}
+                  mode='contained'
+                  onPress={() =>_setNewPassword()}
                   style={{ width: '100%', marginVertical: 20 }}
                   loading={values.loading.value}
                   disabled={values.loading.value}>
@@ -296,7 +304,9 @@ const ForgotPassword = ({ navigation }) => {
         </Container>
       </TouchableWithoutFeedback>
   );
-}
+};
+
+export default connect(loggedUserSelector)(ForgotPassword);
 
 const styles = StyleSheet.create({
   container: {
@@ -372,4 +382,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPassword;
