@@ -1,4 +1,5 @@
-import React, {PureComponent,Fragment} from 'react';
+import React, {PureComponent,Fragment, useEffect, useState,} from 'react';
+import {connect} from 'react-redux';
 import {Body, Container, Content, Header, Icon, Item, Right, Text} from "native-base";
 import {colors} from "../config/styles";
 import {StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity,SafeAreaView,BackHandler} from "react-native";
@@ -10,47 +11,55 @@ import MessageCount from "../components/MessageCount/MessageCount";
 import settings , {getProfileImage} from "../config/settings";
 import DeviceInfo from 'react-native-device-info';
 import FooterTabs from '../components/FooterTab';
+import {loggedUserSelector} from '../store/selectors/auth';
+import authHandlers from '../../../store/services/auth/handlers'
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 
-class SideMenu extends PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLogged: Meteor.user() ? true : false,
-            currentRoute: 'Dashboard',
-            user: ''
-        }
-    }
+const SideMenu = ({navigation, loggedUser}) => {
 
-    async componentDidMount() {
-        let Token=await AsyncStorage.getItem(USER_TOKEN_KEY);
-        // BackHandler.addEventListener('hardwareBackPress', this.handleBack);
-        let loggedUser=await AsyncStorage.getItem("loggedUser");
-        loggedUser=loggedUser?  JSON.parse(loggedUser) : null;
-        this.setState({isLogged: Token ? true : false, user: this.props.loggedUser ? this.props.loggedUser :loggedUser})
-    }
-    handleBack=()=>{
+    const [isLogged, setIsLogged] = useState(loggedUser ? true : false);
+    const [currentRoute, setCurrentRoute] =useState('Dashboard');
+    const [user, setUser] = useState('');
+
+    useEffect(async () => {
+        setIsLogged(loggedUser? true:false);
+        setUser(loggedUser);
+    },[loggedUser])
+    
+    const handleBack=()=>{
             console.log('handlebackpress')
-            // this.props.navigation.navigate('Dashboard');
-            this.props.navigation.goBack();
+            navigation.navigate('Dashboard');
             return true;
     }
 
-    componentWillReceiveProps(newProps) {
-      //  this.setState({isLogged: newProps.loggedUser ? true : false})
-        if (newProps.loggedUser)
-            this.setState({user: newProps.loggedUser})
-    }
-    componentWillUnmount(){
-        // BackHandler.removeEventListener('hardwareBackPress',this.handleBack);
+    const navigateToRoute = (route) =>{
+        navigation.navigate(route)
     }
 
-    navigateToRoute(route) {
-        this.props.navigation.navigate(route)
+    const _signOut = () => {
+        Alert.alert(
+            'SignOut',
+            'Do you want to SignOut?',
+            [
+                {
+                    text: 'Yes SignOut',
+                    onPress: () => authHandlers.handleSignOut((res)=>{
+                        if(res === true){
+                            setIsLogged(false);
+                            setUser('');
+                            navigation.navigate( 'Dashboard');
+                        }else{
+                            console.log('Please contact administrator.')
+                        }
+                    })
+                },
+                {text: 'Cancel', onPress: () => {}}
+            ],
+            {cancelable: false}
+        );
     }
-
-    _signOut() {
+    const _signOut1 = () => {
         Alert.alert(
             'SignOut',
             'Do you want to SignOut?',
@@ -61,30 +70,21 @@ class SideMenu extends PureComponent {
                             console.log('logout',err);
                             AsyncStorage.setItem(USER_TOKEN_KEY, '');
                             AsyncStorage.setItem('loggedUser', '');
-                            this.setState({isLogged: false,user:''})
-                            this.props.navigation.navigate( 'Dashboard');
+                            //this.setState({isLogged: false,user:''});
+                            setIsLogged(false);
+                            setUser('');
+                            navigation.navigate( 'Dashboard');
                         // }
                         // else
-                        //     this.props.navigation.goBack()
+                        //     props.navigation.goBack()
                     })
                 },
                 {text: 'Cancel', onPress: () => {}}
             ],
             {cancelable: false}
         );
-
-        // Meteor.logout((err) => {
-        //     if (!err){
-        //         console.log('logout')
-        //         AsyncStorage.setItem(USER_TOKEN_KEY, '');
-        //         this.props.navigation.navigate('UnAuthorized');
-        //     }
-        //     else
-        //         this.props.navigation.goBack()
-        // })
     }
 
-    render() {
         return (
             <Fragment>
             <SafeAreaView style={{ flex: 0,  }} />
@@ -92,8 +92,8 @@ class SideMenu extends PureComponent {
                         style={{height: 220,backgroundColor: '#daecf2' }} >
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
 
-                    {this.state.user=='NaN' ?
-                        <TouchableOpacity onPress={this.navigateToRoute.bind(this,'Profile')}>
+                    {user ?
+                        <TouchableOpacity onPress={navigateToRoute.bind(this,'Profile')}>
                             <>
                                 <Image style={{
                                     width: 147,
@@ -106,20 +106,20 @@ class SideMenu extends PureComponent {
                                     borderColor: `rgba(87, 150, 252, 1)`,
                                     backgroundColor:'white',
                                 }}
-                                       source={this.state.user.profile.profileImage ? {uri: getProfileImage(this.state.user.profile.profileImage)} : require('../images/user-icon.png')}/>
-                                {/*{this.state.user?*/}
+                                       source={user.profile.profileImage ? {uri: getProfileImage(user.profile.profileImage)} : require('../images/user-icon.png')}/>
+                                {/*{user?*/}
                                 {/*<Icon name="edit" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 60 }} />:null}*/}
                             </>
                         </TouchableOpacity> :
                         <Image style={{width: 150, height: 150}}
                                source={require('../images/logo2-trans-640X640.png')}/>}
                     <Text style={{fontSize: 16, fontWeight: "400", color: colors.appLayout}}>WELCOME</Text>
-                    {this.state.user ?
+                    {user ?
                         <Text style={{
                             fontSize: 14,
                             fontWeight: "200",
                             color: colors.appLayout
-                        }}>{this.state.user.profile.name}</Text> : null}
+                        }}>{user.profile.name}</Text> : null}
 
                     <Text note style={{color:colors.appLayout}}>[ Version: {DeviceInfo.getVersion()} ]</Text>
                     </View>
@@ -127,79 +127,79 @@ class SideMenu extends PureComponent {
 
                 </Header>
                 <Content style={{flex: 1, marginTop: 1, backgroundColor:'white'}}>
-                    <TouchableOpacity onPress={() => this.navigateToRoute("Dashboard")}>
+                    <TouchableOpacity onPress={() => navigateToRoute("Dashboard")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Home</Text>
+                                style={[currentRoute == 'Dashboard' ? style.selectedTextStyle : style.screenTextStyle]}>Home</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.navigateToRoute("Orders")}>
+                    <TouchableOpacity onPress={() => navigateToRoute("Orders")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'Orders' ? style.selectedTextStyle : style.screenTextStyle]}>Orders</Text>
+                                style={[currentRoute == 'Orders' ? style.selectedTextStyle : style.screenTextStyle]}>Orders</Text>
                         </View>
                     </TouchableOpacity>
-                    {this.state.isLogged ?
+                    {isLogged ?
                         <>
-                            <TouchableOpacity onPress={() => this.navigateToRoute("Chat")}>
+                            <TouchableOpacity onPress={() => navigateToRoute("Chat")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
-                                        style={[this.state.currentRoute == 'Chat' ? style.selectedTextStyle : style.screenTextStyle]}>Message</Text>
+                                        style={[currentRoute == 'Chat' ? style.selectedTextStyle : style.screenTextStyle]}>Message</Text>
                                     <Right style={{marginRight: 10}}>
                                         <MessageCount/>
                                     </Right>
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigateToRoute("MyServices")}>
+                            <TouchableOpacity onPress={() => navigateToRoute("MyServices")}>
                                 <View style={[style.screenStyle]}>
-                                    <Text style={[this.state.currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Business</Text>
+                                    <Text style={[currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Business</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.navigateToRoute("AddService")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
-                                        style={[this.state.currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Create Business/Store</Text>
+                                        style={[currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Create Business/Store</Text>
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigateToRoute("MyProducts")}>
+                            <TouchableOpacity onPress={() => navigateToRoute("MyProducts")}>
                                 <View style={[style.screenStyle]}>
-                                    <Text style={[this.state.currentRoute == 'MyProducts' ? style.selectedTextStyle : style.screenTextStyle]}>My Products/Services</Text>
+                                    <Text style={[currentRoute == 'MyProducts' ? style.selectedTextStyle : style.screenTextStyle]}>My Products/Services</Text>
                                 </View>
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => this.navigateToRoute("AddProduct")}>
                                 <View style={[style.screenStyle]}>
                                     <Text
-                                        style={[this.state.currentRoute == 'AddProduct' ? style.selectedTextStyle : style.screenTextStyle]}>Create Product/Service</Text>
+                                        style={[currentRoute == 'AddProduct' ? style.selectedTextStyle : style.screenTextStyle]}>Create Product/Service</Text>
                                 </View>
                             </TouchableOpacity></> : null}
 
-                    <TouchableOpacity onPress={() => this.navigateToRoute("ContactUs")}>
+                    <TouchableOpacity onPress={() => navigateToRoute("ContactUs")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'ContactUs' ? style.selectedTextStyle : style.screenTextStyle]}>Contact
+                                style={[currentRoute == 'ContactUs' ? style.selectedTextStyle : style.screenTextStyle]}>Contact
                                 Us</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.navigateToRoute("ForgotPassword")}>
+                    <TouchableOpacity onPress={() => navigateToRoute("ForgotPassword")}>
                         <View style={[style.screenStyle]}>
                             <Text
-                                style={[this.state.currentRoute == 'ForgotPassword' ? style.selectedTextStyle : style.screenTextStyle]}>Forgot
+                                style={[currentRoute == 'ForgotPassword' ? style.selectedTextStyle : style.screenTextStyle]}>Forgot
                                 Password</Text>
                         </View>
                     </TouchableOpacity>
 
-                    {this.state.isLogged ?
-                        <TouchableOpacity onPress={() => this._signOut()}>
+                    {isLogged ?
+                        <TouchableOpacity onPress={_signOut}>
                             <View style={[style.screenStyle]}>
                                 <Text
-                                    style={[this.state.currentRoute == 'SignOut' ? style.selectedTextStyle : style.screenTextStyle]}>SignOut</Text>
+                                    style={[currentRoute == 'SignOut' ? style.selectedTextStyle : style.screenTextStyle]}>SignOut</Text>
                             </View>
                         </TouchableOpacity> :
-                        <TouchableOpacity onPress={() => this.navigateToRoute("SignIn")}>
+                        <TouchableOpacity onPress={() => navigateToRoute("SignIn")}>
                             <View style={[style.screenStyle]}>
                                 <Text
-                                    style={[this.state.currentRoute == 'SignIn' ? style.selectedTextStyle : style.screenTextStyle]}>Sign
+                                    style={[currentRoute == 'SignIn' ? style.selectedTextStyle : style.screenTextStyle]}>Sign
                                     In</Text>
                             </View>
                         </TouchableOpacity>}
@@ -214,8 +214,9 @@ class SideMenu extends PureComponent {
                 {/* <FooterTabs route={'More'} componentId={this.props.componentId}/> */}
             </Fragment>
         )
-    }
 }
+
+export default connect(loggedUserSelector)(SideMenu);
 
 const style = StyleSheet.create({
     activeRoute: {
@@ -269,9 +270,3 @@ const style = StyleSheet.create({
         width: '100%',
     },
 })
-
-export default Meteor.withTracker(() => {
-    return {
-        loggedUser: Meteor.user()
-    }
-})(SideMenu);

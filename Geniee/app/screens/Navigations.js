@@ -4,7 +4,8 @@ import Dashboard from './Dashboard';
 import ChatList from './chat/ChatList';
 import WishListEF from './EatFit/WishListEF';
 import FooterTab from '../components/FooterTab';
-import SideMenu from './SideMenu';
+import SideMenu from '../componentsG/Auth/components/SideMenu'
+// import SideMenu from './SideMenu';
 
 const Tab = createBottomTabNavigator();
 
