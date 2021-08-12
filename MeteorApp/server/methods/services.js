@@ -1,11 +1,11 @@
-import {Meteor} from "meteor/meteor";
-import {FIREBASE_MESSAGING} from "../API/fire-base-admin";
-import {Ratings} from "../../lib/collections/genieeRepair/ratings";
-import {EFProducts} from "../../lib/collections/eatFit/efProducts";
-import {ProductOwner, NotificationTypes, BusinessType} from "../../lib/utils";
+import { Meteor } from "meteor/meteor";
+import { FIREBASE_MESSAGING } from "../API/fire-base-admin";
+import { Ratings } from "../../lib/collections/genieeRepair/ratings";
+import { EFProducts } from "../../lib/collections/eatFit/efProducts";
+import { ProductOwner, NotificationTypes, BusinessType } from "../../lib/utils";
 
 const removeProductsByServiceId = (Id) => {
-    let _products = Products.find({service: Id}).fetch();
+    let _products = Products.find({ service: Id }).fetch();
     _products.foreach((_product) => {
         Products.remove(_product._id);
         _product.images.foreach((item) => {
@@ -26,7 +26,7 @@ Meteor.methods({
                     : Id;
             if (!serviceInfo.Category.subCatId) {
                 MainCategories.update(
-                    {catId: "0"},
+                    { catId: "0" },
                     {
                         $addToSet: {
                             subCategories: {
@@ -53,95 +53,95 @@ Meteor.methods({
             };
             //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
             serviceInfo.location = location;
-            let Owner = Meteor.users.findOne({_id: serviceInfo.owner});
-            if (serviceInfo.Image) {
-                ServiceImage.write(
-                    new Buffer(serviceInfo.Image.data, "base64"),
+            let Owner = Meteor.users.findOne({ _id: serviceInfo.owner });
+            // if (serviceInfo.Image) {
+            //     ServiceImage.write(
+            //         new Buffer(serviceInfo.Image.data, "base64"),
+            //         {
+            //             fileName: serviceInfo.Image.modificationDate + ".JPEG",
+            //             type: serviceInfo.Image.mime,
+            //         },
+            //         (err, res) => {
+            //             if (err) {
+            //                 console.log(err);
+            //             } else {
+            //                 console.log(res._id);
+            //                 serviceInfo.createdAt = new Date(
+            //                     new Date().toUTCString()
+            //                 );
+            //                 serviceInfo.createdBy = currentUserId;
+            //                 serviceInfo.coverImage = res._id;
+            //                 serviceInfo.categoryId = CategoryId;
+            //                 serviceInfo.ratings = [{count: 0}];
+            //                 serviceInfo.Image = null;
+            //                 var res = Service.insert(serviceInfo);
+            //                 try {
+            //                     FIREBASE_MESSAGING.notificationToAll(
+            //                         "newServiceStaging",
+            //                         `New Service by- ${Owner.profile.name}`,
+            //                         serviceInfo.title,
+            //                         {
+            //                             Id: res,
+            //                             navigate: "true",
+            //                             route: "ServiceDetail",
+            //                             image: serviceInfo.coverImage,
+            //                             icon: Owner.profile.profileImage
+            //                                 ? Owner.profile.profileImage
+            //                                 : "",
+            //                         }
+            //                     );
+            //                 } catch (e) {
+            //                     throw new Meteor.Error(403, e.message);
+            //                 }
+            //                 const notification = {
+            //                     title: `New Service by- ${Owner.profile.name}`,
+            //                     description: serviceInfo.title,
+            //                     owner: serviceInfo.owner,
+            //                     navigateId: res,
+            //                     receiver: [],
+            //                     removedBy: [],
+            //                     type: NotificationTypes.ADD_SERVICE,
+            //                 };
+            //                 Meteor.call("addNotification", notification);
+            //                 return res;
+            //             }
+            //         },
+            //         (proceedAfterUpload = true)
+            //     );
+            // } else {
+            serviceInfo.createdAt = new Date(new Date().toUTCString());
+            serviceInfo.createdBy = currentUserId;
+            serviceInfo.coverImage = null;
+            serviceInfo.categoryId = CategoryId;
+            serviceInfo.ratings = [{ count: 0 }];
+            serviceInfo.Image = null;
+            var res = Service.insert(serviceInfo);
+            try {
+                FIREBASE_MESSAGING.notificationToAll(
+                    "newServiceStaging",
+                    `New Service Provider - ${serviceInfo.title}`,
+                    serviceInfo.description,
                     {
-                        fileName: serviceInfo.Image.modificationDate + ".JPEG",
-                        type: serviceInfo.Image.mime,
-                    },
-                    (err, res) => {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(res._id);
-                            serviceInfo.createdAt = new Date(
-                                new Date().toUTCString()
-                            );
-                            serviceInfo.createdBy = currentUserId;
-                            serviceInfo.coverImage = res._id;
-                            serviceInfo.categoryId = CategoryId;
-                            serviceInfo.ratings = [{count: 0}];
-                            serviceInfo.Image = null;
-                            var res = Service.insert(serviceInfo);
-                            try {
-                                FIREBASE_MESSAGING.notificationToAll(
-                                    "newServiceStaging",
-                                    `New Service by- ${Owner.profile.name}`,
-                                    serviceInfo.title,
-                                    {
-                                        Id: res,
-                                        navigate: "true",
-                                        route: "ServiceDetail",
-                                        image: serviceInfo.coverImage,
-                                        icon: Owner.profile.profileImage
-                                            ? Owner.profile.profileImage
-                                            : "",
-                                    }
-                                );
-                            } catch (e) {
-                                throw new Meteor.Error(403, e.message);
-                            }
-                            const notification = {
-                                title: `New Service by- ${Owner.profile.name}`,
-                                description: serviceInfo.title,
-                                owner: serviceInfo.owner,
-                                navigateId: res,
-                                receiver: [],
-                                removedBy: [],
-                                type: NotificationTypes.ADD_SERVICE,
-                            };
-                            Meteor.call("addNotification", notification);
-                            return res;
-                        }
-                    },
-                    (proceedAfterUpload = true)
+                        Id: res,
+                        navigate: "true",
+                        route: "ServiceDetail",
+                    }
                 );
-            } else {
-                serviceInfo.createdAt = new Date(new Date().toUTCString());
-                serviceInfo.createdBy = currentUserId;
-                serviceInfo.coverImage = null;
-                serviceInfo.categoryId = CategoryId;
-                serviceInfo.ratings = [{count: 0}];
-                serviceInfo.Image = null;
-                var res = Service.insert(serviceInfo);
-                try {
-                    FIREBASE_MESSAGING.notificationToAll(
-                        "newServiceStaging",
-                        `New Service Provider - ${serviceInfo.title}`,
-                        serviceInfo.description,
-                        {
-                            Id: res,
-                            navigate: "true",
-                            route: "ServiceDetail",
-                        }
-                    );
-                } catch (e) {
-                    throw new Meteor.Error(403, e.message);
-                }
-                const notification = {
-                    title: `New Service by- ${Owner.profile.name}`,
-                    description: serviceInfo.title,
-                    owner: serviceInfo.owner,
-                    navigateId: res,
-                    receiver: [],
-                    removedBy: [],
-                    type: NotificationTypes.ADD_SERVICE,
-                };
-                Meteor.call("addNotification", notification);
-                return res;
+            } catch (e) {
+                throw new Meteor.Error(403, e.message);
             }
+            const notification = {
+                title: `New Service by- ${Owner.profile.name}`,
+                description: serviceInfo.title,
+                owner: serviceInfo.owner,
+                navigateId: res,
+                receiver: [],
+                removedBy: [],
+                type: NotificationTypes.ADD_SERVICE,
+            };
+            Meteor.call("addNotification", notification);
+            return res;
+            // }
         } catch (e) {
             console.log(e.message);
             throw new Meteor.Error(403, e.message);
@@ -156,7 +156,7 @@ Meteor.methods({
                 : Id;
         if (!serviceInfo.Category.subCatId) {
             MainCategories.update(
-                {catId: "0"},
+                { catId: "0" },
                 {
                     $addToSet: {
                         subCategories: {
@@ -183,36 +183,36 @@ Meteor.methods({
         };
         //     serviceInfo.location.geometry.coordinates=[serviceInfo.location.geometry.location.lng,serviceInfo.location.geometry.location.lat]
         serviceInfo.location = location;
-        if (serviceInfo.Image) {
-            ServiceImage.write(
-                new Buffer(serviceInfo.Image.data, "base64"),
-                {
-                    fileName: serviceInfo.Image.modificationDate + ".JPEG",
-                    type: serviceInfo.Image.mime,
-                },
-                (err, res) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(res._id);
-                        ServiceImage.remove(serviceInfo.coverImage);
-                        serviceInfo.updatedAt = new Date(
-                            new Date().toUTCString()
-                        );
-                        serviceInfo.coverImage = res._id;
-                        serviceInfo.categoryId = CategoryId;
-                        serviceInfo.Image = null;
-                        Service.update({_id: servId}, {$set: serviceInfo});
-                    }
-                },
-                (proceedAfterUpload = true)
-            );
-        } else {
-            serviceInfo.updatedAt = new Date(new Date().toUTCString());
-            serviceInfo.categoryId = CategoryId;
-            serviceInfo.Image = null;
-            Service.update({_id: servId}, {$set: serviceInfo});
-        }
+        // if (serviceInfo.Image) {
+        //     ServiceImage.write(
+        //         new Buffer(serviceInfo.Image.data, "base64"),
+        //         {
+        //             fileName: serviceInfo.Image.modificationDate + ".JPEG",
+        //             type: serviceInfo.Image.mime,
+        //         },
+        //         (err, res) => {
+        //             if (err) {
+        //                 console.log(err);
+        //             } else {
+        //                 console.log(res._id);
+        //                 ServiceImage.remove(serviceInfo.coverImage);
+        //                 serviceInfo.updatedAt = new Date(
+        //                     new Date().toUTCString()
+        //                 );
+        //                 serviceInfo.coverImage = res._id;
+        //                 serviceInfo.categoryId = CategoryId;
+        //                 serviceInfo.Image = null;
+        //                 Service.update({ _id: servId }, { $set: serviceInfo });
+        //             }
+        //         },
+        //         (proceedAfterUpload = true)
+        //     );
+        // } else {
+        serviceInfo.updatedAt = new Date(new Date().toUTCString());
+        serviceInfo.categoryId = CategoryId;
+        serviceInfo.Image = null;
+        Service.update({ _id: servId }, { $set: serviceInfo });
+        // }
     },
 
     addCategory: (name) => {
@@ -232,14 +232,14 @@ Meteor.methods({
     },
 
     updateCategory: function (category) {
-        var cat = Service.findOne({_id: category._id});
+        var cat = Service.findOne({ _id: category._id });
         if (
             cat.createdBy === Meteor.userId() ||
             Meteor.user().profile.role === 2
         ) {
             try {
                 Category.update(
-                    {_id: category._id},
+                    { _id: category._id },
                     {
                         $set: {
                             title: category.title,
@@ -259,13 +259,13 @@ Meteor.methods({
     },
 
     removeCategory: function (id) {
-        var category = Service.findOne({_id: id});
+        var category = Service.findOne({ _id: id });
         if (
             Meteor.userId() === category.createdBy ||
             Meteor.user().profile.role === 2
         ) {
             try {
-                Category.remove({_id: id});
+                Category.remove({ _id: id });
             } catch (err) {
                 console.log(err.message);
                 throw new Meteor.Error(403, err.message);
@@ -280,7 +280,7 @@ Meteor.methods({
             if (Count.find().count() > 0) {
                 var count = Count.findOne();
                 Count.update(
-                    {_id: count._id},
+                    { _id: count._id },
                     {
                         $set: {
                             callCount: count.callCount + 1,
@@ -288,7 +288,7 @@ Meteor.methods({
                     }
                 );
             } else {
-                Count.insert({callCount: 1});
+                Count.insert({ callCount: 1 });
             }
         } catch (err) {
             console.log(err.message);
@@ -302,7 +302,7 @@ Meteor.methods({
             // this.unblock();
             var searchExp = new RegExp(RexExp.escape(searchText), "i");
             return Service.find({
-                $or: [{title: searchExp}, {description: searchText}],
+                $or: [{ title: searchExp }, { description: searchText }],
             }).fetch();
         } catch (e) {
             console.log("from search" + e.message);
@@ -312,7 +312,7 @@ Meteor.methods({
     updateRating: function (Id, rating) {
         try {
             let user = Meteor.user();
-            const service = Service.findOne({_id: Id});
+            const service = Service.findOne({ _id: Id });
 
             let Rating = {
                 serviceId: Id,
@@ -322,7 +322,7 @@ Meteor.methods({
             };
 
             Ratings.upsert(
-                {ratedBy: user._id, serviceId: Id},
+                { ratedBy: user._id, serviceId: Id },
                 {
                     $set: Rating,
                 }
@@ -338,26 +338,26 @@ Meteor.methods({
                 type: NotificationTypes.RATE_SERVICE,
             };
             Meteor.call("addNotification", notification);
-            try{
-            const tokens =
-                Meteor.users.findOne({_id: service.owner}).devices || [];
-            FIREBASE_MESSAGING.notificationToList(
-                tokens,
-                "New Service Review",
-                `${user.profile.name} has reviewd your service '${service.title}. "${rating.comment}"`,
-                {
-                    Id: Id,
-                    navigate: "true",
-                    route: "ServiceRatings",
-                    image: service.coverImage || "",
-                    icon: user.profile.profileImage || "",
-                }
-            );
+            try {
+                const tokens =
+                    Meteor.users.findOne({ _id: service.owner }).devices || [];
+                FIREBASE_MESSAGING.notificationToList(
+                    tokens,
+                    "New Service Review",
+                    `${user.profile.name} has reviewd your service '${service.title}. "${rating.comment}"`,
+                    {
+                        Id: Id,
+                        navigate: "true",
+                        route: "ServiceRatings",
+                        image: service.coverImage || "",
+                        icon: user.profile.profileImage || "",
+                    }
+                );
             }
-         catch (err) {
-            console.log(err.message);
-            // throw new Meteor.Error(403, err.message);
-        }
+            catch (err) {
+                console.log(err.message);
+                // throw new Meteor.Error(403, err.message);
+            }
 
         } catch (err) {
             console.log(err.message);
@@ -366,7 +366,7 @@ Meteor.methods({
     },
 
     getMyRating: (servId) => {
-        return Ratings.findOne({serviceId: servId, ratedBy: Meteor.userId()});
+        return Ratings.findOne({ serviceId: servId, ratedBy: Meteor.userId() });
     },
 
     getRatings: (servId, skip) => {
@@ -374,7 +374,7 @@ Meteor.methods({
         const collection = Ratings.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
         const pipeline = [
-            {$match: {serviceId: servId}},
+            { $match: { serviceId: servId } },
             {
                 $lookup: {
                     from: "users",
@@ -386,12 +386,12 @@ Meteor.methods({
             },
             {
                 $addFields: {
-                    RatedBy: {$arrayElemAt: ["$Users", 0]},
+                    RatedBy: { $arrayElemAt: ["$Users", 0] },
                 },
             },
-            {$sort: {rateDate: -1}},
-            {$limit: _skip + 20},
-            {$skip: _skip},
+            { $sort: { rateDate: -1 } },
+            { $limit: _skip + 20 },
+            { $skip: _skip },
             {
                 $project: {
                     _id: 1,
@@ -404,7 +404,7 @@ Meteor.methods({
             },
         ];
         return Async.runSync(function (done) {
-            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
+            aggregate(pipeline, { cursor: {} }).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
                 }
@@ -425,7 +425,7 @@ Meteor.methods({
             productInfo.discount = parseInt(productInfo.discount);
             productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
-            let _service = Service.findOne({_id: productInfo.service});
+            let _service = Service.findOne({ _id: productInfo.service });
             let imageIds = [];
             if (productInfo.images) {
                 productInfo.images.forEach((image) => {
@@ -462,7 +462,7 @@ Meteor.methods({
                                                 navigate: "true",
                                                 route: "ProductDetail",
                                                 image:
-                                                productInfo.images[0] || "",
+                                                    productInfo.images[0] || "",
                                                 icon: _service.coverImage || "",
                                             }
                                         );
@@ -475,7 +475,7 @@ Meteor.methods({
                                         owner: _service.owner,
                                         navigateId: pId,
                                         productOwner:
-                                        ProductOwner.REGULAR_USERS,
+                                            ProductOwner.REGULAR_USERS,
                                         receiver: [],
                                         removedBy: [],
                                         type: NotificationTypes.ADD_PRODUCT,
@@ -536,99 +536,99 @@ Meteor.methods({
         productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
-        if (productInfo.images.length < 1) {
-            console.log("imagesToRemove", imagesToRemove);
-            Products.update(
-                {_id: productId},
-                {$set: productInfo},
-                (err, res) => {
-                    ServiceImage.remove({_id: {$in: imagesToRemove}});
-                }
-            );
-            return;
-        }
-        productInfo.images.forEach((image) => {
-            if (!image.hasOwnProperty("_id")) {
-                let Id =
-                    moment().format("DDMMYYx") +
-                    "." +
-                    image.mime.substr(image.mime.indexOf("/") + 1);
-                ServiceImage.write(
-                    new Buffer(image.data, "base64"),
-                    {
-                        fileName: Id,
-                        type: image.mime,
-                    },
-                    (err, res) => {
-                        if (err) {
-                            console.log("error", err);
-                        } else {
-                            let imageId = res._id;
-                            console.log("res:", imageId);
-                            imageIds.push(imageId);
-                            if (productInfo.images.length == imageIds.length) {
-                                productInfo.images = imageIds;
-                                console.log("update", Id, imageIds);
-                                Products.update(
-                                    {_id: productId},
-                                    {
-                                        $set: productInfo,
-                                        // $set: {
-                                        //     title: productInfo.title,
-                                        //     description: productInfo.description,
-                                        //     contact: productInfo.contact,
-                                        //     radius: productInfo.radius,
-                                        //     homeDelivery: productInfo.homeDelivery,
-                                        //     price: productInfo.price,
-                                        //     discount: productInfo.discount,
-                                        //     unit: productInfo.unit,
-                                        //     website: productInfo.unit,
-                                        //     sizes: productInfo.unit,
-                                        //     colors: productInfo.unit,
-                                        //     qty: productInfo.qty,
-                                        //     images: imageIds,
-                                        //     service: productInfo.service,
-                                        //     serviceOwner: productInfo.serviceOwner,
-                                        //     availabeQuantity: productInfo.availabeQuantity,
-                                        //     updateDate: productInfo.updateDate
-                                        // }
-                                    },
-                                    (err, res) => {
-                                        if (err) {
-                                            console.log(err);
-                                        } else {
-                                            ServiceImage.remove({
-                                                _id: {$in: imagesToRemove},
-                                            });
-                                            return res;
-                                        }
-                                    }
-                                );
-                            }
-                        }
-                    },
-                    (proceedAfterUpload = true)
-                );
-            } else {
-                imageIds.push(image._id);
-                if (productInfo.images.length == imageIds.length) {
-                    productInfo.images = imageIds;
-                    console.log("update existing");
-                    Products.update(
-                        {_id: productId},
-                        {
-                            $set: productInfo,
-                        },
-                        (err, res) => {
-                            ServiceImage.remove({
-                                _id: {$in: imagesToRemove},
-                            });
-                            return res;
-                        }
-                    );
-                }
+        // if (productInfo.images.length < 1) {
+        console.log("imagesToRemove", imagesToRemove);
+        Products.update(
+            { _id: productId },
+            { $set: productInfo },
+            (err, res) => {
+                ServiceImage.remove({ _id: { $in: imagesToRemove } });
             }
-        });
+        );
+        return;
+        // }
+        // productInfo.images.forEach((image) => {
+        //     if (!image.hasOwnProperty("_id")) {
+        //         let Id =
+        //             moment().format("DDMMYYx") +
+        //             "." +
+        //             image.mime.substr(image.mime.indexOf("/") + 1);
+        //         ServiceImage.write(
+        //             new Buffer(image.data, "base64"),
+        //             {
+        //                 fileName: Id,
+        //                 type: image.mime,
+        //             },
+        //             (err, res) => {
+        //                 if (err) {
+        //                     console.log("error", err);
+        //                 } else {
+        //                     let imageId = res._id;
+        //                     console.log("res:", imageId);
+        //                     imageIds.push(imageId);
+        //                     if (productInfo.images.length == imageIds.length) {
+        //                         productInfo.images = imageIds;
+        //                         console.log("update", Id, imageIds);
+        //                         Products.update(
+        //                             { _id: productId },
+        //                             {
+        //                                 $set: productInfo,
+        //                                 // $set: {
+        //                                 //     title: productInfo.title,
+        //                                 //     description: productInfo.description,
+        //                                 //     contact: productInfo.contact,
+        //                                 //     radius: productInfo.radius,
+        //                                 //     homeDelivery: productInfo.homeDelivery,
+        //                                 //     price: productInfo.price,
+        //                                 //     discount: productInfo.discount,
+        //                                 //     unit: productInfo.unit,
+        //                                 //     website: productInfo.unit,
+        //                                 //     sizes: productInfo.unit,
+        //                                 //     colors: productInfo.unit,
+        //                                 //     qty: productInfo.qty,
+        //                                 //     images: imageIds,
+        //                                 //     service: productInfo.service,
+        //                                 //     serviceOwner: productInfo.serviceOwner,
+        //                                 //     availabeQuantity: productInfo.availabeQuantity,
+        //                                 //     updateDate: productInfo.updateDate
+        //                                 // }
+        //                             },
+        //                             (err, res) => {
+        //                                 if (err) {
+        //                                     console.log(err);
+        //                                 } else {
+        //                                     ServiceImage.remove({
+        //                                         _id: { $in: imagesToRemove },
+        //                                     });
+        //                                     return res;
+        //                                 }
+        //                             }
+        //                         );
+        //                     }
+        //                 }
+        //             },
+        //             (proceedAfterUpload = true)
+        //         );
+        //     } else {
+        //         imageIds.push(image._id);
+        //         if (productInfo.images.length == imageIds.length) {
+        //             productInfo.images = imageIds;
+        //             console.log("update existing");
+        //             Products.update(
+        //                 { _id: productId },
+        //                 {
+        //                     $set: productInfo,
+        //                 },
+        //                 (err, res) => {
+        //                     ServiceImage.remove({
+        //                         _id: { $in: imagesToRemove },
+        //                     });
+        //                     return res;
+        //                 }
+        //             );
+        //         }
+        //     }
+        // });
     },
 
     getSingleService: (Id) => {
@@ -636,10 +636,10 @@ Meteor.methods({
 
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
         const categoryLookup = {
             from: "MainCategories",
-            let: {catId: "$categoryId"},
+            let: { catId: "$categoryId" },
             pipeline: [
                 {
                     $match: {
@@ -653,17 +653,17 @@ Meteor.methods({
         };
         const ServiceRatings = {
             from: "ratings",
-            let: {serviceId: Id},
+            let: { serviceId: Id },
             pipeline: [
-                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: {$avg: "$rating.count"},
-                        count: {$sum: 1},
+                        avgRate: { $avg: "$rating.count" },
+                        count: { $sum: 1 },
                     },
                 },
-                {$project: {avgRate: 1, count: 1}},
+                { $project: { avgRate: 1, count: 1 } },
             ],
             as: "servRatings",
         };
@@ -671,12 +671,12 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: {$eq: ["$servRatings", []]},
+                    if: { $eq: ["$servRatings", []] },
                     then: defaultRating,
-                    else: {$arrayElemAt: ["$servRatings", 0]},
+                    else: { $arrayElemAt: ["$servRatings", 0] },
                 },
             },
-            category: {$arrayElemAt: ["$categories", 0]},
+            category: { $arrayElemAt: ["$categories", 0] },
         };
 
         // const project = {
@@ -690,13 +690,13 @@ Meteor.methods({
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {$match: {_id: Id}},
-                    {$lookup: categoryLookup},
-                    {$lookup: ServiceRatings},
-                    {$addFields: addValues},
+                    { $match: { _id: Id } },
+                    { $lookup: categoryLookup },
+                    { $lookup: ServiceRatings },
+                    { $addFields: addValues },
                     // {$project: project}
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -717,7 +717,7 @@ Meteor.methods({
         if (_product) {
             let views = _product.views || 0;
             Products.update(
-                {_id: productId},
+                { _id: productId },
                 {
                     $set: {
                         views: views + 1,
@@ -728,7 +728,7 @@ Meteor.methods({
     },
 
     getSimilarProduct: (Id) => {
-        let product = Products.findOne({_id: Id});
+        let product = Products.findOne({ _id: Id });
         return Products.find({
             service: product.service,
             _id: {
@@ -740,10 +740,10 @@ Meteor.methods({
     getServicesNearBy: (obj) => {
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
         const defaultUser = {
             id: "000",
-            profile: {name: "", profileImage: null},
+            profile: { name: "", profileImage: null },
         };
         // const categoryLookup = {
         //     from: "MainCategories",
@@ -776,17 +776,17 @@ Meteor.methods({
         };
         const ServiceRatings = {
             from: "ratings",
-            let: {serviceId: "$_id"},
+            let: { serviceId: "$_id" },
             pipeline: [
-                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: {$avg: "$rating.count"},
-                        count: {$sum: 1},
+                        avgRate: { $avg: "$rating.count" },
+                        count: { $sum: 1 },
                     },
                 },
-                {$project: {avgRate: 1, count: 1}},
+                { $project: { avgRate: 1, count: 1 } },
             ],
             as: "servRatings",
         };
@@ -794,19 +794,19 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: {$eq: ["$servRatings", []]},
+                    if: { $eq: ["$servRatings", []] },
                     then: defaultRating,
-                    else: {$arrayElemAt: ["$servRatings", 0]},
+                    else: { $arrayElemAt: ["$servRatings", 0] },
                 },
             },
             Owner: {
                 $cond: {
-                    if: {$eq: ["$users", []]},
+                    if: { $eq: ["$users", []] },
                     then: defaultUser,
-                    else: {$arrayElemAt: ["$users", 0]},
+                    else: { $arrayElemAt: ["$users", 0] },
                 },
             },
-            category: {$arrayElemAt: ["$categories", 0]},
+            category: { $arrayElemAt: ["$categories", 0] },
             subCategories: {
                 $arrayElemAt: ["$categories.subCategories", 0],
             },
@@ -841,7 +841,7 @@ Meteor.methods({
                         $filter: {
                             input: "$subCategories",
                             as: "item",
-                            cond: {$eq: ["$$item.subCatId", "$categoryId"]},
+                            cond: { $eq: ["$$item.subCatId", "$categoryId"] },
                         },
                     },
                     0,
@@ -850,29 +850,29 @@ Meteor.methods({
         };
         //  return Category.find().fetch();
         const query = obj.subCatIds
-            ? {categoryId: {$in: obj.subCatIds}}
+            ? { categoryId: { $in: obj.subCatIds } }
             : {};
         return Async.runSync(function (done) {
             aggregate(
                 [
                     {
                         $geoNear: {
-                            near: {type: "Point", coordinates: obj.coords},
+                            near: { type: "Point", coordinates: obj.coords },
                             distanceField: "dist.calculated",
                             query: query,
                             spherical: true,
                             distanceMultiplier: 0.001,
                         },
                     },
-                    {$limit: obj.skip + obj.limit},
-                    {$skip: obj.skip},
-                    {$lookup: categoryLookup},
-                    {$lookup: ServiceRatings},
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
-                    {$project: project}
+                    { $limit: obj.skip + obj.limit },
+                    { $skip: obj.skip },
+                    { $lookup: categoryLookup },
+                    { $lookup: ServiceRatings },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $project: project }
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -883,13 +883,13 @@ Meteor.methods({
     },
 
     getRandomServices: (cordinates, KM, sampleSize) => {
-        const match = {'location.geometry.location': {$geoWithin: {$centerSphere: [cordinates, ((KM * 0.62137119) / 3963.2)]}}};
+        const match = { 'location.geometry.location': { $geoWithin: { $centerSphere: [cordinates, ((KM * 0.62137119) / 3963.2)] } } };
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
         const defaultUser = {
             id: "000",
-            profile: {name: "", profileImage: null},
+            profile: { name: "", profileImage: null },
         };
         const categoryLookup = {
             from: "MainCategories",
@@ -905,17 +905,17 @@ Meteor.methods({
         };
         const ServiceRatings = {
             from: "ratings",
-            let: {serviceId: "$_id"},
+            let: { serviceId: "$_id" },
             pipeline: [
-                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: {$avg: "$rating.count"},
-                        count: {$sum: 1},
+                        avgRate: { $avg: "$rating.count" },
+                        count: { $sum: 1 },
                     },
                 },
-                {$project: {avgRate: 1, count: 1}},
+                { $project: { avgRate: 1, count: 1 } },
             ],
             as: "servRatings",
         };
@@ -923,19 +923,19 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: {$eq: ["$servRatings", []]},
+                    if: { $eq: ["$servRatings", []] },
                     then: defaultRating,
-                    else: {$arrayElemAt: ["$servRatings", 0]},
+                    else: { $arrayElemAt: ["$servRatings", 0] },
                 },
             },
             Owner: {
                 $cond: {
-                    if: {$eq: ["$users", []]},
+                    if: { $eq: ["$users", []] },
                     then: defaultUser,
-                    else: {$arrayElemAt: ["$users", 0]},
+                    else: { $arrayElemAt: ["$users", 0] },
                 },
             },
-            category: {$arrayElemAt: ["$categories", 0]},
+            category: { $arrayElemAt: ["$categories", 0] },
             subCategories: {
                 $arrayElemAt: ["$categories.subCategories", 0],
             },
@@ -970,7 +970,7 @@ Meteor.methods({
                         $filter: {
                             input: "$subCategories",
                             as: "item",
-                            cond: {$eq: ["$$item.subCatId", "$categoryId"]},
+                            cond: { $eq: ["$$item.subCatId", "$categoryId"] },
                         },
                     },
                     0,
@@ -987,22 +987,22 @@ Meteor.methods({
                     // {$match:match},
                     {
                         $geoNear: {
-                            near: {type: "Point", coordinates: cordinates},
+                            near: { type: "Point", coordinates: cordinates },
                             distanceField: "dist.calculated",
                             query: {},
                             spherical: true,
                             distanceMultiplier: 0.001,
                         },
                     },
-                    {$limit: 100},
-                    {$sample: {size: sampleSize}},
-                    {$lookup: categoryLookup},
-                    {$lookup: ServiceRatings},
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
-                    {$project: project}
+                    { $limit: 100 },
+                    { $sample: { size: sampleSize } },
+                    { $lookup: categoryLookup },
+                    { $lookup: ServiceRatings },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $project: project }
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1015,10 +1015,10 @@ Meteor.methods({
     getMyServices: () => {
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
         const categoryLookup = {
             from: "MainCategories",
-            let: {catId: "$categoryId"},
+            let: { catId: "$categoryId" },
             pipeline: [
                 {
                     $match: {
@@ -1033,17 +1033,17 @@ Meteor.methods({
 
         const ServiceRatings = {
             from: "ratings",
-            let: {serviceId: "$_id"},
+            let: { serviceId: "$_id" },
             pipeline: [
-                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: {$avg: "$rating.count"},
-                        count: {$sum: 1},
+                        avgRate: { $avg: "$rating.count" },
+                        count: { $sum: 1 },
                     },
                 },
-                {$project: {avgRate: 1, count: 1}},
+                { $project: { avgRate: 1, count: 1 } },
             ],
             as: "servRatings",
         };
@@ -1051,12 +1051,12 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: {$eq: ["$servRatings", []]},
+                    if: { $eq: ["$servRatings", []] },
                     then: defaultRating,
-                    else: {$arrayElemAt: ["$servRatings", 0]},
+                    else: { $arrayElemAt: ["$servRatings", 0] },
                 },
             },
-            category: {$arrayElemAt: ["$categories", 0]},
+            category: { $arrayElemAt: ["$categories", 0] },
         };
         // const project = {
         //     _id: 1,
@@ -1071,16 +1071,16 @@ Meteor.methods({
             aggregate(
                 [
                     {
-                        $match: {owner: loggedUser},
+                        $match: { owner: loggedUser },
                     },
-                    {$lookup: categoryLookup},
-                    {$lookup: ServiceRatings},
-                    {$addFields: addValues},
+                    { $lookup: categoryLookup },
+                    { $lookup: ServiceRatings },
+                    { $addFields: addValues },
                     // {$limit: obj.skip + obj.limit},
                     // {$skip: obj.skip},
                     // {$project: project}
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1110,18 +1110,18 @@ Meteor.methods({
             as: "services",
         };
         const addValues = {
-            Service: {$arrayElemAt: ["$services", 0]},
+            Service: { $arrayElemAt: ["$services", 0] },
         };
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {$sort: {views: -1}},
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
-                    {$limit: _skip + _limit},
-                    {$skip: _skip},
+                    { $sort: { views: -1 } },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $limit: _skip + _limit },
+                    { $skip: _skip },
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1143,19 +1143,19 @@ Meteor.methods({
             as: "users",
         };
         const addValues = {
-            Owner: {$arrayElemAt: ["$users", 0]},
+            Owner: { $arrayElemAt: ["$users", 0] },
         };
         return Async.runSync(function (done) {
             aggregate(
                 [
                     {
-                        $match: {serviceOwner: loggedUser},
+                        $match: { serviceOwner: loggedUser },
                     },
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
-                    {$sort: {createDate: -1}},
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $sort: { createDate: -1 } },
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1168,23 +1168,23 @@ Meteor.methods({
     geOwnServiceList: () => {
         let loggedUser = Meteor.userId() || "NA";
         return Service.find(
-            {owner: loggedUser},
+            { owner: loggedUser },
             {
-                sort: {createDate: -1},
-                fields: {_id: 1, title: 1, owner: 1, businessType: 1, location:1, Category:1},
+                sort: { createDate: -1 },
+                fields: { _id: 1, title: 1, owner: 1, businessType: 1, location: 1, Category: 1 },
             }
         ).fetch();
     },
 
     getPopularResturants: () => {
-        return Service.find({businessType: BusinessType.RESTURANT}, {sort: {views: -1}, limit: 3}).fetch();
+        return Service.find({ businessType: BusinessType.RESTURANT }, { sort: { views: -1 }, limit: 3 }).fetch();
     },
     updateServiceViewCount: (serviceId) => {
         let _service = Service.findOne(serviceId);
         if (_service) {
             let views = _service.views || 0;
             Service.update(
-                {_id: serviceId},
+                { _id: serviceId },
                 {
                     $set: {
                         views: views + 1,
@@ -1214,10 +1214,10 @@ Meteor.methods({
         console.log(obj);
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-        const defaultRating = {id: "000", avgRate: 1, count: 0};
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
         const defaultUser = {
             id: "000",
-            profile: {name: "", profileImage: null},
+            profile: { name: "", profileImage: null },
         };
         const categoryLookup = {
             from: "MainCategories",
@@ -1233,17 +1233,17 @@ Meteor.methods({
         };
         const ServiceRatings = {
             from: "ratings",
-            let: {serviceId: "$_id"},
+            let: { serviceId: "$_id" },
             pipeline: [
-                {$match: {$expr: {$eq: ["$serviceId", "$$serviceId"]}}},
+                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
                 {
                     $group: {
                         _id: "$_id",
-                        avgRate: {$avg: "$rating.count"},
-                        count: {$sum: 1},
+                        avgRate: { $avg: "$rating.count" },
+                        count: { $sum: 1 },
                     },
                 },
-                {$project: {avgRate: 1, count: 1}},
+                { $project: { avgRate: 1, count: 1 } },
             ],
             as: "servRatings",
         };
@@ -1251,19 +1251,19 @@ Meteor.methods({
         const addValues = {
             Rating: {
                 $cond: {
-                    if: {$eq: ["$servRatings", []]},
+                    if: { $eq: ["$servRatings", []] },
                     then: defaultRating,
-                    else: {$arrayElemAt: ["$servRatings", 0]},
+                    else: { $arrayElemAt: ["$servRatings", 0] },
                 },
             },
             Owner: {
                 $cond: {
-                    if: {$eq: ["$users", []]},
+                    if: { $eq: ["$users", []] },
                     then: defaultUser,
-                    else: {$arrayElemAt: ["$users", 0]},
+                    else: { $arrayElemAt: ["$users", 0] },
                 },
             },
-            category: {$arrayElemAt: ["$categories", 0]},
+            category: { $arrayElemAt: ["$categories", 0] },
             subCategories: {
                 $arrayElemAt: ["$categories.subCategories", 0],
             },
@@ -1298,7 +1298,7 @@ Meteor.methods({
                         $filter: {
                             input: "$subCategories",
                             as: "item",
-                            cond: {$eq: ["$$item.subCatId", "$categoryId"]},
+                            cond: { $eq: ["$$item.subCatId", "$categoryId"] },
                         },
                     },
                     0,
@@ -1307,20 +1307,20 @@ Meteor.methods({
         };
         //  return Category.find().fetch();
         const query = obj.subCatIds
-            ? {$text: {$search: obj.searchValue},categoryId: {$in: obj.subCatIds}}
-            : {$text: {$search: obj.searchValue}};
+            ? { $text: { $search: obj.searchValue }, categoryId: { $in: obj.subCatIds } }
+            : { $text: { $search: obj.searchValue } };
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {$match:query},
-                    {$sort: {titleScore: {$meta: "textScore"}}},
-                    {$limit: 20},
-                    {$skip: 0},
-                    {$lookup: categoryLookup},
-                    {$lookup: ServiceRatings},
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
-                    {$project: project}
+                    { $match: query },
+                    { $sort: { titleScore: { $meta: "textScore" } } },
+                    { $limit: 20 },
+                    { $skip: 0 },
+                    { $lookup: categoryLookup },
+                    { $lookup: ServiceRatings },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $project: project }
                 ],
                 {
                     cursor: {}
@@ -1334,7 +1334,7 @@ Meteor.methods({
         });
     },
 
-    searchProducts:(searchValue)=>{
+    searchProducts: (searchValue) => {
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
@@ -1345,20 +1345,20 @@ Meteor.methods({
             as: "services",
         };
         const addValues = {
-            Service: {$arrayElemAt: ["$services", 0]},
+            Service: { $arrayElemAt: ["$services", 0] },
         };
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {$match:{$text: {$search: searchValue}}},
-                    {$sort: {titleScore: {$meta: "textScore"}}},
-                    {$limit: 20},
-                    {$skip: 0},
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
+                    { $match: { $text: { $search: searchValue } } },
+                    { $sort: { titleScore: { $meta: "textScore" } } },
+                    { $limit: 20 },
+                    { $skip: 0 },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
 
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1369,7 +1369,7 @@ Meteor.methods({
     },
 
 
-    searchCategories:(searchValue)=>{
+    searchCategories: (searchValue) => {
         const collection = MainCategories.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
@@ -1380,20 +1380,20 @@ Meteor.methods({
             as: "services",
         };
         const addValues = {
-            Service: {$arrayElemAt: ["$services", 0]},
+            Service: { $arrayElemAt: ["$services", 0] },
         };
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {$match:{$text: {$search: searchValue}}},
-                    {$sort: {titleScore: {$meta: "textScore"}}},
-                    {$limit: 20},
-                    {$skip: 0},
-                    {$lookup: OwnerLookup},
-                    {$addFields: addValues},
+                    { $match: { $text: { $search: searchValue } } },
+                    { $sort: { titleScore: { $meta: "textScore" } } },
+                    { $limit: 20 },
+                    { $skip: 0 },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
 
                 ],
-                {cursor: {}}
+                { cursor: {} }
             ).toArray(function (err, doc) {
                 if (doc) {
                     //   console.log('doc', doc.length,doc)
@@ -1403,4 +1403,4 @@ Meteor.methods({
         });
     }
 })
-;
+    ;

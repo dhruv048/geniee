@@ -57,7 +57,7 @@ adminRoutes.route('/', {
             BlazeLayout.render('adminMainLayoutGR', {main: ""});
             document.title = "Geniee-Repair Dashboard";
         }
-        else if (Session.get('loggedUserRole')== 2) {
+        else if (Session.get('loggedUserRole')== 101) {
             BlazeLayout.render('adminMainLayout', {main: "dashboard"});
             document.title = "Geniee-Admin Dashboard";
         }
@@ -110,7 +110,7 @@ adminRoutes.route('/categories', {
         if(Session.get('loggedUserRole')==111) {
             BlazeLayout.render('adminMainLayoutGR', {main: 'GRcategories'});
         }
-        else if(Session.get('loggedUserRole')==2){
+        else if(Session.get('loggedUserRole')==101){
             BlazeLayout.render('adminMainLayout', {main: 'categories'});
         }
         else   if(Session.get('loggedUserRole')==222) {
@@ -170,7 +170,7 @@ adminRoutes.route('/products', {
             BlazeLayout.render('adminMainLayoutEF', {main: 'ProductsEF'});
             document.title = "Eat-Fit Products";
         }
-        else if (Session.get('loggedUserRole')==2) {
+        else if (Session.get('loggedUserRole')==101) {
             BlazeLayout.render('adminMainLayout', {main: 'Products'});
             document.title = "Geniee-Admin Products";
         }
@@ -202,8 +202,8 @@ adminRoutes.route('/create-product', {
             BlazeLayout.render('adminMainLayoutEF', {main: 'Create_ProductEF'});
             document.title = "Eat-Fit Add product";
         }
-        else if(Session.get('loggedUserRole')==2){
-            console.log('role:2')
+        else if(Session.get('loggedUserRole')==101){
+            console.log('role:101')
             BlazeLayout.render('adminMainLayout', {main: 'Create_Product'});
             document.title = "Geniee-Admin Add product";
         }
@@ -230,7 +230,7 @@ adminRoutes.route('/product/:productId', {
             BlazeLayout.render('adminMainLayoutEF', {main: 'Product_DetailEF'});
             document.title = "Eat-Fit Product";
         }
-        else if(Session.get('loggedUserRole')==2){
+        else if(Session.get('loggedUserRole')==101){
             console.log("param:" + params.productId);
             Meteor.subscribe("singleProduct", params.productId);
             BlazeLayout.render('adminMainLayout', {main: 'Product_Detail'});

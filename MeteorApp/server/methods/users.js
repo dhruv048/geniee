@@ -62,11 +62,13 @@ Meteor.methods({
                     { _id: userId },
                     {
                         $push: { 'services.email.verificationTokens': tokenRecord },
-                        $set: { 
+                        $set: {
                             email: userInfo.email,
                             hashPassword: hash,
-                            emailToken : token,
-                            emailTokenExpires : new Date(expiry) }
+                            emailToken: token,
+                            emailTokenExpires: new Date(expiry)
+                        },
+                        active: false,
                     }
                     , function (err) {
                         let url = Meteor.absoluteUrl() + 'verify-email/' + token;
@@ -193,21 +195,21 @@ Meteor.methods({
 
     },
 
-    'setPasswordCustom': async(email, Token, newPassword) => {
+    'setPasswordCustom': async (email, Token, newPassword) => {
         try {
             let user = Accounts.findUserByEmail(email);
             if (user && user.services.password.reset.token === Token) {
                 const salt = await bcrypt.genSalt(10);
-                const hash = await bcrypt.hash(password, salt);
+                const hash = await bcrypt.hash(newPassword, salt);
                 try {
                     Accounts.setPassword(user._id, newPassword);
                     Meteor.users.update({ _id: user._id }, {
                         $set: {
                             'services.resume.loginTokens': [],
                             'services.password.reset': '',
-                             hashPassword: hash[0],
-                             resetPasswordToken : null,
-                             resetPasswordExpires : ""
+                            hashPassword: hash[0],
+                            resetPasswordToken: null,
+                            resetPasswordExpires: ""
                         }
                     }, (err, res) => {
                         if (!err) {
@@ -228,6 +230,7 @@ Meteor.methods({
             }
         }
         catch (e) {
+            console.log(e)
             throw new Meteor.Error(401, 'Something went wrong. Please send request for new code.');
         }
     },
@@ -262,7 +265,7 @@ Meteor.methods({
                     $set: {
                         'services.email.verificationTokens': [],
                         'emails.0.verified': true,
-                        'active':true
+                        'active': true
                     }
                 }
             )

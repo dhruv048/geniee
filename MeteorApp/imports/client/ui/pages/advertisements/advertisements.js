@@ -9,7 +9,7 @@ Template.Advertisements.helpers({
 });
 
 Template.Advertisements.onCreated(()=>{
-    this.subscribe("adminGallery");
+    Meteor.subscribe("adminGallery");
 })
 
 Template.Advertisements.rendered = () => {
