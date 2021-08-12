@@ -7,6 +7,8 @@ import {
   wrongEmailPassword,
   setSignedOut,
   setLoggedInUser,
+  setSignedUp,
+  emailSent,
 } from '../../../store/actions';
 
 import { apiUrl } from 'settings';
@@ -14,16 +16,12 @@ import { getExpireDate } from 'helpers';
 import Meteor from '../../../react-native-meteor';
 
 const handleSignIn = ({ email, password }, callBack) => {
-  // Validate email/password
-  //new Promise((resolve, reject) => {
   Meteor.loginWithPassword(email, password, (err, res) => {
     if (err) {
       dispatch(wrongEmailPassword());
       callBack(err);
     } else {
       dispatch(setSignedIn());
-      //AsyncStorage.setItem('userToken', Meteor.getData()._tokenIdSaved);
-      //AsyncStorage.setItem('loggedInUser', JSON.stringify(Meteor.user()));
       dispatch(setLoggedInUser({ user : Meteor.user() }))
       callBack(true);
     }
@@ -33,14 +31,48 @@ const handleSignIn = ({ email, password }, callBack) => {
 
 
 const handleSignOut = (callBack) => {
-  Meteor.logout((res,err)=>{
-      console.log('This is result from handler '+res);
+  Meteor.logout((err,res)=>{
+    if(err){
+      console.log('Please contact administrator.')
+      callBack(err);
+    }else{
       dispatch(setSignedOut());
       callBack(true);
+    }
   })
-  
-  //AsyncStorage.removeItem('loggedInUser');
-  //AsyncStorage.removeItem('userToken');
+};
+
+const handleSignUp = ({user}, callBack) => {
+  Meteor.signUpUser(user, (err,res) =>{
+    if (err) {
+      console.log('Please contact administrator.')
+      callBack(err);
+    } else {
+      console.log('SignedUp successfully')
+      dispatch(setSignedUp());
+      callBack(true);
+    }
+  })
+};
+
+const forgetPassword = (email,callBack) => {
+  Meteor.call('forgotPasswordCustom', email,(err,res)=>{
+    if(err){
+      console.log('Please contact administrator.')
+    }else{
+      callBack(true);
+    }
+  })
+};
+
+const changeNewPassword = (email, confirmationcode, password,callBack) => {
+  Meteor.call('setPasswordCustom',email,confirmationcode,password,(err,res)=>{
+    if(err){
+      console.log('Please contact administrator.')
+    }else{
+      callBack(true);
+    }
+  })
 };
 
 // axios({
@@ -161,7 +193,9 @@ const handleSignOut = (callBack) => {
 export default {
   handleSignIn,
   handleSignOut,
-  // handleSignUp,
+  handleSignUp,
+  forgetPassword,
+  changeNewPassword,
   //handleValidateToken,
   // handleResetActions,
   // handleResetPassword,
