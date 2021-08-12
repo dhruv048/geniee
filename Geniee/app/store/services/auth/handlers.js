@@ -31,7 +31,7 @@ const handleSignIn = ({ email, password }, callBack) => {
 
 
 const handleSignOut = (callBack) => {
-  Meteor.logout((res,err)=>{
+  Meteor.logout((err,res)=>{
     if(err){
       console.log('Please contact administrator.')
       callBack(err);
@@ -56,7 +56,7 @@ const handleSignUp = ({user}, callBack) => {
 };
 
 const forgetPassword = (email,callBack) => {
-  Meteor.call('forgotPasswordCustom', email,(res,err)=>{
+  Meteor.call('forgotPasswordCustom', email,(err,res)=>{
     if(err){
       console.log('Please contact administrator.')
     }else{
@@ -66,8 +66,7 @@ const forgetPassword = (email,callBack) => {
 };
 
 const changeNewPassword = (email, confirmationcode, password,callBack) => {
-  debugger;
-  Meteor.call('setPasswordCustom',email,confirmationcode,password,(res,err)=>{
+  Meteor.call('setPasswordCustom',email,confirmationcode,password,(err,res)=>{
     if(err){
       console.log('Please contact administrator.')
     }else{

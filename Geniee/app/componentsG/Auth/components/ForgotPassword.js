@@ -85,8 +85,6 @@ const ForgotPassword = ({loggedUser, navigation}) => {
   };
 
   const _setNewPassword = () => {
-    debugger;
-    console.log('This is logged user :'+loggedUser)
     //let email = await AsyncStorage.getItem('Forgot_pss_email');
     let email = loggedUser.emails[0].address;
     if (values.token.value && values.password.value && values.confirmPassword.value) {
@@ -100,7 +98,7 @@ const ForgotPassword = ({loggedUser, navigation}) => {
         );
       } else {
         handleInputChange('loading', true);
-        authHandlers.changeNewPassword(email, values.token.value, values.password.value, (err, res) => {
+        authHandlers.changeNewPassword(email, values.token.value, values.password.value, (res) => {
           handleInputChange('loading', false);
           if (res === true) {
             ToastAndroid.showWithGravityAndOffset(
@@ -114,7 +112,7 @@ const ForgotPassword = ({loggedUser, navigation}) => {
             navigation.navigate('SignIn')
           } else {
             ToastAndroid.showWithGravityAndOffset(
-              err.reason,
+              'Internal Server error occured.',
               ToastAndroid.LONG,
               ToastAndroid.TOP,
               0,
@@ -291,7 +289,7 @@ const ForgotPassword = ({loggedUser, navigation}) => {
                 }}>
                 <RNPButton
                   transparent
-                  onPress={() => handleInputChange('setPassWord', false)}
+                  onPress={() => handleInputChange('setPassword', false)}
                 >
                   <Text style={styles.priText}>
                     Resend code, click here
