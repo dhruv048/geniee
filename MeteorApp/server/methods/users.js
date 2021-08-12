@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
+import { FIREBASE_MESSAGING } from '../API/fire-base-admin';
 const bcrypt = require("bcryptjs");
 Meteor.methods({
 
