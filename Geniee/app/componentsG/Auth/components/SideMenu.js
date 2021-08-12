@@ -4,7 +4,7 @@ import { Body, Container, Content, Header, Icon, Item, Right, Text } from "nativ
 import { colors } from "../../../config/styles";
 import { StatusBar, StyleSheet, Alert, View, Image, TouchableOpacity, SafeAreaView, BackHandler } from "react-native";
 import ContactUs from '../../../screens/ContactUs';
-import ForgotPassword from "../../../screens/ForgotPassword";
+import ForgotPassword from './ForgotPassword';
 import Meteor from "../../../react-native-meteor";
 import AsyncStorage from "@react-native-community/async-storage";
 import MessageCount from "../../../components/MessageCount/MessageCount";
@@ -27,12 +27,6 @@ const SideMenu = ({ navigation, loggedUser }) => {
         setUser(loggedUser);
     }, [loggedUser])
 
-    const handleBack = () => {
-        console.log('handlebackpress')
-        navigation.navigate('Dashboard');
-        return true;
-    }
-
     const navigateToRoute = (route) => {
         navigation.navigate(route)
     }
@@ -44,7 +38,7 @@ const SideMenu = ({ navigation, loggedUser }) => {
             [
                 {
                     text: 'Yes SignOut',
-                    onPress: () => authHandlers.handleSignOut((res) => {
+                    onPress: authHandlers.handleSignOut((res) => {
                         if (res === true) {
                             setIsLogged(false);
                             setUser('');
