@@ -17,113 +17,75 @@ import { Header, Left, Body, Text, Container, Content, Button, Textarea, Title, 
 import CogMenu from "../components/CogMenu";
 import { Navigation } from "react-native-navigation/lib/dist/index";
 import { backToRoot, goToRoute, navigateToRoutefromSideMenu } from "../Navigation";
-//import Icon from 'react-native-vector-icons/Feather'
-// import { GalioProvider, Input, Button as GButton } from 'galio-framework';
 import { customGalioTheme } from '../config/themes';
-import { PaperProvider, TextInput,Button as GButton  } from 'react-native-paper';
+import { PaperProvider, TextInput, Button as GButton } from 'react-native-paper';
+import UseContactForm from '../hooks/useContactForm';
+import authHandlers from '../store/services/contact/handlers';
 
 const window = Dimensions.get('window');
 
-class ContactUs extends Component {
-    constructor(props) {
-        super(props);
+const ContactUs = ({navigation}) => {
 
-        this.mounted = false;
-        this.state = {
-            name: '',
-            email: '',
-            contact: '',
-            message: '',
-            error: null,
-            loading: false,
-        };
+    const { values, handleInputChange, validateContactForm, resetContactForm } = UseContactForm();
+
+    const handleError = (error) => {
+        handleInputChange('error',error);
     }
 
-
-    componentDidMount() {
-
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
-    }
-
-    handleBackButton() {
-        console.log('handlebackpress')
-        // this.props.navigation.navigate('Dashboard');
-        this.props.navigation.navigate('Home');
-        return true;
-    }
-
-    componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton.bind(this));
-    }
-
-    handleError = (error) => {
-        console.log('handleError')
-        this.setState({ error });
-    }
-
-    validInput = () => {
-        const { name, email, message, contact } = this.state;
+    const validInput = () => {
         let valid = true;
 
-        if (!contact.length || !message || !name || !email) {
-            this.handleError('Please Enter all the information.');
+        if (validateContactForm() === true) {
+            handleError('Please Enter all the information.');
             valid = false;
         }
         else {
-            this.handleError('');
+            handleError('');
             valid = true;
-        }
-
-        if (valid) {
-            this.handleError(null);
         }
         return valid;
     }
 
 
-    handleContactUS = () => {
-        console.log('handleContactUS')
-        const { name, email, message, contact } = this.state;
-        if (this.validInput()) {
+    const handleContactUS = () => {
+        if (validInput()) {
             let contactInfo = {
-                name: name,
-                phone: contact,
-                email: email,
-                message: message
+                name: values.name.value,
+                phone: values.contact.value,
+                email: values.email.value,
+                message: values.message.value,
             };
-            this.setState({ loading: true });
-            Meteor.call('addContactUsMessage', contactInfo, (err, result) => {
-                this.setState({ loading: false });
+            handleInputChange('loading',true);
+            authHandlers.contactUs(contactInfo, (err, res) => {
+                debugger;
+                handleInputChange('loading',false);
                 if (err) {
-                    this.handleError(err.reason);
+                    handleError(err.reason);
                 } else {
                     Alert.alert("DONE", "We will Contact you shortly!!");
-                    this.props.navigation.navigate('Dashboard');
+                    navigation.navigate('Dashboard');
                 }
             });
         }
     }
 
-    render() {
-
-        return (
-            <TouchableWithoutFeedback
+    return (
+        <TouchableWithoutFeedback
             onPress={Keyboard.dismiss}
             accessible={false}>
             <Container style={styles.container}>
-               
+
                 <Header androidStatusBarColor={colors.statusBar} style={{ backgroundColor: colors.appLayout }}>
                     <Left>
-                        <Button transparent onPress={() => { this.props.navigation.goBack() }}>
+                        <Button transparent onPress={() => {navigation.navigate('Dashboard')}}>
                             <Icon style={{ color: '#ffffff' }} name="arrow-back" />
                         </Button>
-                        {/* <CogMenu componentId={this.props.componentId} /> */}
                     </Left>
                     <Body>
                         <Title style={styles.screenHeader}>Contact Us</Title>
                     </Body>
                 </Header>
-                <View style={{marginVertical : 20}}>
+                <View style={{ marginVertical: 20 }}>
                     <KeyboardAvoidingView style={{ padding: 20 }}>
                         {/*<View style={styles.header}>*/}
                         <Text style={styles.subHeaderText}>
@@ -133,24 +95,24 @@ class ContactUs extends Component {
                         </Text>
                         {/*</View>*/}
 
-                        <View style={{marginVertical : 15}}>
+                        <View style={{ marginVertical: 15 }}>
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 placeholder='Full name'
-                                value={this.state.name}
-                                onChangeText={(name) => this.setState({ name })}
-                                style={{marginVertical :10}} />
+                                value={values.name.value}
+                                onChangeText={(name) => handleInputChange('name',name)}
+                                style={{ marginVertical: 10 }} />
 
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 placeholder='Email address'
                                 keyboardType='email-address'
-                                value={this.state.email}
-                                onChangeText={(email) => this.setState({ email })}
+                                value={values.email.value}
+                                onChangeText={(email) => handleInputChange('email',email)}
                                 textContentType={'emailAddress'}
-                                style={{marginVertical :10}}
+                                style={{ marginVertical: 10 }}
                             />
 
                             <TextInput
@@ -158,47 +120,44 @@ class ContactUs extends Component {
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 placeholder='Phone No.'
                                 keyboardType='phone-pad'
-                                value={this.state.contact}
-                                onChangeText={(contact) => this.setState({ contact })}
-                                style={{marginVertical :10}}
+                                value={values.contact.value}
+                                onChangeText={(contact) => handleInputChange('contact',contact)}
+                                style={{ marginVertical: 10 }}
                             />
 
                             <TextInput
                                 mode="outlined"
                                 multiline={true}
                                 rowSpan={4}
-                                placeholder="Description (*)"
-                                // style={{height:100}}
+                                placeholder="Description"
                                 placeholderTextColor={customGalioTheme.COLORS.PLACEHOLDER}
                                 selectionColor='#ffffff'
                                 underlineColorAndroid='rgba(0,0,0,0)'
-                                //onSubmitEditing={() => this.contactNumber.focus()}
-                                value={this.state.message}
-                                onChangeText={(message) => this.setState({ message })}
-                                style={{marginVertical :10}}
+                                value={values.message.value}
+                                onChangeText={(message) => handleInputChange('message',message)}
+                                style={{ marginVertical: 10 }}
                             />
                         </View>
                         <View style={styles.error}>
-                            <Text style={styles.errorText}>{this.state.error}</Text>
+                            <Text style={styles.errorText}>{values.error.value}</Text>
                         </View>
                         <View>
                             <GButton
-                            mode="contained"
+                                mode="contained"
                                 onPress={() => {
-                                    this.handleContactUS();
+                                    handleContactUS();
                                 }}
-                                style={{ width: '100%', height:50 }}
-                                loading={this.state.loading}
-                                disabled={this.state.loading}>
+                                style={{ width: '100%', height: 50 }}
+                                loading={values.loading.value}
+                                disabled={values.loading.value}>
                                 Send
                             </GButton>
                         </View>
                     </KeyboardAvoidingView>
                 </View>
             </Container >
-            </TouchableWithoutFeedback>
-        );
-    }
+        </TouchableWithoutFeedback>
+    );
 }
 
 export default (ContactUs);

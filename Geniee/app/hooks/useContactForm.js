@@ -1,16 +1,14 @@
-import { useState } from "react"
+import {useState} from 'react';
 
-const UseForgetPasswordForm = () => {
+const UseContactForm = () =>{
     const initialState = {
+        name: { value: '', error: false },
         email: { value: '', error: false },
-        token: { value: '', error: false },
-        password: { value: '', error: false },
-        confirmPassword: { value: '', error: false },
-        setPassword: { value: false, error: false },
+        contact: { value: '', error: false },
+        message: { value: '', error: false },
+        error: { value: null, error: false },
         loading: { value: false, error: false },
-        showPassword: { value: false, error: false },
-        showConfirmPassword: { value: false, error: false },
-    }
+    };
 
     const [values, setValues] = useState(initialState);
 
@@ -20,8 +18,7 @@ const UseForgetPasswordForm = () => {
             [field]: { value, error },
         }));
     };
-
-    const validateForgetPasswordForm = () => {
+    const validateContactForm = () => {
         let hasError = false;
         const ignorableFields = ['nothing'];
         // eslint-disable-next-line array-callback-return
@@ -40,11 +37,11 @@ const UseForgetPasswordForm = () => {
         return hasError;
     };
 
-    const resetForgetPasswordForm = () => {
+    const resetContactForm = () => {
         setValues(initialState);
     };
 
-    return { values, handleInputChange, validateForgetPasswordForm, resetForgetPasswordForm };
+    return { values, handleInputChange, validateContactForm, resetContactForm };
 }
 
-export default UseForgetPasswordForm;
+export default UseContactForm;
