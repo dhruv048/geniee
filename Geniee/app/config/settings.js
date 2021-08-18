@@ -66,7 +66,8 @@ export const ProductOwner = {
 export const BusinessType = {
     SERVICE_PROVIDER: 0,
     PRODUCTS_GOODS_SELLER: 1,
-    RESTURANT: 2,
+    STORE: 2,
+    RESTURANT : 3,
 };
 
 export const ProductType={

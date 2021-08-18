@@ -275,6 +275,11 @@ Meteor.methods({
         }
     },
 
+    getAllCategories : function(){
+        console.log('THis is category:')
+        return Categories.find({}).fetch();
+    },
+
     updateCallCount: function () {
         try {
             if (Count.find().count() > 0) {

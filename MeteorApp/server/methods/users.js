@@ -31,7 +31,8 @@ Meteor.methods({
                     createdBy: createdBy,
                     primaryEmail: userInfo.email,
                     email: userInfo.email
-                }
+                },
+                isMerchant: userInfo.isMerchant
             });
         }
         catch (e) {
