@@ -11,6 +11,7 @@ var service = {
     }
 };
 
+Business = new Mongo.Collection('business');
 Service = new Mongo.Collection('service');
 Products = new Mongo.Collection('product');
 

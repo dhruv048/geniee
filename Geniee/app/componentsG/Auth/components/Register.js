@@ -31,10 +31,13 @@ import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-pa
 import useRegisterForm from '../../../hooks/useRegisterForm';
 import connect from '../../../react-native-meteor/components/ReactMeteorData';
 import authHandlers from '../../../store/services/auth/handlers';
+import AddService from '../../../screens/services/AddService';
+import BusinessForm from '../../../shared/component/BusinessForm';
 
 const Register = ({ navigation }) => {
 
   const { values, handleInputChange, validateRegisterForm, resetRegisterForm } = useRegisterForm();
+  const [isMerchant, setIsMerchant] = useState(false);
 
   const validateWithPassword = () => {
     let isValidConfirmPassword = true;
@@ -72,6 +75,7 @@ const Register = ({ navigation }) => {
               primaryEmail: values.email.value,
               email: values.email.value,
             },
+            isMerchant: isMerchant
           };
           handleInputChange('loading', true);
           authHandlers.handleSignUp({ user }, (err, res) => {
@@ -127,13 +131,8 @@ const Register = ({ navigation }) => {
     handleInputChange('termsChecked', termsChecked);
   };
 
-  const handleLocation = (data, Detail) => {
-    setValues({ location: data });
-  };
-
   const handleOnLocationSelect = (location) => {
     delete location.address_components;
-    console.log('location is '+ location);
     handleInputChange('location', location);
     handleInputChange('pickLocation', false);
   }
@@ -288,6 +287,25 @@ const Register = ({ navigation }) => {
                 onSubmitEditing={validateWithPassword}
                 style={styles.inputBox}
               />
+              <View
+                style={{
+                  paddingTop: 16,
+                  paddingBottom: 16,
+                  color: '#8E8E8E',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  alignItems: 'flex-end',
+                  marginLeft: 16,
+                }}>
+                <Checkbox
+                  status={isMerchant ? 'checked' : 'unchecked'}
+                  onPress={() => setIsMerchant(!isMerchant)}
+                />
+                <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 20, marginBottom: 5 }}>
+                  IsMerchant
+                </Text>
+              </View>
+              {isMerchant ? <BusinessForm />: null}
               <RNPButton
                 mode='contained'
                 onPress={handleCreateAccount}

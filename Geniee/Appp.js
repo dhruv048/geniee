@@ -48,6 +48,7 @@ import AllProducts from './app/screens/store/AllProducts';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import authHandlers from '../../geniee-react-native/Geniee/app/store/services/business/handlers'
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -71,7 +72,7 @@ export default function Appp({ navigation }) {
         });
         //   Meteor.subscribe('srvicesByLimit', {limit:100,coordinates:[this.initialPosition.coords.longitude||85.312950,this.initialPosition.coords.latitude||27.712020]})
         Meteor.subscribe('categories-list');
-
+        authHandlers.getAllCategories();
         Meteor.Accounts.onLogin(async cd => {
             console.log('onLogin');
             Meteor.subscribe('newNotificationCount', deviceId);

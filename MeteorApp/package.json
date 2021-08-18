@@ -2,7 +2,7 @@
   "name": "MeteorApp",
   "private": true,
   "scripts": {
-    "start": "meteor run --settings settings.json"
+    "start": "MONGO_URL=mongodb://139.59.59.117:27020/geniee meteor"
   },
   "dependencies": {
     "@babel/runtime": "^7.14.8",
