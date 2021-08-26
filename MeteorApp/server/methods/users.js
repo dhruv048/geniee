@@ -44,8 +44,9 @@ Meteor.methods({
     'signUpUser': async (userInfo) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(userInfo.password, salt);
-        userInfo.hashPassword = hash;
-        console.log(userInfo);
+        console.log(hash);
+        // userInfo.hashPassword = hash;
+        // console.log(userInfo);
         let expiry = Date.now() + 60 * 1000 * 48 * 60; //48 hrs in ms
         try {
             let userId = Accounts.createUser(userInfo);
@@ -67,9 +68,10 @@ Meteor.methods({
                             email: userInfo.email,
                             hashPassword: hash,
                             emailToken: token,
-                            emailTokenExpires: new Date(expiry)
+                            emailTokenExpires: new Date(expiry),
+                            active:false,
+                            role: userInfo.profile.role,
                         },
-                        active: false,
                     }
                     , function (err) {
                         let url = Meteor.absoluteUrl() + 'verify-email/' + token;
