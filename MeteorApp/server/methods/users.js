@@ -43,6 +43,7 @@ Meteor.methods({
     },
 
     'signUpUser': async (userInfo) => {
+        console.log('This is userInfo '+ userInfo.password);
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(userInfo.password, salt);
         console.log(hash);

@@ -1,22 +1,13 @@
 import { useState } from 'react';
 
-const UseBusinessForm = () => {
+const useAddressDetailForm = () => {
     const initialState = {
-        merchantName: { value: '', error: false },
-        selectedCategory: { value: '', error: false },
-        location: { value: null, error: false },
+        district: { value: '', error: false },
+        city: { value: '', error: false },
+        //pickLocation: { value: '', error: false },
+        nearestLandmark: { value: '', error: false },
         contact: { value: '', error: false },
-        avatarSource: { value: null, error: false },
-        Image: { value: null, error: false },
-        pickLocation: { value: false, error: false },
-        loading: { value: false, error: false },
-        panNumber: { value: '', error: false },
-        email: { value: '', error: false },
-        panVatImage :{value:'',error:false},
-        district : {value:'',error:false},
-        city : {value:'',error:false},
-        nearestLandmark : {value:'',error:false},
-
+        OTPCode: { value: '', error: false }
     };
 
     const [values, setValues] = useState(initialState);
@@ -27,9 +18,10 @@ const UseBusinessForm = () => {
             [field]: { value, error },
         }));
     };
-    const validateBusinessForm = () => {
+
+    const validateAddressDetailForm = () => {
         let hasError = false;
-        const ignorableFields = ['nothing'];
+        const ignorableFields = ['middleName','confirmPassword'];
         // eslint-disable-next-line array-callback-return
         Object.keys(values).map((key) => {
             if (ignorableFields.includes(key)) {
@@ -46,11 +38,11 @@ const UseBusinessForm = () => {
         return hasError;
     };
 
-    const resetBusinessForm = () => {
+    const resetAddressDetailForm = () => {
         setValues(initialState);
     };
 
-    return { values, handleInputChange, validateBusinessForm, resetBusinessForm };
-}
+    return { values, handleInputChange, validateAddressDetailForm, resetAddressDetailForm };
+};
 
-export default UseBusinessForm;
+export default useAddressDetailForm;

@@ -952,7 +952,7 @@ class Dashboard extends Component {
               paddingTop: 10,
             }}>
             {/*NEARBY SERVICE PROVIDERS LIST START*/}
-            {this.state.nearByservice.length > 0 ? (
+            {this.state.nearByservice === '' ? null :this.state.nearByservice > 0 ? (
               <View style={styles.block}>
                 <View style={customStyle.blockHeader}>
                   <Text style={customStyle.blockTitle}>

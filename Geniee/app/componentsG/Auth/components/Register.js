@@ -12,6 +12,7 @@ import {
   Dimensions,
   Modal,
   ScrollView,
+  Image
 } from 'react-native';
 import { Button as NBButton, Icon as NBIcon, Row } from 'native-base';
 import { RadioGroup } from 'react-native-btr';
@@ -32,232 +33,133 @@ import useRegisterForm from '../../../hooks/useRegisterForm';
 import connect from '../../../react-native-meteor/components/ReactMeteorData';
 import authHandlers from '../../../store/services/auth/handlers';
 import AddService from '../../../screens/services/AddService';
-import BusinessForm from '../../../shared/component/BusinessForm';
+import BusinessForm from '../../Merchant/component/BusinessForm';
 
 const Register = ({ navigation }) => {
 
   const { values, handleInputChange, validateRegisterForm, resetRegisterForm } = useRegisterForm();
-  const [isMerchant, setIsMerchant] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [privacyModal, setprivacyModal] = useState(false);
+  const [termsModal, settermsModal] = useState(false);
+  const [showPassword, setshowPassword] = useState(false);
+  const [showConfirmPassword, setshowConfirmPassword] = useState(false);
 
-  const validateWithPassword = () => {
-    let isValidConfirmPassword = true;
-    if (values.password.value != values.confirmPassword.value) {
-      isValidConfirmPassword = false;
-    }
-    return isValidConfirmPassword;
-  }
+  // const validateWithPassword = () => {
+  //   let isValidConfirmPassword = true;
+  //   if (values.password.value != values.confirmPassword.value) {
+  //     isValidConfirmPassword = false;
+  //   }
+  //   return isValidConfirmPassword;
+  // }
 
   const handleCreateAccount = () => {
-    if (validateRegisterForm()) {
-      ToastAndroid.showWithGravityAndOffset(
-        'Please fill all required field',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        0,
-        50,
-      );
-    }
-    else {
-      if (validateWithPassword()) {
-        if (values.termsChecked.value) {
-          let user = {
-            password: values.password.value,
-            username: values.contact.value,
-            email: values.email.value,
-            createdAt: new Date(),
-            profile: {
-              firstName: capitalzeFirstLetter(values.firstName.value),
-              middleName: capitalzeFirstLetter(values.middleName.value),
-              lastName: capitalzeFirstLetter(values.lastName.value),
-              contactNo: values.contact.value,
-              profileImage: null,
-              location: values.location.value,
-              primaryEmail: values.email.value,
-              email: values.email.value,
-            },
-            isMerchant: isMerchant
-          };
-          handleInputChange('loading', true);
-          authHandlers.handleSignUp({ user }, (err, res) => {
-            handleInputChange('loading', false);
-            if (err) {
-              console.log('result from signup error ' + err.reason);
-              ToastAndroid.showWithGravityAndOffset(
-                err.reason,
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                50,
-              );
-            } else {
-              // hack because react-native-meteor doesn't login right away after sign in
-              console.log('Result from register' + res);
-              ToastAndroid.showWithGravityAndOffset(
-                'Registered Successfully',
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                50,
-              );
-              resetRegisterForm();
-              navigation.navigate('SignIn');
-            }
-          });
-        } else {
-          ToastAndroid.showWithGravityAndOffset(
-            'Please read & accept Terms & Conditions.',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-            0,
-            50,
-          );
-        }
-      } else {
-        ToastAndroid.showWithGravityAndOffset(
-          'Password and Confirm Password mismatch',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-          0,
-          50,
-        );
+    if (!validateRegisterForm() && isPasswordValid && isEmailValid) {
+      let user = {
+        firstName: values.firstName.value,
+        lastName: values.lastName.value,
+        email: values.email.value,
+        password: values.password.value
       }
-      handleInputChange('loading', false);
+      navigation.navigate('AddressDetail', { userData: user });
     }
   }
 
-  const _updateUsersAgreeStatus = () => {
-    let termsChecked = values.termsChecked.value;
-    termsChecked = !termsChecked;
-    handleInputChange('termsChecked', termsChecked);
-  };
+  // const _updateUsersAgreeStatus = () => {
+  //   let termsChecked = values.termsChecked.value;
+  //   termsChecked = !termsChecked;
+  //   handleInputChange('termsChecked', termsChecked);
+  // };
 
-  const handleOnLocationSelect = (location) => {
-    delete location.address_components;
-    handleInputChange('location', location);
-    handleInputChange('pickLocation', false);
+  const handlePasswordValidation = (value) => {
+    const passwordValidator = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
+    if (passwordValidator.test(value)) {
+      setIsPasswordValid(true);
+    } else {
+      setIsPasswordValid(false);
+    }
+    handleInputChange('password', value);
   }
 
-  const closePickLocation = () => {
-    handleInputChange('pickLocation', false);
+  const handleEmailValidation = (value) => {
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (emailRegex.test(value)) {
+      setIsEmailValid(true);
+    } else {
+      setIsEmailValid(false);
+    }
+    handleInputChange('email', value);
   }
+
   return (
     <Container>
-      <StatusBar
-        backgroundColor={colors.appBackground}
-        barStyle="dark-content"
-      />
       <Content style={{ backgroundColor: colors.appBackground }}>
         <TouchableWithoutFeedback
           onPress={Keyboard.dismiss}
           accessible={false}>
           <View style={{ paddingTop: 0 }}>
             {/* <Logo />*/}
-            <View style={{ width: '100%', alignItems: 'flex-end' }}>
-              <RNPButton mode="text">
-                <NBIcon
-                  name="close"
-                  size={20}
-                  style={{ color: 'rgba(0, 0, 0, 0.6)' }}
-                />
-              </RNPButton>
+            <View style={styles.logo}>
+              <Image style={styles.logoImage} source={require('Geniee/app/images/logoApp.png')} />
             </View>
 
             <View style={styles.welcomeText}>
-              <Title
-                style={{
-                  fontSize: 24,
-                  color: 'rgba(0, 0, 0, 0.87)',
-                  marginBottom: 5,
-                  marginTop: 71,
-                }}>
-                Welcome to Geniee,
-              </Title>
               <Text
-                style={{
-                  fontSize: 16,
-                  color: 'rgba(0, 0, 0, 0.87)',
-                  marginBottom: 28,
-                }}>
-                Sign up with email
+                style={styles.textHeader}>
+                Let's create your account,
+              </Text>
+              <Text
+                style={styles.textSubHeader}>
+                A step to making your wish come true
               </Text>
             </View>
             <View style={styles.containerRegister}>
+              <View style={styles.textInputNameView}>
+                <TextInput
+                  mode="outlined"
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
+                  placeholder="First Name"
+                  placeholderTextColor="#808080"
+                  name="firstName"
+                  value={values.firstName.value}
+                  onChangeText={(value) => handleInputChange('firstName', value)}
+                  style={styles.textInputNameBox}
+                  theme={{ roundness: 6 }}
+                  error={values.firstName.error}
+                />
+                <TextInput
+                  mode="outlined"
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
+                  placeholder="Last Name"
+                  placeholderTextColor="#808080"
+                  name="lastName"
+                  value={values.lastName.value}
+                  onChangeText={(value) => handleInputChange('lastName', value)}
+                  style={styles.textInputNameBox}
+                  theme={{ roundness: 6 }}
+                  error={values.lastName.error}
+                />
+              </View>
               <TextInput
                 mode="outlined"
                 color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="First Name"
+                placeholder="user@gmail.com"
                 placeholderTextColor="#808080"
-                name="firstName"
-                value={values.firstName.value}
-                onChangeText={(value) => handleInputChange('firstName', value)}
-                style={styles.inputBox}
-              />
-              <TextInput
-                mode="outlined"
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="Middle Name"
-                placeholderTextColor="#808080"
-                name="middleName"
-                value={values.middleName.value}
-                onChangeText={(value) => handleInputChange('middleName', value)}
-                //onSubmitEditing={() => values.lastName.focus()}
-                style={styles.inputBox}
-              />
-              <TextInput
-                mode="outlined"
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="Last Name"
-                placeholderTextColor="#808080"
-                name="lastName"
-                value={values.lastName.value}
-                onChangeText={(value) => handleInputChange('lastName', value)}
-                style={styles.inputBox}
-              />
-
-              <TextInput
-                mode="outlined"
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="Email"
-                placeholderTextColor="#808080"
-                keyboardType="Email-Address"
+                keyboardType="email-address"
                 value={values.email.value}
-                onChangeText={(value) => handleInputChange('email', value)}
+                onChangeText={(value) => handleEmailValidation(value)}
                 style={styles.inputBox}
+                theme={{ roundness: 6 }}
+                error={values.email.value.length > 0 ? !isEmailValid : values.email.error}
               />
-
               <TextInput
                 mode="outlined"
                 color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="Mobile No"
-                placeholderTextColor="#808080"
-                keyboardType="phone-pad"
-                value={values.contact.value}
-                onChangeText={(value) => handleInputChange('contact', value)}
-                style={styles.inputBox}
-              />
-
-              <TextInput
-                mode="outlined"
-                right={<TextInput.Icon name="map-marker" />}
-                family="feather"
-                iconSize={20}
-                iconColor={colors.primary}
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="Location"
-                placeholderTextColor="#808080"
-                value={values.location.value ? values.location.value.formatted_address : ''}
-                onFocus={() => handleInputChange('pickLocation', true)}
-                style={styles.inputBox}
-              />
-              {/*</View>*/}
-              <TextInput
-                mode="outlined"
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                secureTextEntry={!values.showPassword.value}
+                secureTextEntry={!showPassword}
                 right={
                   <TextInput.Icon
                     name="eye"
-                    onPress={() => handleInputChange('showPassword', !values.showPassword.value)}
+                    onPress={() => setshowPassword(!showPassword)}
                   />
                 }
                 iconColor={colors.primary}
@@ -265,11 +167,14 @@ const Register = ({ navigation }) => {
                 placeholder="Password"
                 placeholderTextColor="#808080"
                 value={values.password.value}
-                onChangeText={(value) => handleInputChange('password', value)}
+                onChangeText={(value) => handlePasswordValidation(value)}
                 style={styles.inputBox}
+                theme={{ roundness: 6 }}
+                error={values.password.value.length > 0 ? !isPasswordValid : values.password.error}
               />
-              <TextInput
+              {/* <TextInput
                 mode="outlined"
+                color={customGalioTheme.COLORS.INPUT_TEXT}
                 secureTextEntry={!values.showConfirmPassword.value}
                 right={
                   <TextInput.Icon
@@ -279,53 +184,54 @@ const Register = ({ navigation }) => {
                 }
                 iconColor={colors.primary}
                 iconSize={24}
-                color={customGalioTheme.COLORS.INPUT_TEXT}
                 placeholder="Confirm Password"
                 placeholderTextColor="#808080"
                 value={values.confirmPassword.value}
                 onChangeText={(value) => handleInputChange('confirmPassword', value)}
-                onSubmitEditing={validateWithPassword}
+                //onSubmitEditing={validateWithPassword}
                 style={styles.inputBox}
-              />
+                theme={{ roundness: 6 }}
+                error={values.confirmPassword.error}
+              /> */}
+              <View style={{ marginBottom: 15 }}>
+                {isPasswordValid ?
+                  <Text style={{ color: 'green' }}>At least 8 character. At least 1 numerals.</Text> :
+                  <Text>At least 8 character. At least 1 numerals.</Text>}
+                {isPasswordValid ? <Text style={{ color: 'green' }}>A upper and lower character.</Text> :
+                  <Text>A upper and lower character.</Text>}
+              </View>
               <View
-                style={{
-                  paddingTop: 16,
-                  paddingBottom: 16,
-                  color: '#8E8E8E',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  alignItems: 'flex-end',
-                  marginLeft: 16,
-                }}>
-                <Checkbox
-                  status={isMerchant ? 'checked' : 'unchecked'}
-                  onPress={() => setIsMerchant(!isMerchant)}
-                />
-                <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 20, marginBottom: 5 }}>
-                  IsMerchant
+                style={styles.textTermsCondition}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
+                    Signing up means you agree with all the {' '}
+                  </Text>
+
+                  <TouchableOpacity>
+                    <Text
+                      style={{ color: colors.primaryText, fontSize: 12 }}
+                      onPress={() => handleInputChange('termsModal', true)}>
+                      terms & condition
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12, marginLeft: '35%' }}>
+                  {' '}
+                  set by geniee{' '}
                 </Text>
               </View>
-              {isMerchant ? <BusinessForm />: null}
               <RNPButton
                 mode='contained'
+                uppercase={false}
                 onPress={handleCreateAccount}
-                style={{
-                  width: '100%',
-                  marginBottom: 35,
-                  borderRadius: 4,
-                  height: 50,
-                }}
-                loading={values.loading.value}
-                disabled={values.loading.value}
+                style={styles.btnContinue}
               >
                 <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: '500',
-                    color: colors.whiteText,
-                  }}>
-                  SIGN UP
+                  style={styles.btnContinueText}>
+                  Continue
                 </Text>
+                <Icon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
               </RNPButton>
             </View>
 
@@ -339,47 +245,6 @@ const Register = ({ navigation }) => {
                 <Text style={styles.navButtonText}>Login</Text>
               </TouchableOpacity>
             </View>
-
-            <View
-              style={{
-                paddingTop: 16,
-                paddingBottom: 16,
-                color: '#8E8E8E',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                alignItems: 'flex-end',
-                marginLeft: 16,
-              }}>
-              <Checkbox
-
-                status={values.termsChecked.value ? 'checked' : 'unchecked'}
-                onPress={_updateUsersAgreeStatus}
-              />
-              <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
-                By proceeding, you agree to our{' '}
-              </Text>
-
-              <TouchableOpacity>
-                <Text
-                  style={{ color: colors.primaryText, fontSize: 12 }}
-                  onPress={() => handleInputChange('termsModal', true)}>
-                  Terms of Use
-                </Text>
-              </TouchableOpacity>
-
-              <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
-                {' '}
-                and confirm you have read our{' '}
-              </Text>
-
-              <TouchableOpacity>
-                <Text
-                  style={{ color: colors.primaryText, fontSize: 12 }}
-                  onPress={() => handleInputChange('privacyModal', true)}>
-                  Privacy Policy.
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </TouchableWithoutFeedback>
       </Content>
@@ -388,13 +253,13 @@ const Register = ({ navigation }) => {
         style={customStyle.modal}
         animationType="slide"
         // transparent={true}
-        visible={values.privacyModal.value}
-        onRequestClose={() => handleInputChange('privacyModal', false)}>
+        visible={privacyModal}
+        onRequestClose={() => setprivacyModal(false)}>
         <View style={customStyle.modalDialog}>
           <View style={customStyle.modalHeader}>
             <NBButton
               transparent
-              onPress={() => handleInputChange('privacyModal', false)}>
+              onPress={() => setprivacyModal(false)}>
               <Icon name={'x'} size={24} color={'#2E2E2E'} />
             </NBButton>
             <View style={[customStyle.modalTitleHolder, { marginLeft: 30 }]}>
@@ -426,13 +291,13 @@ const Register = ({ navigation }) => {
         style={customStyle.modal}
         animationType="slide"
         // transparent={true}
-        visible={values.termsModal}
-        onRequestClose={() => handleInputChange('termsModal', false)}>
+        visible={termsModal}
+        onRequestClose={() => setTermsModal(false)}>
         <View style={customStyle.modalDialog}>
           <View style={customStyle.modalHeader}>
             <NBButton
               transparent
-              onPress={() => handleInputChange('termsModal', false)}>
+              onPress={() => setTermsModal(false)}>
               <Icon name={'x'} size={24} color={'#2E2E2E'} />
             </NBButton>
             <View style={[customStyle.modalTitleHolder, { marginLeft: 30 }]}>
@@ -459,11 +324,6 @@ const Register = ({ navigation }) => {
         </View>
       </Modal>
       {/* TERMS&CONDITION MODAL STOP */}
-      <LocationPicker
-        close={closePickLocation}
-        onLocationSelect={handleOnLocationSelect}
-        modalVisible={values.pickLocation.value}
-      />
     </Container>
   );
 }
@@ -532,42 +392,80 @@ const styles = StyleSheet.create({
   },
 
   containerRegister: {
-    //  flexGrow: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
     marginHorizontal: 25,
     marginTop: 5,
   },
 
-  inputBox: {
-    width: '100%',
-    backgroundColor: colors.transparent,
-    borderRadius: 3.5,
+  logo: {
+    marginTop: 30,
+    marginLeft: 10,
+    marginBottom: 40
+  },
+
+  logoImage: {
+    height: 40,
+    width: 80,
+    position: 'absolute'
+  },
+
+  textHeader: {
+    fontSize: 20,
+    color: 'rgba(0, 0, 0, 0.87)',
+    marginBottom: 5,
+    marginTop: 50,
+    fontWeight: 'bold'
+  },
+
+  textSubHeader: {
+    fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.87)',
+    marginBottom: 15,
+  },
+  textInputNameView:
+  {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+
+  textInputNameBox: {
+    width: '55%',
+    height: 45,
     paddingHorizontal: 10,
-    fontSize: 16,
     color: 'rgba(0, 0, 0, 0.6)',
-    borderColor: colors.borderColor,
-    height: 54,
+    fontSize: 18,
+    backgroundColor: colors.transparent,
     marginBottom: 10,
   },
 
-  radioView: {
-    //flexGrow: 1,
-    //alignItems: 'flex-end',
-    justifyContent: 'center',
-    //paddingVertical: 2,
+  inputBox: {
+    width: '100%',
+    height: 45,
+    color: 'rgba(0, 0, 0, 0.6)',
+    fontSize: 18,
+    backgroundColor: colors.transparent,
+    marginBottom: 10,
+  },
+
+  btnContinue: {
+    width: '55%',
+    marginBottom: 10,
+    marginLeft: '25%',
+    borderRadius: 6,
+    height: 45,
+  },
+
+  btnContinueText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: colors.whiteText,
+  },
+
+  textTermsCondition: {
+    marginBottom: 40,
+    color: '#8E8E8E',
     flexDirection: 'row',
-  },
-  radioTypeText: {
-    color: colors.primaryText,
-    fontSize: 16,
-    fontWeight: '700',
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-  },
-  radioGrp: {
-    paddingHorizontal: 12,
-    marginVertical: 0,
+    flexWrap: 'wrap',
+    alignItems: 'flex-end',
   },
 
   button: {
@@ -586,10 +484,11 @@ const styles = StyleSheet.create({
 
   signupCont: {
     flexGrow: 1,
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 20,
     flexDirection: 'row',
+    marginLeft: 25
   },
   signupText: {
     color: 'rgba(0, 0, 0, 0.87);',
