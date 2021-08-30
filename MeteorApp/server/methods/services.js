@@ -276,8 +276,8 @@ Meteor.methods({
     },
 
     getAllCategories : function(){
-        console.log('THis is category:')
-        return Categories.find({}).fetch();
+        var data  = Categories.find().fetch();
+        return data;
     },
 
     updateCallCount: function () {

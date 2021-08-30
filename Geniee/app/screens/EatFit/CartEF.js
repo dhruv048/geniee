@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, AsyncStorage, FlatList, ToastAndroid } from 'react-native';
+import { Alert, AsyncStorage, FlatList, ToastAndroid,TouchableOpacity } from 'react-native';
 import {
     Container,
     Content,
@@ -33,7 +33,7 @@ class CartEF extends Component {
             totalPrice: 0,
             popularProducts: [],
             shippingPrice: 0,
-            liked : false
+            liked: false
         };
         this.cartList = [];
         this.skip = 0;
@@ -102,14 +102,14 @@ class CartEF extends Component {
 
         //Get Wishlist Items
         let wishList = await AsyncStorage.getItem('myWhishList');
-        
+
         if (wishList) wishList = JSON.parse(wishList);
         else wishList = [];
-        wishList.forEach((x)=>{
+        wishList.forEach((x) => {
             products.liked = x.includes(products) ? true : false;
-            console.log('Product Id '+products);
-            console.log('Wishlist Id '+x);
-            console.log('Product Id liked '+products.liked);
+            console.log('Product Id ' + products);
+            console.log('Wishlist Id ' + x);
+            console.log('Product Id liked ' + products.liked);
         })
         // this.setState({
         //     liked: wishList.includes(products) ? true : false,
@@ -184,30 +184,7 @@ class CartEF extends Component {
                                     return item._id
                                 }}
                             /> : <Loading />}
-                        {/* <View>
-                            <Button onPress={() => this.checkout()} style={{backgroundColor: colors.appLayout}}
-                                block iconLeft>
-                                <Icon name='ios-card'/>
-                                <Text style={{color: '#fdfdfd'}}> Checkout</Text>
-                            </Button>
-                        </View> */}
-                        {/* <Grid style={{marginTop: 20, marginBottom: 10}}>
-                            <Col style={{paddingLeft: 10, paddingRight: 5}}>
-                                <Button onPress={() => this.checkout()} style={{backgroundColor: colors.appLayout}}
-                                        block iconLeft>
-                                    <Icon name='ios-card'/>
-                                    <Text style={{color: '#fdfdfd'}}> Checkout</Text>
-                                </Button>
-                            </Col>
-                            <Col style={{paddingLeft: 5, paddingRight: 10}}>
-                                <Button onPress={() => this.removeAllPressed()}
-                                        style={{borderWidth: 1, borderColor: colors.appLayout}} block iconRight
-                                        transparent>
-                                    <Text style={{color: colors.appLayout}}>Emtpy Cart </Text>
-                                    <Icon style={{color: colors.appLayout}} name='ios-trash'/>
-                                </Button>
-                            </Col>
-                        </Grid> */}
+
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10, marginHorizontal: 20 }}>
                             <View >
                                 <Text style={{ fontSize: 16, marginBottom: 5 }}>Items ({this.state.cartItems.length})</Text>
@@ -267,18 +244,29 @@ class CartEF extends Component {
                     last={this.state.cartItems.length === index + 1}
                     onPress={() => this.itemClicked(item)}
                 >
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <Thumbnail square style={{ width: 140, height: 150, marginRight: 25 }}
+                    <View style={{ flexDirection: 'row'}}>
+                        <Thumbnail square style={{ width: 80, height: 80, borderRadius: 4 }}
                             source={{ uri: settings.IMAGE_URL + item.images[0] }} />
-                        <Body>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }} numberOfLines={2}>
+                        <View style={{ marginLeft: 15 }}>
+                            <View style={{flexDirection: 'row',justifyContent:'space-around' }}>
+                                <Text style={{ fontSize: 10 }}> From Chaudhary Group</Text>
+                                <TouchableOpacity 
+                                transparent 
+                                style={{marginLeft:130,color:colors.danger}}
+                                onPress={() => this.removeItemPressed(data.item)}>
+                                    <FIcon name='x-circle' size={15}/>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
                                 {item.title}
-                                {item.orderQuantity > 1 ? " x " + item.orderQuantity : null}
+                                {/* {item.orderQuantity > 1 ? " x " + item.orderQuantity : null} */}
                             </Text>
                             {/*<Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 5}}>Rs. {item.finalPrice} <Text style={{fontWeight: 'normal', fontSize: 13}}>{item.orderQuantity > 1 ? " x " + item.orderQuantity : null}</Text></Text>*/}
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue' }}>Rs. {item.finalPrice}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: '300', textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rs. {item.price}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text>
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>Rs. {item.finalPrice}</Text>
+                                <Text style={{ fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid', marginTop:3 }}>Rs. {item.price}</Text>
+                            </View>
+                            {/* <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text> */}
                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <Button block icon transparent onPress={this._minusQuantity.bind(this, item)}
                                 // onPress={() => this.setState({ quantity: item.orderQuantity > 1 ? item.orderQuantity - 1 : 1 })}
@@ -292,17 +280,9 @@ class CartEF extends Component {
                                     <FIcon style={{ paddingLeft: 16 }} size={16} name='plus' />
                                 </Button>
                             </View>
-                            {/* {item.productOwner == ProductOwner.EAT_FIT ?
-                            <Text style={{ color: '#8E8E8E', fontSize: 14 }}>{item.isVeg ? "Veg" : "Non-Veg"}</Text> :
+                        </View>
+                        {/* <Right >
                             <View style={{ flexDirection: 'row' }}>
-                                {item.color ?
-                                    <Text style={{ color: '#8E8E8E', fontSize: 13 }}>Color: {item.color}</Text> : null}
-                                {item.size ?
-                                    <Text style={{ color: '#8E8E8E', fontSize: 13, marginLeft: item.color ? 10 : 0 }}>Size: {item.size}</Text> : null}
-                            </View>} */}
-                        </Body>
-                        <Right >
-                            <View style={{ flexDirection: 'row', marginTop: 110 }}>
                                 <Button transparent onPress={() => this.addToWishlist(data.item)}>
                                 <FIcon name="heart" color={item.liked?colors.primary: '#8E8E8E'} size={24} style={{ paddingRight: 20 }} />
                                 </Button>
@@ -310,7 +290,7 @@ class CartEF extends Component {
                                     <FIcon name='trash' size={24} color={'#8E8E8E'} />
                                 </Button>
                             </View>
-                        </Right>
+                        </Right> */}
                     </View>
                 </ListItem>
             </View>

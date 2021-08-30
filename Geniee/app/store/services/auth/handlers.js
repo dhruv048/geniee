@@ -42,8 +42,8 @@ const handleSignOut = (callBack) => {
   })
 };
 
-const handleSignUp = ({user}, callBack) => {
-  Meteor.signUpUser(user, (err,res) =>{
+const handleSignUp = (user, callBack) => {
+  Meteor.call('signUpUser',user, (err,res) =>{
     if (err) {
       console.log('Please contact administrator.')
       callBack(err);

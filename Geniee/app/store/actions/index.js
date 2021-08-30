@@ -1,6 +1,6 @@
 export * from '../modules/auth/actions';
-export * from '../modules/business/actions';
-// export * from '../modules/admin/actions';
+export * from '../modules/categories/actions';
+export * from '../modules/shopping/actions';
 // export * from '../modules/items/actions';
 // export * from '../modules/teams/actions';
 // export * from '../modules/guests/actions';

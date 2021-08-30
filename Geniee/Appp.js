@@ -48,7 +48,13 @@ import AllProducts from './app/screens/store/AllProducts';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
 import { PersistGate } from 'redux-persist/integration/react';
-import authHandlers from '../../geniee-react-native/Geniee/app/store/services/business/handlers'
+import authHandlers from './app/store/services/categories/handlers';
+import AddressDetail from './app/componentsG/Auth/components/AddressDetail';
+import RegisterCompleted from './app/componentsG/Auth/components/RegisterCompleted';
+import BusinessForm from './app/componentsG/Merchant/component/BusinessForm';
+import BusinessDocument from './app/componentsG/Merchant/component/BusinessDocument';
+import BusinessCompleted from './app/componentsG/Merchant/component/BusinessCompleted';
+import MyCart from './app/componentsG/Shopping/components/MyCart';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -306,6 +312,12 @@ export default function Appp({ navigation }) {
                             <Stack.Screen name='Notification' component={Notification} ></Stack.Screen>
                             <Stack.Screen name='ServiceRatings' component={ServiceRatings} ></Stack.Screen>
                             <Stack.Screen name='SearchResult' component={SearchResult} ></Stack.Screen>
+                            <Stack.Screen name='AddressDetail' component={AddressDetail} ></Stack.Screen>
+                            <Stack.Screen name='RegisterCompleted' component={RegisterCompleted} ></Stack.Screen>
+                            <Stack.Screen name='BecomeSeller' component={BusinessForm} ></Stack.Screen>
+                            <Stack.Screen name='BusinessDocument' component={BusinessDocument}></Stack.Screen>
+                            <Stack.Screen name='BusinessCompleted' component={BusinessCompleted}></Stack.Screen>
+                            <Stack.Screen name='MyCart' component={MyCart} ></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>

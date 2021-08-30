@@ -1,9 +1,8 @@
 import Meteor from "../../../react-native-meteor";
-import { dispatch } from "../../../store";
-import { getCategories } from "../../../store/actions";
+import { dispatch } from "../..";
+import { getCategories } from "../../actions";
 
 const getAllCategories = () =>{
-  debugger;
     Meteor.call('getAllCategories',(err, res) =>{
         if(err){
             console.log('Please contact administrator.')

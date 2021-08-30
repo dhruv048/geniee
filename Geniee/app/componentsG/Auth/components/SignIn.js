@@ -125,7 +125,7 @@ const  handleSignIn = () => {
                         backgroundColor={colors.appBackground}
                         barStyle="dark-content"
                     />
-                    <View style={{ width: '100%', alignItems: 'flex-end' }}>
+                    {/* <View style={{ width: '100%', alignItems: 'flex-end' }}>
                         <Button mode="text">
                             <NBIcon
                                 name="close"
@@ -133,7 +133,7 @@ const  handleSignIn = () => {
                                 style={{ color: 'rgba(0, 0, 0, 0.6)' }}
                             />
                         </Button>
-                    </View>
+                    </View> */}
                     {/* <Logo /> */}
                     <Text
                         style={
@@ -142,8 +142,8 @@ const  handleSignIn = () => {
                                 color: colors.primary,
                                 fontSize: 50,
                                 paddingHorizontal: 16,
-                                marginBottom: 39,
-                                marginTop: 71,
+                                marginBottom: 20,
+                                marginTop: 30,
                             })
                         }>
                         Geniee
