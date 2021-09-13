@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Feather';
 const BusinessCompleted = ({ navigation }) => {
 
     const addItemOrService = () => {
-        console.log('Add Item Service');
+        navigation.navigate('ProductInfo');
 
     }
     const showSellingRules = () => {
@@ -28,6 +28,7 @@ const BusinessCompleted = ({ navigation }) => {
                     <Left>
                         <Button
                             transparent
+                            uppercase={false}
                             onPress={() => {
                                 navigation.goBack();
                             }}>
@@ -40,6 +41,7 @@ const BusinessCompleted = ({ navigation }) => {
                     <Right>
                         <Button
                             transparent
+                            uppercase={false}
                             onPress={() => {
                                 handleSkipCall();
                             }}>

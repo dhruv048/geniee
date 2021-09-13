@@ -1,9 +1,10 @@
-import React, {useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     View,
     StyleSheet,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    Image
 } from 'react-native';
 import { colors, customStyle } from '../../../config/styles';
 import {
@@ -19,18 +20,25 @@ import Icon from 'react-native-vector-icons/Feather';
 import ImagePicker from 'react-native-image-crop-picker';
 import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
 import { customGalioTheme } from '../../../config/themes';
+import { launchImageLibrary } from 'react-native-image-picker';
+import merchantHandlers from '../../../store/services/merchant/handlers';
 
 const RNFS = require('react-native-fs');
 
-const BusinessForm = ({ navigation }) => {
+const BusinessForm = (props) => {
+    let actionsheet = useRef();
+    const [merchantPhoto, setMerchantPhoto] = useState('Merchant image');
+    const [PANNumber, setPANNumber] = useState('PAN Number image');
+    const [businessRegistration, setBusinessRegistration] = useState('Registration image');
+    const [merchantImage, setMerchantImage] = useState('');
+    const [PANImage, setPANImage] = useState('');
+    const [registrationImage, setRegistrationImage] = useState('');
+    const [isMerchant, setIsMerchant] = useState(false);
+    const [isPAN, setIsPAN] = useState(false);
+    const [isRegistration, setIsRegistration] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const [merchantPhoto, setMerchantPhoto] = useState('');
-    const [PANNumber, setPANNumber] = useState('');
-    const [businessRegistration, setBusinessRegistration] = useState('');
-    const [modalVisible,setModalVisible] = useState('');
-
-    const _handleImageUpload = selectedOption => {
-        setModalVisible(false);
+    const chooseImage = (selectedOption) => {
         if (selectedOption === 0) {
             ImagePicker.openCamera({
                 width: 1440,
@@ -56,19 +64,62 @@ const BusinessForm = ({ navigation }) => {
                 _onImageChange(image);
             });
         }
-    };
+    }
+
     const _onImageChange = (image) => {
-        const compressFormat = 'JPEG';
-        const newWidth = image.width > 1440 ? 1440 : image.width;
-        const newHeight = image.height > 2960 ? 2960 : image.width;
-        handleInputChange('avatarSource', { uri: `data:${image.mime};base64,${image.data}` });
-        handleInputChange('Image', image);
+        const imagedata = `data:${image.mime};base64,${image.data}`;
+        if (isMerchant) {
+            setMerchantImage(imagedata);
+        } else if (isPAN) {
+            setPANImage(imagedata);
+        } else if (isRegistration) {
+            setRegistrationImage(imagedata);
+        }
+        setImageData(imagedata);
+        setIsMerchant(false);
+        setIsPAN(false);
+        setIsRegistration(false);
+
     };
 
+    const handleMerchantInfo =()=>{
+        props.navigation.navigate('BusinessCompleted');
+    }
+    
+    const handleMerchantInfo1 = () => {
+        let business = props.route.params.businessData;
+        //prepare for database
+        business.merchantImage = merchantImage;
+        business.PANImage = PANImage;
+        business.registrationImage = registrationImage;
 
-    const handleMerchantInfo = () => {
-        console.log('This is merchan document');
-        navigation.navigate('BusinessCompleted')
+        setLoading(true);
+        merchantHandlers.addBusiness(business, (res) => {
+            if (!res) {
+                console.log('result from Merchant error ' + err.reason);
+                ToastAndroid.showWithGravityAndOffset(
+                    err.reason,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+            } else {
+                // hack because react-native-meteor doesn't login right away after sign in
+                console.log('Result from Merchant register' + res);
+                ToastAndroid.showWithGravityAndOffset(
+                    'Business Registered Successfully',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+                setLoading(false);
+                //resetAddressDetailForm();
+                props.navigation.navigate('BusinessCompleted');
+            }
+        });
+        setLoading(false);
     }
 
     return (
@@ -86,8 +137,9 @@ const BusinessForm = ({ navigation }) => {
                             <Left>
                                 <RNPButton
                                     transparent
+                                    uppercase={false}
                                     onPress={() => {
-                                        navigation.goBack();
+                                        props.navigation.goBack();
                                     }}>
                                     <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                                     <Text style={{ color: colors.whiteText }}>
@@ -113,6 +165,7 @@ const BusinessForm = ({ navigation }) => {
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
+                                    disabled= {true}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="Photo of Merchant"
                                     placeholderTextColor="#808080"
@@ -125,16 +178,26 @@ const BusinessForm = ({ navigation }) => {
                                     mode='contained'
                                     uppercase={false}
                                     onPress={() => {
-                                        _handleImageUpload()
+                                        setIsMerchant(true);
+                                        actionsheet.current.show();
                                     }}
                                     style={{ height: 40, marginTop: 10 }}>
                                     <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
                                     <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
                                 </RNPButton>
                             </View>
+                            <View>
+                                {merchantPhoto ?
+                                    <Image
+                                        source={{ uri: merchantImage }}
+                                        style={{ width: 100, height: 100, marginBottom: 10 }}
+                                    /> : null
+                                }
+                            </View>
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
+                                    disabled= {true}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="PAN Number"
                                     placeholderTextColor="#808080"
@@ -147,16 +210,26 @@ const BusinessForm = ({ navigation }) => {
                                     mode='contained'
                                     uppercase={false}
                                     onPress={() => {
-                                        _handleImageUpload()
+                                        setIsPAN(true);
+                                        actionsheet.current.show();
                                     }}
                                     style={{ height: 40, marginTop: 10 }}>
                                     <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
                                     <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
                                 </RNPButton>
                             </View>
+                            <View>
+                                {PANNumber ?
+                                    <Image
+                                        source={{ uri: PANImage }}
+                                        style={{ width: 100, height: 100, marginBottom: 10 }}
+                                    /> : null
+                                }
+                            </View>
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
+                                    disabled= {true}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="Business Registration"
                                     placeholderTextColor="#808080"
@@ -169,17 +242,27 @@ const BusinessForm = ({ navigation }) => {
                                     mode='contained'
                                     uppercase={false}
                                     onPress={() => {
-                                        _handleImageUpload()
+                                        setIsRegistration(true);
+                                        actionsheet.current.show();
                                     }}
                                     style={{ height: 40, marginTop: 10 }}>
                                     <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
                                     <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
                                 </RNPButton>
                             </View>
+                            <View>
+                                {businessRegistration ?
+                                    <Image
+                                        source={{ uri: registrationImage }}
+                                        style={{ width: 100, height: 100, marginBottom: 10 }}
+                                    /> : null
+                                }
+                            </View>
                             <RNPButton
                                 mode='contained'
                                 onPress={() => { handleMerchantInfo() }}
                                 uppercase={false}
+                                loading={loading}
                                 style={styles.btnContinue}
                             >
                                 <Text
@@ -189,8 +272,28 @@ const BusinessForm = ({ navigation }) => {
                                 <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-right" />
                             </RNPButton>
                         </View>
+
                     </View>
+
                 </TouchableWithoutFeedback>
+                <ActionSheet
+                    ref={actionsheet}
+                    title={'Please select the option'}
+                    options={[
+                        <Text style={{ color: colors.appLayout }}>
+                            Take Picture from Camera
+                        </Text>,
+                        <Text style={{ color: colors.appLayout }}>
+                            Pick Image from Gallery
+                        </Text>,
+                        'Cancel',
+                    ]}
+                    cancelButtonIndex={2}
+                    destructiveButtonIndex={2}
+                    onPress={index => {
+                        chooseImage(index);
+                    }}
+                />
             </Content>
         </Container>
 

@@ -4,14 +4,15 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
 export const colors = {
   appBackground: '#ffffff',
-  // statusBar: '#4d94ff',
-  statusBar: '#4d94ff',
+   statusBar: '#4d94ff',
+  //statusBar: '#ffffff',
   inputBackground: '#eaf2ff',
   buttonPrimaryBackground: '#4d94ff',
   primaryText: '#4d94ff',
   redText: '#a51822',
   whiteText: '#ffffff',
-  appLayout: '#4d94ff',
+  //appLayout: '#4d94ff',
+  appLayout: '#ffffff',
   primary: '#397CCD',
   warning: '#EFBD6E',
   danger: '#FF7278',

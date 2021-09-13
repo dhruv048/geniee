@@ -12,17 +12,6 @@ const getAllCategories = () =>{
     })
 };
 
-const addBusiness = ({businessModel}, callBack) =>{
-    Meteor.call('addNewService',businessModel,(err, res) =>{
-        if(err){
-            console.log('Please contact administrator.')
-          }else{
-            callBack(true);
-          }
-    })
-};
-
 export default {
-    getAllCategories,
-    addBusiness
+    getAllCategories
 }

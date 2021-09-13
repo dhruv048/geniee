@@ -55,6 +55,13 @@ import BusinessForm from './app/componentsG/Merchant/component/BusinessForm';
 import BusinessDocument from './app/componentsG/Merchant/component/BusinessDocument';
 import BusinessCompleted from './app/componentsG/Merchant/component/BusinessCompleted';
 import MyCart from './app/componentsG/Shopping/components/MyCart';
+import Checkout from './app/componentsG/Shopping/components/Checkout';
+import PaymentMethod from './app/componentsG/Shopping/components/PaymentMethod';
+import OrdersCompleted from './app/componentsG/Shopping/components/OrdersCompleted';
+import MyOrders from './app/componentsG/Shopping/components/MyOrders';
+import ProductInfo from './app/componentsG/ProductInfo/components/ProductInfo';
+import ProductPreview from './app/componentsG/ProductInfo/components/ProductPreview';
+import ProductCompleted from './app/componentsG/ProductInfo/components/ProductCompleted';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -318,6 +325,13 @@ export default function Appp({ navigation }) {
                             <Stack.Screen name='BusinessDocument' component={BusinessDocument}></Stack.Screen>
                             <Stack.Screen name='BusinessCompleted' component={BusinessCompleted}></Stack.Screen>
                             <Stack.Screen name='MyCart' component={MyCart} ></Stack.Screen>
+                            <Stack.Screen name='Checkout' component={Checkout} ></Stack.Screen>
+                            <Stack.Screen name='PaymentMethod' component={PaymentMethod} ></Stack.Screen>
+                            <Stack.Screen name='OrdersCompleted' component={OrdersCompleted} ></Stack.Screen>
+                            <Stack.Screen name='MyOrders' component={MyOrders} ></Stack.Screen>
+                            <Stack.Screen name='ProductInfo' component={ProductInfo} ></Stack.Screen>
+                            <Stack.Screen name='ProductPreview' component={ProductPreview} ></Stack.Screen>
+                            <Stack.Screen name='ProductCompleted' component={ProductCompleted} ></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>

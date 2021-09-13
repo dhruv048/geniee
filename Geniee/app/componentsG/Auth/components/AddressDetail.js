@@ -33,9 +33,14 @@ const AddressDetail = (props) => {
         return otpValid;
     }
     const handleCreateAccount = () => {
+        props.navigation.navigate('RegisterCompleted',{data:'user'});
+    }
+    const handleCreateAccount1 = () => {
         let userData = props.route.params.userData;
+        let registerUser='';
         if (!validateAddressDetailForm()) {
             if (!validateOTPCode()) {
+                //preparing for Database
                 let user = {
                     username: values.contact.value,
                     password: userData.password,
@@ -77,9 +82,10 @@ const AddressDetail = (props) => {
                             0,
                             50,
                         );
+                        registerUser = res;
                         setLoading(false);
                         //resetAddressDetailForm();
-                        props.navigation.navigate('RegisterCompleted');
+                        props.navigation.navigate('RegisterCompleted',{data:registerUser});
                     }
                 });
                 setLoading(false);
@@ -123,8 +129,9 @@ const AddressDetail = (props) => {
                             <Left>
                                 <RNPButton
                                     transparent
+                                    uppercase={false}
                                     onPress={() => {
-                                        navigation.goBack();
+                                        props.navigation.goBack();
                                     }}>
                                     <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                                     <Text style={{ color: colors.whiteText }}>

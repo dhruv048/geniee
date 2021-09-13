@@ -1,0 +1,220 @@
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import {
+    View,
+    StyleSheet,
+    ToastAndroid,
+    TouchableWithoutFeedback,
+    Keyboard,
+    TouchableOpacity
+} from 'react-native';
+import { colors, customStyle } from '../../../config/styles';
+import {
+    Container,
+    Content,
+    Text,
+    Picker,
+    Header,
+    Left,
+    Input as NBInput,
+    Right,
+    Textarea
+} from 'native-base';
+import ActionSheet from 'react-native-actionsheet';
+import Icon from 'react-native-vector-icons/Feather';
+import ImagePicker from 'react-native-image-crop-picker';
+import LocationPicker from '../../../components/LocationPicker';
+import AsyncStorage from '@react-native-community/async-storage';
+import _, { set } from 'lodash';
+import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
+import { customGalioTheme } from '../../../config/themes';
+import { categorySelector } from '../../../store/selectors';
+import { connect } from 'react-redux';
+import { ProgressViewIOSComponent, Image } from 'react-native';
+import { SliderBox } from "react-native-image-slider-box";
+
+const RNFS = require('react-native-fs');
+
+const ProductPreview = (props) => {
+    const productData = props.route.params.productInfo;
+
+    const editProduct = () => {
+        props.navigation.goBack();
+    }
+
+    const handleConfirmProduct = () => {
+        //if(!validateBusinessForm()){
+        //preparing for Database
+        let product = {
+            productTitle: productData.productTitle,
+            price: productData.price,
+            discount: productData.discount,
+            description: productData.description,
+            productImage: productData.productImage,
+            productProperty: productData.customFields,
+        };
+        //}
+        // call API to save data
+        props.navigation.navigate('ProductCompleted', { data: product });
+    }
+
+    const renderImage = () => {
+        return (
+            <SliderBox
+                images={productData.productImage}
+                sliderBoxHeight={250}
+                onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+                dotColor="#FFEE58"
+                inactiveDotColor="#90A4AE"
+            />
+
+        )
+    };
+
+    const renderProductProperty = (item, index) => {
+        return (
+            <View key={index}>
+                <View style={styles.propertyView}>
+                    <View style={{ width: '50%' }}><Text>{item.metaName}</Text></View>
+                    <View style={{ width: '50%' }}><Text>{item.metaValue}</Text></View>
+                </View>
+            </View>
+        )
+    }
+
+    return (
+        <Container style={styles.container}>
+            <Content style={{ padding: Platform.OS === 'ios' ? 20 : 0 }}>
+                <TouchableWithoutFeedback
+                    onPress={Keyboard.dismiss}
+                    accessible={false}>
+                    <View style={{ paddingTop: 0 }}>
+                        {/* <Logo />*/}
+                        <Header
+                            androidStatusBarColor={colors.statusBar}
+                            style={{ backgroundColor: '#4d94ff' }}
+                        >
+                            <RNPButton
+                                transparent
+                                uppercase={false}
+                                style={{ width: '100%', alignItems: 'flex-start' }}
+                                onPress={() => {
+                                    props.navigation.goBack();
+                                }}>
+                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Product Preview</Text>
+                            </RNPButton>
+                        </Header>
+                        <View style={styles.containerRegister}>
+                                <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
+                            </View>
+                            <View style={styles.sliderBox}>
+                                {productData.productImage.length > 0 ? renderImage() : null}
+                                {/* {productData.productImage.map((item, indx) => renderImage(item, indx))} */}
+                            </View>
+                        <View style={styles.containerRegister}>
+                            
+                            <View>
+                                <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', marginRight: 10 }}>Rs.{productData.price}</Text>
+                                <Text style={{ fontWeight: 'bold', color: 'red' }}>-{productData.discount}% Off</Text>
+                            </View>
+                            <Text style={{ color: colors.statusBar }}>Rs. {productData.price - (productData.price * productData.discount) / 100}</Text>
+                            <View>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Description</Text>
+                                <Text style={{ fontSize: 16 }}>{productData.description}</Text>
+                            </View>
+                            <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Specification</Text>
+                            {productData.productProperty.map((item, index) => renderProductProperty(item, index))}
+                        </View>
+                        <View style={styles.horizontalView}>
+                            <RNPButton
+                                mode='outlined'
+                                onPress={() => { editProduct() }}
+                                uppercase={false}
+                                style={styles.btnContinue}
+                            >
+                                <Text
+                                    style={styles.btnEditText}>
+                                    Edit
+                                </Text>
+                                <Icon style={{ color: 'black', fontSize: 18 }} name="edit" />
+                            </RNPButton>
+                            <RNPButton
+                                mode='contained'
+                                onPress={() => { handleConfirmProduct() }}
+                                uppercase={false}
+                                style={styles.btnContinue}
+                            >
+                                <Text
+                                    style={styles.btnContinueText}>
+                                    Post
+                                </Text>
+                                <Icon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
+                            </RNPButton>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Content>
+        </Container>
+
+    );
+}
+export default ProductPreview;
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: colors.whiteText,
+        flex: 1,
+    },
+    content: {
+        backgroundColor: colors.appBackground,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    containerRegister: {
+        marginHorizontal: 25,
+        //marginTop: 5,
+    },
+
+    horizontalView:
+    {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginHorizontal: 20,
+    },
+
+    propertyView:
+    {
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start'
+    },
+
+    btnContinue: {
+        width: '48%',
+        marginBottom: 10,
+        marginTop: 20,
+        //marginLeft: '25%',
+        borderRadius: 6,
+        height: 45,
+    },
+
+    btnEditText: {
+        fontSize: 18,
+        fontWeight: '500',
+        color: 'black',
+    },
+    btnContinueText: {
+        fontSize: 18,
+        fontWeight: '500',
+        color: colors.whiteText,
+    },
+    sliderBox : {
+        marginHorizontal: 0,
+    }
+});

@@ -4,19 +4,13 @@ const UseBusinessForm = () => {
     const initialState = {
         merchantName: { value: '', error: false },
         selectedCategory: { value: '', error: false },
-        location: { value: null, error: false },
-        contact: { value: '', error: false },
-        avatarSource: { value: null, error: false },
-        Image: { value: null, error: false },
-        pickLocation: { value: false, error: false },
-        loading: { value: false, error: false },
-        panNumber: { value: '', error: false },
-        email: { value: '', error: false },
-        panVatImage :{value:'',error:false},
         district : {value:'',error:false},
         city : {value:'',error:false},
         nearestLandmark : {value:'',error:false},
-
+        //location: { value: null, error: false },
+        panNumber: { value: '', error: false },
+        contact: { value: '', error: false },
+        email: { value: '', error: false },
     };
 
     const [values, setValues] = useState(initialState);

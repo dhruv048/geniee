@@ -14,7 +14,114 @@ const removeProductsByServiceId = (Id) => {
     });
 };
 
+const uploadImage = async(baseImage) => {
+    try {
+        /*path of the folder where your project is saved. (In my case i got it from config file, root path of project).*/
+        const uploadPath = '/home/geniee';
+        //path of folder where you want to save the image.
+        const localPath = `${uploadPath}/images/`;
+        //Find extension of file
+        const ext = baseImage.substring(baseImage.indexOf("/")+1, baseImage.indexOf(";base64"));
+        const fileType = baseImage.substring("data:".length,baseImage.indexOf("/"));
+        //Forming regex to extract base64 data of file.
+        const regex = new RegExp(`^data:${fileType}\/${ext};base64,`, 'gi');
+        //Extract base64 data.
+        const base64Data = baseImage.replace(regex, "");
+        //Random photo name with timeStamp so it will not overide previous images.
+        const fileName = `${Date.now()}.${ext}`;
+        
+        //Check that if directory is present or not.
+        if(!fs.existsSync(`${uploadPath}/images/`)) {
+            fs.mkdirSync(`${uploadPath}/images/`);
+        }
+        if (!fs.existsSync(localPath)) {
+            fs.mkdirSync(localPath);
+        }
+        fs.writeFileSync(localPath+fileName, base64Data, 'base64');
+        return {fileName, localPath};
+ 
+    } catch (e) {
+        console.log(e)
+        // next(e);
+    }
+};
+
 Meteor.methods({
+    addNewBusiness: async(businessInfo) => {
+        try {
+            var currentUserId = Meteor.userId();  
+            const merchantImage = await uploadImage(businessInfo.merchantImage); 
+            const PANImage = await uploadImage(businessInfo.PANImage);
+            const registrationImage = await uploadImage(businessInfo.registrationImage);       
+            // let location = {
+            //     geometry: {
+            //         coordinates: [
+            //             serviceInfo.location.geometry.location.lng,
+            //             serviceInfo.location.geometry.location.lat,
+            //         ],
+            //         type: "Point",
+            //         location: {
+            //             lat: serviceInfo.location.geometry.location.lat,
+            //             lng: serviceInfo.location.geometry.location.lng,
+            //         },
+            //     },
+            //     formatted_address: serviceInfo.location.formatted_address,
+            // };
+            let Owner = Meteor.users.findOne({ _id: businessInfo.owner });
+            
+            businessInfo.businessImage = merchantImage.fileName;
+            businessInfo.PANImage = PANImage.fileName;
+            businessInfo.registrationImage = registrationImage.fileName;
+            
+            businessInfo.createdAt = new Date(new Date().toUTCString());
+            businessInfo.createdBy = currentUserId;
+            businessInfo.coverImage = null;
+            businessInfo.categoryId = '';
+            businessInfo.ratings = [{ count: 0 }];
+            businessInfo.Image = null;
+            businessInfo.isApproved = false;
+            businessInfo.approvedBy = null;
+            businessInfo.approvedDate = null;
+
+            var res = Business.insert(businessInfo);
+            try {
+                FIREBASE_MESSAGING.notificationToAll(
+                    "newBusinessStaging",
+                    `New Business Provider - ${businessInfo.merchantName}`,
+                    businessInfo.merchantName,
+                    {
+                        Id: res,
+                        navigate: "true",
+                        route: "ServiceDetail",
+                    }
+                );
+            } catch (e) {
+                throw new Meteor.Error(403, e.message);
+            }
+            const notification = {
+                title: `New Service by- ${Owner.profile.name}`,
+                description: businessInfo.merchantName,
+                owner: businessInfo.owner,
+                navigateId: res,
+                receiver: [],
+                removedBy: [],
+                type: NotificationTypes.ADD_SERVICE,
+            };
+            Meteor.call("addNotification", notification);
+            return res;
+            // }
+        } catch (e) {
+            console.log(e.message);
+            throw new Meteor.Error(403, e.message);
+        }
+    },
+
+    updateBusiness: (businessId, businessInfo) => {
+        businessInfo.updatedAt = new Date(new Date().toUTCString());
+        Service.update({ _id: businessId }, { $set: businessInfo });
+        // }
+    },
+
     addNewService: (serviceInfo) => {
         try {
             console.log("addNewCategory:::=>>>");

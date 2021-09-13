@@ -50,7 +50,7 @@ const handleSignUp = (user, callBack) => {
     } else {
       console.log('SignedUp successfully')
       dispatch(setSignedUp());
-      callBack(true);
+      callBack(res.result);
     }
   })
 };
