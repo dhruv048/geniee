@@ -54,7 +54,8 @@ const Register = ({ navigation }) => {
   // }
 
   const handleCreateAccount = () => {
-    if (!validateRegisterForm() && isPasswordValid && isEmailValid) {
+    //if (!validateRegisterForm() && isPasswordValid && isEmailValid) {
+      //preparing for Database
       let user = {
         firstName: values.firstName.value,
         lastName: values.lastName.value,
@@ -62,7 +63,7 @@ const Register = ({ navigation }) => {
         password: values.password.value
       }
       navigation.navigate('AddressDetail', { userData: user });
-    }
+    //}
   }
 
   // const _updateUsersAgreeStatus = () => {

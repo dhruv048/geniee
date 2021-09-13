@@ -28,158 +28,53 @@ import { customGalioTheme } from '../../../config/themes';
 import UseBusinessForm from '../../../hooks/useBusinessForm';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
+import { ProgressViewIOSComponent } from 'react-native';
 
 const RNFS = require('react-native-fs');
 
-const BusinessForm = ({ navigation, categories }) => {
+const BusinessForm = (props) => {
     const { values, handleInputChange, validateBusinessForm, resetBusinessForm } = UseBusinessForm();
+    const registerUser = props.route.params.data
 
     const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
-        console.log('This is categories : ' + categories);
-    }, [categories]);
+        console.log('This is categories : ' + props.categories);
+    }, [props.categories]);
 
-    const _handleImageUpload = selectedOption => {
-        setModalVisible(false);
-        if (selectedOption === 0) {
-            ImagePicker.openCamera({
-                width: 1440,
-                height: 720,
-                cropping: true,
-                includeBase64: true,
-                compressImageMaxWidth: 1440,
-                compressImageMaxHeight: 720,
-                compressImageQuality: 0.8,
-            }).then(image => {
-                _onImageChange(image);
-            });
-        } else if (selectedOption === 1) {
-            ImagePicker.openPicker({
-                width: 1440,
-                height: 720,
-                cropping: true,
-                includeBase64: true,
-                compressImageMaxWidth: 1440,
-                compressImageMaxHeight: 720,
-                compressImageQuality: 0.8,
-            }).then(image => {
-                _onImageChange(image);
-            });
-        }
-    };
-    const _onImageChange = (image) => {
-        const compressFormat = 'JPEG';
-        const newWidth = image.width > 1440 ? 1440 : image.width;
-        const newHeight = image.height > 2960 ? 2960 : image.width;
-        handleInputChange('avatarSource', { uri: `data:${image.mime};base64,${image.data}` });
-        handleInputChange('Image', image);
-    };
+    // const handleOnLocationSelect = (location) => {
+    //     delete location.address_components;
+    //     handleInputChange('location', location);
+    //     handleInputChange('pickLocation', false);
+    // }
 
-    const _callSaveServiceMethod = (service) => {
-        service.Image = values.Image.value;
-        let _service = props.Service;
-        if (_service) {
-            service.coverImage = _service.coverImage;
-            handleInputChange('loading', true);
-            Meteor.call('updateService', _service._id, service, (err, res) => {
-                handleInputChange('loading', false);
-                if (err) {
-                    ToastAndroid.showWithGravityAndOffset(
-                        err.reason,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        50,
-                    );
-                    console.log(err.reason);
-                } else {
-                    ToastAndroid.showWithGravityAndOffset(
-                        'Service Updated Successfully!!',
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        50,
-                    );
-                    // hack because react-native-meteor doesn't login right away after sign in
-                    resetBusinessForm();
-                    Meteor.call('geOwnServiceList', (err, res) => {
-                        if (!err) {
-                            AsyncStorage.setItem('myServices', res);
-                        }
-                    });
-                    navigation.navigate('Home');
-                }
-            });
-        } else {
-            service.owner = Meteor.userId();
-            handleInputChange('loading', true);
-            Meteor.call('addNewService', service, (err, res) => {
-                handleInputChange('loading', false);
-                if (err) {
-                    ToastAndroid.showWithGravityAndOffset(
-                        err.reason,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        50,
-                    );
-                    console.log(err.reason);
-                } else {
-                    // hack because react-native-meteor doesn't login right away after sign in
-                    resetBusinessForm();
-                    navigation.navigate('MyServices');
-                }
-            });
-        }
-    };
-
-    const _saveService = () => {
-        let service = {
-            title: values.title.value,
-            selectedCategory: values.selectedCategory.value,
-            contact: values.contact.value,
-            location: values.location.value,
-            coverImage: null,
-            contactPerson: values.contactPerson.value,
-            panvat: values.panvat.value,
-            email: values.email.value,
-            website: values.webLink.value,
-            businessType: values.businessType.value,
-        };
-        if (validateBusinessForm() != true) {
-            ToastAndroid.showWithGravityAndOffset(
-                'Please Enter all the fields with *.',
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                50,
-            );
-            //valid = false;
-        } else {
-            _callSaveServiceMethod(service);
-        }
-    };
-
-    const handleOnLocationSelect = (location) => {
-        delete location.address_components;
-        handleInputChange('location', location);
-        handleInputChange('pickLocation', false);
-    }
-
-    const closePickLocation = () => {
-        handleInputChange('pickLocation', false);
-    }
+    // const closePickLocation = () => {
+    //     handleInputChange('pickLocation', false);
+    // }
 
     const loadCategoriesTypes = useCallback(() => {
-        if (!categories) return;
-        return categories.map(category => (
+        if (!props.categories) return;
+        return props.categories.map(category => (
             <Picker.Item key={category._id} label={category.title} value={category._id} />
         ))
-    }, [categories]);
+    }, [props.categories]);
 
     const handleMerchantInfo = () => {
-        console.log('This is merchanInfo');
-        navigation.navigate('BusinessDocument');
+        //if(!validateBusinessForm()){
+            //preparing for Database
+            let business = {
+                businessName : values.merchantName.value,
+                selectedCategory: values.selectedCategory.value,
+                district: values.district.value,
+                city:values.city.value,
+                nearestLandmark: values.nearestLandmark.value,
+                location: null,
+                panNumber: values.panNumber.value,
+                contact: values.contact.value,
+                email: values.email.value,
+                owner: registerUser
+            };
+        //}
+        props.navigation.navigate('BusinessDocument',{businessData : business});
     }
 
     return (
@@ -197,8 +92,9 @@ const BusinessForm = ({ navigation, categories }) => {
                             <Left>
                                 <RNPButton
                                     transparent
+                                    uppercase={false}
                                     onPress={() => {
-                                        navigation.goBack();
+                                        props.navigation.goBack();
                                     }}>
                                     <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                                     <Text style={{ color: colors.whiteText }}>
@@ -229,6 +125,7 @@ const BusinessForm = ({ navigation, categories }) => {
                                 value={values.merchantName.value}
                                 onChangeText={(value) => handleInputChange('merchantName', value)}
                                 style={styles.inputBox}
+                                theme={{roundness:6}}
                             />
                             <View
                                 style={styles.categoryPicker}>
@@ -251,6 +148,7 @@ const BusinessForm = ({ navigation, categories }) => {
                                     onChangeText={(value) => handleInputChange('district', value)}
                                     style={styles.textInputNameBox}
                                     error={values.district.error}
+                                    theme={{roundness:6}}
                                 />
 
                                 <TextInput
@@ -263,6 +161,7 @@ const BusinessForm = ({ navigation, categories }) => {
                                     onChangeText={(value) => handleInputChange('city', value)}
                                     style={styles.textInputNameBox}
                                     error={values.city.error}
+                                    theme={{roundness:6}}
                                 />
                             </View>
                             <TextInput
@@ -274,8 +173,9 @@ const BusinessForm = ({ navigation, categories }) => {
                                 onChangeText={(value) => handleInputChange('nearestLandmark', value)}
                                 style={styles.inputBox}
                                 error={values.nearestLandmark.error}
+                                theme={{roundness:6}}
                             />
-                            <TextInput
+                            {/* <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 //   onBlur={()=>this.setState({pickLocation:true})}
@@ -285,7 +185,8 @@ const BusinessForm = ({ navigation, categories }) => {
                                 value={values.location.value ? values.location.value.formatted_address : ""}
                                 //   onChangeText={(radius) => this.setState({radius})}
                                 style={styles.inputBox}
-                            />
+                                theme={{roundness:6}}
+                            /> */}
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
@@ -294,6 +195,7 @@ const BusinessForm = ({ navigation, categories }) => {
                                 value={values.panNumber.value}
                                 onChangeText={(value) => handleInputChange('panNumber', value)}
                                 style={styles.inputBox}
+                                theme={{roundness:6}}
                             />
                             <TextInput
                                 mode="outlined"
@@ -305,6 +207,7 @@ const BusinessForm = ({ navigation, categories }) => {
                                 onChangeText={(value) => handleInputChange('contact', value)}
                                 value={values.contact.value}
                                 style={styles.inputBox}
+                                theme={{roundness:6}}
                             />
                             <TextInput
                                 mode="outlined"
@@ -314,6 +217,7 @@ const BusinessForm = ({ navigation, categories }) => {
                                 onChangeText={(value) => handleInputChange('email', value)}
                                 value={values.email.value}
                                 style={styles.inputBox}
+                                theme={{roundness:6}}
                             />
                             <RNPButton
                                 mode='contained'
@@ -322,20 +226,20 @@ const BusinessForm = ({ navigation, categories }) => {
                                 style={styles.btnContinue}
                             >
                                 <Text
-                                    style={styles.btnText}>
+                                    style={styles.btnContinueText}>
                                     Continue
                                 </Text>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-right" />
+                                <Icon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
                             </RNPButton>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
             </Content>
-            <LocationPicker
+            {/* <LocationPicker
                 close={closePickLocation}
                 onLocationSelect={handleOnLocationSelect}
                 modalVisible={values.pickLocation.value}
-            />
+            /> */}
         </Container>
 
     );
@@ -359,16 +263,23 @@ const styles = StyleSheet.create({
         //marginTop: 5,
     },
 
+    welcomeText: {
+        flexGrow: 1,
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
+        paddingHorizontal: 25,
+      },
+
     textHeader: {
         fontSize: 20,
         color: 'rgba(0, 0, 0, 0.87)',
         marginBottom: 5,
-        marginTop: 25,
+        marginTop: 50,
         fontWeight: 'bold'
     },
 
     textSubHeader: {
-        fontSize: 16,
+        fontSize: 14,
         color: 'rgba(0, 0, 0, 0.87)',
         marginBottom: 15,
     },
@@ -380,8 +291,7 @@ const styles = StyleSheet.create({
 
     textInputNameBox: {
         width: '55%',
-        height: 48,
-        borderRadius: 3.5,
+        height: 45,
         paddingHorizontal: 10,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
@@ -391,35 +301,31 @@ const styles = StyleSheet.create({
 
     inputBox: {
         width: '100%',
-        height: 48,
-        borderRadius: 3.5,
+        height: 45,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
         backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
-    welcomeText: {
-        flexGrow: 1,
-        justifyContent: 'flex-start',
-        flexDirection: 'column',
-        paddingHorizontal: 20,
-    },
     btnContinue: {
-        width: '45%',
-        marginVertical: 8,
+        width: '55%',
+        marginBottom: 10,
+        marginTop: 20,
         marginLeft: '25%',
-        borderRadius: 4,
-        height: 50,
+        borderRadius: 6,
+        height: 45,
     },
-    btnText: {
-        fontSize: 20,
+
+    btnContinueText: {
+        fontSize: 18,
         fontWeight: '500',
         color: colors.whiteText,
     },
+
     categoryPicker: {
         width: '100%',
-        height: 48,
+        height: 45,
         marginBottom: 10,
         backgroundColor: customGalioTheme.COLORS.WHITE,
         borderRadius: customGalioTheme.SIZES.INPUT_BORDER_RADIUS,

@@ -5,11 +5,11 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../../../config/styles';
 
-const RegisterCompleted = ({ navigation }) => {
+const RegisterCompleted = (props) => {
 
-    const becomeSeller = () => {
-        console.log('Become seller');
-        navigation.navigate('BecomeSeller');
+    const becomeSeller = () => {  
+        const registerUser = props.route.params.data;
+        props.navigation.navigate('BecomeSeller',{data : registerUser});
     }
     return (
         <Container>
@@ -25,7 +25,7 @@ const RegisterCompleted = ({ navigation }) => {
                         uppercase={false}
                         icon='shopping'
                         style={styles.btnComplete}
-                        onPress={() => { navigation.navigate('Home') }}
+                        onPress={() => { props.navigation.navigate('Home') }}
                     >
                         <Text style={styles.btnCompleteText}>Begin the shopping</Text>
                     </Button>

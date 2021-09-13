@@ -98,7 +98,11 @@ Meteor.methods({
                         });
                     });
 
-                done(null,{userId});
+                //return userId;
+
+                return Async.runSync(function (done) {
+                    done(null, userId);
+                })
             }
         });
         }
