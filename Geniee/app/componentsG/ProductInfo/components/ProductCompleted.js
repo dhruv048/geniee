@@ -8,7 +8,6 @@ import { colors } from '../../../config/styles';
 
 const ProductCompleted = (props) => {
   const productData = props.route.params.data;
-  console.log('THis is productData: ' + productData.productImage[0].mime);
   return (
     <Container>
       <Content style={{ backgroundColor: colors.appBackground }}>
@@ -36,9 +35,10 @@ const ProductCompleted = (props) => {
           <Text style={{ fontSize: 20, marginTop: 35, marginBottom: 20, fontWeight: 'bold' }}>Your product has been posted.</Text>
 
           <View style={{ flexDirection: 'row',justifyContent:'flex-start',marginHorizontal:25 }}>
-            <Image
+            {productData.length>0?
+              <Image
               style={{ width: 60, height: 60, resizeMode: 'cover' }}
-              source={{ uri: `data:${productData.productImage[0].mime};base64,${productData.productImage[0].data}` }} />
+              source={{ uri: `data:${productData.productImage[0].mime};base64,${productData.productImage[0].data}` }} />: null}
             <View style={{marginLeft:10,marginBottom:30}}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}> {productData.productTitle}</Text>
               <View style={{ flexDirection: 'row' }}>

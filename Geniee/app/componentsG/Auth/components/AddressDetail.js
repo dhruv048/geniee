@@ -32,10 +32,11 @@ const AddressDetail = (props) => {
         }
         return otpValid;
     }
+    //Design Purpose
+    // const handleCreateAccount = () => {
+    //     props.navigation.navigate('RegisterCompleted',{data:'user'});
+    // }
     const handleCreateAccount = () => {
-        props.navigation.navigate('RegisterCompleted',{data:'user'});
-    }
-    const handleCreateAccount1 = () => {
         let userData = props.route.params.userData;
         let registerUser='';
         if (!validateAddressDetailForm()) {
@@ -135,18 +136,19 @@ const AddressDetail = (props) => {
                                     }}>
                                     <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                                     <Text style={{ color: colors.whiteText }}>
-                                        back
+                                        Back
                                     </Text>
                                 </RNPButton>
                             </Left>
                             <Right>
                                 <RNPButton
                                     transparent
+                                    uppercase={false}
                                     onPress={() => {
                                         handleSkipCall();
                                     }}>
                                     <Text style={{ color: colors.whiteText }}>
-                                        skip
+                                        Skip
                                     </Text>
                                 </RNPButton>
                             </Right>

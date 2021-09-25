@@ -31,6 +31,7 @@ import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
 import { ProgressViewIOSComponent, Image } from 'react-native';
 import { SliderBox } from "react-native-image-slider-box";
+import productHandlers from "../../../store/services/product/handlers";
 
 const RNFS = require('react-native-fs');
 
@@ -44,17 +45,55 @@ const ProductPreview = (props) => {
     const handleConfirmProduct = () => {
         //if(!validateBusinessForm()){
         //preparing for Database
-        let product = {
-            productTitle: productData.productTitle,
-            price: productData.price,
-            discount: productData.discount,
-            description: productData.description,
-            productImage: productData.productImage,
-            productProperty: productData.customFields,
-        };
+        let product = productData;
         //}
         // call API to save data
-        props.navigation.navigate('ProductCompleted', { data: product });
+        if (productData._id) {
+            //Update
+            productHandlers.updateProduct(productData._id, product, productData.imageBeRemove, (res) => {
+                if (res === true) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Updated Successfully!!",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    props.navigation.navigate('ProductCompleted', { data: product });
+                } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Please contact administrator",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
+            })
+        } else {
+            //Save
+            productHandlers.saveProduct(product, (res) => {
+                if (res === true) {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Saved Successfully!!",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    props.navigation.navigate('ProductCompleted', { data: product });
+                } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        "Please contact administrator",
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
+            })
+        }
+
     }
 
     const renderImage = () => {
@@ -105,14 +144,14 @@ const ProductPreview = (props) => {
                             </RNPButton>
                         </Header>
                         <View style={styles.containerRegister}>
-                                <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
-                            </View>
-                            <View style={styles.sliderBox}>
-                                {productData.productImage.length > 0 ? renderImage() : null}
-                                {/* {productData.productImage.map((item, indx) => renderImage(item, indx))} */}
-                            </View>
+                            <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
+                        </View>
+                        <View style={styles.sliderBox}>
+                            {productData.productImage.length > 0 ? renderImage() : null}
+                            {/* {productData.productImage.map((item, indx) => renderImage(item, indx))} */}
+                        </View>
                         <View style={styles.containerRegister}>
-                            
+
                             <View>
                                 <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
                             </View>
@@ -214,7 +253,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.whiteText,
     },
-    sliderBox : {
+    sliderBox: {
         marginHorizontal: 0,
     }
 });

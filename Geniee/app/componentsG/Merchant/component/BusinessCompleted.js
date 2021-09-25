@@ -4,19 +4,21 @@ import { Keyboard, View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { colors } from '../../../config/styles';
 import Icon from 'react-native-vector-icons/Feather';
+import Meteor from '../../../react-native-meteor';
 
-const BusinessCompleted = ({ navigation }) => {
+const BusinessCompleted = (props) => {
+
+    const loggedUser = Meteor.user() ? Meteor.user() :props.route.params.data;
 
     const addItemOrService = () => {
-        navigation.navigate('ProductInfo');
-
+        props.navigation.navigate('ProductInfo', {data: loggedUser});
     }
     const showSellingRules = () => {
         console.log('Selling Rules');
     }
     const handleSkipCall = () => {
         console.log('Handle Skip Call');
-        navigation.navigate('Home')
+        props.navigation.navigate('Home')
     }
     return (
         <Container>
@@ -30,11 +32,11 @@ const BusinessCompleted = ({ navigation }) => {
                             transparent
                             uppercase={false}
                             onPress={() => {
-                                navigation.goBack();
+                                props.navigation.goBack();
                             }}>
                             <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                             <Text style={{ color: colors.whiteText }}>
-                                back
+                                Back
                             </Text>
                         </Button>
                     </Left>
@@ -46,7 +48,7 @@ const BusinessCompleted = ({ navigation }) => {
                                 handleSkipCall();
                             }}>
                             <Text style={{ color: colors.whiteText }}>
-                                skip
+                                Skip
                             </Text>
                         </Button>
                     </Right>

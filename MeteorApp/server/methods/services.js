@@ -69,9 +69,9 @@ Meteor.methods({
             // };
             let Owner = Meteor.users.findOne({ _id: businessInfo.owner });
             
-            businessInfo.businessImage = merchantImage.fileName;
-            businessInfo.PANImage = PANImage.fileName;
-            businessInfo.registrationImage = registrationImage.fileName;
+            businessInfo.businessImage = merchantImage ? merchantImage.fileName:'';
+            businessInfo.PANImage = PANImage ? PANImage.fileName:'';
+            businessInfo.registrationImage = registrationImage ? registrationImage.fileName:'';
             
             businessInfo.createdAt = new Date(new Date().toUTCString());
             businessInfo.createdBy = currentUserId;
@@ -387,6 +387,11 @@ Meteor.methods({
         return data;
     },
 
+    getBusinessType : function(){
+        var data  = BusinessTypes.find().fetch();
+        return data;
+    },
+
     updateCallCount: function () {
         try {
             if (Count.find().count() > 0) {
@@ -531,11 +536,11 @@ Meteor.methods({
             productInfo.productOwner = ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId;
-            productInfo.qty = parseInt(productInfo.qty);
-            productInfo.availabeQuantity = parseInt(productInfo.qty);
+            //productInfo.qty = parseInt(productInfo.qty);
+            //productInfo.availabeQuantity = parseInt(productInfo.qty);
             productInfo.price = parseInt(productInfo.price);
             productInfo.discount = parseInt(productInfo.discount);
-            productInfo.radius = parseInt(productInfo.radius);
+            //productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
             let _service = Service.findOne({ _id: productInfo.service });
             let imageIds = [];
@@ -567,8 +572,9 @@ Meteor.methods({
                                     try {
                                         FIREBASE_MESSAGING.notificationToAll(
                                             "newPoductStaging",
-                                            `New Product by - ${_service.title}`,
-                                            productInfo.title,
+                                            // `New Product by - ${_service.title}`,
+                                            `New Product by - ${productInfo.productTitle}`,
+                                            productInfo.productTitle,
                                             {
                                                 Id: pId,
                                                 navigate: "true",
@@ -582,9 +588,10 @@ Meteor.methods({
                                         throw new Meteor.Error(403, e.message);
                                     }
                                     const notification = {
-                                        title: `New Product by- ${_service.title}`,
-                                        description: productInfo.title,
-                                        owner: _service.owner,
+                                        // title: `New Product by- ${_service.title}`,
+                                        title: `New Product by- ${productInfo.productTitle}`,
+                                        description: productInfo.productTitle,
+                                        owner: productInfo.owner,
                                         navigateId: pId,
                                         productOwner:
                                             ProductOwner.REGULAR_USERS,
@@ -610,8 +617,9 @@ Meteor.methods({
                 try {
                     FIREBASE_MESSAGING.notificationToAll(
                         "newPoductStaging",
-                        `New Product by - ${_service.title}`,
-                        productInfo.title,
+                        // `New Product by - ${_service.title}`,
+                        `New Product by - ${productInfo.productTitle}`,
+                        productInfo.productTitle,
                         {
                             Id: pId,
                             navigate: "true",
@@ -622,9 +630,10 @@ Meteor.methods({
                     throw new Meteor.Error(403, e.message);
                 }
                 const notification = {
-                    title: `New Product by- ${_service.title}`,
-                    description: productInfo.title,
-                    owner: _service.owner,
+                    // title: `New Product by- ${_service.title}`,
+                    title: `New Product by- ${productInfo.productTitle}`,
+                    description: productInfo.productTitle,
+                    owner: productInfo.owner,
                     navigateId: pId,
                     productOwner: ProductOwner.REGULAR_USERS,
                     receiver: [],
@@ -641,11 +650,11 @@ Meteor.methods({
     },
 
     updateProduct: (productId, productInfo, imagesToRemove) => {
-        productInfo.qty = parseInt(productInfo.qty);
-        productInfo.availabeQuantity = parseInt(productInfo.qty);
+        //productInfo.qty = parseInt(productInfo.qty);
+        //productInfo.availabeQuantity = parseInt(productInfo.qty);
         productInfo.price = parseInt(productInfo.price);
         productInfo.discount = parseInt(productInfo.discount);
-        productInfo.radius = parseInt(productInfo.radius);
+        //productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
         // if (productInfo.images.length < 1) {

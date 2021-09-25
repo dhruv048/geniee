@@ -144,7 +144,7 @@ const ForgotPassword = ({loggedUser, navigation}) => {
             <Button
               transparent
               onPress={() => {
-                navigation.navigate('Home');
+                navigation.goBack();
               }}>
               <Icon style={{ color: '#ffffff' }} name="arrow-back" />
             </Button>

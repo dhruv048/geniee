@@ -4,7 +4,9 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
-    Image
+    Image,
+    TouchableOpacity,
+    ToastAndroid
 } from 'react-native';
 import { colors, customStyle } from '../../../config/styles';
 import {
@@ -75,18 +77,18 @@ const BusinessForm = (props) => {
         } else if (isRegistration) {
             setRegistrationImage(imagedata);
         }
-        setImageData(imagedata);
         setIsMerchant(false);
         setIsPAN(false);
         setIsRegistration(false);
 
     };
 
-    const handleMerchantInfo =()=>{
-        props.navigation.navigate('BusinessCompleted');
-    }
-    
-    const handleMerchantInfo1 = () => {
+    //Design Propose
+    // const handleMerchantInfo = () => {
+    //     props.navigation.navigate('BusinessCompleted');
+    // }
+
+    const handleMerchantInfo = () => {
         let business = props.route.params.businessData;
         //prepare for database
         business.merchantImage = merchantImage;
@@ -116,7 +118,7 @@ const BusinessForm = (props) => {
                 );
                 setLoading(false);
                 //resetAddressDetailForm();
-                props.navigation.navigate('BusinessCompleted');
+                props.navigation.navigate('BusinessCompleted',{data : business.owner});
             }
         });
         setLoading(false);
@@ -143,7 +145,7 @@ const BusinessForm = (props) => {
                                     }}>
                                     <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                                     <Text style={{ color: colors.whiteText }}>
-                                        back
+                                        Back
                                     </Text>
                                 </RNPButton>
                             </Left>
@@ -165,7 +167,7 @@ const BusinessForm = (props) => {
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
-                                    disabled= {true}
+                                    disabled={true}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="Photo of Merchant"
                                     placeholderTextColor="#808080"
@@ -173,31 +175,32 @@ const BusinessForm = (props) => {
                                     value={merchantPhoto}
                                     onChangeText={(value) => setMerchantPhoto(value)}
                                     style={styles.textInputNameBox}
+                                    theme={{ roundness: 6 }}
                                 />
-                                <RNPButton
-                                    mode='contained'
-                                    uppercase={false}
+                                <TouchableOpacity
+                                    style={styles.imageView}
                                     onPress={() => {
                                         setIsMerchant(true);
                                         actionsheet.current.show();
-                                    }}
-                                    style={{ height: 40, marginTop: 10 }}>
-                                    <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
-                                    <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
-                                </RNPButton>
-                            </View>
-                            <View>
-                                {merchantPhoto ?
-                                    <Image
+                                    }}>
+                                    {merchantImage ?
+                                    <View>
+                                        <Image
                                         source={{ uri: merchantImage }}
-                                        style={{ width: 100, height: 100, marginBottom: 10 }}
-                                    /> : null
+                                        style={{ width: 65, height: 65,}}
+                                    /> 
+                                    <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft:42,marginBottom:7 }} />
+                                    </View>: <Image
+                                    source={require('Geniee/app/images/uploadimage.png')}
+                                    style={{ width: 65, height: 65, }}
+                                />
                                 }
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
-                                    disabled= {true}
+                                    disabled={true}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="PAN Number"
                                     placeholderTextColor="#808080"
@@ -205,31 +208,32 @@ const BusinessForm = (props) => {
                                     value={PANNumber}
                                     onChangeText={(value) => setPANNumber(value)}
                                     style={styles.textInputNameBox}
+                                    theme={{ roundness: 6 }}
                                 />
-                                <RNPButton
-                                    mode='contained'
-                                    uppercase={false}
+                                <TouchableOpacity
+                                    style={styles.imageView}
                                     onPress={() => {
                                         setIsPAN(true);
                                         actionsheet.current.show();
-                                    }}
-                                    style={{ height: 40, marginTop: 10 }}>
-                                    <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
-                                    <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
-                                </RNPButton>
-                            </View>
-                            <View>
-                                {PANNumber ?
-                                    <Image
+                                    }}>
+                                    {PANImage ?
+                                    <View>
+                                        <Image
                                         source={{ uri: PANImage }}
-                                        style={{ width: 100, height: 100, marginBottom: 10 }}
-                                    /> : null
+                                        style={{ width: 65, height: 65,}}
+                                    /> 
+                                    <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft:42,marginBottom:7 }} />
+                                    </View>: <Image
+                                    source={require('Geniee/app/images/uploadimage.png')}
+                                    style={{ width: 65, height: 65, }}
+                                />
                                 }
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
-                                    disabled= {true}
+                                    disabled={true}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="Business Registration"
                                     placeholderTextColor="#808080"
@@ -237,26 +241,27 @@ const BusinessForm = (props) => {
                                     value={businessRegistration}
                                     onChangeText={(value) => setBusinessRegistration(value)}
                                     style={styles.textInputNameBox}
+                                    theme={{ roundness: 6 }}
                                 />
-                                <RNPButton
-                                    mode='contained'
-                                    uppercase={false}
+                                <TouchableOpacity
+                                    style={styles.imageView}
                                     onPress={() => {
                                         setIsRegistration(true);
                                         actionsheet.current.show();
-                                    }}
-                                    style={{ height: 40, marginTop: 10 }}>
-                                    <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
-                                    <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
-                                </RNPButton>
-                            </View>
-                            <View>
-                                {businessRegistration ?
-                                    <Image
+                                    }}>
+                                    {registrationImage ?
+                                    <View>
+                                        <Image
                                         source={{ uri: registrationImage }}
-                                        style={{ width: 100, height: 100, marginBottom: 10 }}
-                                    /> : null
+                                        style={{ width: 65, height: 65}}
+                                    /> 
+                                    <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft:42,marginBottom:7 }} />
+                                    </View>: <Image
+                                    source={require('Geniee/app/images/uploadimage.png')}
+                                    style={{ width: 65, height: 65 }}
+                                />
                                 }
+                                </TouchableOpacity>
                             </View>
                             <RNPButton
                                 mode='contained'
@@ -269,7 +274,7 @@ const BusinessForm = (props) => {
                                     style={styles.btnText}>
                                     Continue
                                 </Text>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-right" />
+                                <Icon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
                             </RNPButton>
                         </View>
 
@@ -280,10 +285,10 @@ const BusinessForm = (props) => {
                     ref={actionsheet}
                     title={'Please select the option'}
                     options={[
-                        <Text style={{ color: colors.appLayout }}>
+                        <Text style={{ color: colors.text_muted }}>
                             Take Picture from Camera
                         </Text>,
-                        <Text style={{ color: colors.appLayout }}>
+                        <Text style={{ color: colors.text_muted }}>
                             Pick Image from Gallery
                         </Text>,
                         'Cancel',
@@ -335,11 +340,12 @@ const styles = StyleSheet.create({
     {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        marginBottom: 25
     },
 
     textInputNameBox: {
         width: '80%',
-        height: 48,
+        height: 45,
         borderRadius: 3.5,
         paddingHorizontal: 10,
         color: 'rgba(0, 0, 0, 0.6)',
@@ -355,15 +361,22 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     btnContinue: {
-        width: '45%',
+        width: '55%',
         marginVertical: 15,
         marginLeft: '25%',
-        borderRadius: 4,
-        height: 50,
+        borderRadius: 6,
+        height: 45,
     },
     btnText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '500',
         color: colors.whiteText,
+    },
+
+    imageView: {
+        borderColor: `rgba(87, 150, 252, 1)`,
+        borderWidth: 2,
+        height: 70,
+        width: 70,
     },
 });

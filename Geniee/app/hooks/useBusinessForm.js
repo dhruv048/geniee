@@ -3,6 +3,7 @@ import { useState } from 'react';
 const UseBusinessForm = () => {
     const initialState = {
         merchantName: { value: '', error: false },
+        businessType: { value: '', error: false },
         selectedCategory: { value: '', error: false },
         district : {value:'',error:false},
         city : {value:'',error:false},

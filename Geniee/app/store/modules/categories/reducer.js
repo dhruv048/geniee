@@ -2,6 +2,7 @@
 import { handleActions } from 'redux-actions';
 
 import {
+  getBusinessType,
   getCategories,
 } from './actions';
 
@@ -13,6 +14,13 @@ export default handleActions(
     })
   },
   {
+    [getBusinessType]: (state, { payload: { data } }) => ({
+      ...state,
+      businessType: data,
+    })
+  },
+  {
     categories: null,
+    businessType: null,
   },
 );

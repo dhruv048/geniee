@@ -1,6 +1,6 @@
 import Meteor from "../../../react-native-meteor";
 import { dispatch } from "../..";
-import { getCategories } from "../../actions";
+import { getBusinessType, getCategories } from "../../actions";
 
 const getAllCategories = () =>{
     Meteor.call('getAllCategories',(err, res) =>{
@@ -12,6 +12,17 @@ const getAllCategories = () =>{
     })
 };
 
+const getAllBusinessType = (callBack) =>{
+  Meteor.call('getBusinessType',(err, res) =>{
+      if(err){
+          console.log('Please contact administrator.')
+        }else{
+          dispatch(getBusinessType({ data : res}));
+        }
+  })
+};
+
 export default {
-    getAllCategories
+    getAllCategories,
+    getAllBusinessType
 }

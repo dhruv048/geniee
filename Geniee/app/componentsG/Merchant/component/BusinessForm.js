@@ -29,16 +29,25 @@ import UseBusinessForm from '../../../hooks/useBusinessForm';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
 import { ProgressViewIOSComponent } from 'react-native';
-
+import Meteor from '../../../react-native-meteor';
+import handlers from '../../../store/services/categories/handlers';
 const RNFS = require('react-native-fs');
 
 const BusinessForm = (props) => {
     const { values, handleInputChange, validateBusinessForm, resetBusinessForm } = UseBusinessForm();
     const registerUser = props.route.params.data
 
+    const merchantOwner = Meteor.userId() ? Meteor.userId() : registerUser;
+    const [businessTypes, setBusinessTypes] = useState();
+
     const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
         console.log('This is categories : ' + props.categories);
+        handlers.getAllBusinessType((res) =>{
+            if(res){
+                setBusinessTypes(res.result);
+            }
+        });
     }, [props.categories]);
 
     // const handleOnLocationSelect = (location) => {
@@ -50,31 +59,42 @@ const BusinessForm = (props) => {
     // const closePickLocation = () => {
     //     handleInputChange('pickLocation', false);
     // }
+    // const loadBusinessTypes = () => {
+        
+    // }
+
+    const loadBusinessTypes = useCallback(() => {
+        if (!businessTypes) return;
+        return businessTypes.map(item => (
+            <Picker.Item key={item._id} label={item.title} value={item._id} style={styles.inputBox}/>
+        ))
+    }, [businessTypes]);
+
 
     const loadCategoriesTypes = useCallback(() => {
         if (!props.categories) return;
         return props.categories.map(category => (
-            <Picker.Item key={category._id} label={category.title} value={category._id} />
+            <Picker.Item key={category._id} label={category.title} value={category._id} style={styles.inputBox}/>
         ))
     }, [props.categories]);
 
     const handleMerchantInfo = () => {
         //if(!validateBusinessForm()){
-            //preparing for Database
-            let business = {
-                businessName : values.merchantName.value,
-                selectedCategory: values.selectedCategory.value,
-                district: values.district.value,
-                city:values.city.value,
-                nearestLandmark: values.nearestLandmark.value,
-                location: null,
-                panNumber: values.panNumber.value,
-                contact: values.contact.value,
-                email: values.email.value,
-                owner: registerUser
-            };
+        //preparing for Database
+        let business = {
+            businessName: values.merchantName.value,
+            selectedCategory: values.selectedCategory.value,
+            district: values.district.value,
+            city: values.city.value,
+            nearestLandmark: values.nearestLandmark.value,
+            location: null,
+            panNumber: values.panNumber.value,
+            contact: values.contact.value,
+            email: values.email.value,
+            owner: merchantOwner
+        };
         //}
-        props.navigation.navigate('BusinessDocument',{businessData : business});
+        //props.navigation.navigate('BusinessDocument',{businessData : business});
     }
 
     return (
@@ -98,7 +118,7 @@ const BusinessForm = (props) => {
                                     }}>
                                     <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                                     <Text style={{ color: colors.whiteText }}>
-                                        back
+                                        Back
                                     </Text>
                                 </RNPButton>
                             </Left>
@@ -125,8 +145,19 @@ const BusinessForm = (props) => {
                                 value={values.merchantName.value}
                                 onChangeText={(value) => handleInputChange('merchantName', value)}
                                 style={styles.inputBox}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
+                            <View
+                                style={styles.categoryPicker}>
+                                <Picker
+                                    placeholder='Select BusinessType'
+                                    selectedValue={values.businessType.value}
+                                    onValueChange={(itemValue, itemIndex) => handleInputChange('businessType', itemValue)
+                                    }>
+                                    <Picker.Item label='Select Business Type' value='0' style={styles.inputBox}/>
+                                    {loadBusinessTypes()}
+                                </Picker>
+                            </View>
                             <View
                                 style={styles.categoryPicker}>
                                 <Picker
@@ -134,6 +165,7 @@ const BusinessForm = (props) => {
                                     selectedValue={values.selectedCategory.value}
                                     onValueChange={(itemValue, itemIndex) => handleInputChange('selectedCategory', itemValue)
                                     }>
+                                    <Picker.Item label='Select Category' value='0' style={styles.inputBox}/>
                                     {loadCategoriesTypes()}
                                 </Picker>
                             </View>
@@ -148,7 +180,7 @@ const BusinessForm = (props) => {
                                     onChangeText={(value) => handleInputChange('district', value)}
                                     style={styles.textInputNameBox}
                                     error={values.district.error}
-                                    theme={{roundness:6}}
+                                    theme={{ roundness: 6 }}
                                 />
 
                                 <TextInput
@@ -161,7 +193,7 @@ const BusinessForm = (props) => {
                                     onChangeText={(value) => handleInputChange('city', value)}
                                     style={styles.textInputNameBox}
                                     error={values.city.error}
-                                    theme={{roundness:6}}
+                                    theme={{ roundness: 6 }}
                                 />
                             </View>
                             <TextInput
@@ -173,7 +205,7 @@ const BusinessForm = (props) => {
                                 onChangeText={(value) => handleInputChange('nearestLandmark', value)}
                                 style={styles.inputBox}
                                 error={values.nearestLandmark.error}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
                             {/* <TextInput
                                 mode="outlined"
@@ -195,7 +227,7 @@ const BusinessForm = (props) => {
                                 value={values.panNumber.value}
                                 onChangeText={(value) => handleInputChange('panNumber', value)}
                                 style={styles.inputBox}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
                             <TextInput
                                 mode="outlined"
@@ -207,7 +239,7 @@ const BusinessForm = (props) => {
                                 onChangeText={(value) => handleInputChange('contact', value)}
                                 value={values.contact.value}
                                 style={styles.inputBox}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
                             <TextInput
                                 mode="outlined"
@@ -217,7 +249,7 @@ const BusinessForm = (props) => {
                                 onChangeText={(value) => handleInputChange('email', value)}
                                 value={values.email.value}
                                 style={styles.inputBox}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
                             <RNPButton
                                 mode='contained'
@@ -268,7 +300,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'column',
         paddingHorizontal: 25,
-      },
+    },
 
     textHeader: {
         fontSize: 20,
