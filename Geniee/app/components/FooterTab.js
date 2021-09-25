@@ -3,11 +3,13 @@ import {ScrollView,StyleSheet,TouchableOpacity,TextInput, Image, Alert} from 're
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import React, { createRef } from "react";
-import { colors } from "../config/styles";
+import { colors, customStyle } from "../config/styles";
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from "react-native-actions-sheet";
 import { Headline, List, } from "react-native-paper";
 import Meteor from "../react-native-meteor";
+import AIcon from 'react-native-vector-icons/AntDesign';
+import CartIcon from "./HeaderIcons/CartIcon";
 
 class FooterTabs extends React.PureComponent {
 
@@ -30,6 +32,13 @@ class FooterTabs extends React.PureComponent {
   getIndex = (routeName) => {
     return this.props.state.routes.findIndex(route => route.name == routeName)
 }
+
+handleAccount = () => {
+  if(this.state.loggedUser)
+  this.props.navigation.navigate('MyAccount');
+  else
+  this.props.navigation.navigate('SignIn')
+}
   render(){
    console.log(this.props);
    const state=this.props.state;
@@ -39,39 +48,43 @@ class FooterTabs extends React.PureComponent {
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
             onPress={() =>this.props.navigation.navigate('Home')}
           >
-            <FAIcon name="home" style={{ color: state.index== this.getIndex('Home') ? colors.appLayout : colors.gray_200, }} size={20} ></FAIcon>
+            <AIcon name="home" style={{ color: state.index== this.getIndex('Home') ? colors.statusBar : colors.gray_200, }} size={20} ></AIcon>
             {state.index== this.getIndex('Home') ?
-              <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Home</Text>
+              <Text note style={{ color: colors.statusBar, fontSize: 9,fontWeight:'bold'}}>Home</Text>
               : null}
           </Button >
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => this.props.navigation.navigate( 'Chat')}
+            onPress={() => this.props.navigation.navigate( 'Message')}
           >
-            <Icon name="mail" style={{ color: state.index== this.getIndex('Chat') ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
+            <AIcon name="message1" style={{ color: state.index== this.getIndex('Chat') ? colors.statusBar : colors.statusBar }} size={20}></AIcon>
             {state.index== this.getIndex('Chat')?
-              <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Message</Text> : null}
+              <Text note style={{fontSize: 9,fontWeight:'bold'}}>Message</Text> : <Text note style={{fontSize: 9,fontWeight:'bold'}}>Message</Text>}
           </Button>
- {this.state.loggedUser?
           <View style={{ flex: 1, justifyContent:'center', width:'100%' }}>
             <Button onPress={() => { this.actionSheetRef.current?.setModalVisible(); }}
-              style={{ alignSelf:'center', justifyContent: 'center', backgroundColor: colors.appLayout, height: 40, width: 40, borderRadius: 20 }} >
-              <Icon name="plus" style={{ color: colors.whiteText }} size={25}></Icon>
+            // <Button onPress={() => {}}
+              style={{ alignSelf:'center', justifyContent: 'center', backgroundColor: colors.statusBar, height: 40, width: 40, borderRadius: 20 }} >
+              <AIcon name="search1" style={{ color: colors.whiteText }} size={25}></AIcon>
             </Button>
-          </View>:null}
+          </View>
+          <CartIcon
+                  navigation={this.props.navigation}
+                  style={customStyle.actionIcon}
+                />
 
-          <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
+          {/* <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
             onPress={() => this.props.navigation.navigate( 'WishListEF')}
           >
-            <Icon name="heart" style={{ color: state.index== this.getIndex('WishListEF') ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
+            <AIcon name="shoppingcart" style={{ color: state.index== this.getIndex('WishListEF') ? colors.appLayout : colors.gray_200 }} size={20}></AIcon>
             {state.index== this.getIndex('WishListEF')?
-              <Text note style={{ color: state.index== this.getIndex('WishListEF')? colors.appLayout : colors.gray_200, fontSize: 8 }}>WishList</Text> : null}
-          </Button>
+              <Text note style={{ color: state.index== this.getIndex('WishListEF')? colors.statusBar : colors.gray_200, fontSize: 8 }}>Cart</Text> : <Text note style={{ color: state.index== this.getIndex('WishListEF')? colors.statusBar : colors.gray_200, fontSize: 8 }}>Cart</Text>}
+          </Button> */}
           <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => this.props.navigation.navigate('More')}
+            onPress={() =>this.handleAccount()}
           >
-            <Icon name="more-horizontal" style={{ color: state.index== this.getIndex('More')? colors.appLayout : colors.gray_200 }} size={20}></Icon>
+            <AIcon name="user" style={{ color: state.index== this.getIndex('More')? colors.statusBar : colors.gray_200 }} size={20}></AIcon>
             {state.index== this.getIndex('More')?
-              <Text note style={{ color:state.index== this.getIndex('More')? colors.appLayout :colors.gray_200, fontSize: 8 }}>More</Text> : null}
+              <Text note style={{ color:state.index== this.getIndex('More')? colors.statusBar :colors.gray_200, fontSize: 8 }}>Account</Text> : <Text note style={{ color:state.index== this.getIndex('More')? colors.statusBar :colors.gray_200, fontSize: 8 }}>Account</Text>}
           </Button>
         </View>
         <ActionSheet ref={this.actionSheetRef}

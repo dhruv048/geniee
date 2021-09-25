@@ -31,11 +31,19 @@ import UseBusinessForm from '../../../hooks/useBusinessForm';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
 import { ProgressViewIOSComponent, Image } from 'react-native';
+import { FlatList } from 'react-native';
+import { Dimensions } from 'react-native';
+import Meteor from '../../../react-native-meteor';
+
+
+const { width, height } = Dimensions.get('screen');
 
 const RNFS = require('react-native-fs');
 
 const ProductInfo = (props) => {
     let actionsheet = useRef();
+
+    const loggedUser = Meteor.userId() ? Meteor.userId() :props.route.params.loggedUser;
 
     const [productTitle, setProductTitle] = useState('');
     const [price, setPrice] = useState(0);
@@ -44,6 +52,7 @@ const ProductInfo = (props) => {
     const [isTitleValid, setIsTitleValid] = useState(false);
     const [isPriceValid, setIsPriceValid] = useState(false);
     const [isDescriptionValid, setIsDescriptionValid] = useState(false);
+    const [imageBeRemove, setImageBeRemove] = useState([]);
 
     const [productImage, setProductImage] = useState([]);
     const [customFields, setCustomFields] = useState([{ metaName: 'value', metaValue: 'value' }]);
@@ -52,20 +61,20 @@ const ProductInfo = (props) => {
     const addCustomField = () => {
         setCustomFields(prev => [...prev, { metaName: 'value', metaValue: 'value' }])
     }
-    
-    const handleCustomFieldName = (value,index)=>{
+
+    const handleCustomFieldName = (value, index) => {
         customFields[index].metaName = value;
         setCustomFields(customFields);
     }
-    
-    const handleCustomFieldValue = (value, index) =>{
+
+    const handleCustomFieldValue = (value, index) => {
         customFields[index].metaValue = value;
         setCustomFields(customFields);
     }
-    
-    const deleteDynamicInput = (key) =>{
-      const _inputs = customFields.filter((input,index) => index != key);
-      setCustomFields(_inputs);
+
+    const deleteDynamicInput = (key) => {
+        const _inputs = customFields.filter((input, index) => index != key);
+        setCustomFields(_inputs);
     }
 
     const renderCustomField = (customInput, key) => {
@@ -79,7 +88,7 @@ const ProductInfo = (props) => {
                         placeholderTextColor="#808080"
                         name="label"
                         value={customInput.key}
-                        onChangeText={(label) => handleCustomFieldName(label,key)}
+                        onChangeText={(label) => handleCustomFieldName(label, key)}
                         style={styles.textInputNameBox}
                         error={isPriceValid}
                         theme={{ roundness: 6 }}
@@ -91,7 +100,7 @@ const ProductInfo = (props) => {
                         placeholderTextColor="#808080"
                         name="value"
                         //value={discount}
-                        onChangeText={(value) => handleCustomFieldValue(value,key)}
+                        onChangeText={(value) => handleCustomFieldValue(value, key)}
                         style={styles.textInputNameBox}
                         theme={{ roundness: 6 }}
                     />
@@ -102,7 +111,7 @@ const ProductInfo = (props) => {
                 </View>
             </View>
         )
-}
+    }
     const uploadProductImage = (selectedOption) => {
         if (selectedOption === 0) {
             ImagePicker.openCamera({
@@ -148,7 +157,7 @@ const ProductInfo = (props) => {
     };
 
     const handleProductInfo = () => {
-        console.log('THis is customs'+customFields);
+        console.log('THis is customs' + customFields);
         //if(!validateBusinessForm()){
         //preparing for Database
         let product = {
@@ -158,6 +167,8 @@ const ProductInfo = (props) => {
             description: description,
             productImage: productImage,
             productProperty: customFields,
+            owner: loggedUser,
+            imageBeRemove: imageBeRemove,
         };
         //}
         props.navigation.navigate('ProductPreview', { productInfo: product });
@@ -165,24 +176,22 @@ const ProductInfo = (props) => {
     }
 
     const renderImage = (data, index) => {
-        let item = data;
+        let item = data.item;
         return (
             <View key={index}>
-                <View >
-                    <Image style={{
-                        flex: 1,
-                        //alignSelf: 'stretch',
-                        width: 60,
-                        height: 60,
-                        resizeMode: 'cover'
-                    }}
-                        source={{ uri: item.uri }} />
-                    <RNPButton onPress={() => removeImage(item)} transparent
-                        style={{ position: 'absolute', top: -12, right: 250 }}>
-                        <Icon name='x-circle' style={{ backgroundColor: 'white', top: 0 }} size={20}
-                            color={colors.danger} />
-                    </RNPButton>
-                </View>
+                <Image style={{
+                    //alignSelf: 'stretch',
+                    width: 70,
+                    height: 70,
+                }}
+                    source={{ uri: item.uri }} />
+                <RNPButton 
+                transparent
+                style={{position: 'absolute',top:-12,left:30}}
+                onPress={() => removeImage(item)} >
+                    <Icon name='x-circle'  size={20}
+                        color={colors.danger} />
+                </RNPButton>
 
             </View>
 
@@ -190,14 +199,14 @@ const ProductInfo = (props) => {
     };
 
     const removeImage = (image) => {
-        let images = [...this.state.images];
+        let images = [...productImage];
         let index = images.indexOf(image);
         console.log(index, image)
         if (index !== -1) {
             images.splice(index, 1);
-            this.setState({ images: images });
+            setProductImage(images);
             if (image.hasOwnProperty("_id")) {
-                this.imagesToRemove.push(image._id);
+                imageBeRemove.push(image._id);
             }
         }
     }
@@ -243,20 +252,27 @@ const ProductInfo = (props) => {
                         </View>
                         <View style={styles.containerRegister}>
                             <View>
-                                <Text style={{ fontWeight: 'bold' }}>Photo of Product({productImage.length}/5)</Text>
+                                <Text style={{ fontWeight: 'bold' }}>Photo of Product({productImage.length}/4)</Text>
                             </View>
-                            <RNPButton
-                                mode='contained'
-                                uppercase={false}
+                            
+                            <View style={{flexDirection:'row',marginTop:10}}>
+                                {/* {productImage.map((item, indx) => renderImage(item, indx))} */}
+                                {productImage.length>0 ?<FlatList
+                                    data={productImage}
+                                    renderItem={(item,index) =>renderImage(item,index)}
+                                    keyExtractor={item => item.id}
+                                    numColumns={5}
+                                />:null}
+                                <TouchableOpacity
                                 onPress={() => {
                                     actionsheet.current.show();
                                 }}
-                                style={{ height: 40, marginTop: 10 }}>
-                                <Text style={{ fontSize: 12, textAlign: 'center' }}>Upload</Text>
-                                <Icon style={{ color: '#ffffff', fontSize: 12 }} name="arrow-up" />
-                            </RNPButton>
-                            <View>
-                                {productImage.map((item, indx) => renderImage(item, indx))}
+                                disabled={productImage.length===4? true:false}
+                                style={{ height: 70, width: 70,borderWidth:1,borderColor:'grey' }}>
+                                <Image
+                                    source={require('Geniee/app/images/uploadimage.png')}
+                                    style={{ width: 65, height: 65,resizeMode:'cover'}} />
+                            </TouchableOpacity>
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ fontWeight: 'bold' }}>Product Details</Text>
@@ -311,19 +327,19 @@ const ProductInfo = (props) => {
                                         _dark={{
                                             placeholderTextColor: "gray.300",
                                         }}
-                                        disabled={description.length>500}
+                                        disabled={description.length > 500}
                                     />
-                                    <Text style={{fontSize:12,marginLeft:285}}>({description.length}/500)</Text>
+                                    <Text style={{ fontSize: 12, marginLeft: 264 }}>({description.length}/500)</Text>
                                 </View>
                                 {customFields.length > 0 ?
-                                <View>
-                                    {customFields.map((item, index) => renderCustomField(item, index))}
-                                </View>:null}
+                                    <View>
+                                        {customFields.map((item, index) => renderCustomField(item, index))}
+                                    </View> : null}
                                 <View>
                                     <RNPButton
                                         mode="outlined"
                                         uppercase={false}
-                                        onPress={() => { addCustomField()}}>
+                                        onPress={() => { addCustomField() }}>
                                         <Icon name='plus' />
                                         <Text>Add Property</Text>
                                     </RNPButton>
@@ -348,10 +364,10 @@ const ProductInfo = (props) => {
                     ref={actionsheet}
                     title={'Please select the option'}
                     options={[
-                        <Text style={{ color: colors.appLayout }}>
+                        <Text style={{ color: colors.text_muted }}>
                             Take Picture from Camera
                         </Text>,
-                        <Text style={{ color: colors.appLayout }}>
+                        <Text style={{ color: colors.text_muted }}>
                             Pick Image from Gallery
                         </Text>,
                         'Cancel',

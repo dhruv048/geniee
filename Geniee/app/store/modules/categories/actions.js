@@ -1,7 +1,9 @@
 import { createActions } from 'redux-actions';
 
 export const {
-  getCategories
+  getCategories,
+  getBusinessType
 } = createActions(
-  'GET_CATEGORIES'
+  'GET_CATEGORIES',
+  'GET_BUSINESS_TYPE'
 );

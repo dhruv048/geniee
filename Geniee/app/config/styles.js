@@ -157,8 +157,8 @@ export const customStyle = StyleSheet.create({
     color: colors.gray_100,
   },
   blockHeaderArrow: {
-    color: '#767676',
-    fontSize: 20,
+    color: colors.statusBar,
+    fontSize: 12,
     fontWeight: '700',
   },
   itemTitle: {
@@ -168,7 +168,7 @@ export const customStyle = StyleSheet.create({
   },
   //product popular
   productContainerStyle: {
-    height: 200,
+    //height: 200,
     // flex: 1,
     borderWidth: 0,
     marginHorizontal: 8,

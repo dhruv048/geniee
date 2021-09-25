@@ -5,6 +5,7 @@ import { colors, customStyle } from '../../config/styles';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
+import AIcon from 'react-native-vector-icons/AntDesign';
 
 class CartIcon extends PureComponent {
 
@@ -40,10 +41,11 @@ class CartIcon extends PureComponent {
         return (
             <TouchableOpacity  style={{marginHorizontal:5}}
                 onPress={() => navigation.navigate('CartEF')}
+                //onPress={() => navigation.navigate('MyCart')}
             >
-                <Icon name="shopping-bag" style={customStyle.actionIcon} />
+                <AIcon name="shoppingcart" style={{color:colors.gray_200}} size={20} />
                 {this.state.totalCount > 0 ? (
-                    <Badge style={{ position: 'absolute', top: -10, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
+                    <Badge style={{ position: 'absolute', top: -14, right: -14, borderWidth: 1 }}>
                         {this.state.totalCount}
                     </Badge>
                 ) : null}

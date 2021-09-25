@@ -6,10 +6,41 @@ import {
 
 import Meteor from '../../../react-native-meteor';
 
+const addItemToCart = () =>{
+  
+}
+
+const addItemToWishList = () =>{
+  
+}
+
+const addOrder = (itemList ,cb) =>{
+  Meteor.call('addOrder', itemList, (err, res) => {
+    if(err){
+      console.log('Please contact an adminsitrator'+err);
+    }else{
+      cb(true);
+    }
+  })
+}
+
 const getAllCartItems = () => {
 
 }
 
+const getAllWishList = () => {
+
+}
+
+const getMyOrders = () =>{
+
+}
+
 export default {
-  getAllCartItems
+  addItemToCart,
+  addItemToWishList,
+  addOrder,
+  getAllCartItems,
+  getAllWishList,
+  getMyOrders
 };

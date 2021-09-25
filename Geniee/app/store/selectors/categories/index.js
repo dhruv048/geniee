@@ -4,5 +4,5 @@ export const categoryContainer = ({ categories }) => categories;
 
 export const categorySelector = createSelector(
   [categoryContainer],
-  ({ categories }) => ({ categories }),
+  ({ categories,businessType }) => ({ categories,businessType }),
 );

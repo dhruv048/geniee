@@ -59,9 +59,14 @@ import { customPaperTheme } from '../../../config/themes';
 import { MaterialColors } from '../../../constants/material-colors';
 import { Button as RNPButton } from 'react-native-paper';
 import { lowerCase } from 'lodash';
+import Moment from 'moment';
+import Data from '../../../react-native-meteor/Data';
+import { connect } from 'react-redux';
+import { categorySelector } from '../../../store/selectors';
 
 let isDashBoard = true;
 
+const IMAGE_URL = 'http://139.59.59.117/api/files/';
 const Home = (props) => {
     const [viewAll, setViewAll] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -101,6 +106,7 @@ const Home = (props) => {
         },
     ])
 
+    const currentDate = new Date();
     let arrayholder;
     let currentSearch = '';
     let region = {
@@ -131,15 +137,7 @@ const Home = (props) => {
     useEffect(async () => {
         setLoggedUser(props.loggedUser);
         updateCounts();
-        let MainCategories = await AsyncStorage.getItem('Categories');
-        if (MainCategories) {
-            MainCategories = JSON.parse(MainCategories);
-            setCategories(MainCategories.slice(0, 6));
-            setLoading(false);
-            arrayholder = MainCategories;
-        } else {
-            MainCategories = [];
-        }
+        setCategories(props.categories);
         SplashScreen.hide();
         //
         Meteor.subscribe('aggChatChannels');
@@ -241,18 +239,19 @@ const Home = (props) => {
         });
 
         //Store All Catefories
-        Meteor.subscribe('categories-list', () => {
-            //console.log(MainCategories)
-            if (props.categories.length > 0) {
-                let MainCategories = props.categories;
-                setCategories(viewAll
-                    ? MainCategories
-                    : MainCategories.slice(0, 6));
-                setLoading(false);
-                arrayholder = MainCategories;
-                AsyncStorage.setItem('Categories', JSON.stringify(MainCategories));
-            }
-        });
+        // Meteor.subscribe('categories-list', () => {
+        //     //console.log(MainCategories)
+        //     if (props.categories.length > 0) {
+        //         let MainCategories = props.categories;
+        //         setCategories(viewAll
+        //             ? MainCategories
+        //             : MainCategories.slice(0, 6));
+        //         setLoading(false);
+        //         arrayholder = MainCategories;
+        //         AsyncStorage.setItem('Categories', JSON.stringify(MainCategories));
+        //     }
+        // });
+
     }, [])
 
     const _fetchNearByServices = () => {
@@ -280,16 +279,6 @@ const Home = (props) => {
             },
         );
     };
-
-    const handleBackButton = () => {
-        console.log('back handle from dashboard');
-        if (isDashBoard) {
-            const { screen, navigator } = props;
-            console.log(screen, navigator, props);
-            backClickCount == 1 ? BackHandler.exitApp() : _spring();
-            return true;
-        }
-    }
 
     const handleViewAll = () => {
         let prevState = viewAll;
@@ -326,10 +315,6 @@ const Home = (props) => {
                 setBackClickCount(0)
             });
         });
-    }
-
-    const handleOnLocationSelect = (location) => {
-        setPickLocation(false);
     }
 
     const messageListener = async () => {
@@ -428,30 +413,22 @@ const Home = (props) => {
     const renderCategoryItem = (data, index) => {
         var item = data.item;
         return (
-            <View key={data.index.toString()} style={styles.containerStyle}>
-                <TouchableOpacity onPress={() => _itemClick(item)}>
-                    <Body>
-                        <View
-                            style={[
-                                styles.categoriesIcon,
-                                { backgroundColor: MaterialColors[data.index] },
-                            ]}>
-                            <FAIcon name={item.icon} size={25} />
-                        </View>
-                    </Body>
-
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            fontWeight: '200',
-                            color: MaterialColors[data.index],
-                            fontSize: 10,
-                        }}>
-                        {item.mainCategory}
-                    </Text>
-                    {/*</View>
+            <View>
+                <View key={data.index.toString()} style={styles.containerStyle}>
+                    <TouchableOpacity onPress={() => _itemClick(item)}>
+                        <Image
+                            style={{ height: 50, width: 50 }}
+                            source={{
+                                uri: IMAGE_URL + item.image,
+                            }}
+                        />
+                        {/*</View>
                 </ImageBackground>*/}
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ width: 65,marginBottom:5 }}>
+                    <Text style={{ textAlign: 'center', fontSize: 10 }}> {item.title}</Text>
+                </View>
             </View>
         );
     };
@@ -532,23 +509,6 @@ const Home = (props) => {
         );
     };
 
-    const _renderItem = ({ item, index }) => {
-        console.log(item, index);
-        return (
-            <View key={index} style={{ flex: 1, width: '100%' }}>
-                <Thumbnail
-                    square
-                    style={{
-                        width: '100%',
-                        height: Math.round(viewportWidth * 0.29),
-                        resizeMode: 'cover',
-                    }}
-                    source={{ uri: settings.IMAGE_URL + item.src }}
-                />
-            </View>
-        );
-    }
-
     const _handleProductPress = pro => {
         props.navigation.navigate('ProductDetail', { Id: pro._id });
     };
@@ -594,68 +554,95 @@ const Home = (props) => {
                     customStyle.productContainerStyle,
                     { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
                 ]}>
-                {/*<Product key={item._id} product={item}/>*/}
                 <View
                     key={item._id}
                     style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
-                    <CardItem cardBody style={{ width: '100%', borderRadius: 5 }}>
+                    <View style={{ width: '100%', borderRadius: 5 }}>
                         <Image
                             source={{ uri: settings.IMAGE_URL + item.images[0] }}
                             style={{
-                                flex: 1,
-                                width: undefined,
-                                height: 104,
-                                width: 104,
-                                resizeMode: 'cover',
-                                borderRadius: 4,
-                                marginBottom: 8,
+                                flex: 1, width: undefined, height: 160, width: 104, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
                             }}
                         />
-
-                    </CardItem>
-                    <CardItem style={{ paddingTop: 0, paddingLeft: 5 }}>
-                        <Body>
-                            <View style={{ height: 35 }}>
-                                <Text note numberOfLines={2} style={{ fontWeight: 'bold' }}>
-                                    {/* style={{ fontSize: 12, color: colors.primaryText }}
+                    </View>
+                    <View>
+                        <View>
+                            <Text numberOfLines={1} style={{ fontSize: 10 }}>From ABC group</Text>
+                            <Text numberOfLines={2} style={{ fontSize: 12, fontWeight: 'bold', color: colors.gray_100 }}>
+                                {/* style={{ fontSize: 12, color: colors.primaryText }}
                                  numberOfLines={1}> */}
-                                    {item.title}
-                                </Text>
+                                {/* //{item.title} */}Phis is a title of product/ 200gb ram 600Gb memory
+                            </Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                {item.discount ? (
+                                    <>
+                                        <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>
+                                            Rs. {item.price}
+                                        </Text>
+                                        <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 10, marginLeft: 5, }}>
+                                            {item.discount}% off
+                                        </Text>
+                                    </>
+                                ) : null}
                             </View>
                             <Text
                                 style={{
                                     color: colors.primary,
                                     fontWeight: '700',
-                                    fontSize: 14,
+                                    fontSize: 12,
                                 }}>
                                 Rs. {item.price - (item.price * item.discount) / 100}
                             </Text>
-                            {item.discount ? (
-                                <>
-                                    <Text
-                                        style={{
-                                            color: colors.body_color,
-                                            fontWeight: '400',
-                                            fontSize: 12,
-                                            textDecorationLine: 'line-through',
-                                            textDecorationStyle: 'solid',
-                                        }}>
-                                        Rs. {item.price}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            color: colors.body_color,
-                                            fontWeight: '400',
-                                            fontSize: 10,
-                                        }}>
-                                        {item.discount}% off
-                                    </Text>
-                                </>
-                            ) : null}
-                        </Body>
-                    </CardItem>
+                        </View>
+                    </View>
                 </View>
             </TouchableOpacity>
+        );
+    };
+
+    const _renderStore = (data, index) => {
+        let item = data.item;
+        return (
+            <View
+                key={item._id}
+                onPress={() => _handleProductPress(item)}
+                style={[
+                    customStyle.productContainerStyle,
+                    { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
+                ]}>
+                <View
+                    key={item._id}
+                    style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
+                    <View style={{ width: '100%', borderRadius: 5 }}>
+                        <Image
+                            source={{ uri: settings.IMAGE_URL + item.images[0] }}
+                            style={{
+                                flex: 1, width: undefined, height: 70, width: 100, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
+                            }}
+                        />
+                    </View>
+                    <View>
+                        <View>
+                            <Text numberOfLines={1} style={{ fontSize: 10 }}>Butwal</Text>
+                            <Text numberOfLines={2} style={{ fontSize: 12, fontWeight: 'bold', color: colors.gray_100 }}>
+                                {/* style={{ fontSize: 12, color: colors.primaryText }}
+                                 numberOfLines={1}> */}
+                                {/* //{item.title} */}Phis is a title of product/ 200gb ram 600Gb memory
+                            </Text>
+                            <View style={{ marginTop: 5, marginRight: 5 }}>
+                                <RNPButton
+                                    mode='text'
+                                    uppercase={false}
+                                    onPress={() => { console.log('Visit Prssed') }}
+                                >
+                                    <Text style={{ fontSize: 10 }}>Visit</Text>
+                                    <Icon name='chevron-right' style={{ marginLeft: 10, marginTop: 10 }} />
+                                </RNPButton>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </View>
         );
     };
 
@@ -722,25 +709,26 @@ const Home = (props) => {
                     }}>
                     {/* GENIEE BANNER */}
                     <View>
-                        <Image
-                            style={{ height: 70, width: '100%' }}
-                            source={require('../../../images/geniee_banner.png')}
-                        />
-                    </View>
-                    <View style={{marginHorizontal:15,marginVertical:15}}>
-                        <RNPButton
-                            mode='outlined'
-                            uppercase={false}
-                            onPress={() => {}}
-                            style={{borderColor:colors.statusBar,borderWidth:2,borderStyle:'dotted'}}
+                        <View>
+                            <Image
+                                style={{ height: 70, width: '100%' }}
+                                source={require('../../../images/geniee_banner.png')}
+                            />
+                        </View>
+                        <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+                            <RNPButton
+                                mode='outlined'
+                                uppercase={false}
+                                onPress={() => { }}
+                                style={{ borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted' }}
                             >
-                            <Text style={{color:colors.statusBar}}>Become a Merchant & Sell</Text>
-                        </RNPButton>
-                    </View>
-                    {/*CATEGORIES LIST START*/}
-                    {categories.length > 0 ? (
-                        <View style={[styles.block, { marginVertical: 15 }]}>
-                            {/* <View style={styles.blockHeader}>
+                                <Text style={{ color: colors.statusBar }}>Become a Merchant & Sell</Text>
+                            </RNPButton>
+                        </View>
+                        {/*CATEGORIES LIST START*/}
+                        {props.categories.length > 0 ? (
+                            <View style={[styles.block, { marginVertical: 15 }]}>
+                                {/* <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent onPress={() => handleViewAll()}>
                                     <Text style={customStyle.buttonOutlinePrimaryText}>
@@ -748,132 +736,116 @@ const Home = (props) => {
                                     </Text>
                                 </Button>
                             </View> */}
-                            <FlatList
-                                contentContainerStyle={{
-                                    marginTop: 10,
-                                    paddingBottom: 10,
-                                    //   alignItems:'center',
-                                    justifyContent: 'space-around',
-                                    // flexWrap: 'wrap',
-                                    // flexDirection: 'row',
-                                }}
-                                data={categories}
-                                //horizontal={true}
-                                keyExtractor={(item, index) => index.toString()}
-                                // showsHorizontalScrollIndicator={false}
-                                renderItem={renderCategoryItem}
-                                numColumns={Math.round(viewportWidth / 100)}
-                            />
+                                <FlatList
+                                    contentContainerStyle={{
+                                        marginTop: 10,
+                                        paddingBottom: 10,
+                                        //   alignItems:'center',
+                                        justifyContent: 'space-around',
+                                        // flexWrap: 'wrap',
+                                        // flexDirection: 'row',
+                                    }}
+                                    data={categories}
+                                    //horizontal={true}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    // showsHorizontalScrollIndicator={false}
+                                    renderItem={renderCategoryItem}
+                                    numColumns={5}
+                                />
 
-                        </View>
-                    ) : null}
-
-                    {/*Deal that might excite you*/}
-                    {popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Deal that might excite you</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        props.navigation.navigate('AllProducts', {
-                                            Region: region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        size={20}
-                                        color={colors.gray_200}
-                                    />
-                                </Button>
                             </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    paddingBottom: 15,
-                                    marginHorizontal: 8,
-                                }}
-                                data={popularProducts}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => _renderProduct(item, index)}
-                            />
-                        </View>
-                    ) : null}
+                        ) : null}
 
-                    {/*FEATURE STORE*/}
-                    {popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Featured Store</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        props.navigation.navigate('AllProducts', {
-                                            Region: region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        size={20}
-                                        color={colors.gray_200}
-                                    />
-                                </Button>
+                        {/*Deal that might excite you*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Deals that might excite you</Text>
+                                    <Text uppercase={false} style={{ fontSize: 10, color: colors.statusBar, marginLeft: 65 }}>{Moment(currentDate).format('MMM Do YYYY')} </Text>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts.slice(0, 6)}
+                                    numColumns={3}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={(item, index) => _renderProduct(item, index)}
+                                />
+                                <View style={{ marginTop: 5, marginRight: 5 }}>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { console.log('See All Prssed') }}
+                                    >
+                                        <Text style={{ fontSize: 12 }}>See All</Text>
+                                        <Icon name='chevron-right' style={{ marginLeft: 10, marginTop: 10 }} />
+                                    </RNPButton>
+                                </View>
                             </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    paddingBottom: 15,
-                                    marginHorizontal: 8,
-                                }}
-                                data={popularProducts}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => _renderProduct(item, index)}
-                            />
-                        </View>
-                    ) : null}
+                        ) : null}
 
-                    {/*NEARBY SERVICE PROVIDERS LIST START*/}
-                    {/* {nearByservice === '' ? null : nearByservice > 0 ? ( */}
+                        {/*FEATURE STORE*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Featured Store</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderStore(item, index)}
+                                />
+                            </View>
+                        ) : null}
+
+                        {/*NEARBY SERVICE PROVIDERS LIST START*/}
+                        {/* {nearByservice === '' ? null : nearByservice > 0 ? ( */}
                         <View style={styles.block}>
                             <View style={customStyle.blockHeader}>
-                                <Text style={customStyle.blockTitle}>
-                                   Nearby Stores
+                                <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                                    Nearby Stores
                                 </Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
+                                <RNPButton
+                                    mode='text'
+                                    uppercase={false}
                                     onPress={() =>
                                         props.navigation.navigate('ServiceList', {
                                             Region: region,
                                         })
                                     }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        style={customStyle.blockHeaderArrow}
-                                    />
-                                </Button>
+                                    <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                    <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                </RNPButton>
                             </View>
                             <FlatList
                                 contentContainerStyle={{
                                     paddingBottom: 14,
                                     paddingLeft: 14,
                                     paddingRight: 14,
-                                    marginLeft: 0,
+                                    marginTop: 15
                                 }}
                                 data={nearByservice}
                                 horizontal={true}
@@ -1030,368 +1002,206 @@ const Home = (props) => {
                                 )}
                             />
                         </View>
-                    {/* ) : null} */}
+                        {/* ) : null} */}
 
-                    {/*POPULAR STORE*/}
-                    {popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular Stores</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        props.navigation.navigate('AllProducts', {
-                                            Region: region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        size={20}
-                                        color={colors.gray_200}
-                                    />
-                                </Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    paddingBottom: 15,
-                                    marginHorizontal: 8,
-                                }}
-                                data={popularProducts}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => _renderProduct(item, index)}
-                            />
-                        </View>
-                    ) : null}     
-
-                    {/*POPUlAR IN STORE*/}
-                    {popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular in Stores</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        props.navigation.navigate('AllProducts', {
-                                            Region: region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        size={20}
-                                        color={colors.gray_200}
-                                    />
-                                </Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    paddingBottom: 15,
-                                    marginHorizontal: 8,
-                                }}
-                                data={popularProducts}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => _renderProduct(item, index)}
-                            />
-                        </View>
-                    ) : null}                                        
-
-                    {/*SPECIAL RESTURANT LISTING START*/}
-                    <View style={styles.block}>
-                        <View style={customStyle.blockHeader}>
-                            <Text
-                                style={[
-                                    styles.blockTitle,
-                                    { marginRight: 37, width: 278, paddingRight: 20 },
-                                ]}>
-                                Popular Restaurants
-                            </Text>
-                            <Button style={{ paddingRight: 0 }} transparent>
-                                <Icon
-                                    name="arrow-right"
-                                    style={customStyle.blockHeaderArrow}
-                                />
-                            </Button>
-                        </View>
-                        <View
-                            style={[
-                                styles.blockBody,
-                                { marginTop: 10, marginBottom: 15, padding: 0 },
-                            ]}>
-                            <FlatList
-                                contentContainerStyle={{ paddingBottom: 15 }}
-                                data={resturants}
-                                horizontal={true}
-                                keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({ item, index }) => (
-                                    <View
-                                        key={index.toString()}
-                                        style={[
-                                            styles.card,
-                                            {
-                                                marginHorizontal: 5,
-                                                width: viewportWidth / 2.5,
-                                            },
-                                        ]}>
-                                        <TouchableOpacity
-                                            onPress={
-                                                item.hasOwnProperty('onPress')
-                                                    ? item.onPress
-                                                    : () =>
-                                                        props.navigation.navigate(
-                                                            'ServiceDetail',
-                                                            { Id: item },
-                                                        )
-                                            }>
-                                            <View>
-                                                <Image
-                                                    onPress={() => item.onPress}
-                                                    source={
-                                                        item.hasOwnProperty('coverImage')
-                                                            ? { uri: settings.IMAGE_URL + item.coverImage }
-                                                            : item.imgSource
-                                                    }
-                                                    style={{
-                                                        flex: 1,
-                                                        height: 100,
-                                                        width: 158,
-                                                        resizeMode: 'cover',
-                                                        // margin: 5,
-                                                    }}
-                                                />
-
-                                                <Text numberOfLines={1} style={customStyle.itemTitle}>
-                                                    {item.title}
-                                                </Text>
-                                                {/* needs to be made dynamic */}
-                                                <Text
-                                                    style={{
-                                                        fontSize: 12,
-                                                        color: colors.text_muted,
-                                                        marginVertical: 2,
-                                                    }}>
-                                                    {item.tags}
-                                                </Text>
-                                                {/* needs to be made dynamic */}
-                                                {/* <Text style={{fontSize:10,color:colors.text_muted}}>Durbarmarg</Text> */}
-
-                                                <Text note numberOfLines={2}>
-                                                    {item.description}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                            />
-                        </View>
-                    </View>
-
-                    {/*POPUlAR IN RESTURANT LISTING START*/}
-                    <View style={styles.block}>
-                        <View style={customStyle.blockHeader}>
-                            <Text
-                                style={[
-                                    styles.blockTitle,
-                                    { marginRight: 37, width: 278, paddingRight: 20 },
-                                ]}>
-                                Popular in Restaurants
-                            </Text>
-                            <Button style={{ paddingRight: 0 }} transparent>
-                                <Icon
-                                    name="arrow-right"
-                                    style={customStyle.blockHeaderArrow}
-                                />
-                            </Button>
-                        </View>
-                        <View
-                            style={[
-                                styles.blockBody,
-                                { marginTop: 10, marginBottom: 15, padding: 0 },
-                            ]}>
-                            <FlatList
-                                contentContainerStyle={{ paddingBottom: 15 }}
-                                data={resturants}
-                                horizontal={true}
-                                keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({ item, index }) => (
-                                    <View
-                                        key={index.toString()}
-                                        style={[
-                                            styles.card,
-                                            {
-                                                marginHorizontal: 5,
-                                                width: viewportWidth / 2.5,
-                                            },
-                                        ]}>
-                                        <TouchableOpacity
-                                            onPress={
-                                                item.hasOwnProperty('onPress')
-                                                    ? item.onPress
-                                                    : () =>
-                                                        props.navigation.navigate(
-                                                            'ServiceDetail',
-                                                            { Id: item },
-                                                        )
-                                            }>
-                                            <View>
-                                                <Image
-                                                    onPress={() => item.onPress}
-                                                    source={
-                                                        item.hasOwnProperty('coverImage')
-                                                            ? { uri: settings.IMAGE_URL + item.coverImage }
-                                                            : item.imgSource
-                                                    }
-                                                    style={{
-                                                        flex: 1,
-                                                        height: 100,
-                                                        width: 158,
-                                                        resizeMode: 'cover',
-                                                        // margin: 5,
-                                                    }}
-                                                />
-
-                                                <Text numberOfLines={1} style={customStyle.itemTitle}>
-                                                    {item.title}
-                                                </Text>
-                                                {/* needs to be made dynamic */}
-                                                <Text
-                                                    style={{
-                                                        fontSize: 12,
-                                                        color: colors.text_muted,
-                                                        marginVertical: 2,
-                                                    }}>
-                                                    {item.tags}
-                                                </Text>
-                                                {/* needs to be made dynamic */}
-                                                {/* <Text style={{fontSize:10,color:colors.text_muted}}>Durbarmarg</Text> */}
-
-                                                <Text note numberOfLines={2}>
-                                                    {item.description}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                            />
-                        </View>
-                    </View>
-
-                     {/*POPULAR STORE*/}
-                     {popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular Travel Agency</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        props.navigation.navigate('AllProducts', {
-                                            Region: region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        size={20}
-                                        color={colors.gray_200}
-                                    />
-                                </Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    paddingBottom: 15,
-                                    marginHorizontal: 8,
-                                }}
-                                data={popularProducts}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => _renderProduct(item, index)}
-                            />
-                        </View>
-                    ) : null}     
-
-                    {/*POPUlAR IN TRAVEL/AGENCY*/}
-                    {popularProducts.length > 0 ? (
-                        <View style={styles.block}>
-                            <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Popular Destination</Text>
-                                <Button
-                                    style={{ paddingRight: 10 }}
-                                    transparent
-                                    onPress={() =>
-                                        props.navigation.navigate('AllProducts', {
-                                            Region: region,
-                                        })
-                                    }>
-                                    {/* <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        View All
-                                    </Text> */}
-                                    <Icon
-                                        name="arrow-right"
-                                        size={20}
-                                        color={colors.gray_200}
-                                    />
-                                </Button>
-                            </View>
-                            <FlatList
-                                contentContainerStyle={{
-                                    paddingBottom: 15,
-                                    marginHorizontal: 8,
-                                }}
-                                data={popularProducts}
-                                horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                //  numColumns={3}
-                                renderItem={(item, index) => _renderProduct(item, index)}
-                            />
-                        </View>
-                    ) : null}   
-
-                    {adds.length > 0 ? (
-                        <View style={[styles.block, { marginVertical: 20 }]}>
-                            <View
-                                style={{
-                                    minHeight: Math.round(viewportWidth * 0.29),
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                }}>
-                                <Carousel
-                                    ref={c => {
-                                        _carousel = c;
+                        {/*POPULAR STORE*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular Stores</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
                                     }}
-                                    data={adds}
-                                    renderItem={_renderItem}
-                                    sliderWidth={viewportWidth - 20}
-                                    itemWidth={viewportWidth - 20}
-                                    //  slideStyle={{ viewportWidth: viewportWidth }}
-                                    inactiveSlideOpacity={1}
-                                    inactiveSlideScale={1}
-                                    autoplay={true}
-                                    loop={true}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderStore(item, index)}
                                 />
                             </View>
-                        </View>
-                    ) : null}
+                        ) : null}
+
+                        {/*POPUlAR IN STORE*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular in Stores</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderProduct(item, index)}
+                                />
+                            </View>
+                        ) : null}
+
+                        {/*SPECIAL RESTURANT LISTING START*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular Restaurants</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderStore(item, index)}
+                                />
+                            </View>
+                        ) : null}
+
+                        {/*POPUlAR IN RESTAURANTS*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular in Restaurants</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderProduct(item, index)}
+                                />
+                            </View>
+                        ) : null}
+
+                        {/*POPULAR TRAVEL AGENCY*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular Travel Agency</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderStore(item, index)}
+                                />
+                            </View>
+                        ) : null}
+
+                        {/*POPUlAR IN TRAVEL/AGENCY*/}
+                        {popularProducts.length > 0 ? (
+                            <View style={styles.block}>
+                                <View style={styles.blockHeader}>
+                                    <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular Destination</Text>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() =>
+                                            props.navigation.navigate('AllProducts', {
+                                                Region: region,
+                                            })
+                                        }>
+                                        <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                                        <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
+                                    </RNPButton>
+                                </View>
+                                <FlatList
+                                    contentContainerStyle={{
+                                        paddingBottom: 15,
+                                        marginHorizontal: 8,
+                                        marginTop: 15
+                                    }}
+                                    data={popularProducts}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //  numColumns={3}
+                                    renderItem={(item, index) => _renderProduct(item, index)}
+                                />
+                            </View>
+                        ) : null}
+                    </View>
 
                 </Content>
                 {/* <FooterTabs route={'Home'} componentId={props.componentId}/> */}
@@ -1407,17 +1217,15 @@ const styles = StyleSheet.create({
         // flexWrap: 'wrap',
     },
     containerStyle: {
-        paddingLeft: 5,
-        paddingVertical: 5,
-        //backgroundColor: 'white',
         borderWidth: 0,
-        // marginVertical: 4,
+        borderRadius: 300,
+        marginVertical: 5,
         borderColor: '#808080',
         //elevation: 5,
         //width: (viewportWidth-60)/3,
-        width: 100,
-        margin: 5,
-        height: 100,
+        width: 65,
+        margin: 7,
+        height: 50,
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
@@ -1591,10 +1399,11 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
 });
-export default Meteor.withTracker(() => {
-    return {
-        loggedUser: Meteor.user(),
-        categories: Meteor.collection('MainCategories').find(),
-        notificationCount: Meteor.collection('newNotificationCount').find(),
-    };
-})(Home);
+// export default Meteor.withTracker(() => {
+//     return {
+//         loggedUser: Meteor.user(),
+//         categories: Meteor.collection('MainCategories').find(),
+//         notificationCount: Meteor.collection('newNotificationCount').find(),
+//     };
+// })(Home);
+export default connect(categorySelector)(Home);

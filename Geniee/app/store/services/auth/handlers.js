@@ -15,8 +15,9 @@ import { apiUrl } from 'settings';
 import { getExpireDate } from 'helpers';
 import Meteor from '../../../react-native-meteor';
 
-const handleSignIn = ({ email, password }, callBack) => {
+const handleSignIn = (email, password, callBack) => {
   Meteor.loginWithPassword(email, password, (err, res) => {
+    console.log('This is an error '+err);
     if (err) {
       dispatch(wrongEmailPassword());
       callBack(err);
