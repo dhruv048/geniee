@@ -49,6 +49,7 @@ Meteor.methods({
         // console.log(userInfo);
         let expiry = Date.now() + 60 * 1000 * 48 * 60; //48 hrs in ms
         try {
+            return Async.runSync(function (done) {
             let userId = Accounts.createUser(userInfo);
             if (userId) {
                 // Accounts.sendVerificationEmail(userId);
@@ -94,8 +95,9 @@ Meteor.methods({
                         // });
                     });
 
-                return userId;
+                done(null,{userId});
             }
+        });
         }
         catch (e) {
             console.log(e.message);
