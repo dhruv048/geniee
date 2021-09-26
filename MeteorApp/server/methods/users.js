@@ -76,23 +76,23 @@ Meteor.methods({
                     }
                     , function (err) {
                         let url = Meteor.absoluteUrl() + 'verify-email/' + token;
-                        // Email.send({
-                        //     to: userInfo.email,
-                        //     from: "Geniee",
-                        //     cc: "",
-                        //     bcc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
-                        //     subject: "Activate your account now!",
-                        //     html: `<h4>Dear ${user.profile.hasOwnProperty('name') ? user.profile.name : `${user.profile.firstName}`},</h4><br>
-                        //     <p>Thank you very much for signing up with Geniee.</p><br>
-                        //     <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
-                        //     <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
-                        //     Regards, <br/>
-                        //     Geniee`,
-                        // }, function (err) {
-                        //     if (err != null) {
-                        //         console.log(err.messsage);
-                        //     }
-                        // });
+                        Email.send({
+                            to: userInfo.email,
+                            from: "Geniee",
+                            cc: "",
+                            bcc: "roshanshah.011@gmail.com;sushil.jakibanja@gmail.com",
+                            subject: "Activate your account now!",
+                            html: `<h4>Dear ${user.profile.hasOwnProperty('name') ? user.profile.name : `${user.profile.firstName}`},</h4><br>
+                            <p>Thank you very much for signing up with Geniee.</p><br>
+                            <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
+                            <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
+                            Regards, <br/>
+                            Geniee`,
+                        }, function (err) {
+                            if (err != null) {
+                                console.log(err.messsage);
+                            }
+                        });
                     });
 
                 done(null,{userId});
