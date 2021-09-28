@@ -115,12 +115,13 @@ const Register = ({ navigation }) => {
               </Text>
             </View>
             <View style={styles.containerRegister}>
-              <View style={styles.textInputNameView}>
+              <View style={styles.textInputNameView}>               
                 <TextInput
                   mode="outlined"
                   color={customGalioTheme.COLORS.INPUT_TEXT}
                   placeholder="First Name"
                   placeholderTextColor="#808080"
+                  label="First Name"
                   name="firstName"
                   value={values.firstName.value}
                   onChangeText={(value) => handleInputChange('firstName', value)}
@@ -133,6 +134,7 @@ const Register = ({ navigation }) => {
                   color={customGalioTheme.COLORS.INPUT_TEXT}
                   placeholder="Last Name"
                   placeholderTextColor="#808080"
+                  label="Last Name"
                   name="lastName"
                   value={values.lastName.value}
                   onChangeText={(value) => handleInputChange('lastName', value)}
@@ -144,9 +146,10 @@ const Register = ({ navigation }) => {
               <TextInput
                 mode="outlined"
                 color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="user@gmail.com"
+                placeholder="Email"
                 placeholderTextColor="#808080"
                 keyboardType="email-address"
+                label="Email"
                 value={values.email.value}
                 onChangeText={(value) => handleEmailValidation(value)}
                 style={styles.inputBox}
@@ -167,6 +170,7 @@ const Register = ({ navigation }) => {
                 iconSize={24}
                 placeholder="Password"
                 placeholderTextColor="#808080"
+                label="Password"
                 value={values.password.value}
                 onChangeText={(value) => handlePasswordValidation(value)}
                 style={styles.inputBox}
@@ -434,7 +438,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: 'rgba(0, 0, 0, 0.6)',
     fontSize: 18,
-    backgroundColor: colors.transparent,
+    //backgroundColor: colors.transparent,
     marginBottom: 10,
   },
 
@@ -443,7 +447,7 @@ const styles = StyleSheet.create({
     height: 45,
     color: 'rgba(0, 0, 0, 0.6)',
     fontSize: 18,
-    backgroundColor: colors.transparent,
+    //backgroundColor: colors.transparent,
     marginBottom: 10,
   },
 

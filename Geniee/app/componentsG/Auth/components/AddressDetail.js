@@ -21,6 +21,8 @@ const AddressDetail = (props) => {
     const [showOTPInput, setShowOTPInput] = useState(false);
     const [OTPCodeValid, setOTPCodeValid] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [pickLocation, setPickLocation] = useState(false);
+    const [location, setLocation] = useState('');
 
     const validateOTPCode = () => {
         // this code will be from API
@@ -53,7 +55,7 @@ const AddressDetail = (props) => {
                         lastName: capitalzeFirstLetter(userData.lastName),
                         contactNo: values.contact.value,
                         profileImage: null,
-                        location: null,
+                        location: location,
                         primaryEmail: userData.email,
                         email: userData.email,
                         district: values.district.value,
@@ -94,15 +96,34 @@ const AddressDetail = (props) => {
         }
     }
 
-    // const handleOnLocationSelect = (location) => {
-    //     delete location.address_components;
-    //     handleInputChange('location', location);
-    //     handleInputChange('pickLocation', false);
-    // }
+    const handleOnLocationSelect = (location) => {
+        let city='';
+        let district='';
+        for (var i=0; i<location.address_components.length; i++) {
+            for (var b=0;b<location.address_components[i].types.length;b++) {
 
-    // const closePickLocation = () => {
-    //     handleInputChange('pickLocation', false);
-    // }
+            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                if (location.address_components[i].types[b] == "locality") {
+                    //this is the object you are looking for
+                    city= location.address_components[i];
+                }
+                if (location.address_components[i].types[b] == "administrative_area_level_2") {
+                    //this is the object you are looking for
+                    district = location.address_components[i];
+                }
+            }
+        }
+
+        delete location.address_components;
+        setLocation(location); 
+        handleInputChange('district', district.long_name);
+        handleInputChange('city', city.long_name)
+        setPickLocation(false);
+    }
+
+    const closePickLocation = () => {
+        setPickLocation(false);
+    }
     const handleShowOTPInput = () => {
         //if (validateAddressDetailForm()) {
         setShowOTPInput(true);
@@ -165,12 +186,29 @@ const AddressDetail = (props) => {
                             </Text>
                         </View>
                         <View style={styles.containerRegister}>
-                            <View style={styles.textInputNameView}>
+                        <TextInput
+                                mode="outlined"
+                                right={<TextInput.Icon name="map-marker" />}
+                                family="feather"
+                                iconSize={20}
+                                iconColor={colors.primary}
+                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                label="Location"
+                                placeholder="Location"
+                                placeholderTextColor="#808080"
+                                value={location ? location.formatted_address : ''}
+                                onFocus={() => setPickLocation(true)}
+                                style={styles.inputBox}
+                                // error={values.location.error}
+                                theme={{roundness:6}}
+                            />
+                            <View style={styles.textInputNameView}>                            
                                 <TextInput
                                     mode="outlined"
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="District"
                                     placeholderTextColor="#808080"
+                                    label="District"
                                     name="district"
                                     value={values.district.value}
                                     onChangeText={(value) => handleInputChange('district', value)}
@@ -184,6 +222,7 @@ const AddressDetail = (props) => {
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="City"
                                     placeholderTextColor="#808080"
+                                    label="City"
                                     name="city"
                                     value={values.city.value}
                                     onChangeText={(value) => handleInputChange('city', value)}
@@ -195,6 +234,7 @@ const AddressDetail = (props) => {
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
+                                label="Nearest Landmark"
                                 placeholder="Nearest Landmark"
                                 placeholderTextColor="#808080"
                                 value={values.nearestLandmark.value}
@@ -204,27 +244,13 @@ const AddressDetail = (props) => {
                                 theme={{ roundness: 6 }}
                             />
 
-                            {/* <TextInput
-                                mode="outlined"
-                                right={<TextInput.Icon name="map-marker" />}
-                                family="feather"
-                                iconSize={20}
-                                iconColor={colors.primary}
-                                color={customGalioTheme.COLORS.INPUT_TEXT}
-                                placeholder="Location"
-                                placeholderTextColor="#808080"
-                                value={values.location.value ? values.location.value.formatted_address : ''}
-                                onFocus={() => handleInputChange('pickLocation', true)}
-                                style={styles.inputBox}
-                                error={values.location.error}
-                                theme={{roundness:6}}
-                            /> */}
                             {showOTPInput === false ?
                                 <TextInput
                                     mode="outlined"
                                     //left={<TextInput.Affix text="+977-" textStyle={{ color: 'black' }} />}
                                     //right={<TextInput.Icon name="check-circle" style={{ color: 'green'}} />}
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    label="Mobile Number"
                                     placeholder="Mobile Number"
                                     placeholderTextColor="#808080"
                                     keyboardType="phone-pad"
@@ -241,6 +267,7 @@ const AddressDetail = (props) => {
                                             mode="outlined"
                                             //left={<TextInput.Affix text="+977-" textStyle={{ color: 'black' }} />}
                                             color={customGalioTheme.COLORS.INPUT_TEXT}
+                                            label="Mobile Number"
                                             placeholder="Mobile Number"
                                             placeholderTextColor="#808080"
                                             keyboardType="phone-pad"
@@ -265,6 +292,7 @@ const AddressDetail = (props) => {
                                         mode="outlined"
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="OTP Code"
+                                        label="OTP Code"
                                         placeholderTextColor="#808080"
                                         keyboardType="phone-pad"
                                         value={values.OTPCode.value}
@@ -309,11 +337,11 @@ const AddressDetail = (props) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Content>
-            {/* <LocationPicker
+            <LocationPicker
                 close={closePickLocation}
                 onLocationSelect={handleOnLocationSelect}
-                modalVisible={values.pickLocation.value}
-            /> */}
+                modalVisible={pickLocation}
+            />
         </Container>
     );
 }
@@ -429,7 +457,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
@@ -439,7 +467,7 @@ const styles = StyleSheet.create({
         //paddingHorizontal: 10,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
@@ -448,7 +476,7 @@ const styles = StyleSheet.create({
         height: 45,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 

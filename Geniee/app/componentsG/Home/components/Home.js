@@ -135,10 +135,11 @@ const Home = (props) => {
     //onClick = onClick.bind(this);
 
     useEffect(async () => {
+        SplashScreen.hide();
         setLoggedUser(props.loggedUser);
         updateCounts();
         setCategories(props.categories);
-        SplashScreen.hide();
+        
         //
         Meteor.subscribe('aggChatChannels');
         if (props.notificationCount.length > 0)
@@ -286,7 +287,7 @@ const Home = (props) => {
             ? props.categories.slice(0, 6)
             : props.categories;
         setViewAll(!prevState);
-        setCategories(categories);
+        //setCategories(categories);
     };
 
     const _spring = () => {
@@ -1221,9 +1222,10 @@ const styles = StyleSheet.create({
         borderRadius: 300,
         marginVertical: 5,
         borderColor: '#808080',
+        borderWidth:0,
         //elevation: 5,
         //width: (viewportWidth-60)/3,
-        width: 65,
+        width: 55,
         margin: 7,
         height: 50,
         borderRadius: 5,

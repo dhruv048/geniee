@@ -26,49 +26,67 @@ import _, { set } from 'lodash';
 import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
 import { customGalioTheme } from '../../../config/themes';
 import UseBusinessForm from '../../../hooks/useBusinessForm';
-import { categorySelector } from '../../../store/selectors';
+import { businessTypesSelector, categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
 import { ProgressViewIOSComponent } from 'react-native';
 import Meteor from '../../../react-native-meteor';
 import handlers from '../../../store/services/categories/handlers';
+import combineSelectors from '../../../helpers';
 const RNFS = require('react-native-fs');
 
 const BusinessForm = (props) => {
     const { values, handleInputChange, validateBusinessForm, resetBusinessForm } = UseBusinessForm();
-    const registerUser = props.route.params.data
+    const registerUser = props.route.params.data;
+    const [pickLocation, setPickLocation] = useState(false);
+    const [location, setLocation] = useState('');
 
     const merchantOwner = Meteor.userId() ? Meteor.userId() : registerUser;
-    const [businessTypes, setBusinessTypes] = useState();
 
     const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
         console.log('This is categories : ' + props.categories);
         handlers.getAllBusinessType((res) =>{
             if(res){
-                setBusinessTypes(res.result);
+                //setBusinessTypes(res.result);
             }
         });
-    }, [props.categories]);
+    }, []);
 
-    // const handleOnLocationSelect = (location) => {
-    //     delete location.address_components;
-    //     handleInputChange('location', location);
-    //     handleInputChange('pickLocation', false);
-    // }
+    const handleOnLocationSelect = (location) => {
+        let city='';
+        let district='';
+        for (var i=0; i<location.address_components.length; i++) {
+            for (var b=0;b<location.address_components[i].types.length;b++) {
 
-    // const closePickLocation = () => {
-    //     handleInputChange('pickLocation', false);
-    // }
-    // const loadBusinessTypes = () => {
-        
-    // }
+            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                if (location.address_components[i].types[b] == "locality") {
+                    //this is the object you are looking for
+                    city= location.address_components[i];
+                }
+                if (location.address_components[i].types[b] == "administrative_area_level_2") {
+                    //this is the object you are looking for
+                    district = location.address_components[i];
+                }
+            }
+        }
+
+        delete location.address_components;
+        setLocation(location); 
+        handleInputChange('district', district.long_name);
+        handleInputChange('city', city.long_name)
+        setPickLocation(false);
+    }
+
+    const closePickLocation = () => {
+        setPickLocation(false);
+    }
 
     const loadBusinessTypes = useCallback(() => {
-        if (!businessTypes) return;
-        return businessTypes.map(item => (
+        if (!props.businessTypes) return;
+        return props.businessTypes.map(item => (
             <Picker.Item key={item._id} label={item.title} value={item._id} style={styles.inputBox}/>
         ))
-    }, [businessTypes]);
+    }, [props.businessTypes]);
 
 
     const loadCategoriesTypes = useCallback(() => {
@@ -169,12 +187,25 @@ const BusinessForm = (props) => {
                                     {loadCategoriesTypes()}
                                 </Picker>
                             </View>
+                            <TextInput
+                                mode="outlined"
+                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                label="Location"
+                                onFocus={() => setPickLocation(true)}
+                                placeholder="Location"
+                                placeholderTextColor='#808080'
+                                value={location}
+                                //   onChangeText={(radius) => this.setState({radius})}
+                                style={styles.inputBox}
+                                theme={{roundness:6}}
+                            />
                             <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="District"
                                     placeholderTextColor="#808080"
+                                    label="District"
                                     name="district"
                                     value={values.district.value}
                                     onChangeText={(value) => handleInputChange('district', value)}
@@ -187,6 +218,7 @@ const BusinessForm = (props) => {
                                     mode="outlined"
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="City"
+                                    label="City"
                                     placeholderTextColor="#808080"
                                     name="city"
                                     value={values.city.value}
@@ -200,6 +232,7 @@ const BusinessForm = (props) => {
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 placeholder="Nearest Landmark"
+                                label="Nearest Landmark"
                                 placeholderTextColor="#808080"
                                 value={values.nearestLandmark.value}
                                 onChangeText={(value) => handleInputChange('nearestLandmark', value)}
@@ -207,22 +240,12 @@ const BusinessForm = (props) => {
                                 error={values.nearestLandmark.error}
                                 theme={{ roundness: 6 }}
                             />
-                            {/* <TextInput
-                                mode="outlined"
-                                color={customGalioTheme.COLORS.INPUT_TEXT}
-                                //   onBlur={()=>this.setState({pickLocation:true})}
-                                onFocus={() => handleInputChange('pickLocation', true)}
-                                placeholder="Location"
-                                placeholderTextColor='#808080'
-                                value={values.location.value ? values.location.value.formatted_address : ""}
-                                //   onChangeText={(radius) => this.setState({radius})}
-                                style={styles.inputBox}
-                                theme={{roundness:6}}
-                            /> */}
+                            
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 placeholder="PAN Number"
+                                label="PAN Number"
                                 placeholderTextColor='#808080'
                                 value={values.panNumber.value}
                                 onChangeText={(value) => handleInputChange('panNumber', value)}
@@ -234,6 +257,7 @@ const BusinessForm = (props) => {
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 // style={{width:'90%'}}
                                 placeholder="Business contacts number"
+                                label="Business contacts number"
                                 placeholderTextColor='#808080'
                                 keyboardType="phone-pad"
                                 onChangeText={(value) => handleInputChange('contact', value)}
@@ -245,6 +269,7 @@ const BusinessForm = (props) => {
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
                                 placeholder="Business contacts email"
+                                label="Business contacts email"
                                 placeholderTextColor='#808080'
                                 onChangeText={(value) => handleInputChange('email', value)}
                                 value={values.email.value}
@@ -267,16 +292,18 @@ const BusinessForm = (props) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Content>
-            {/* <LocationPicker
+            <LocationPicker
                 close={closePickLocation}
                 onLocationSelect={handleOnLocationSelect}
-                modalVisible={values.pickLocation.value}
-            /> */}
+                modalVisible={pickLocation}
+            />
         </Container>
 
     );
 }
-export default connect(categorySelector)(BusinessForm);
+
+const combinedSelector = combineSelectors(categorySelector,businessTypesSelector);
+export default connect(combinedSelector)(BusinessForm);
 
 const styles = StyleSheet.create({
     container: {
@@ -327,7 +354,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
@@ -336,7 +363,7 @@ const styles = StyleSheet.create({
         height: 45,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
