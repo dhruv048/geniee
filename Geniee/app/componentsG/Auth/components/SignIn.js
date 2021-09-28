@@ -161,6 +161,7 @@ const SignIn = ({ actions, navigation }) => {
                             placeholderTextColor="#808080"
                             keyboardType="email-address"
                             name="email"
+                            label="Email"
                             value={email}
                             onSubmitEditing={() =>
                                 passwordInputRef.current &&
@@ -178,6 +179,7 @@ const SignIn = ({ actions, navigation }) => {
                             right={<TextInput.Icon name="eye" onPress={() => setShowPassword(!showPassword)} />}
                             placeholder="Password"
                             placeholderTextColor="#808080"
+                            label="Password"
                             value={password}
                             ref={passwordInputRef}
                             onSubmitEditing={Keyboard.dismiss}
@@ -294,7 +296,7 @@ const styles = StyleSheet.create({
 
     inputBox: {
         width: '100%',
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         fontSize: 18,
         color: 'rgba(0, 0, 0, 0.6)',
         marginBottom: 10,

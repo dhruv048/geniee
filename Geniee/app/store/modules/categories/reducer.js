@@ -11,16 +11,14 @@ export default handleActions(
     [getCategories]: (state, { payload: { data } }) => ({
       ...state,
       categories: data,
-    })
-  },
-  {
+    }),
     [getBusinessType]: (state, { payload: { data } }) => ({
       ...state,
-      businessType: data,
+      businessTypes: data,
     })
   },
   {
     categories: null,
-    businessType: null,
+    businessTypes: null,
   },
 );
