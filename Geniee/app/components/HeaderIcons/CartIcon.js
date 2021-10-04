@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { Badge } from 'react-native-paper';
 import { colors, customStyle } from '../../config/styles';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity,Text } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
 import AIcon from 'react-native-vector-icons/AntDesign';
@@ -43,12 +43,13 @@ class CartIcon extends PureComponent {
                 onPress={() => navigation.navigate('CartEF')}
                 //onPress={() => navigation.navigate('MyCart')}
             >
-                <AIcon name="shoppingcart" style={{color:colors.gray_200}} size={20} />
+                <AIcon name="shoppingcart" style={{color:colors.gray_200}} size={25} />
                 {this.state.totalCount > 0 ? (
                     <Badge style={{ position: 'absolute', top: -14, right: -14, borderWidth: 1 }}>
                         {this.state.totalCount}
                     </Badge>
                 ) : null}
+                <Text style={{ color:colors.gray_200, fontSize: 8, marginLeft:4 }}>CART</Text>
             </TouchableOpacity>
         );
     }

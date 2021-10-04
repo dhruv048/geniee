@@ -97,16 +97,7 @@ const BusinessForm = (props) => {
 
         setLoading(true);
         merchantHandlers.addBusiness(business, (res) => {
-            if (!res) {
-                console.log('result from Merchant error ' + err.reason);
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            } else {
+            if (res === true) {
                 // hack because react-native-meteor doesn't login right away after sign in
                 console.log('Result from Merchant register' + res);
                 ToastAndroid.showWithGravityAndOffset(
@@ -119,6 +110,16 @@ const BusinessForm = (props) => {
                 setLoading(false);
                 //resetAddressDetailForm();
                 props.navigation.navigate('BusinessCompleted',{data : business.owner});
+                
+            } else {
+                console.log('result from Merchant error ' + res.reason);
+                ToastAndroid.showWithGravityAndOffset(
+                    res.reason,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
             }
         });
         setLoading(false);

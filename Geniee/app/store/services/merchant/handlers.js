@@ -25,17 +25,30 @@ const apiUrl = 'http://139.59.59.117';
 //         });
 // };
 
-const addBusiness = (businessModel, callBack) =>{
-    Meteor.call('addNewBusiness',businessModel,(err, res) =>{
-        if(err){
+const addBusiness = (businessModel, callBack) => {
+    Meteor.call('addNewBusiness', businessModel, (err, res) => {
+        if (err) {
             console.log('Please contact administrator.')
-          }else{
+            callBack(err);
+        } else {
             callBack(true);
-          }
+        }
     })
 };
+
+const getBusinessInfo = (loggedUser, callBack) => {
+    Meteor.call('getBusinessInfo', loggedUser, (err, res) => {
+        if (err) {
+            console.log('Please contact administrator.')
+            callBack(err);
+        } else {
+            callBack(res.result);
+        }
+    })
+}
 
 export default {
     //handleImageUpload,
     addBusiness,
+    getBusinessInfo,
 };
