@@ -87,7 +87,7 @@ const AddressDetail = (props) => {
                         );
                         registerUser = res;
                         setLoading(false);
-                        //resetAddressDetailForm();
+                        resetAddressDetailForm();
                         props.navigation.navigate('RegisterCompleted',{data:registerUser});
                     }
                 });
@@ -99,25 +99,27 @@ const AddressDetail = (props) => {
     const handleOnLocationSelect = (location) => {
         let city='';
         let district='';
-        for (var i=0; i<location.address_components.length; i++) {
-            for (var b=0;b<location.address_components[i].types.length;b++) {
-
-            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
-                if (location.address_components[i].types[b] == "locality") {
-                    //this is the object you are looking for
-                    city= location.address_components[i];
-                }
-                if (location.address_components[i].types[b] == "administrative_area_level_2") {
-                    //this is the object you are looking for
-                    district = location.address_components[i];
+        if(location != '' ){
+            for (var i=0; i<location.address_components.length; i++) {
+                for (var b=0;b<location.address_components[i].types.length;b++) {
+    
+                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                    if (location.address_components[i].types[b] == "locality") {
+                        //this is the object you are looking for
+                        city= location.address_components[i];
+                    }
+                    if (location.address_components[i].types[b] == "administrative_area_level_2") {
+                        //this is the object you are looking for
+                        district = location.address_components[i];
+                    }
                 }
             }
+    
+            delete location.address_components;
+            setLocation(location); 
+            handleInputChange('district', district.long_name);
+            handleInputChange('city', city.long_name)
         }
-
-        delete location.address_components;
-        setLocation(location); 
-        handleInputChange('district', district.long_name);
-        handleInputChange('city', city.long_name)
         setPickLocation(false);
     }
 

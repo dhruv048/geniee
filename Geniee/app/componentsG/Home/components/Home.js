@@ -136,10 +136,10 @@ const Home = (props) => {
 
     useEffect(async () => {
         SplashScreen.hide();
-        setLoggedUser(props.loggedUser);
+        let user = Meteor.user();
+        setLoggedUser(user);
         updateCounts();
         setCategories(props.categories);
-        
         //
         Meteor.subscribe('aggChatChannels');
         if (props.notificationCount.length > 0)

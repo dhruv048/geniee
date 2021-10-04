@@ -12,20 +12,31 @@ import { Button as RNPButton, Switch, ToggleButton } from 'react-native-paper'
 import FIcon from 'react-native-vector-icons/Feather';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import AIcon from 'react-native-vector-icons/AntDesign';
-import authHandlers from '../../../store/services/auth/handlers'
+import authHandlers from '../../../store/services/auth/handlers';
+import merchantHandlers from "../../../store/services/merchant/handlers";
 
 const MyAccount = (props) => {
 
     const [isMerchant, setIsMerchant] = useState(true);
     const [userName, setUserName] = useState('User');
+    const [merchantUser, setMerchantUser] = useState(false);
     let loggedUser;
     let profile;
+
     useEffect(async () => {
         let user = await AsyncStorage.getItem('loggedUser');
         loggedUser = Meteor.user() ? Meteor.user() : JSON.parse(user);
         profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
         //this._updateState(this.loggedUser.profile)
         setUserName(profile.firstName + ' ' + profile.lastName);
+
+        merchantHandlers.getBusinessInfo(loggedUser, (res) => {
+            if (res) {
+              setMerchantUser(true);
+            } else {
+              setMerchantUser(false);
+            }
+          })
     }, [])
 
     const _signOut = () => {
@@ -74,7 +85,12 @@ const MyAccount = (props) => {
                                 {isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>My Design Store</Text> : null}
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#F0F8FF', paddingBottom: 15 }}>
+                        {!merchantUser ?
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#F0F8FF', paddingBottom: 15,marginLeft:15 }}>
+                                <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text>
+                            </View>
+                            :
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#F0F8FF', paddingBottom: 15 }}>
                             {!isMerchant ? <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text> : <Text style={{ color: colors.statusBar }}>User</Text>}
                             <Switch
                                 value={isMerchant}
@@ -82,7 +98,7 @@ const MyAccount = (props) => {
                                 color={colors.statusBar}
                             />
                             {isMerchant ? <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>Merchant</Text> : <Text style={{ color: colors.statusBar }}>Merchant</Text>}
-                        </View>
+                        </View>}
                         <KeyboardAvoidingView>
                             <View style={styles.containerRegister}>
                                 {!isMerchant ?
@@ -159,14 +175,24 @@ const MyAccount = (props) => {
                                         <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => { props.navigation.navigate('BecomeSeller',{data: loggedUser}) }}>
+                               {isMerchant? 
+                               <TouchableOpacity
+                                    onPress={() => { props.navigation.navigate('ProductInfo',{data: loggedUser}) }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='storefront' />
-                                        <Text style={{ fontSize: 14, marginLeft: 10 }}>Become Merchant</Text>
+                                        <Text style={{ fontSize: 14, marginLeft: 10 }}>Add Product</Text>
                                         <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
                                     </View>
-                                </TouchableOpacity>
+                                </TouchableOpacity>:
+                                 <TouchableOpacity
+                                 onPress={() => { props.navigation.navigate('BecomeSeller',{data: loggedUser}) }}>
+                                 <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                                     <MIcon style={{ fontSize: 20 }} name='storefront' />
+                                     <Text style={{ fontSize: 14, marginLeft: 10 }}>Become Merchant</Text>
+                                     <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
+                                 </View>
+                             </TouchableOpacity>
+                             }
                                 <TouchableOpacity
                                     onPress={() => { }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>

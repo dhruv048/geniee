@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, useEffect, useState} from 'react';
 import {
     Container,
     Content,
@@ -31,21 +31,23 @@ const materialColors=['#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2','#AF
 '#616161','#FFA000','#455A64' ];
 import ServiceItem from "../components/Service/ServiceItem";
 
-export default class SearchResult extends PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            query: '',
-            services: [],
-            products: [],
-            categories: [],
-            loading: false,
-        };
-        this.currentSearch = '';
-    }
+const SearchResult = (props) => {
+    const [query, setQuery]= useState('');
+    const [services, setServices] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [serachMode, setSearchMode] = useState(false);
+    let currentSearch = '';
 
-    _handleProductPress = pro => {
-        this.props.navigation.push('ProductDetail', { Id: pro._id,})
+    // useEffect(() =>{
+    //         //let searchText = this.props.route.params.SearchText;
+    //         let searchText = '';
+    //         setQuery(searchText);
+    //         _search(searchText); 
+    // })
+    const _handleProductPress = pro => {
+        props.navigation.push('ProductDetail', { Id: pro._id,})
         // Navigation.push(this.props.componentId, {
         //     component: {
         //         name: 'ProductDetail',
@@ -56,12 +58,12 @@ export default class SearchResult extends PureComponent {
         // });
     };
 
-    _itemClick = item => {
+    const _itemClick = item => {
         let Ids = [];
         item.subCategories.map(item => {
             Ids.push(item.subCatId);
         });
-        this.props.navigation.navigate("ServiceList", {Id: Ids, Region: this.region})
+        props.navigation.navigate("ServiceList", {Id: Ids, Region: region})
         // Navigation.push(this.props.componentId, {
         //     component: {
         //         name: 'ServiceList',
@@ -72,11 +74,11 @@ export default class SearchResult extends PureComponent {
         //     },
         // });
     };
-    renderItem = (data, index) => {
+    const renderItem = (data, index) => {
         var item = data.item;
         return (
             <View key={item._id} style={styles.containerStyle}>
-                <TouchableOpacity onPress={() => this._itemClick(item)}>
+                <TouchableOpacity onPress={() => _itemClick(item)}>
                     <Body>
                     <View style={[styles.catIcon,{backgroundColor:materialColors[data.index]}]}>
                         <FAIcon name={item.icon} size={25} color='white'/>
@@ -98,35 +100,25 @@ export default class SearchResult extends PureComponent {
             </View>
         );
     };
-    _search = text => {
+    
+    const _search = text => {
         // const textData = text.trim().toUpperCase();
-        this.setState({loading: true});
+        setLoading(true);
         // if (textData === this.currentSearch) {
         //     // abort search if query wasn't different
         //     return;
         // }
         if (text === '') {
-            this.setState({
-                loading: false,
-                products: [],
-                services: [],
-                //   categories: this.arrayholder, loading: false
-            });
-            this.currentSearch = '';
+            setLoading(false);
+            setProducts([]);
+            setServices([]);
+            currentSearch = '';
             return;
         } else {
-            this.setState({
-                searchMode: true,
-            });
+           setSearchMode(true);
         }
-        this.currentSearch = text;
-        // const newData = this.arrayholder.filter(item => {
-        //     const itemData =
-        //         `${item.mainCategory.toUpperCase()}`;
-        //     return itemData.indexOf(textData) > -1;
-        // });
-        // this.setState({categories: newData, loading: false});
-
+        currentSearch = text;
+        
         var dataToSend = {
             searchValue: text,
         };
@@ -135,60 +127,31 @@ export default class SearchResult extends PureComponent {
         Meteor.call('searchService', dataToSend, (err, res) => {
             console.log(err, res);
             if (!err) {
-                this.setState({
-                    loading: false,
-                    services: res.result
-                });
+                setLoading(false);
+                setServices(res.result)
             }
         });
 
         Meteor.call('searchProducts', text, (err, res) => {
             console.log(err, res);
             if (!err) {
-                this.setState({
-                    loading: false,
-                    products: res.result
-                });
+                setLoading(false);
+                setProducts(res.result)
             }
         });
 
         Meteor.call('searchCategories', text, (err, res) => {
             console.log(err, res);
             if (!err) {
-                this.setState({
-                    loading: false,
-                    categories: res.result
-                });
+                setLoading(false);
+                setCategories(res.result)
             }
         });
-
-        // fetch(settings.API_URL + 'mainSearch', {
-        //     method: 'POST', //Request Type
-        //     body: JSON.stringify(dataToSend), //post body
-        //     headers: {
-        //         //Header Defination
-        //         'Content-Type': 'application/json',
-        //     },
-        // })
-        //     .then(response => response.json())
-        //     .then(responseJson => {
-        //         // console.log(responseJson);
-        //         this.setState({
-        //             loading: false,
-        //             services: responseJson.services,
-        //             products: responseJson.products,
-        //             categories: responseJson.categories,
-        //         });
-        //         // //  this.arrayholder = responseJson.data
-        //     })
-        //     .catch(error => {
-        //         console.error('API error', error);
-        //     });
     };
 
-    _handlItemPress = service => {
-        service.avgRate = this.averageRating(service.ratings);
-          this.props.navigation.navigate('Service', {Id: service._id});
+    const _handlItemPress = service => {
+        service.avgRate = averageRating(service.ratings);
+          props.navigation.navigate('Service', {Id: service._id});
         // Navigation.push(this.props.componentId, {
         //     component: {
         //         name: 'ServiceDetail',
@@ -198,7 +161,8 @@ export default class SearchResult extends PureComponent {
         //     },
         // });
     };
-    averageRating = arr => {
+   
+    const averageRating = arr => {
         let sum = 0;
         arr.forEach(item => {
             sum = sum + item.count;
@@ -206,30 +170,24 @@ export default class SearchResult extends PureComponent {
         var avg = sum / arr.length;
         return Math.round(avg);
     };
-    _getListItem = data => {
+    
+    const _getListItem = data => {
         let rowData = data.item;
         let distance;
         return (
-            <ServiceItem navigation={this.props.navigation} service={rowData}/>
+            <ServiceItem navigation={props.navigation} service={rowData}/>
         )
     };
 
-    _renderProduct = (data, index) => {
+    const _renderProduct = (data, index) => {
         let item = data.item;
         // console.log(item);
         return (
-            <Product product={item} navigation={this.props.navigation}/>
+            <Product product={item} navigation={props.navigation}/>
            
         );
     };
 
-    componentDidMount() {
-        let searchText = this.props.route.params.SearchText;
-        this.setState({query: searchText});
-        this._search(searchText);
-    }
-
-    render() {
         return (
             <Container>
                 <Header
@@ -239,7 +197,7 @@ export default class SearchResult extends PureComponent {
                     style={{backgroundColor: '#4d94ff'}}>
                     <Left style={{flex: 1}}>
                     <Button transparent onPress={() => 
-                    this.props.navigation.goBack()}>
+                    props.navigation.goBack()}>
                     <Icon name={'arrow-left'} size={25} color={'white'}/></Button>
                     {/*<CogMenu componentId={this.props.componentId}/>*/}
                     </Left>
@@ -249,12 +207,6 @@ export default class SearchResult extends PureComponent {
                             zIndex: 1,
                             borderRadius:8,
                             borderBottomWidth:0,}}>
-                        {/* <Button
-                            onPress={() => this.props.navigation.goBack()}
-                            style={{paddingHorizontal: 10}}
-                            transparent>
-                            <Icon name={'arrow-left'} size={25} color={colors.primary}/>
-                        </Button> */}
                         <Input
                         style={{ fontFamily: 'Roboto' }}
                         underlineColorAndroid="rgba(0,0,0,0)"
@@ -263,16 +215,17 @@ export default class SearchResult extends PureComponent {
                             style={styles.searchInput}
                             // selectionColor='#ffffff'
                             onChangeText={searchText => {
-                                this._search(searchText), this.setState({query: searchText});
+                                setQuery(searchText);
+                                _search(searchText);
                             }}
-                            value={this.state.query}
+                            value={query}
                             autoCorrect={false}
                         />
                        
                        <Button
                             style={{paddingHorizontal: 2}}
                             transparent
-                            onPress={() => this.setState({query: ''})}>
+                            onPress={() => setQuery('')}>
                             <NBIcon
                                 name={'close'}
                                 size={25}
@@ -282,31 +235,16 @@ export default class SearchResult extends PureComponent {
                         
                     </Item>
                     <Right style={{alignItems:'center', justifyContent:'center'}}>
-                    {/* <TouchableOpacity
-                            style={{paddingHorizontal: 5}}
-                            transparent
-                            onPress={() => this.setState({query: ''})}>
-                            <Icon
-                                name={'shopping-bag'}
-                                size={25}
-                                style={{color: colors.whiteText}}v
-                            />
-                        </TouchableOpacity> */}
-                        <CartIcon navigation={this.props.navigation}/>
+                        <CartIcon navigation={props.navigation}/>
                     </Right>
                     {/*</Body>*/}
                 </Header>
                 <Content style={{padding: 10, backgroundColor: colors.appBackground}}>
-                    {/* <View style={{alignItems: 'center', marginHorizontal: 30}}>
-                        <Text style={[styles.screenHeader, {color: colors.appLayout}]}>
-                            Services
-                        </Text>
-                    </View> */}
-                    {this.state.services.length > 0 ? (
+                    {services.length > 0 ? (
                         <FlatList
                             style={styles.contentList}
-                            data={this.state.services}
-                            renderItem={this._getListItem}
+                            data={services}
+                            renderItem={_getListItem}
                             initialNumToRender={15}
                             numColumns={2}
                             // onEndReached={(distance) => this._onEndReached(distance)}
@@ -316,36 +254,17 @@ export default class SearchResult extends PureComponent {
                         />
                     ) : null}
                     
-                    {/*  (
-                         <View style={customStyle.noList}>
-                             <Text style={customStyle.noListTextColor}>
-                                 Sorry No Services found for "{this.currentSearch}"
-                             </Text>
-                         </View>
-                     )} */}
-                    {/* <View style={{alignItems: 'center', marginHorizontal: 30}}>
-                        <Text style={[styles.screenHeader, {color: colors.appLayout}]}>
-                            Products
-                        </Text>
-                    </View> */}
-                    {this.state.products.length > 0 ? (
+                    {products.length > 0 ? (
                         <FlatList
                             style={styles.mainContainer}
-                            data={this.state.products}
+                            data={products}
                             keyExtracter={(item, index) => item._id}
                             horizontal={false}
                             numColumns={2}
-                            renderItem={(item, index) => this._renderProduct(item, index)}
+                            renderItem={(item, index) => _renderProduct(item, index)}
                         />
                     ) : null}
-                    
-                    {/* (
-                        <View style={customStyle.noList}>
-                            <Text style={customStyle.noListTextColor}>
-                                Sorry No Products found for "{this.currentSearch}"
-                            </Text>
-                        </View>
-                    )} */}
+                
 
                     <FlatList
                             contentContainerStyle={{
@@ -356,18 +275,19 @@ export default class SearchResult extends PureComponent {
                             // flexWrap:'wrap',
                             // flexDirection:'row',
                         }}
-                        data={this.state.categories}
+                        data={categories}
                         horizontal={false}
                         keyExtractor={(item, index) => index.toString()}
                         showsHorizontalScrollIndicator={false}
-                        renderItem={this.renderItem}
+                        renderItem={renderItem}
                         numColumns={Math.round(viewportWidth/100)}
                     />
                 </Content>
             </Container>
         );
-    }
 }
+
+export default SearchResult;
 
 const styles = StyleSheet.create({
     mainContainer: {

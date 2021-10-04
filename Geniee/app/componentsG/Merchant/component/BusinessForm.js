@@ -102,6 +102,7 @@ const BusinessForm = (props) => {
         let business = {
             businessName: values.merchantName.value,
             selectedCategory: values.selectedCategory.value,
+            businessTypes : values.businessType.value,
             district: values.district.value,
             city: values.city.value,
             nearestLandmark: values.nearestLandmark.value,
@@ -112,7 +113,8 @@ const BusinessForm = (props) => {
             owner: merchantOwner
         };
         //}
-        //props.navigation.navigate('BusinessDocument',{businessData : business});
+        props.navigation.navigate('BusinessDocument',{businessData : business});
+        resetBusinessForm();
     }
 
     return (
@@ -158,8 +160,9 @@ const BusinessForm = (props) => {
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
-                                placeholder="Merchant Name"
+                                placeholder="Business Name"
                                 placeholderTextColor="#808080"
+                                label="Business Name"
                                 value={values.merchantName.value}
                                 onChangeText={(value) => handleInputChange('merchantName', value)}
                                 style={styles.inputBox}

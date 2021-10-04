@@ -117,7 +117,7 @@ export const customStyle = StyleSheet.create({
   },
   actionIcon: {
     opacity: 0.75,
-    marginLeft: 21,
+    marginLeft: 15,
     color: '#ffffff',
     fontSize: 20,
     height: 20,

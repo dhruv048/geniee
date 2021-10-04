@@ -14,32 +14,32 @@ const removeProductsByServiceId = (Id) => {
     });
 };
 
-const uploadImage = async(baseImage) => {
+const uploadImage = async (baseImage) => {
     try {
         /*path of the folder where your project is saved. (In my case i got it from config file, root path of project).*/
         const uploadPath = '/home/geniee';
         //path of folder where you want to save the image.
         const localPath = `${uploadPath}/images/`;
         //Find extension of file
-        const ext = baseImage.substring(baseImage.indexOf("/")+1, baseImage.indexOf(";base64"));
-        const fileType = baseImage.substring("data:".length,baseImage.indexOf("/"));
+        const ext = baseImage.substring(baseImage.indexOf("/") + 1, baseImage.indexOf(";base64"));
+        const fileType = baseImage.substring("data:".length, baseImage.indexOf("/"));
         //Forming regex to extract base64 data of file.
         const regex = new RegExp(`^data:${fileType}\/${ext};base64,`, 'gi');
         //Extract base64 data.
         const base64Data = baseImage.replace(regex, "");
         //Random photo name with timeStamp so it will not overide previous images.
         const fileName = `${Date.now()}.${ext}`;
-        
+
         //Check that if directory is present or not.
-        if(!fs.existsSync(`${uploadPath}/images/`)) {
+        if (!fs.existsSync(`${uploadPath}/images/`)) {
             fs.mkdirSync(`${uploadPath}/images/`);
         }
         if (!fs.existsSync(localPath)) {
             fs.mkdirSync(localPath);
         }
-        fs.writeFileSync(localPath+fileName, base64Data, 'base64');
-        return {fileName, localPath};
- 
+        fs.writeFileSync(localPath + fileName, base64Data, 'base64');
+        return { fileName, localPath };
+
     } catch (e) {
         console.log(e)
         // next(e);
@@ -47,12 +47,16 @@ const uploadImage = async(baseImage) => {
 };
 
 Meteor.methods({
-    addNewBusiness: async(businessInfo) => {
+    addNewBusiness: async (businessInfo) => {
         try {
-            var currentUserId = Meteor.userId();  
-            const merchantImage = await uploadImage(businessInfo.merchantImage); 
+            var currentUserId = Meteor.userId();
+            var existingMerchantTitle = Business.findOne({ businessName: businessInfo.merchantName });
+            if (existingMerchantTitle) {
+                throw new Meteor.Error('This business is already exist. Please try with other business');
+            }
+            const merchantImage = await uploadImage(businessInfo.merchantImage);
             const PANImage = await uploadImage(businessInfo.PANImage);
-            const registrationImage = await uploadImage(businessInfo.registrationImage);       
+            const registrationImage = await uploadImage(businessInfo.registrationImage);
             // let location = {
             //     geometry: {
             //         coordinates: [
@@ -68,11 +72,11 @@ Meteor.methods({
             //     formatted_address: serviceInfo.location.formatted_address,
             // };
             let Owner = Meteor.users.findOne({ _id: businessInfo.owner });
-            
-            businessInfo.businessImage = merchantImage ? merchantImage.fileName:'';
-            businessInfo.PANImage = PANImage ? PANImage.fileName:'';
-            businessInfo.registrationImage = registrationImage ? registrationImage.fileName:'';
-            
+
+            businessInfo.merchantImage = merchantImage ? merchantImage.fileName : '';
+            businessInfo.PANImage = PANImage ? PANImage.fileName : '';
+            businessInfo.registrationImage = registrationImage ? registrationImage.fileName : '';
+
             businessInfo.createdAt = new Date(new Date().toUTCString());
             businessInfo.createdBy = currentUserId;
             businessInfo.coverImage = null;
@@ -120,6 +124,26 @@ Meteor.methods({
         businessInfo.updatedAt = new Date(new Date().toUTCString());
         Service.update({ _id: businessId }, { $set: businessInfo });
         // }
+    },
+
+    getBusinessInfo: (loggedUser) => {
+        
+        let user;
+        if (loggedUser != null) {
+            user = Business.find({ owner : loggedUser._id }).fetch();
+        }
+        try {
+            if (user) {
+                return Async.runSync(function (done) {
+                    done(null, user);
+                })
+            }
+            else{
+                return false;
+            }
+        } catch (e) {
+            throw new Meteor.Error(403, e.message);
+        }
     },
 
     addNewService: (serviceInfo) => {
@@ -382,13 +406,13 @@ Meteor.methods({
         }
     },
 
-    getAllCategories : function(){
-        var data  = Categories.find().fetch();
+    getAllCategories: function () {
+        var data = Categories.find().fetch();
         return data;
     },
 
-    getBusinessType : function(){
-        var data  = BusinessTypes.find().fetch();
+    getBusinessType: function () {
+        var data = BusinessTypes.find().fetch();
         return data;
     },
 
