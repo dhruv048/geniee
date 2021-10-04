@@ -54,7 +54,7 @@ Meteor.methods({
             if (userId) {
                 // Accounts.sendVerificationEmail(userId);
                 let user = Meteor.users.findOne({ _id: userId });
-                var token = Random.secret();
+                var token = Random.secret(6);
                 var tokenRecord = {
                     token: token,
                     address: user.emails[0].address,
@@ -76,6 +76,7 @@ Meteor.methods({
                     }
                     , function (err) {
                         let url = Meteor.absoluteUrl() + 'verify-email/' + token;
+                        console.log('Send token Email');
                         Email.send({
                             to: userInfo.email,
                             from: "Geniee",
@@ -84,7 +85,7 @@ Meteor.methods({
                             subject: "Activate your account now!",
                             html: `<h4>Dear ${user.profile.hasOwnProperty('name') ? user.profile.name : `${user.profile.firstName}`},</h4><br>
                             <p>Thank you very much for signing up with Geniee.</p><br>
-                            <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
+                            <p>Please use token : ${token}, to verify your email and complete the registration process.</p><br>
                             <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
                             Regards, <br/>
                             Geniee`,
