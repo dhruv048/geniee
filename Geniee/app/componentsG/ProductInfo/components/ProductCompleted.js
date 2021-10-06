@@ -5,7 +5,7 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FIcon from 'react-native-vector-icons/Feather';
 import { colors } from '../../../config/styles';
-
+const urlPath = 'http://139.59.59.117/api/files/';
 const ProductCompleted = (props) => {
   const productData = props.route.params.data;
   return (
@@ -38,7 +38,7 @@ const ProductCompleted = (props) => {
             {productData.length>0?
               <Image
               style={{ width: 60, height: 60, resizeMode: 'cover' }}
-              source={{ uri: `data:${productData.productImage[0].mime};base64,${productData.productImage[0].data}` }} />: null}
+              source={{ uri:productData.images[0] }} />: null}
             <View style={{marginLeft:10,marginBottom:30}}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}> {productData.productTitle}</Text>
               <View style={{ flexDirection: 'row' }}>

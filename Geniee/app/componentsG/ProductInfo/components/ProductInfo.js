@@ -142,12 +142,13 @@ const ProductInfo = (props) => {
 
     const _onImageChange = (image) => {
         image.uri = `data:${image.mime};base64,${image.data}`;
-        console.log('This is image' + image);
+        imageData = image.uri;
+        console.log('This is image' + imageData);
         // this.setState(prevState => ({
         //     images: [...prevState.images, image]
         // }))
 
-        setProductImage(prevImage => [...prevImage, image]);
+        setProductImage(prevImage => [...prevImage, imageData]);
         ImagePicker.clean().then(() => {
             console.log('removed all tmp images from tmp directory');
         }).catch(e => {
@@ -165,7 +166,7 @@ const ProductInfo = (props) => {
             price: price,
             discount: discount,
             description: description,
-            productImage: productImage,
+            images: productImage,
             productProperty: customFields,
             owner: loggedUser,
             imageBeRemove: imageBeRemove,
@@ -184,7 +185,7 @@ const ProductInfo = (props) => {
                     width: 70,
                     height: 70,
                 }}
-                    source={{ uri: item.uri }} />
+                    source={{ uri: item }} />
                 <RNPButton 
                 transparent
                 style={{position: 'absolute',top:-12,left:30}}
