@@ -142,13 +142,13 @@ const Home = (props) => {
         setCategories(props.categories);
         //
         Meteor.subscribe('aggChatChannels');
-        if (props.notificationCount.length > 0)
-            setNotificationCount(props.notificationCount[0].totalCount);
-        Meteor.call('getActiveAdvertises', (err, res) => {
-            if (!err) {
-                setAdds(res);
-            }
-        });
+        // if (props.notificationCount.length > 0)
+        //     setNotificationCount(props.notificationCount[0].totalCount);
+        // Meteor.call('getActiveAdvertises', (err, res) => {
+        //     if (!err) {
+        //         setAdds(res);
+        //     }
+        // });
 
         //Services/Store Nearby
         //   Meteor.call('getServicesNearBy', data, (err, res) => {

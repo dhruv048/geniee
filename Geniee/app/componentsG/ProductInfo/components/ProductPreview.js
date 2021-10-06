@@ -99,7 +99,7 @@ const ProductPreview = (props) => {
     const renderImage = () => {
         return (
             <SliderBox
-                images={productData.productImage}
+                images={productData.images}
                 sliderBoxHeight={250}
                 onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                 dotColor="#FFEE58"
@@ -147,7 +147,7 @@ const ProductPreview = (props) => {
                             <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
                         </View>
                         <View style={styles.sliderBox}>
-                            {productData.productImage.length > 0 ? renderImage() : null}
+                            {productData.images.length > 0 ? renderImage() : null}
                             {/* {productData.productImage.map((item, indx) => renderImage(item, indx))} */}
                         </View>
                         <View style={styles.containerRegister}>
