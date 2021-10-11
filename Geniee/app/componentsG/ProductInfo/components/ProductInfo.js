@@ -25,7 +25,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import LocationPicker from '../../../components/LocationPicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import _, { set } from 'lodash';
-import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
+import { Title, Button as RNPButton, TextInput, Checkbox, Switch } from 'react-native-paper';
 import { customGalioTheme } from '../../../config/themes';
 import UseBusinessForm from '../../../hooks/useBusinessForm';
 import { categorySelector } from '../../../store/selectors';
@@ -34,6 +34,8 @@ import { ProgressViewIOSComponent, Image } from 'react-native';
 import { FlatList } from 'react-native';
 import { Dimensions } from 'react-native';
 import Meteor from '../../../react-native-meteor';
+import DropDown from "react-native-paper-dropdown";
+import settings, {ServiceDuration} from "../../../config/settings";
 
 
 const { width, height } = Dimensions.get('screen');
@@ -43,7 +45,7 @@ const RNFS = require('react-native-fs');
 const ProductInfo = (props) => {
     let actionsheet = useRef();
 
-    const loggedUser = Meteor.userId() ? Meteor.userId() :props.route.params.loggedUser;
+    const loggedUser = Meteor.userId() ? Meteor.userId() : props.route.params.loggedUser;
 
     const [productTitle, setProductTitle] = useState('');
     const [price, setPrice] = useState(0);
@@ -53,12 +55,20 @@ const ProductInfo = (props) => {
     const [isPriceValid, setIsPriceValid] = useState(false);
     const [isDescriptionValid, setIsDescriptionValid] = useState(false);
     const [imageBeRemove, setImageBeRemove] = useState([]);
-
+    const [warranty, setWarranty] = useState(0);
+    const [warrantyTime, setWarrantyTime] = useState('');
+    const [returnPolicy, setReturnPolicy] = useState(0);
+    const [returnPolicyTime, setReturnPolicyTime] = useState('');
+    const [stockAvailability, setStockAvailability] = React.useState(true);
+    const [colorAvailability, setColorAvailability] = React.useState(true);
+    const [sizeAvailability, setSizeAvailability] = React.useState(true);
     const [productImage, setProductImage] = useState([]);
     const [customFields, setCustomFields] = useState([{ metaName: 'value', metaValue: 'value' }]);
+    const [colorField, setColorField] = useState([{ colorName: 'Color1' }]);
+    const [sizeField, setSizeField] = useState([{ size: 'Color1' }])
 
 
-    const addCustomField = () => {
+    const addPropertyCustomField = () => {
         setCustomFields(prev => [...prev, { metaName: 'value', metaValue: 'value' }])
     }
 
@@ -77,6 +87,35 @@ const ProductInfo = (props) => {
         setCustomFields(_inputs);
     }
 
+
+    const addColorCustomField = () => {
+        setColorField(prev => [...prev, { colorName: 'value' }])
+    }
+
+    const handleColorFieldValue = (value, index) => {
+        colorField[index].colorName = value;
+        setColorField(colorField);
+    }
+
+    const deleteColorDynamicInput = (key) => {
+        const _inputs = colorField.filter((input, index) => index != key);
+        setColorField(_inputs);
+    }
+
+    const addSizeCustomField = () => {
+        setSizeField(prev => [...prev, { size: 'value', }])
+    }
+
+    const handleSizeFieldValue = (value, index) => {
+        sizeField[index].size = value;
+        setSizeField(sizeField);
+    }
+
+    const deleteSizeDynamicInput = (key) => {
+        const _inputs = sizeField.filter((input, index) => index != key);
+        setSizeField(_inputs);
+    }
+
     const renderCustomField = (customInput, key) => {
         return (
             <View key={key}>
@@ -86,6 +125,7 @@ const ProductInfo = (props) => {
                         color={customGalioTheme.COLORS.INPUT_TEXT}
                         placeholder="Property label"
                         placeholderTextColor="#808080"
+                        label="Property label"
                         name="label"
                         value={customInput.key}
                         onChangeText={(label) => handleCustomFieldName(label, key)}
@@ -97,6 +137,7 @@ const ProductInfo = (props) => {
                         mode="outlined"
                         color={customGalioTheme.COLORS.INPUT_TEXT}
                         placeholder="Property value"
+                        label="Property value"
                         placeholderTextColor="#808080"
                         name="value"
                         //value={discount}
@@ -112,6 +153,56 @@ const ProductInfo = (props) => {
             </View>
         )
     }
+    const renderColorField = (customInput, key) => {
+        return (
+            <View key={key}>
+                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                    <TextInput
+                        mode="outlined"
+                        color={customGalioTheme.COLORS.INPUT_TEXT}
+                        placeholder="Color value"
+                        label="Color value"
+                        placeholderTextColor="#808080"
+                        name="color"
+                        //value={discount}
+                        onChangeText={(value) => handleColorFieldValue(value, key)}
+                        style={{ width: '50%', height: 45, fontSize: 18 }}
+                        theme={{ roundness: 6 }}
+                    />
+                    <TouchableOpacity
+                        onPress={() => { deleteColorDynamicInput(key) }}>
+                        <Icon name='x-circle' style={{ backgroundColor: 'white', top: 0 }} size={20} color={colors.danger} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
+
+    const renderSizeField = (customInput, key) => {
+        return (
+            <View key={key}>
+                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                    <TextInput
+                        mode="outlined"
+                        color={customGalioTheme.COLORS.INPUT_TEXT}
+                        placeholder="Size value"
+                        label="Size value"
+                        placeholderTextColor="#808080"
+                        name="size"
+                        //value={discount}
+                        onChangeText={(value) => handleSizeFieldValue(value, key)}
+                        style={{ width: '50%', height: 45, fontSize: 18 }}
+                        theme={{ roundness: 6 }}
+                    />
+                    <TouchableOpacity
+                        onPress={() => { deleteSizeDynamicInput(key) }}>
+                        <Icon name='x-circle' style={{ backgroundColor: 'white', top: 0 }} size={20} color={colors.danger} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
+
     const uploadProductImage = (selectedOption) => {
         if (selectedOption === 0) {
             ImagePicker.openCamera({
@@ -158,13 +249,19 @@ const ProductInfo = (props) => {
     };
 
     const handleProductInfo = () => {
-        console.log('THis is customs' + customFields);
         //if(!validateBusinessForm()){
         //preparing for Database
         let product = {
             productTitle: productTitle,
             price: price,
             discount: discount,
+            warranty: warranty,
+            stockAvailability: stockAvailability,
+            warrantyTime:warrantyTime,
+            returnPolicy: returnPolicy,
+            returnPolicyTime: returnPolicyTime,
+            color: colorField,
+            size: sizeField,
             description: description,
             images: productImage,
             productProperty: customFields,
@@ -186,11 +283,11 @@ const ProductInfo = (props) => {
                     height: 70,
                 }}
                     source={{ uri: item }} />
-                <RNPButton 
-                transparent
-                style={{position: 'absolute',top:-12,left:30}}
-                onPress={() => removeImage(item)} >
-                    <Icon name='x-circle'  size={20}
+                <RNPButton
+                    transparent
+                    style={{ position: 'absolute', top: -12, left: 30 }}
+                    onPress={() => removeImage(item)} >
+                    <Icon name='x-circle' size={20}
                         color={colors.danger} />
                 </RNPButton>
 
@@ -255,25 +352,25 @@ const ProductInfo = (props) => {
                             <View>
                                 <Text style={{ fontWeight: 'bold' }}>Photo of Product({productImage.length}/4)</Text>
                             </View>
-                            
-                            <View style={{flexDirection:'row',marginTop:10}}>
+
+                            <View style={{ flexDirection: 'row', marginTop: 10 }}>
                                 {/* {productImage.map((item, indx) => renderImage(item, indx))} */}
-                                {productImage.length>0 ?<FlatList
+                                {productImage.length > 0 ? <FlatList
                                     data={productImage}
-                                    renderItem={(item,index) =>renderImage(item,index)}
+                                    renderItem={(item, index) => renderImage(item, index)}
                                     keyExtractor={item => item.id}
                                     numColumns={5}
-                                />:null}
+                                /> : null}
                                 <TouchableOpacity
-                                onPress={() => {
-                                    actionsheet.current.show();
-                                }}
-                                disabled={productImage.length===4? true:false}
-                                style={{ height: 70, width: 70,borderWidth:1,borderColor:'grey' }}>
-                                <Image
-                                    source={require('Geniee/app/images/uploadimage.png')}
-                                    style={{ width: 65, height: 65,resizeMode:'cover'}} />
-                            </TouchableOpacity>
+                                    onPress={() => {
+                                        actionsheet.current.show();
+                                    }}
+                                    disabled={productImage.length === 4 ? true : false}
+                                    style={{ height: 70, width: 70, borderWidth: 1, borderColor: 'grey' }}>
+                                    <Image
+                                        source={require('Geniee/app/images/uploadimage.png')}
+                                        style={{ width: 65, height: 65, resizeMode: 'cover' }} />
+                                </TouchableOpacity>
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ fontWeight: 'bold' }}>Product Details</Text>
@@ -282,6 +379,7 @@ const ProductInfo = (props) => {
                                     color={customGalioTheme.COLORS.INPUT_TEXT}
                                     placeholder="Product Title"
                                     placeholderTextColor="#808080"
+                                    label="Product Title"
                                     value={productTitle}
                                     onChangeText={(value) => setProductTitle(value)}
                                     style={styles.inputBox}
@@ -295,6 +393,7 @@ const ProductInfo = (props) => {
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
                                         placeholder="Price"
                                         placeholderTextColor="#808080"
+                                        label="Price"
                                         name="price"
                                         value={price}
                                         onChangeText={(value) => setPrice(value)}
@@ -306,8 +405,9 @@ const ProductInfo = (props) => {
                                     <TextInput
                                         mode="outlined"
                                         color={customGalioTheme.COLORS.INPUT_TEXT}
-                                        placeholder="Discount"
+                                        placeholder="Discount %"
                                         placeholderTextColor="#808080"
+                                        label="Discount %"
                                         name="discount"
                                         value={discount}
                                         onChangeText={(value) => setDiscount(value)}
@@ -315,10 +415,146 @@ const ProductInfo = (props) => {
                                         theme={{ roundness: 6 }}
                                     />
                                 </View>
+                                <View style={styles.textInputNameView}>
+                                    <TextInput
+                                        mode="outlined"
+                                        color={customGalioTheme.COLORS.INPUT_TEXT}
+                                        placeholder="Warranty"
+                                        placeholderTextColor="#808080"
+                                        label="Warranty"
+                                        name="warranty"
+                                        value={warranty}
+                                        onChangeText={(value) => setWarranty(value)}
+                                        style={styles.textInputNameBox}
+                                        //error={warranty}
+                                        theme={{ roundness: 6 }}
+                                    />
+                                    <View style={{
+                                        width: '50%',
+                                        height: 47,
+                                        paddingHorizontal: 10,
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: 18,
+                                        //backgroundColor: colors.transparent,
+                                        borderWidth: 1, borderRadius: 6, marginTop: 7, marginHorizontal: 10
+                                    }}>
+                                        <Picker
+                                            mode="dropdown"
+                                            iosIcon={<Icon name="arrow-down" />}
+                                            placeholder="Select Duration"
+                                            
+                                            style={{ width: '100%',fontSize:18 }}
+                                            selectedValue={warrantyTime}
+                                            onValueChange={(warrantyTime) => setWarrantyTime(warrantyTime)}>
+                                            <Picker.Item
+                                                label="Day"
+                                                value={ServiceDuration.Day}
+                                            />
+                                            <Picker.Item
+                                                label="Month"
+                                                value={ServiceDuration.Month}
+                                            />
+                                            <Picker.Item
+                                                label="Year"
+                                                value={ServiceDuration.Yr}
+                                            />
+                                        </Picker>
+                                    </View>
+                                </View>
+                                <View style={styles.textInputNameView}>
+                                    <TextInput
+                                        mode="outlined"
+                                        color={customGalioTheme.COLORS.INPUT_TEXT}
+                                        placeholder="Return Policy"
+                                        placeholderTextColor="#808080"
+                                        label="Return Policy"
+                                        name="policy"
+                                        value={returnPolicy}
+                                        onChangeText={(value) => setReturnPolicy(value)}
+                                        style={styles.textInputNameBox}
+                                        //error={returnPolicy}
+                                        theme={{ roundness: 6 }}
+                                    />
+                                    <View style={{
+                                        width: '50%',
+                                        height: 47,
+                                        paddingHorizontal: 10,
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: 18,
+                                        //backgroundColor: colors.transparent,
+                                        borderWidth: 1, borderRadius: 6, marginTop: 7, marginHorizontal: 10
+                                    }}>
+                                        <Picker
+                                            mode="dropdown"
+                                            iosIcon={<Icon name="arrow-down" />}
+                                            placeholder="Select Duration"
+                                            
+                                            style={{ width: '100%',fontSize:18 }}
+                                            selectedValue={returnPolicyTime}
+                                            onValueChange={(returnPolicyTime) => setReturnPolicyTime(returnPolicyTime)}>
+                                            <Picker.Item
+                                                label="Day"
+                                                value={ServiceDuration.Day}
+                                            />
+                                            <Picker.Item
+                                                label="Month"
+                                                value={ServiceDuration.Month}
+                                            />
+                                            <Picker.Item
+                                                label="Year"
+                                                value={ServiceDuration.Yr}
+                                            />
+                                        </Picker>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'space-between', marginVertical: 10 }}>
+                                    <Text style={{ fontWeight: 'bold' }}>Stock Availability</Text>
+                                    <Switch style={{ marginLeft: 'auto' }} value={stockAvailability} onValueChange={() => setStockAvailability(!stockAvailability)} />
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'space-between', marginVertical: 10 }}>
+                                    <Text style={{ fontWeight: 'bold' }}>Color Availability</Text>
+                                    <Switch style={{ marginLeft: 'auto' }} value={colorAvailability} onValueChange={() => setColorAvailability(!colorAvailability)} />
+                                </View>
+                                {colorField.length > 0 ?
+                                    <View>
+                                        {colorField.map((item, index) => renderColorField(item, index))}
+                                    </View> : null}
+                                <View>
+                                    <View>
+                                        <RNPButton
+                                            mode="outlined"
+                                            uppercase={false}
+                                            disabled={!colorAvailability}
+                                            style={{ marginVertical: 10 }}
+                                            onPress={() => { addColorCustomField() }}>
+                                            <Icon name='plus' />
+                                            <Text>Add color variant</Text>
+                                        </RNPButton>
+                                    </View>
+                                    {sizeField.length > 0 ?
+                                        <View>
+                                            {sizeField.map((item, index) => renderSizeField(item, index))}
+                                        </View> : null}
+                                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'space-between', marginVertical: 10 }}>
+                                        <Text style={{ fontWeight: 'bold' }}>Size Availability</Text>
+                                        <Switch style={{ marginLeft: 'auto' }} value={sizeAvailability} onValueChange={() => setSizeAvailability(!sizeAvailability)} />
+                                    </View>
+
+                                    <RNPButton
+                                        mode="outlined"
+                                        uppercase={false}
+                                        disabled={!sizeAvailability}
+                                        style={{ marginVertical: 10 }}
+                                        onPress={() => { addSizeCustomField() }}>
+                                        <Icon name='plus' />
+                                        <Text>Add size variant</Text>
+                                    </RNPButton>
+                                </View>
                                 <View>
                                     <Textarea
                                         rowSpan={4}
                                         placeholder="Product Description"
+                                        label="Product Description"
                                         style={styles.inputTextarea}
                                         placeholderTextColor="#808080"
                                         underlineColorAndroid='red'
@@ -340,7 +576,8 @@ const ProductInfo = (props) => {
                                     <RNPButton
                                         mode="outlined"
                                         uppercase={false}
-                                        onPress={() => { addCustomField() }}>
+                                        style={{ marginVertical: 10 }}
+                                        onPress={() => { addPropertyCustomField() }}>
                                         <Icon name='plus' />
                                         <Text>Add Property</Text>
                                     </RNPButton>
@@ -435,7 +672,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
@@ -444,7 +681,7 @@ const styles = StyleSheet.create({
         height: 45,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
     },
 
