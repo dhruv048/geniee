@@ -25,7 +25,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import LocationPicker from '../../../components/LocationPicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import _, { set } from 'lodash';
-import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
+import { Title, Button as RNPButton, TextInput, Checkbox, RadioButton } from 'react-native-paper';
 import { customGalioTheme } from '../../../config/themes';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
@@ -37,6 +37,10 @@ const RNFS = require('react-native-fs');
 
 const ProductPreview = (props) => {
     const productData = props.route.params.productInfo;
+
+    productData.size.map((x) => {
+        console.log('This is prodcut from preveri ' + x.size);
+    })
 
     const editProduct = () => {
         props.navigation.goBack();
@@ -120,6 +124,20 @@ const ProductPreview = (props) => {
         )
     }
 
+    const renderSize = (item, index) => {
+        let items = item.toUpperCase();
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <Text style={{marginTop: 20, marginBottom: 10 }}>{items}</Text>
+        </View>
+    }
+
+    const renderColor = (item, index) =>{
+        let items = item.toLowerCase();
+        <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <RadioButton.Android value={null} status='unchecked' color={items} disabled={true} />
+        </View>
+    }
+
     return (
         <Container style={styles.container}>
             <Content style={{ padding: Platform.OS === 'ios' ? 20 : 0 }}>
@@ -160,6 +178,14 @@ const ProductPreview = (props) => {
                                 <Text style={{ fontWeight: 'bold', color: 'red' }}>-{productData.discount}% Off</Text>
                             </View>
                             <Text style={{ color: colors.statusBar }}>Rs. {productData.price - (productData.price * productData.discount) / 100}</Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Color</Text>
+                                {productData.color.map((item,index) => renderColor(item,index))}
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Size</Text>
+                                {productData.size.map((item, index) => renderSize(item, index))}
+                            </View>
                             <View>
                                 <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Description</Text>
                                 <Text style={{ fontSize: 16 }}>{productData.description}</Text>
