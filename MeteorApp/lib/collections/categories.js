@@ -11,6 +11,7 @@ var service = {
     }
 };
 
+Business = new Mongo.Collection('business');
 Service = new Mongo.Collection('service');
 Products = new Mongo.Collection('product');
 
@@ -29,7 +30,7 @@ Products = new Mongo.Collection('product');
 
 Count = new Mongo.Collection('count');
 Categories = new  Mongo.Collection('categories');
-
+BusinessTypes = new  Mongo.Collection('businesstypes');
 MainCategories= new Mongo.Collection('MainCategories');
 // Categories.schema== new SimpleSchema({
 //     name: {type: String},

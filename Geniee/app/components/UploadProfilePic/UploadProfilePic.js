@@ -102,27 +102,27 @@ class UploadProfilePic extends React.Component {
     render() {
 
         return (
-            <View style={{justifyContent:'center', alignItems:'center'}}>
+            <View style={{justifyContent:'center', alignItems:'center', marginTop: 20, marginLeft:20}}>
                 {this.state.user?
                 <TouchableOpacity style={styles.imageView} onPress={() => {
                     this.ActionSheet.show()
                 }}>
                         <Image style={{
-                            width: 150,
-                            height: 150,
+                            width: 75,
+                            height: 75,
                             borderRadius: 75,
                             borderWidth: 3,
-                            // height: 150,
                             justifyContent: `center`,
                             alignSelf: 'center',
                             borderColor: `rgba(87, 150, 252, 1)`,
                             backgroundColor:'white',
                         }} source={this.state.avatarSource? {uri:getProfileImage(this.state.avatarSource)} : require('../../images/user-icon.png')}/>
-                    {this.state.user?
-                    <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 90 }} />:null}
+                    {/* {this.state.user?
+                    <Icon name="camera" color="#4F8EF7" size={25} style={{ position: 'absolute', bottom: 0, left: 90 }} />
+                    :null} */}
 
                 </TouchableOpacity>:
-                    <Image style={{width: 150, height: 150}}
+                    <Image style={{width: 75, height: 75}}
                            source={require('../../images/logo2-trans-640X640.png')} />}
                 {/*<Text style={{fontSize:16,fontWeight:"400",color:'white'}}>WELLCOME</Text>*/}
                 {/*{this.state.user?*/}
@@ -131,8 +131,8 @@ class UploadProfilePic extends React.Component {
                 <ActionSheet
                     ref={o => this.ActionSheet = o}
                     title={'Please select the option'}
-                    options={[<Text style={{color: colors.appLayout}}>Take Picture from Camera</Text>,
-                        <Text style={{color: colors.appLayout}}>Pick Image from Gallery</Text>, 'Cancel']}
+                    options={[<Text style={{color: colors.text_muted}}>Take Picture from Camera</Text>,
+                        <Text style={{color: colors.text_muted}}>Pick Image from Gallery</Text>, 'Cancel']}
                     cancelButtonIndex={2}
                     destructiveButtonIndex={2}
                     onPress={(index) => {
@@ -196,14 +196,14 @@ export default Meteor.withTracker(()=>{
 
 const styles = StyleSheet.create({
     imageView: {
-        alignSelf: `center`,
-        borderColor: `rgba(87, 150, 252, 1)`,
-        borderRadius: 75,
-        borderWidth: 3,
-        height: 150,
-        justifyContent: `center`,
-        marginTop: 50,
-        width: 150
+        // alignSelf: `center`,
+        // borderColor: `rgba(87, 150, 252, 1)`,
+        // borderRadius: 75,
+        // borderWidth: 3,
+        // height: 150,
+        // justifyContent: `center`,
+        // marginTop: 50,
+        // width: 150
     },
     sfe09f185: {
         color: `rgba(87, 150, 252, 1)`,

@@ -48,6 +48,22 @@ import AllProducts from './app/screens/store/AllProducts';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import categoryHandlers from './app/store/services/categories/handlers';
+import AddressDetail from './app/componentsG/Auth/components/AddressDetail';
+import RegisterCompleted from './app/componentsG/Auth/components/RegisterCompleted';
+import BusinessForm from './app/componentsG/Merchant/component/BusinessForm';
+import BusinessDocument from './app/componentsG/Merchant/component/BusinessDocument';
+import BusinessCompleted from './app/componentsG/Merchant/component/BusinessCompleted';
+import MyCart from './app/componentsG/Shopping/components/MyCart';
+import Checkout from './app/componentsG/Shopping/components/Checkout';
+import PaymentMethod from './app/componentsG/Shopping/components/PaymentMethod';
+import OrdersCompleted from './app/componentsG/Shopping/components/OrdersCompleted';
+import MyOrders from './app/componentsG/Shopping/components/MyOrders';
+import ProductInfo from './app/componentsG/ProductInfo/components/ProductInfo';
+import ProductPreview from './app/componentsG/ProductInfo/components/ProductPreview';
+import ProductCompleted from './app/componentsG/ProductInfo/components/ProductCompleted';
+import MyAccount from './app/componentsG/Auth/components/MyAccount';
+import MerchantDashboard from './app/componentsG/Merchant/component/MerchantDashboard';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -71,7 +87,9 @@ export default function Appp({ navigation }) {
         });
         //   Meteor.subscribe('srvicesByLimit', {limit:100,coordinates:[this.initialPosition.coords.longitude||85.312950,this.initialPosition.coords.latitude||27.712020]})
         Meteor.subscribe('categories-list');
-
+        // getting data when app start
+        categoryHandlers.getAllCategories();
+        categoryHandlers.getAllBusinessType();
         Meteor.Accounts.onLogin(async cd => {
             console.log('onLogin');
             Meteor.subscribe('newNotificationCount', deviceId);
@@ -193,7 +211,7 @@ export default function Appp({ navigation }) {
             console.log(JSON.stringify(message));
             let notification = message.notification;
             if (message.data.title == 'REMOVE_AUTH_TOKEN') {
-                
+
             }
             // Create a channel
             const channelId = await notifee.createChannel({
@@ -236,7 +254,7 @@ export default function Appp({ navigation }) {
                 case EventType.PRESS:
                     console.log('User pressed notification', detail.notification);
                     const notificationOpen = detail;
-                    
+
                     if (notificationOpen.notification.data.navigate) {
                         console.log('subscribe & Navigate');
                         // Meteor.subscribe(notificationOpen.notification.data.subscription, notificationOpen.notification.data.Id, (err) => {
@@ -305,6 +323,21 @@ export default function Appp({ navigation }) {
                             <Stack.Screen name='Notification' component={Notification} ></Stack.Screen>
                             <Stack.Screen name='ServiceRatings' component={ServiceRatings} ></Stack.Screen>
                             <Stack.Screen name='SearchResult' component={SearchResult} ></Stack.Screen>
+                            <Stack.Screen name='AddressDetail' component={AddressDetail} ></Stack.Screen>
+                            <Stack.Screen name='RegisterCompleted' component={RegisterCompleted} ></Stack.Screen>
+                            <Stack.Screen name='BecomeSeller' component={BusinessForm} ></Stack.Screen>
+                            <Stack.Screen name='BusinessDocument' component={BusinessDocument}></Stack.Screen>
+                            <Stack.Screen name='BusinessCompleted' component={BusinessCompleted}></Stack.Screen>
+                            <Stack.Screen name='MyCart' component={MyCart} ></Stack.Screen>
+                            <Stack.Screen name='Checkout' component={Checkout} ></Stack.Screen>
+                            <Stack.Screen name='PaymentMethod' component={PaymentMethod} ></Stack.Screen>
+                            <Stack.Screen name='OrdersCompleted' component={OrdersCompleted} ></Stack.Screen>
+                            <Stack.Screen name='MyOrders' component={MyOrders} ></Stack.Screen>
+                            <Stack.Screen name='ProductInfo' component={ProductInfo} ></Stack.Screen>
+                            <Stack.Screen name='ProductPreview' component={ProductPreview} ></Stack.Screen>
+                            <Stack.Screen name='ProductCompleted' component={ProductCompleted} ></Stack.Screen>
+                            <Stack.Screen name='MyAccount' component={MyAccount} ></Stack.Screen>
+                            <Stack.Screen name='MerchantDashboard' component={MerchantDashboard} ></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>

@@ -4,14 +4,15 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
 export const colors = {
   appBackground: '#ffffff',
-  // statusBar: '#4d94ff',
-  statusBar: '#4d94ff',
+   statusBar: '#4d94ff',
+  //statusBar: '#ffffff',
   inputBackground: '#eaf2ff',
   buttonPrimaryBackground: '#4d94ff',
   primaryText: '#4d94ff',
   redText: '#a51822',
   whiteText: '#ffffff',
-  appLayout: '#4d94ff',
+  //appLayout: '#4d94ff',
+  appLayout: '#ffffff',
   primary: '#397CCD',
   warning: '#EFBD6E',
   danger: '#FF7278',
@@ -116,7 +117,7 @@ export const customStyle = StyleSheet.create({
   },
   actionIcon: {
     opacity: 0.75,
-    marginLeft: 21,
+    marginLeft: 15,
     color: '#ffffff',
     fontSize: 20,
     height: 20,
@@ -156,8 +157,8 @@ export const customStyle = StyleSheet.create({
     color: colors.gray_100,
   },
   blockHeaderArrow: {
-    color: '#767676',
-    fontSize: 20,
+    color: colors.statusBar,
+    fontSize: 12,
     fontWeight: '700',
   },
   itemTitle: {
@@ -167,7 +168,7 @@ export const customStyle = StyleSheet.create({
   },
   //product popular
   productContainerStyle: {
-    height: 200,
+    //height: 200,
     // flex: 1,
     borderWidth: 0,
     marginHorizontal: 8,

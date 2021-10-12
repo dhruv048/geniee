@@ -124,7 +124,7 @@ const SideMenu = ({ navigation, loggedUser }) => {
                                 <Text style={[currentRoute == 'MyServices' ? style.selectedTextStyle : style.screenTextStyle]}>My Business</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.navigateToRoute("AddService")}>
+                        <TouchableOpacity onPress={() => navigateToRoute("AddService")}>
                             <View style={[style.screenStyle]}>
                                 <Text
                                     style={[currentRoute == 'AddService' ? style.selectedTextStyle : style.screenTextStyle]}>Create Business/Store</Text>

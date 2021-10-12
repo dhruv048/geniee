@@ -1,131 +1,216 @@
 import { Text, FooterTab, Footer, Button, View, Icon as NBIcon } from "native-base";
-import {ScrollView,StyleSheet,TouchableOpacity,TextInput, Image, Alert} from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
-import React, { createRef } from "react";
-import { colors } from "../config/styles";
+import React, { createRef, useEffect, useState } from "react";
+import { colors, customStyle } from "../config/styles";
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from "react-native-actions-sheet";
 import { Headline, List, } from "react-native-paper";
 import Meteor from "../react-native-meteor";
+import AIcon from 'react-native-vector-icons/AntDesign';
+import CartIcon from "./HeaderIcons/CartIcon";
+import merchantHandlers from "../store/services/merchant/handlers";
+import AddProduct from "../screens/store/AddProduct";
 
-class FooterTabs extends React.PureComponent {
+const FooterTabs = (props) => {
 
-  constructor(props){
-    super(props);
-    this.state={
-      loggedUser: Meteor.user(),
+  const [loggedUser, setLoggedUser] = useState();
+  const [merchantUser, setMerchantUser] = useState(false);
+  const actionSheetRef = createRef();
+  const userLogged = Meteor.user();
+
+  useEffect(() => {
+
+    if (!props.loggedUser) {
+      setLoggedUser(userLogged);
+    } else {
+      setLoggedUser(props.loggedUser);
     }
-    this.actionSheetRef = createRef();
-  };
 
-  componentDidMount(){
-    this.setState({loggedUser:this.props.loggedUser})
-  }
-  componentWillReceiveProps(newProps) {
-    //  this.setState({isLogged: newProps.loggedUser ? true : false})
-      // if (newProps.loggedUser)
-          this.setState({loggedUser: newProps.loggedUser})
-  }
-  getIndex = (routeName) => {
-    return this.props.state.routes.findIndex(route => route.name == routeName)
-}
-  render(){
-   console.log(this.props);
-   const state=this.props.state;
-    return (
-      <Footer style={{ backgroundColor: colors.whiteText, borderTopWidth: 0 }}>
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', backgroundColor: 'white' }}>
-          <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() =>this.props.navigation.navigate('Home')}
-          >
-            <FAIcon name="home" style={{ color: state.index== this.getIndex('Home') ? colors.appLayout : colors.gray_200, }} size={20} ></FAIcon>
-            {state.index== this.getIndex('Home') ?
-              <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Home</Text>
-              : null}
-          </Button >
-          <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => this.props.navigation.navigate( 'Chat')}
-          >
-            <Icon name="mail" style={{ color: state.index== this.getIndex('Chat') ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
-            {state.index== this.getIndex('Chat')?
-              <Text note style={{ color: colors.appLayout, fontSize: 8 }}>Message</Text> : null}
-          </Button>
- {this.state.loggedUser?
-          <View style={{ flex: 1, justifyContent:'center', width:'100%' }}>
-            <Button onPress={() => { this.actionSheetRef.current?.setModalVisible(); }}
-              style={{ alignSelf:'center', justifyContent: 'center', backgroundColor: colors.appLayout, height: 40, width: 40, borderRadius: 20 }} >
-              <Icon name="plus" style={{ color: colors.whiteText }} size={25}></Icon>
-            </Button>
-          </View>:null}
+    merchantHandlers.getBusinessInfo(loggedUser, (res) => {
+      if (res) {
+        setMerchantUser(true);
+      } else {
+        setMerchantUser(false);
+      }
+    })
+  })
 
-          <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => this.props.navigation.navigate( 'WishListEF')}
+  const getIndex = (routeName) => {
+    return props.state.routes.findIndex(route => route.name == routeName)
+  }
+
+  const handleAccount = () => {
+    if (loggedUser)
+      props.navigation.navigate('MyAccount');
+    else
+      props.navigation.navigate('SignIn')
+  }
+  return (
+    <Footer style={{ backgroundColor: colors.whiteText, borderTopWidth: 0 }}>
+      <View style={styles.footerTab}>
+          <View >
+            <Button transparent style={styles.btnTab}
+              onPress={() => props.navigation.navigate('Home')}
+            >
+              <AIcon name="home" style={{ color: props.state.index == getIndex('Home') ? colors.statusBar : colors.gray_200, }} size={25} ></AIcon>
+              {props.state.index == getIndex('Home') ?
+                <Text note style={{ color: colors.statusBar, fontSize: 8 }}>Home</Text> 
+                : <Text note style={{ color: colors.gray_200, fontSize: 8 }}>Home</Text>}
+            </Button >
+          </View> 
+          {/* :
+          <View >
+            <Button transparent style={styles.btnTab}
+              onPress={() => props.navigation.navigate('MerchantDashboard')}
+            >
+              <AIcon name="home" style={{ color: props.state.index == getIndex('MerchantDashboard') ? colors.statusBar : colors.gray_200, }} size={30} ></AIcon>
+              {props.state.index == getIndex('MerchantDashboard') ?
+                <Text note style={{ color: colors.statusBar, fontSize: 8 }}>Dash</Text> 
+                : <Text note style={{ color: colors.gray_200, fontSize: 8 }}>Dash</Text>}
+            </Button >
+          </View>
+        } */}
+        <View>
+          <Button transparent style={styles.btnTab}
+            onPress={() => props.navigation.navigate('Message')}
           >
-            <Icon name="heart" style={{ color: state.index== this.getIndex('WishListEF') ? colors.appLayout : colors.gray_200 }} size={20}></Icon>
-            {state.index== this.getIndex('WishListEF')?
-              <Text note style={{ color: state.index== this.getIndex('WishListEF')? colors.appLayout : colors.gray_200, fontSize: 8 }}>WishList</Text> : null}
-          </Button>
-          <Button transparent style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-            onPress={() => this.props.navigation.navigate('More')}
-          >
-            <Icon name="more-horizontal" style={{ color: state.index== this.getIndex('More')? colors.appLayout : colors.gray_200 }} size={20}></Icon>
-            {state.index== this.getIndex('More')?
-              <Text note style={{ color:state.index== this.getIndex('More')? colors.appLayout :colors.gray_200, fontSize: 8 }}>More</Text> : null}
+            <AIcon name="message1" style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
+            {props.state.index == getIndex('Chat') ?
+              <Text note style={{ fontSize: 9, fontWeight: 'bold' }}>Message</Text> 
+              : <Text note style={{ fontSize: 9, fontWeight: 'bold' }}>Message</Text>}
           </Button>
         </View>
-        <ActionSheet ref={this.actionSheetRef}
-          initialOffsetFromBottom={0.6}
-          statusBarTranslucent
-          bounceOnOpen={true}
-          bounciness={4}
-          gestureEnabled={true}
-          defaultOverlayOpacity={0.3}
-        >
-          <View
-            nestedScrollEnabled={true}
-            style={styles.actionContentView}>
-              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-              <Headline>Create</Headline>
-              <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false)}}/>
-               <Icon  onPress={()=>{this.actionSheetRef.current?.setModalVisible(false)}} name="x" size={25} />
-              </View>
-              <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddService')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
-                <MIcon size={20}  name="briefcase" color={colors.gray_100}/>
-                <Text note style={{marginLeft:25}}>Business</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddService')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
-                <Image style={{height:20,width:20}}  source={require("../images/ic_storefront_black_36dp.png")} />
-                <Text note style={{marginLeft:25}}>Store</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddProduct')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
-                <Image style={{height:20,width:20}}  source={require("../images/ic_store_plus_black_36dp.png")} />
-                <Text note style={{marginLeft:25}}>Product</Text>
-                </TouchableOpacity>
-             <TouchableOpacity onPress={()=>{this.actionSheetRef.current?.setModalVisible(false),this.props.navigation.navigate( 'AddProduct')}} style={{flexDirection:'row' , paddingLeft:20, paddingVertical:10}}>
-                <MIcon size={20}  name="face-agent"  color={colors.gray_100}/>
-                <Text note style={{marginLeft:25}}>Services</Text>
-                </TouchableOpacity>
-             
-            {/*  Add a Small Footer at Bottom */}
-            <View style={styles.footer} />
+          <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 10, }}>
+            <Button onPress={() => { props.navigation.navigate('SearchResult') }}
+              style={styles.searchBtn} >
+              <AIcon name="search1" style={{ color: colors.whiteText }} size={25}></AIcon>
+            </Button>
+          </View> 
+          {/* /* :
+          <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 10, }}>
+            <Button onPress={() => { actionSheetRef.current?.setModalVisible(); }}
+              // <Button onPress={() => {}}
+              style={styles.searchBtn} >
+              <AIcon name="plus" style={{ color: colors.whiteText }} size={25}></AIcon>
+            </Button>
           </View>
-        </ActionSheet>
-      </Footer>
-    );
-  }
+        } */}
+          <View>
+            <CartIcon
+              navigation={props.navigation}
+              style={customStyle.actionIcon}
+            />
+            {/* {props.state.index == getIndex('MyCart') ?
+              <Text style={{ color: colors.statusBar, fontSize: 8, paddingLeft: 15 }}>CART</Text> 
+              : <Text style={{ color:colors.gray_200, fontSize: 8 }}>CART</Text>} */}
+          </View> 
+          {/* :
+          <View>
+            <Button transparent style={styles.btnTab}
+              onPress={() => props.navigation.navigate('MyOrders')}
+            >
+              <Icon name="list" style={{ color: props.state.index == getIndex('MyOrders') ? colors.statusBar : colors.gray_200 }} size={20}></Icon>
+              {props.state.index == getIndex('MyOrders') ?
+                <Text note style={{ color: props.state.index == getIndex('MyOrders') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Account</Text> : <Text note style={{ color: props.state.index == getIndex('MyOrders') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Orders</Text>}
+            </Button>
+          </View>
+        } */}
+        <View>
+          <Button transparent style={styles.btnTab}
+            onPress={() => handleAccount()}
+          >
+            <AIcon name="user" style={{ color: props.state.index == getIndex('MyAccount') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
+            {props.state.index == getIndex('MyAccount') ?
+              <Text note style={{ color: colors.statusBar, fontSize: 8 }}>Account</Text> 
+              : <Text note style={{ color: colors.gray_200, fontSize: 8 }}>Account</Text>}
+          </Button>
+        </View>
+      </View>
+
+      <ActionSheet ref={actionSheetRef}
+        initialOffsetFromBottom={0.6}
+        statusBarTranslucent
+        bounceOnOpen={true}
+        bounciness={4}
+        gestureEnabled={true}
+        defaultOverlayOpacity={0.3}
+      >
+        <View
+          nestedScrollEnabled={true}
+          style={styles.actionContentView}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Headline>Create</Headline>
+            <TouchableOpacity onPress={() => { actionSheetRef.current?.setModalVisible(false) }} />
+            <Icon onPress={() => { actionSheetRef.current?.setModalVisible(false) }} name="x" size={25} />
+          </View>
+          <TouchableOpacity onPress={() => { actionSheetRef.current?.setModalVisible(false), props.navigation.navigate('AddService') }} style={{ flexDirection: 'row', paddingLeft: 20, paddingVertical: 10 }}>
+            <MIcon size={20} name="briefcase" color={colors.gray_100} />
+            <Text note style={{ marginLeft: 25 }}>Business</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { actionSheetRef.current?.setModalVisible(false), props.navigation.navigate('AddService') }} style={{ flexDirection: 'row', paddingLeft: 20, paddingVertical: 10 }}>
+            <Image style={{ height: 20, width: 20 }} source={require("../images/ic_storefront_black_36dp.png")} />
+            <Text note style={{ marginLeft: 25 }}>Store</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { actionSheetRef.current?.setModalVisible(false), props.navigation.navigate('AddProduct') }} style={{ flexDirection: 'row', paddingLeft: 20, paddingVertical: 10 }}>
+            <Image style={{ height: 20, width: 20 }} source={require("../images/ic_store_plus_black_36dp.png")} />
+            <Text note style={{ marginLeft: 25 }}>Product</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { actionSheetRef.current?.setModalVisible(false), props.navigation.navigate('AddProduct') }} style={{ flexDirection: 'row', paddingLeft: 20, paddingVertical: 10 }}>
+            <MIcon size={20} name="face-agent" color={colors.gray_100} />
+            <Text note style={{ marginLeft: 25 }}>Services</Text>
+          </TouchableOpacity>
+
+          {/*  Add a Small Footer at Bottom */}
+          <View style={styles.footer} />
+        </View>
+      </ActionSheet>
+    </Footer>
+  );
 }
 
 export default Meteor.withTracker(() => {
   return {
-      loggedUser: Meteor.user()
+    loggedUser: Meteor.user()
   }
 })(FooterTabs);
 
 const styles = StyleSheet.create({
+  footerTab: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginHorizontal:10
+  },
+
   footer: {
     height: 100,
   },
+
+  btnTab: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+
+  textTab: {
+    color: colors.statusBar,
+    fontSize: 9,
+    fontWeight: 'bold'
+  },
+
+  searchBtn: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.statusBar,
+    height: 60,
+    width: 60,
+    borderRadius: 30
+  },
+
   listItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -166,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     elevation: 5,
     shadowColor: 'black',
-    shadowOffset: {width: 0.3 * 4, height: 0.5 * 4},
+    shadowOffset: { width: 0.3 * 4, height: 0.5 * 4 },
     shadowOpacity: 0.2,
     shadowRadius: 0.7 * 4,
   },

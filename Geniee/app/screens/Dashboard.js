@@ -56,28 +56,9 @@ import FooterTabs from '../components/FooterTab';
 import NotificationIcon from '../components/HeaderIcons/NotificationIcon';
 import CartIcon from '../components/HeaderIcons/CartIcon';
 import {customPaperTheme} from '../config/themes';
+import { MaterialColors } from '../constants/material-colors';
+
 let isDashBoard = true;
-const materialColors = [
-  '#C2185B',
-  '#7B1FA2',
-  '#512DA8',
-  '#303F9F',
-  '#1976D2',
-  '#AFB42B',
-  '#D32F2F',
-  '#0288D1',
-  '#5D4037',
-  '#0097A7',
-  '#FBC02D',
-  '#00796B',
-  '#388E3C',
-  '#F57C00',
-  '#689F38',
-  '#E64A19',
-  '#616161',
-  '#FFA000',
-  '#455A64',
-];
 
 class Dashboard extends Component {
   constructor(props) {
@@ -569,7 +550,7 @@ class Dashboard extends Component {
             <View
               style={[
                 styles.categoriesIcon,
-                {backgroundColor: materialColors[data.index]},
+                {backgroundColor: MaterialColors[data.index]},
               ]}>
               <FAIcon name={item.icon} size={25} />
             </View>
@@ -579,7 +560,7 @@ class Dashboard extends Component {
             style={{
               textAlign: 'center',
               fontWeight: '200',
-              color: materialColors[data.index],
+              color: MaterialColors[data.index],
               fontSize: 10,
             }}>
             {item.mainCategory}
@@ -971,7 +952,7 @@ class Dashboard extends Component {
               paddingTop: 10,
             }}>
             {/*NEARBY SERVICE PROVIDERS LIST START*/}
-            {this.state.nearByservice.length > 0 ? (
+            {this.state.nearByservice === '' ? null :this.state.nearByservice > 0 ? (
               <View style={styles.block}>
                 <View style={customStyle.blockHeader}>
                   <Text style={customStyle.blockTitle}>

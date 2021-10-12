@@ -23,7 +23,7 @@ const UseForgetPasswordForm = () => {
 
     const validateForgetPasswordForm = () => {
         let hasError = false;
-        //const ignorableFields = [];
+        const ignorableFields = ['nothing'];
         // eslint-disable-next-line array-callback-return
         Object.keys(values).map((key) => {
             if (ignorableFields.includes(key)) {

@@ -4,6 +4,8 @@ import { Ratings } from "../../lib/collections/genieeRepair/ratings";
 import { EFProducts } from "../../lib/collections/eatFit/efProducts";
 import { ProductOwner, NotificationTypes, BusinessType } from "../../lib/utils";
 
+const fs = require("fs");
+
 const removeProductsByServiceId = (Id) => {
     let _products = Products.find({ service: Id }).fetch();
     _products.foreach((_product) => {
@@ -14,7 +16,138 @@ const removeProductsByServiceId = (Id) => {
     });
 };
 
+const uploadImage = async (baseImage) => {
+    try {
+        /*path of the folder where your project is saved. (In my case i got it from config file, root path of project).*/
+        const uploadPath = '/home/geniee';
+        //path of folder where you want to save the image.
+        const localPath = `${uploadPath}/images/`;
+        //Find extension of file
+        const ext = baseImage.substring(baseImage.indexOf("/") + 1, baseImage.indexOf(";base64"));
+        const fileType = baseImage.substring("data:".length, baseImage.indexOf("/"));
+        //Forming regex to extract base64 data of file.
+        const regex = new RegExp(`^data:${fileType}\/${ext};base64,`, 'gi');
+        //Extract base64 data.
+        const base64Data = baseImage.replace(regex, "");
+        //Random photo name with timeStamp so it will not overide previous images.
+        const fileName = `${Date.now()}.${ext}`;
+
+        //Check that if directory is present or not.
+        if (!fs.existsSync(`${uploadPath}/images/`)) {
+            fs.mkdirSync(`${uploadPath}/images/`);
+        }
+        if (!fs.existsSync(localPath)) {
+            fs.mkdirSync(localPath);
+        }
+        fs.writeFileSync(localPath + fileName, base64Data, 'base64');
+        return { fileName, localPath };
+
+    } catch (e) {
+        console.log(e)
+        // next(e);
+    }
+};
+
 Meteor.methods({
+    addNewBusiness: async (businessInfo) => {
+        try {
+            var currentUserId = Meteor.userId();
+            var existingMerchantTitle = Business.findOne({ businessName: businessInfo.merchantName });
+            if (existingMerchantTitle) {
+                throw new Meteor.Error('This business is already exist. Please try with other business');
+            }
+            const merchantImage = await uploadImage(businessInfo.merchantImage);
+            const PANImage = await uploadImage(businessInfo.PANImage);
+            const registrationImage = await uploadImage(businessInfo.registrationImage);
+            // let location = {
+            //     geometry: {
+            //         coordinates: [
+            //             serviceInfo.location.geometry.location.lng,
+            //             serviceInfo.location.geometry.location.lat,
+            //         ],
+            //         type: "Point",
+            //         location: {
+            //             lat: serviceInfo.location.geometry.location.lat,
+            //             lng: serviceInfo.location.geometry.location.lng,
+            //         },
+            //     },
+            //     formatted_address: serviceInfo.location.formatted_address,
+            // };
+            let Owner = Meteor.users.findOne({ _id: businessInfo.owner });
+
+            businessInfo.merchantImage = merchantImage ? merchantImage.fileName : '';
+            businessInfo.PANImage = PANImage ? PANImage.fileName : '';
+            businessInfo.registrationImage = registrationImage ? registrationImage.fileName : '';
+
+            businessInfo.createdAt = new Date(new Date().toUTCString());
+            businessInfo.createdBy = currentUserId;
+            businessInfo.coverImage = null;
+            businessInfo.categoryId = '';
+            businessInfo.ratings = [{ count: 0 }];
+            businessInfo.Image = null;
+            businessInfo.isApproved = false;
+            businessInfo.approvedBy = null;
+            businessInfo.approvedDate = null;
+
+            var res = Business.insert(businessInfo);
+            try {
+                FIREBASE_MESSAGING.notificationToAll(
+                    "newBusinessStaging",
+                    `New Business Provider - ${businessInfo.merchantName}`,
+                    businessInfo.merchantName,
+                    {
+                        Id: res,
+                        navigate: "true",
+                        route: "ServiceDetail",
+                    }
+                );
+            } catch (e) {
+                throw new Meteor.Error(403, e.message);
+            }
+            const notification = {
+                title: `New Service by- ${Owner.profile.name}`,
+                description: businessInfo.merchantName,
+                owner: businessInfo.owner,
+                navigateId: res,
+                receiver: [],
+                removedBy: [],
+                type: NotificationTypes.ADD_SERVICE,
+            };
+            Meteor.call("addNotification", notification);
+            return res;
+            // }
+        } catch (e) {
+            console.log(e.message);
+            throw new Meteor.Error(403, e.message);
+        }
+    },
+
+    updateBusiness: (businessId, businessInfo) => {
+        businessInfo.updatedAt = new Date(new Date().toUTCString());
+        Service.update({ _id: businessId }, { $set: businessInfo });
+        // }
+    },
+
+    getBusinessInfo: (loggedUser) => {
+
+        let user;
+        if (loggedUser != null) {
+            user = Business.find({ owner: loggedUser._id }).fetch();
+        }
+        try {
+            if (user) {
+                return Async.runSync(function (done) {
+                    done(null, user);
+                })
+            }
+            else {
+                return false;
+            }
+        } catch (e) {
+            throw new Meteor.Error(403, e.message);
+        }
+    },
+
     addNewService: (serviceInfo) => {
         try {
             console.log("addNewCategory:::=>>>");
@@ -275,6 +408,16 @@ Meteor.methods({
         }
     },
 
+    getAllCategories: function () {
+        var data = Categories.find().fetch();
+        return data;
+    },
+
+    getBusinessType: function () {
+        var data = BusinessTypes.find().fetch();
+        return data;
+    },
+
     updateCallCount: function () {
         try {
             if (Count.find().count() > 0) {
@@ -419,78 +562,62 @@ Meteor.methods({
             productInfo.productOwner = ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId;
-            productInfo.qty = parseInt(productInfo.qty);
-            productInfo.availabeQuantity = parseInt(productInfo.qty);
+            //productInfo.qty = parseInt(productInfo.qty);
+            //productInfo.availabeQuantity = parseInt(productInfo.qty);
             productInfo.price = parseInt(productInfo.price);
             productInfo.discount = parseInt(productInfo.discount);
-            productInfo.radius = parseInt(productInfo.radius);
+            //productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
             let _service = Service.findOne({ _id: productInfo.service });
             let imageIds = [];
             if (productInfo.images) {
-                productInfo.images.forEach((image) => {
-                    let Id =
-                        moment().format("DDMMYYx") +
-                        "." +
-                        image.mime.substr(image.mime.indexOf("/") + 1);
-                    ServiceImage.write(
-                        new Buffer(image.data, "base64"),
+                productInfo.images.forEach(async (image) => {
+                    let Id = await uploadImage(image);
+                    imageIds.push(Id);
+                })
+                // let Id =
+                //     moment().format("DDMMYYx") +
+                //     "." +
+                //     image.mime.substr(image.mime.indexOf("/") + 1);
+
+                productInfo.images = imageIds;
+                console.log("insert");
+                let pId = Products.insert(productInfo);
+                try {
+                    FIREBASE_MESSAGING.notificationToAll(
+                        "newPoductStaging",
+                        // `New Product by - ${_service.title}`,
+                        `New Product by - ${productInfo.productTitle}`,
+                        productInfo.productTitle,
                         {
-                            fileName: Id,
-                            type: image.mime,
-                        },
-                        (err, res) => {
-                            if (err) {
-                                console.log("error", err);
-                            } else {
-                                console.log("res:", res._id);
-                                imageIds.push(res._id);
-                                if (
-                                    productInfo.images.length ===
-                                    imageIds.length
-                                ) {
-                                    productInfo.images = imageIds;
-                                    console.log("insert");
-                                    let pId = Products.insert(productInfo);
-                                    try {
-                                        FIREBASE_MESSAGING.notificationToAll(
-                                            "newPoductStaging",
-                                            `New Product by - ${_service.title}`,
-                                            productInfo.title,
-                                            {
-                                                Id: pId,
-                                                navigate: "true",
-                                                route: "ProductDetail",
-                                                image:
-                                                    productInfo.images[0] || "",
-                                                icon: _service.coverImage || "",
-                                            }
-                                        );
-                                    } catch (e) {
-                                        throw new Meteor.Error(403, e.message);
-                                    }
-                                    const notification = {
-                                        title: `New Product by- ${_service.title}`,
-                                        description: productInfo.title,
-                                        owner: _service.owner,
-                                        navigateId: pId,
-                                        productOwner:
-                                            ProductOwner.REGULAR_USERS,
-                                        receiver: [],
-                                        removedBy: [],
-                                        type: NotificationTypes.ADD_PRODUCT,
-                                    };
-                                    Meteor.call(
-                                        "addNotification",
-                                        notification
-                                    );
-                                    return pId;
-                                }
-                            }
-                        },
-                        (proceedAfterUpload = true)
+                            Id: pId,
+                            navigate: "true",
+                            route: "ProductDetail",
+                            image:
+                                productInfo.images[0] || "",
+                            // icon: _service.coverImage || "",
+                        }
                     );
-                });
+                } catch (e) {
+                    throw new Meteor.Error(403, e.message);
+                }
+                const notification = {
+                    // title: `New Product by- ${_service.title}`,
+                    title: `New Product by- ${productInfo.productTitle}`,
+                    description: productInfo.productTitle,
+                    owner: productInfo.owner,
+                    navigateId: pId,
+                    productOwner:
+                        ProductOwner.REGULAR_USERS,
+                    receiver: [],
+                    removedBy: [],
+                    type: NotificationTypes.ADD_PRODUCT,
+                };
+                Meteor.call(
+                    "addNotification",
+                    notification
+                );
+                return pId;
             } else {
                 productInfo.images = [];
                 console.log("insert");
@@ -498,8 +625,9 @@ Meteor.methods({
                 try {
                     FIREBASE_MESSAGING.notificationToAll(
                         "newPoductStaging",
-                        `New Product by - ${_service.title}`,
-                        productInfo.title,
+                        // `New Product by - ${_service.title}`,
+                        `New Product by - ${productInfo.productTitle}`,
+                        productInfo.productTitle,
                         {
                             Id: pId,
                             navigate: "true",
@@ -510,9 +638,10 @@ Meteor.methods({
                     throw new Meteor.Error(403, e.message);
                 }
                 const notification = {
-                    title: `New Product by- ${_service.title}`,
-                    description: productInfo.title,
-                    owner: _service.owner,
+                    // title: `New Product by- ${_service.title}`,
+                    title: `New Product by- ${productInfo.productTitle}`,
+                    description: productInfo.productTitle,
+                    owner: productInfo.owner,
                     navigateId: pId,
                     productOwner: ProductOwner.REGULAR_USERS,
                     receiver: [],
@@ -529,13 +658,18 @@ Meteor.methods({
     },
 
     updateProduct: (productId, productInfo, imagesToRemove) => {
-        productInfo.qty = parseInt(productInfo.qty);
-        productInfo.availabeQuantity = parseInt(productInfo.qty);
+        //productInfo.qty = parseInt(productInfo.qty);
+        //productInfo.availabeQuantity = parseInt(productInfo.qty);
         productInfo.price = parseInt(productInfo.price);
         productInfo.discount = parseInt(productInfo.discount);
-        productInfo.radius = parseInt(productInfo.radius);
+        //productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
+        productInfo.images.forEach(async (image) => {
+            let Id = await uploadImage(image);
+            imageIds.push(Id);
+        });
+        productInfo.images = imageIds;
         // if (productInfo.images.length < 1) {
         console.log("imagesToRemove", imagesToRemove);
         Products.update(

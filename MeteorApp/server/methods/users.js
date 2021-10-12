@@ -31,7 +31,8 @@ Meteor.methods({
                     createdBy: createdBy,
                     primaryEmail: userInfo.email,
                     email: userInfo.email
-                }
+                },
+                isMerchant: userInfo.isMerchant
             });
         }
         catch (e) {
@@ -42,6 +43,7 @@ Meteor.methods({
     },
 
     'signUpUser': async (userInfo) => {
+        console.log('This is userInfo '+ userInfo.password);
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(userInfo.password, salt);
         console.log(hash);
@@ -76,7 +78,6 @@ Meteor.methods({
                     }
                     , function (err) {
                         let url = Meteor.absoluteUrl() + 'verify-email/' + token;
-                        console.log('Send token Email');
                         Email.send({
                             to: userInfo.email,
                             from: "Geniee",
@@ -85,7 +86,7 @@ Meteor.methods({
                             subject: "Activate your account now!",
                             html: `<h4>Dear ${user.profile.hasOwnProperty('name') ? user.profile.name : `${user.profile.firstName}`},</h4><br>
                             <p>Thank you very much for signing up with Geniee.</p><br>
-                            <p>Please use token : ${token}, to verify your email and complete the registration process.</p><br>
+                            <p>Please <a href="${url}">Click here</a> to verify your email and complete the registration process.</p><br>
                             <p>Questions? Please visit our support system or email us at genieeinfo@gmail.com</p><br/>
                             Regards, <br/>
                             Geniee`,
@@ -96,7 +97,11 @@ Meteor.methods({
                         });
                     });
 
-                done(null,{userId});
+                //return userId;
+
+                return Async.runSync(function (done) {
+                    done(null, userId);
+                })
             }
         });
         }

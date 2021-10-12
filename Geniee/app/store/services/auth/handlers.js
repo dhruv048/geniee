@@ -15,8 +15,9 @@ import { apiUrl } from 'settings';
 import { getExpireDate } from 'helpers';
 import Meteor from '../../../react-native-meteor';
 
-const handleSignIn = ({ email, password }, callBack) => {
+const handleSignIn = (email, password, callBack) => {
   Meteor.loginWithPassword(email, password, (err, res) => {
+    console.log('This is an error '+err);
     if (err) {
       dispatch(wrongEmailPassword());
       callBack(err);
@@ -42,15 +43,15 @@ const handleSignOut = (callBack) => {
   })
 };
 
-const handleSignUp = ({user}, callBack) => {
-  Meteor.signUpUser(user, (err,res) =>{
+const handleSignUp = (user, callBack) => {
+  Meteor.call('signUpUser',user, (err,res) =>{
     if (err) {
       console.log('Please contact administrator.')
       callBack(err);
     } else {
       console.log('SignedUp successfully')
       dispatch(setSignedUp());
-      callBack(true);
+      callBack(res.result);
     }
   })
 };

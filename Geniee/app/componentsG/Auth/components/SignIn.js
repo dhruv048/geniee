@@ -9,6 +9,7 @@ import {
     Keyboard,
     ToastAndroid,
     BackHandler,
+    Image
 } from 'react-native';
 import { Container, Icon as NBIcon } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -34,21 +35,32 @@ const SignIn = ({ actions, navigation }) => {
     const [loading, setLoading] = useState(false);
     const [loadingFB, setLoadingFB] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
+    const [validPassword, setValidPassword] = useState(false);
 
     const passwordInputRef = createRef();
+
     const validInput = overrideConfirm => {
         let valid = true;
 
-        if (email.length === 0 || password.length === 0) {
-            console.log('Empty');
+        if (email.length === 0) {
+            setValidEmail(true);
+            valid = false;
+        } if (password.length === 0){
+            setValidPassword(true);
+            valid = false;
+        }else{
+            setValidEmail(false);
+            setValidPassword(false);
+        }
+        if(!valid){
             ToastAndroid.showWithGravityAndOffset(
-                'Email and password cannot be empty.',
+                'Please fill the login form',
                 ToastAndroid.LONG,
                 ToastAndroid.TOP,
                 0,
                 50,
             );
-            valid = false;
         }
         return valid;
     };
@@ -83,10 +95,10 @@ const SignIn = ({ actions, navigation }) => {
             });
     };
 
-const  handleSignIn = () => {
+    const handleSignIn = () => {
         if (validInput(true)) {
             setLoading(true);
-            authHandlers.handleSignIn({ email, password },(res) =>{
+            authHandlers.handleSignIn(email, password, (res) => {
                 if (res === true) {
                     setLoading(false);
                     ToastAndroid.showWithGravityAndOffset(
@@ -108,7 +120,8 @@ const  handleSignIn = () => {
                     );
                 }
             });
-            
+            //setLoading(false);
+
         }
     }
 
@@ -125,29 +138,9 @@ const  handleSignIn = () => {
                         backgroundColor={colors.appBackground}
                         barStyle="dark-content"
                     />
-                    <View style={{ width: '100%', alignItems: 'flex-end' }}>
-                        <Button mode="text">
-                            <NBIcon
-                                name="close"
-                                size={20}
-                                style={{ color: 'rgba(0, 0, 0, 0.6)' }}
-                            />
-                        </Button>
+                    <View style={styles.logo}>
+                        <Image style={styles.logoImage} source={require('Geniee/app/images/logoApp.png')} />
                     </View>
-                    {/* <Logo /> */}
-                    <Text
-                        style={
-                            (customStyle.topbarLogo,
-                            {
-                                color: colors.primary,
-                                fontSize: 50,
-                                paddingHorizontal: 16,
-                                marginBottom: 39,
-                                marginTop: 71,
-                            })
-                        }>
-                        Geniee
-                    </Text>
 
                     <View style={styles.welcomeText}>
                         <Title style={{ fontSize: 24, marginBottom: 5 }}>Welcome,</Title>
@@ -156,7 +149,6 @@ const  handleSignIn = () => {
                                 fontSize: 16,
                                 color: 'rgba(0,0,0,0.87)',
                                 letterSpacing: 0.15,
-                                marginBottom: 22,
                             }}>
                             Log in to continue
                         </Text>
@@ -168,14 +160,17 @@ const  handleSignIn = () => {
                             placeholder="Email or Mobile No"
                             placeholderTextColor="#808080"
                             keyboardType="email-address"
+                            name="email"
+                            label="Email"
                             value={email}
                             onSubmitEditing={() =>
                                 passwordInputRef.current &&
                                 passwordInputRef.current.focus()
                             }
                             onChangeText={(email) => setEmail(email)}
-                            textContentType={'emailAddress'}
                             style={styles.inputBox}
+                            theme={{ roundness: 6 }}
+                            error={validEmail}
                         />
                         <TextInput
                             mode="outlined"
@@ -184,31 +179,43 @@ const  handleSignIn = () => {
                             right={<TextInput.Icon name="eye" onPress={() => setShowPassword(!showPassword)} />}
                             placeholder="Password"
                             placeholderTextColor="#808080"
-                            iconColor={colors.primary}
-                            iconSize={24}
+                            label="Password"
                             value={password}
                             ref={passwordInputRef}
                             onSubmitEditing={Keyboard.dismiss}
                             onChangeText={password => setPassword(password)}
-                            textContentType={'emailAddress'}
                             style={styles.inputBox}
+                            theme={{ roundness: 6 }}
+                            error={validPassword}
                         />
+                        <View style={{ marginLeft: 'auto' }}>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    navigation.navigate('ForgotPassword')
+                                }>
+                                <Text style={styles.forgotPwdButton}>
+                                    Forgot password?
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
 
                         <Button
                             // round
                             mode="contained"
+                            uppercase={false}
                             color={customGalioTheme.COLORS.PRIMARY}
                             onPress={handleSignIn}
                             style={{
-                                width: '100%',
+                                width: '30%',
+                                height: 45,
+                                marginLeft: '33%',
                                 marginBottom: 28,
-                                paddingVertical: 5,
-                                paddingHorizontal: 15,
+                                borderRadius: 6
                             }}
                             loading={loading}>
-                            LOG IN
+                            <Text style={{ fontSize: 16, color: colors.whiteText }}>Login</Text>
                         </Button>
-                        <Button
+                        {/* <Button
                             // round
                             icon="facebook"
                             mode="outlined"
@@ -234,17 +241,7 @@ const  handleSignIn = () => {
                                 }}>
                                 Continue with Facebook
                             </Text>
-                        </Button>
-                        <View>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    navigation.navigate('ForgotPassword')
-                                }>
-                                <Text style={styles.forgotPwdButton}>
-                                    Forgot your password?
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                        </Button> */}
 
                         <View style={styles.signupCont}>
                             <Text style={styles.signupText}>Don't have an account?</Text>
@@ -291,16 +288,20 @@ const styles = StyleSheet.create({
         width: '100%',
     },
 
+    logo: {
+        marginTop: 40,
+        marginLeft: 10,
+        marginBottom: 40
+      },
+
     inputBox: {
         width: '100%',
-        backgroundColor: colors.transparent,
-        borderRadius: 3.5,
-        paddingHorizontal: 10,
-        fontSize: 16,
+        //backgroundColor: colors.transparent,
+        fontSize: 18,
         color: 'rgba(0, 0, 0, 0.6)',
         marginBottom: 10,
         borderColor: colors.borderColor,
-        height: 54,
+        height: 45,
     },
 
     button: {
@@ -317,10 +318,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     forgotPwdButton: {
-        color: colors.primary,
+        color: colors.statusBar,
         fontSize: 16,
         fontWeight: '400',
-        marginBottom: 15,
+        marginBottom: 25,
     },
 
     signupCont: {
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
     },
 
     welcomeText: {
-        flexGrow: 1,
+        //flexGrow: 1,
         justifyContent: 'flex-start',
         flexDirection: 'column',
         paddingHorizontal: 25,
