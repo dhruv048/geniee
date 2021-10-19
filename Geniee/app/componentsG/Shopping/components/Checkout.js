@@ -46,7 +46,15 @@ const Checkout = (props) => {
         else {
             getCartItems();
         }
+        getShippingAddress();
     }, []);
+
+    const getShippingAddress = () => {
+        setName(props.user.profile.firstName+ ' '+ props.user.profile.lastName);
+        setEmail(props.user.profile.primaryEmail);
+        setAddress(props.user.profile.city);
+        setPhone(props.user.profile.contactNo);
+    }
 
     const updateTotal = (myItems) => {
         // console.log(cartItems);
@@ -100,7 +108,7 @@ const Checkout = (props) => {
     const proceedCheckOut = () => {
         console.log('This is cart Items '+cartItems);
 
-        props.navigation.navigate('PaymentMethod',{data : cartItems});
+        props.navigation.navigate('PaymentMethod',{data : cartItems,totalAmount:finalAmount});
     };
 
     const proceedCheckOut1 = async() => {

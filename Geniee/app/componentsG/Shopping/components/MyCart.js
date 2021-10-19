@@ -19,6 +19,7 @@ import Meteor from '../../../react-native-meteor';
 const MyCart = (props) => {
     const [cartItems, setCartItems] = useState('');
     const [liked, setLiked] = useState(false);
+    const [totalPrice, setTotalPrice] = useState(0);
 
     let cartList = [];
 
@@ -63,10 +64,11 @@ const MyCart = (props) => {
                     product.shippingChage = product.homeDelivery ? (product.shippingChage ? product.shippingChage : 0) : 0;
                     product.shippingPrice = shippingPrice + product.shippingChage;
                     // product.totalPrice = product.totalPrice + Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0))
-                    product.totalPrice = totalPrice + (product.finalPrice * product.orderQuantity) + product.shippingChage;
+                    totalPrice = totalPrice + (product.finalPrice * product.orderQuantity) + product.shippingChage;
                     console.log(shippingPrice, totalPrice);
                 });
-                setCartItems(res.result)
+                setCartItems(res.result);
+                setTotalPrice(totalPrice);
             }
         });
     };
@@ -220,7 +222,7 @@ const MyCart = (props) => {
                     </View>
                     <View style={{flexDirection:'row',marginVertical:10,marginHorizontal:10,justifyContent:'space-between'}}>
                         <Text style={{fontWeight:'bold',fontSize:20}}> Total</Text>
-                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>{cartItems.totalPrice}</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>{totalPrice}</Text>
                     </View>
                     <Button
                         mode='contained'

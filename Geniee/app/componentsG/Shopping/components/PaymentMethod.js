@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, NativeModules, ToastAndroid, Alert, AsyncStorage, Image } from 'react-native';
+import { FlatList, StyleSheet, Text, NativeModules, ToastAndroid, Alert, AsyncStorage, Image, TouchableOpacity } from 'react-native';
 import {
     Container,
     Content,
@@ -22,21 +22,35 @@ import DeviceInfo from 'react-native-device-info'
 import FIcon from 'react-native-vector-icons/Feather';
 import { Button, TextInput } from 'react-native-paper';
 import { customGalioTheme } from '../../../config/themes';
-import {variables, customStyle} from '../../../config/styles';
+import { variables, customStyle } from '../../../config/styles';
+import AIcon from 'react-native-vector-icons/AntDesign';
 
 const paymentMethodList = [
     { id: 1, title: 'Sajilo Pay', subtitle: 'Get 10% off', image: require('Geniee/app/images/sajilopay.png'), icon: 'chevron-right' },
     { id: 2, title: 'E-sewa', subtitle: '', image: require('Geniee/app/images/esewa.png'), icon: 'chevron-right' },
     { id: 3, title: 'Credit/Debit Card', subtitle: '', image: require('Geniee/app/images/creditcard.jpg'), icon: 'chevron-right' },
     { id: 4, title: 'IME Pay', subtitle: '', image: require('Geniee/app/images/imepay.png'), icon: 'chevron-right' },
+    { id: 5, title: 'Cash On Delivery', subtitle: '', image: require('Geniee/app/images/cashondelivery.png'), icon: 'checkcircle' },
 ];
 
 const PaymentMethod = (props) => {
     const orderItems = props.route.params.data;
+    const totalPrice = props.route.params.totalAmount ? props.route.params.totalAmount : 0;
+    const [cashOnDeliverySelected, setCashOnDeliverySelected] = useState(false);
 
     const placeMyOrders = () => {
         console.log('This is cart Items ' + orderItems);
         props.navigation.navigate('OrdersCompleted');
+    };
+
+    const selectPaymentMethod = (paymentTitle) => {
+        if (paymentTitle === "Cash On Delivery") {
+            setCashOnDeliverySelected(true);
+            console.log('Cash On Delivery');
+        } else {
+            setCashOnDeliverySelected(false);
+            console.log('Online Payment option selected');
+        };
     };
 
     const renderItem = (data, index) => {
@@ -49,19 +63,25 @@ const PaymentMethod = (props) => {
                 style={{ width: '100%' }}
             >
                 <Body>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Image square style={{ width: 55, height: 55 }}
-                            source={url} />
-                        <View style={{ marginLeft: 15, marginVertical: 10 }}>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
-                                {payMethod.title}
-                            </Text>
-                            <Text style={{ fontSize: 12, fontWeight: '300', color: 'green' }}>{payMethod.subtitle}</Text>
+                    <TouchableOpacity
+                        onPress={() => { selectPaymentMethod(payMethod.title) }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Image square style={{ width: 55, height: 55 }}
+                                source={url} />
+                            <View style={{ marginLeft: 15, marginVertical: 10 }}>
+                                <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
+                                    {payMethod.title}
+                                </Text>
+                                <Text style={{ fontSize: 12, fontWeight: '300', color: 'green' }}>{payMethod.subtitle}</Text>
+                            </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                 </Body>
                 <Right style={{ alignItems: 'flex-end' }}>
-                    <FIcon name={payMethod.icon} size={30} style={{ marginRight: 12 }} />
+                    {payMethod.title === "Cash On Delivery" ?
+                        <AIcon name={payMethod.icon} size={30} style={{ marginRight: 12, color: cashOnDeliverySelected ? colors.statusBar : "" }} />
+                        :
+                        <FIcon name={payMethod.icon} size={30} style={{ marginRight: 12 }} />}
                 </Right>
             </ListItem>
         );
@@ -110,20 +130,20 @@ const PaymentMethod = (props) => {
                         />
                     </View>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 ,marginBottom:15}}>
+                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, marginBottom: 15 }}>
                         <Text style={{ fontSize: 18, marginTop: 5 }}>Cash on Delivery</Text>
 
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                    </View> */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 30 }}>
                         <Text style={{ fontSize: 18, marginTop: 5 }}>Total</Text>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 5, color: 'blue' }}>Rs.1000 /-</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 5, color: 'blue' }}>Rs.{totalPrice} /-</Text>
                     </View>
                     <View>
                         <Button
                             mode='contained'
                             uppercase={false}
                             style={styles.btnContinue}
-                            onPress={() => { placeMyOrders() }}
+                            onPress={() => placeMyOrders()}
                         >
                             <Text>Place my orders</Text>
                             <FIcon style={{ color: '#ffffff', fontSize: 15, marginTop: 5 }} name="arrow-right" />
