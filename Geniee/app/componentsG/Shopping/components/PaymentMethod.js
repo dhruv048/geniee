@@ -37,13 +37,51 @@ const PaymentMethod = (props) => {
     const orderItems = props.route.params.data;
     const totalPrice = props.route.params.totalAmount ? props.route.params.totalAmount : 0;
     const [cashOnDeliverySelected, setCashOnDeliverySelected] = useState(false);
+    const [paymentType, setPaymentType] = useState('');
 
-    const placeMyOrders = () => {
+    const placeMyOrders = async () => {
         console.log('This is cart Items ' + orderItems);
-        props.navigation.navigate('OrdersCompleted');
+        //prepare for database
+        let Item = orderItems;
+        Item.PaymentType = paymentType;
+
+        Meteor.call('addOrder', Item, async (err, res) => {
+            if (err) {
+                console.log(err.reason);
+                ToastAndroid.showWithGravityAndOffset(
+                    err.reason,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    80,
+                );
+            } else {
+                try {
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Order Made Successfully!!',
+                        ToastAndroid.SHORT,
+                        ToastAndroid.BOTTOM,
+                        0,
+                        50,
+                    );
+                    props.navigation.navigate('OrdersCompleted');
+                }
+                catch (e) {
+                    Meteor.call('removeOrder', res.result);
+                    ToastAndroid.showWithGravityAndOffset(
+                        e.message,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        80,
+                    );
+                }
+            }
+        });
     };
 
     const selectPaymentMethod = (paymentTitle) => {
+        setPaymentType(paymentTitle);
         if (paymentTitle === "Cash On Delivery") {
             setCashOnDeliverySelected(true);
             console.log('Cash On Delivery');

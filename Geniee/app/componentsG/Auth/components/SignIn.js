@@ -101,6 +101,10 @@ const SignIn = ({ actions, navigation }) => {
             authHandlers.handleSignIn(email, password, (res) => {
                 if (res === true) {
                     setLoading(false);
+                    AsyncStorage.setItem(
+                        USER_TOKEN_KEY,
+                        Meteor.getData()._tokenIdSaved,
+                      );
                     ToastAndroid.showWithGravityAndOffset(
                         'Logged In Successfully',
                         ToastAndroid.LONG,

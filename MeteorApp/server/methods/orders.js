@@ -134,7 +134,10 @@ Meteor.methods({
                             }
                         });
                     }
-                    done(null, orderIds);
+                    //done(null, orderIds);
+                    return Async.runSync(function (done) {
+                        done(null, orderIds);
+                    })
                 }
             });
         });

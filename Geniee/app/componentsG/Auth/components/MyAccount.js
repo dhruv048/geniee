@@ -14,6 +14,7 @@ import MIcon from 'react-native-vector-icons/MaterialIcons';
 import AIcon from 'react-native-vector-icons/AntDesign';
 import authHandlers from '../../../store/services/auth/handlers';
 import merchantHandlers from "../../../store/services/merchant/handlers";
+const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 
 const MyAccount = (props) => {
 
@@ -39,7 +40,7 @@ const MyAccount = (props) => {
           })
     }, [])
 
-    const _signOut = () => {
+    const _signOut = async () => {
         Alert.alert(
             'SignOut',
             'Do you want to SignOut?',
@@ -48,7 +49,8 @@ const MyAccount = (props) => {
                     text: 'Yes SignOut',
                     onPress: authHandlers.handleSignOut((res) => {
                         if (res === true) {
-                            props.navigation.navigate('Dashboard');
+                            AsyncStorage.setItem(USER_TOKEN_KEY, '');
+                            props.navigation.navigate('Home');
                         } else {
                             console.log('Please contact administrator.')
                         }
