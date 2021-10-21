@@ -20,16 +20,17 @@ import DeviceInfo from 'react-native-device-info'
 import FIcon from 'react-native-vector-icons/Feather';
 import { Button, TextInput } from 'react-native-paper';
 import { customGalioTheme } from '../../../config/themes';
+import { settings } from '../../../config/settings';
 
 const Checkout = (props) => {
     const [cartItems, setCartItems] = useState('');
     const [total, setTotal] = useState(0);
     const [card, setCard] = useState(true);
     const [paypal, setPaypal] = useState(false);
-    const [name, setName] = useState('Test user');
-    const [email, setEmail] = useState('user@gmail.com');
-    const [phone, setPhone] = useState('1234567890');
-    const [address, setAddress] = useState('Imadol, Lalitpur, Bagmati Province');
+    const [name, setName] = useState('Name');
+    const [email, setEmail] = useState('Email');
+    const [phone, setPhone] = useState('Number');
+    const [address, setAddress] = useState('Address');
     const [disableShipping, setDisableShipping] = useState(true);
     const [disablePicking, setDisablePicking] = useState(true);
     const [shippingCharge, setShippingCharge] = useState(100);
@@ -46,7 +47,15 @@ const Checkout = (props) => {
         else {
             getCartItems();
         }
+        props.user? getShippingAddress():null;
     }, []);
+
+    const getShippingAddress = () => {
+        setName(props.user.profile.firstName+ ' '+ props.user.profile.lastName);
+        setEmail(props.user.profile.primaryEmail);
+        setAddress(props.user.profile.city);
+        setPhone(props.user.profile.contactNo);
+    }
 
     const updateTotal = (myItems) => {
         // console.log(cartItems);
@@ -97,19 +106,19 @@ const Checkout = (props) => {
         });
     }
 
+    // const proceedCheckOut = () => {
+    //     console.log('This is cart Items '+cartItems);
+
+    //     props.navigation.navigate('PaymentMethod',{data : cartItems,totalAmount:finalAmount});
+    // };
+
     const proceedCheckOut = () => {
-        console.log('This is cart Items '+cartItems);
-
-        props.navigation.navigate('PaymentMethod',{data : cartItems});
-    };
-
-    const proceedCheckOut1 = async() => {
         let items = [];
-        if (!name || !phone || !address || !email) {
+        if (name.includes('Name') || phone.includes('Number') || address.includes('Address') || email.includes('Email')) {
             Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
             return true;
         }
-        const userToken=await AsyncStorage.getItem(settings.USER_TOKEN_KEY);
+        const userToken= AsyncStorage.getItem(settings.USER_TOKEN_KEY);
         if(userToken){
             checkout()
         }
@@ -146,7 +155,7 @@ const Checkout = (props) => {
                 {
                     text: 'Yes Checkout', onPress: () => {
                         let items = [];
-                        if (!name || !phone || !address || !email) {
+                        if (name.includes('Name') || phone.includes('Number') || address.includes('Address') || email.includes('Email')) {
                             Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
                             return true;
                         }
@@ -166,9 +175,9 @@ const Checkout = (props) => {
                                     service: item.service || '',
                                     serviceOwner: item.serviceOwner || '',
                                     productImage: item.images[0],
-                                    status: OrderStatus.ORDER_REQUESTED
-                                    // color: item.product.color,
-                                    // size: item.product.size,
+                                    status: OrderStatus.ORDER_REQUESTED,
+                                     color: item.colors,
+                                     size: item.sizes,
                                 };
                                 items.push(product);
                             });
@@ -185,10 +194,10 @@ const Checkout = (props) => {
                             },
                             totalPrice: total,
                             items: items,
-                            deviceId: this.getdeviceId(),
-                            PaymentType: paymentType
+                            deviceId: getdeviceId(),
+                            //PaymentType: paymentType
                         };
-                        this._performOrder(Item);
+                        _performOrder(Item);
                     }
                 },
                 {
@@ -201,40 +210,9 @@ const Checkout = (props) => {
         );
     }
 
-    const _performOrder = async (Item) => {
-        console.log(Item);
-        Meteor.call('addOrder', Item, async (err, res) => {
-            if (err) {
-                console.log(err.reason);
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    80,
-                );
-            } else {
-                try {
-                    ToastAndroid.showWithGravityAndOffset(
-                        'Order Made Successfully!!',
-                        ToastAndroid.SHORT,
-                        ToastAndroid.BOTTOM,
-                        0,
-                        50,
-                    );
-                }
-                catch (e) {
-                    Meteor.call('removeOrder', res.result);
-                    ToastAndroid.showWithGravityAndOffset(
-                        e.message,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        80,
-                    );
-                }
-            }
-        });
+    const _performOrder = (Item) => {
+        console.log('This is order items '+ Item);
+        props.navigation.navigate('PaymentMethod',{data : Item,totalAmount:finalAmount});
     }
     const renderItem = (data, i) => {
         let item = data.item;
@@ -315,9 +293,9 @@ const Checkout = (props) => {
                             disabled={disableShipping}
                             color='#F5F7FF'
                             // style={{width:'90%'}}
-                            placeholder="number"
+                            label="Name"
+                            placeholder="Name"
                             placeholderTextColor='#F5F7FF'
-                            keyboardType="phone-pad"
                             onChangeText={(value) => setName(value)}
                             value={name}
                             style={styles.shippingName}
@@ -327,7 +305,8 @@ const Checkout = (props) => {
                             mode="outlined"
                             disabled={disableShipping}
                             color={customGalioTheme.COLORS.INPUT_TEXT}
-                            placeholder="email"
+                            label="Address"
+                            placeholder="Address"
                             placeholderTextColor='#808080'
                             onChangeText={(value) => setAddress(value)}
                             value={address}
@@ -350,7 +329,8 @@ const Checkout = (props) => {
                             disabled={disablePicking}
                             left={<TextInput.Icon name="phone"/>}
                             color={customGalioTheme.COLORS.INPUT_TEXT}
-                            placeholder="number"
+                            label="Number"
+                            placeholder="Number"
                             placeholderTextColor='#808080'
                             keyboardType="phone-pad"
                             onChangeText={(value) => setPhone(value)}
@@ -363,7 +343,8 @@ const Checkout = (props) => {
                             disabled={disablePicking}
                             left={<TextInput.Icon name="email"/>}
                             color={customGalioTheme.COLORS.INPUT_TEXT}
-                            placeholder="email"
+                            label="Email"
+                            placeholder="Email"
                             placeholderTextColor='#808080'
                             onChangeText={(value) => setEmail(value)}
                             value={email}
@@ -436,7 +417,7 @@ const styles = StyleSheet.create({
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
         fontWeight:'bold',
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginLeft:'15%',
         marginTop: 10,
     },
@@ -445,7 +426,7 @@ const styles = StyleSheet.create({
         height: 25,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 15,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginBottom: 10,
         marginLeft:'18%'
     },
@@ -454,7 +435,7 @@ const styles = StyleSheet.create({
         height: 40,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        backgroundColor: colors.transparent,
+        //backgroundColor: colors.transparent,
         marginTop: 10,
     },
     textField:{ 

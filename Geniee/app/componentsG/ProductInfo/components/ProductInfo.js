@@ -531,15 +531,15 @@ const ProductInfo = (props) => {
                                             <Text>Add color variant</Text>
                                         </RNPButton>
                                     </View>
-                                    {sizeField.length > 0 ?
-                                        <View>
-                                            {sizeField.map((item, index) => renderSizeField(item, index))}
-                                        </View> : null}
+                                    
                                     <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'space-between', marginVertical: 10 }}>
                                         <Text style={{ fontWeight: 'bold' }}>Size Availability</Text>
                                         <Switch style={{ marginLeft: 'auto' }} value={sizeAvailability} onValueChange={() => setSizeAvailability(!sizeAvailability)} />
                                     </View>
-
+                                    {sizeField.length > 0 ?
+                                        <View>
+                                            {sizeField.map((item, index) => renderSizeField(item, index))}
+                                        </View> : null}
                                     <RNPButton
                                         mode="outlined"
                                         uppercase={false}

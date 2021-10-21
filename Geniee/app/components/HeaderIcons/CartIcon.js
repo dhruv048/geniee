@@ -40,8 +40,8 @@ class CartIcon extends PureComponent {
         const {navigation} = this.props;
         return (
             <TouchableOpacity  style={{marginHorizontal:5}}
-                onPress={() => navigation.navigate('CartEF')}
-                //onPress={() => navigation.navigate('MyCart')}
+                // onPress={() => navigation.navigate('CartEF')}
+                onPress={() => navigation.navigate('MyCart')}
             >
                 <AIcon name="shoppingcart" style={{color:colors.gray_200}} size={25} />
                 {this.state.totalCount > 0 ? (
