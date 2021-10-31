@@ -47,7 +47,7 @@ import StarRating from '../components/StarRating/StarRating';
 import Product from '../components/Store/Product';
 import MyFunctions from '../lib/MyFunctions';
 import CogMenu from '../components/CogMenu';
-import SplashScreen from 'react-native-splash-screen';
+import SplashScreen from 'react-native-lottie-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import {getProfileImage} from '../config/settings';
@@ -56,7 +56,7 @@ import FooterTabs from '../components/FooterTab';
 import NotificationIcon from '../components/HeaderIcons/NotificationIcon';
 import CartIcon from '../components/HeaderIcons/CartIcon';
 import {customPaperTheme} from '../config/themes';
-import { MaterialColors } from '../constants/material-colors';
+import {MaterialColors} from '../constants/material-colors';
 
 let isDashBoard = true;
 
@@ -142,10 +142,11 @@ class Dashboard extends Component {
     SplashScreen.hide();
     //
     Meteor.subscribe('aggChatChannels');
-    if (this.props.notificationCount.length > 0)
+    if (this.props.notificationCount.length > 0) {
       this.setState({
         notificationCount: this.props.notificationCount[0].totalCount,
       });
+    }
     Meteor.call('getActiveAdvertises', (err, res) => {
       if (!err) {
         this.setState({Adds: res});
@@ -464,8 +465,11 @@ class Dashboard extends Component {
 
   async updateCounts() {
     let wishList = await AsyncStorage.getItem('myWhishList');
-    if (wishList) wishList = JSON.parse(wishList);
-    else wishList = [];
+    if (wishList) {
+      wishList = JSON.parse(wishList);
+    } else {
+      wishList = [];
+    }
 
     let cartList = await AsyncStorage.getItem('myCart');
     if (cartList) {
@@ -477,11 +481,12 @@ class Dashboard extends Component {
   }
 
   _search = text => {
-    if (this.state.query)
+    if (this.state.query) {
       this.props.navigation.navigate('SearchResult', {
         SearchText: this.state.query,
         Region: this.region,
       });
+    }
   };
 
   _handlItemPress = service => {
@@ -574,13 +579,14 @@ class Dashboard extends Component {
   _getListItem = data => {
     let rowData = data.item;
     let distance;
-    if (rowData.location && rowData.location.geometry)
+    if (rowData.location && rowData.location.geometry) {
       distance = MyFunctions.calculateDistance(
         this.region.latitude,
         this.region.longitude,
         rowData.location.geometry.location.lat,
         rowData.location.geometry.location.lng,
       );
+    }
     // console.log(distance);
     return (
       <View key={data.item._id} style={styles.serviceList}>
@@ -881,9 +887,9 @@ class Dashboard extends Component {
                             <Icon name="heart" style={{ fontSize: 22, color: 'white'}} />
                             {this.state.wishList.length > 0 ? (
                                 <Badge style={{ position: 'absolute', top: 0, right: -7, borderWidth: 2, borderColor: colors.appLayout }}>
-                                     
+
                                     {this.state.wishList.length}
-                                    
+
                                 </Badge>
                             ) : null}
                         </Button> */}
@@ -952,7 +958,8 @@ class Dashboard extends Component {
               paddingTop: 10,
             }}>
             {/*NEARBY SERVICE PROVIDERS LIST START*/}
-            {this.state.nearByservice === '' ? null :this.state.nearByservice > 0 ? (
+            {this.state.nearByservice === '' ? null : this.state.nearByservice >
+              0 ? (
               <View style={styles.block}>
                 <View style={customStyle.blockHeader}>
                   <Text style={customStyle.blockTitle}>
@@ -1060,7 +1067,7 @@ class Dashboard extends Component {
                                   justifyContent: 'center',
                                 }}>
                                 {/* <Icon
-                                                                
+
                                                                     name={'tag'}
                                                                     size={12}
                                                                     color={colors.gray_100}
