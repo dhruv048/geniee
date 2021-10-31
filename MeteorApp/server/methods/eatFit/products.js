@@ -1,6 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import {EFProducts,EFOrder} from "../../../lib/collections/eatFit/efProducts";
-import {ProductOwner} from "../../../lib/utils";
+import {ProductOwner, Business,Product} from "../../../lib/utils";
 import {FIREBASE_MESSAGING} from "../../API/fire-base-admin";
 
 Meteor.methods({
@@ -259,5 +259,32 @@ Meteor.methods({
 
     'removeProductEF':(Id)=>{
         EFProducts.remove(Id);
+    },
+
+    'getStoreCategoriesWise' :(categoryId) =>{
+        try {
+            let subCategoryId = [];
+            let category = Categories.find({_id : categoryId}).fetch();
+            console.log('THis is category: '+category.values);
+            console.log('THis is category: '+category.subCategories);
+
+            category.forEach((item) =>{
+                subCategoryId.push(item.subCategories._id);
+            });
+
+            console.log('This is subcatgoryId: '+subCategoryId);
+            let business = Business.find({selectedCategory :{$in: subCategoryId}}).fetch();
+            console.log('This is business: '+ business);
+
+            return business;
+        }
+        catch (e) {
+            console.log(e.message);
+        }
+    },
+
+    'getproductStoreWise' :(id) =>{
+        let product = Product.find({owner : id}).fetch();
+        return product;
     }
 })

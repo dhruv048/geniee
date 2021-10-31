@@ -407,23 +407,23 @@ const Home = props => {
     props.navigation.navigate('LandingPageEF');
   };
 
-  const gotoBB = () => {
-    props.navigation.navigate('ProductsBB');
-  };
+    const onCategoryClick = (item) => {
+        props.navigation.navigate('StoreList', {categoryId: item._id, title:item.title});
 
-  const renderCategoryItem = (data, index) => {
-    var item = data.item;
-    return (
-      <View>
-        <View key={data.index.toString()} style={styles.containerStyle}>
-          <TouchableOpacity onPress={() => _itemClick(item)}>
-            <Image
-              style={{height: 50, width: 50}}
-              source={{
-                uri: IMAGE_URL + item.image,
-              }}
-            />
-            {/*</View>
+    }
+    const renderCategoryItem = (data, index) => {
+        var item = data.item;
+        return (
+            <View>
+                <View key={data.index.toString()} style={styles.containerStyle}>
+                    <TouchableOpacity onPress={() => onCategoryClick(item)}>
+                        <Image
+                            style={{ height: 50, width: 50 }}
+                            source={{
+                                uri: IMAGE_URL + item.image,
+                            }}
+                        />
+                        {/*</View>
                 </ImageBackground>*/}
           </TouchableOpacity>
         </View>
@@ -756,40 +756,35 @@ const Home = props => {
         </View>
         {/*{loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
 
-        <Content
-          onScroll={_onScroll}
-          style={{
-            width: '100%',
-            flex: 1,
-            paddingTop: 8,
-          }}>
-          {/* GENIEE BANNER */}
-          <View>
-            <View>
-              <Image
-                style={{height: 70, width: '100%'}}
-                source={require('../../../images/geniee_banner.png')}
-              />
-            </View>
-            <View style={{marginHorizontal: 15, marginVertical: 15}}>
-              <RNPButton
-                mode="outlined"
-                uppercase={false}
-                onPress={() => {}}
-                style={{
-                  borderColor: colors.statusBar,
-                  borderWidth: 2,
-                  borderStyle: 'dotted',
-                }}>
-                <Text style={{color: colors.statusBar}}>
-                  Become a Merchant & Sell
-                </Text>
-              </RNPButton>
-            </View>
-            {/*CATEGORIES LIST START*/}
-            {props.categories.length > 0 ? (
-              <View style={[styles.block, {marginVertical: 15}]}>
-                {/* <View style={styles.blockHeader}>
+                <Content
+                    onScroll={_onScroll}
+                    style={{
+                        width: '100%',
+                        flex: 1,
+                        paddingTop: 8,
+                    }}>
+                    {/* GENIEE BANNER */}
+                    <View>
+                        <View>
+                            <Image
+                                style={{ height: 70, width: '100%' }}
+                                source={require('../../../images/geniee_banner.png')}
+                            />
+                        </View>
+                        <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+                            <RNPButton
+                                mode='outlined'
+                                uppercase={false}
+                                onPress={() => { }}
+                                style={{ borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted' }}
+                            >
+                                <Text style={{ color: colors.statusBar }}>Become a Merchant & Sell</Text>
+                            </RNPButton>
+                        </View>
+                        {/*CATEGORIES LIST START*/}
+                        {props.categories ? props.categories.length > 0 ? (
+                            <View style={[styles.block, { marginVertical: 15 }]}>
+                                {/* <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent onPress={() => handleViewAll()}>
                                     <Text style={customStyle.buttonOutlinePrimaryText}>
@@ -797,24 +792,25 @@ const Home = props => {
                                     </Text>
                                 </Button>
                             </View> */}
-                <FlatList
-                  contentContainerStyle={{
-                    marginTop: 10,
-                    paddingBottom: 10,
-                    //   alignItems:'center',
-                    justifyContent: 'space-around',
-                    // flexWrap: 'wrap',
-                    // flexDirection: 'row',
-                  }}
-                  data={categories}
-                  //horizontal={true}
-                  keyExtractor={(item, index) => index.toString()}
-                  // showsHorizontalScrollIndicator={false}
-                  renderItem={renderCategoryItem}
-                  numColumns={5}
-                />
-              </View>
-            ) : null}
+                                <FlatList
+                                    contentContainerStyle={{
+                                        marginTop: 10,
+                                        paddingBottom: 10,
+                                        //   alignItems:'center',
+                                        justifyContent: 'space-around',
+                                        // flexWrap: 'wrap',
+                                        // flexDirection: 'row',
+                                    }}
+                                    data={categories}
+                                    //horizontal={true}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    // showsHorizontalScrollIndicator={false}
+                                    renderItem={renderCategoryItem}
+                                    numColumns={5}
+                                />
+
+                            </View>
+                        ) : null : null}
 
             {/*Deal that might excite you*/}
             {popularProducts.length > 0 ? (

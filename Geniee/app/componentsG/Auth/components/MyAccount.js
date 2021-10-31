@@ -177,7 +177,7 @@ const MyAccount = (props) => {
                                         <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
                                     </View>
                                 </TouchableOpacity>
-                               {isMerchant? 
+                               {isMerchant && merchantUser? 
                                <TouchableOpacity
                                     onPress={() => { props.navigation.navigate('ProductInfo',{data: loggedUser}) }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>

@@ -64,6 +64,8 @@ import ProductPreview from './app/componentsG/ProductInfo/components/ProductPrev
 import ProductCompleted from './app/componentsG/ProductInfo/components/ProductCompleted';
 import MyAccount from './app/componentsG/Auth/components/MyAccount';
 import MerchantDashboard from './app/componentsG/Merchant/component/MerchantDashboard';
+import StoreList from './app/componentsG/stores/StoreList';
+import StoreDetail from './app/componentsG/stores/StoreDetail';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -338,6 +340,8 @@ export default function Appp({ navigation }) {
                             <Stack.Screen name='ProductCompleted' component={ProductCompleted} ></Stack.Screen>
                             <Stack.Screen name='MyAccount' component={MyAccount} ></Stack.Screen>
                             <Stack.Screen name='MerchantDashboard' component={MerchantDashboard} ></Stack.Screen>
+                            <Stack.Screen name='StoreList' component={StoreList} ></Stack.Screen>
+                            <Stack.Screen name='StoreDetail' component={StoreDetail} ></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>
