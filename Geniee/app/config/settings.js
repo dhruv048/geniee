@@ -5,16 +5,16 @@
 let GOOGLE_MAP_API_KEY = 'AIzaSyAYCukDWLUZUbTR8LYshKUXwFPUNQQ9xhY';
 
 
-let API_URL = 'http://192.168.1.118:3000/api/';
-let IMAGE_URL = 'http://192.168.1.118:3000/api/images/';
-let WEB_URL = 'http://192.168.1.118:3000/';
-let METEOR_URL = 'ws://192.168.1.118:3000/websocket';
+// let API_URL = 'http://192.168.1.118:3000/api/';
+// let IMAGE_URL = 'http://192.168.1.118:3000/api/images/';
+// let WEB_URL = 'http://192.168.1.118:3000/';
+// let METEOR_URL = 'ws://192.168.1.118:3000/websocket';
 let IMAGE_URLS = 'http://139.59.59.117/api/files/';
 
-//  let API_URL = "http://api.krishisansaar.com/api/";
-//  let IMAGE_URL = 'http://api.krishisansaar.com/api/images/';
-//  let METEOR_URL = 'ws://api.krishisansaar.com/websocket';
-//  let WEB_URL = "http://api.krishisansaar.com/";
+ let API_URL = "http://api.krishisansaar.com/api/";
+ let IMAGE_URL = 'http://api.krishisansaar.com/api/images/';
+ let METEOR_URL = 'ws://api.krishisansaar.com/websocket';
+ let WEB_URL = "http://api.krishisansaar.com/";
 
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
