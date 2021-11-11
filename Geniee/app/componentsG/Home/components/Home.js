@@ -779,7 +779,7 @@ const Home = props => {
               <RNPButton
                 mode='outlined'
                 uppercase={false}
-                onPress={() => { }}
+                onPress={() => { props.navigation.navigate('BecomeSeller', {data : loggedUser}) }}
                 style={{ borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted' }}
               >
                 <Text style={{ color: colors.statusBar }}>Become a Merchant & Sell</Text>
@@ -802,8 +802,7 @@ const Home = props => {
                     paddingBottom: 10,
                     alignItems:'center',
                     justifyContent: 'space-around',
-                    flexWrap: 'wrap',
-                    flexDirection: 'row',
+                    flexDirection: 'column',
                   }}
                   data={categories}
                   //horizontal={true}
