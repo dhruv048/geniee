@@ -98,6 +98,12 @@ export const ServiceDuration = {
     Yr: 4,
     SQ_Feet: 5,
 };
+
+export const OTPConfig = {
+    SMS_TOKEN : 'v2_W3RXKmhMIH4vzstomppdRcLLVxH.rLCW',
+    SMS_URL : 'http://api.sparrowsms.com/v2/sms'
+}
+
 export default settings;
 export const getProfileImage = (url) => {
 

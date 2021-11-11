@@ -14,6 +14,7 @@ import {
 import { apiUrl } from 'settings';
 import { getExpireDate } from 'helpers';
 import Meteor from '../../../react-native-meteor';
+import {OTPConfig} from '../../../config/settings';
 
 const handleSignIn = (email, password, callBack) => {
   Meteor.loginWithPassword(email, password, (err, res) => {
@@ -44,12 +45,12 @@ const handleSignOut = (callBack) => {
 };
 
 const handleSignUp = (user, callBack) => {
-  Meteor.call('signUpUser',user, (err,res) =>{
-    if (err) {
+  Meteor.call('signUpUser',user, (error,res) =>{
+    if (res.error) {
       console.log('Please contact administrator.')
-      callBack(err);
+      callBack(res.error);
     } else {
-      console.log('SignedUp successfully')
+      console.log('SignedUp successfully' + res.result);
       dispatch(setSignedUp());
       callBack(res.result);
     }
@@ -75,6 +76,17 @@ const changeNewPassword = (email, confirmationcode, password,callBack) => {
     }
   })
 };
+
+const PostSendSMS = (mobileNumber,message,cb) =>{
+  axios({
+    method :'post',
+    url: OTPConfig.SMS_URL,
+    data:{from:'Geniee', token:OTPConfig.SMS_TOKEN, to:mobileNumber, text:message}
+  }).then((response)=>{
+    cb(response);
+  })
+}
+
 
 // axios({
 //   method: 'post',
@@ -197,6 +209,7 @@ export default {
   handleSignUp,
   forgetPassword,
   changeNewPassword,
+  PostSendSMS,
   //handleValidateToken,
   // handleResetActions,
   // handleResetPassword,
