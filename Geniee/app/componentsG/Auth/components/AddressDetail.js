@@ -23,17 +23,31 @@ const AddressDetail = (props) => {
     const [loading, setLoading] = useState(false);
     const [pickLocation, setPickLocation] = useState(false);
     const [location, setLocation] = useState('');
+    const [sendOTPCode, setsendOTPCode] = useState('');
 
     const validateOTPCode = () => {
         // this code will be from API
         let otpValid = false;
-        let otpCode = '123456';
-        if (otpCode != values.OTPCode.value) {
-            setOTPCodeValid(true);
+        let sendOTPCode = '123456';
+        if (sendOTPCode === values.OTPCode.value) {
+            setOTPCodeValid(false);
             otpValid = true;
+        }
+        else{
+            setOTPCodeValid(true);
+            otpValid = false;
         }
         return otpValid;
     }
+
+    const generateOTPCode = () => {
+        const digits = '0123456789';
+        let OTPCode = '';
+        for (let i = 0; i < 6; i++) {
+          OTPCode += digits[Math.floor(Math.random() * 10)];
+        }
+        return OTPCode;
+      };
     //Design Purpose
     // const handleCreateAccount = () => {
     //     props.navigation.navigate('RegisterCompleted',{data:'user'});
@@ -42,7 +56,7 @@ const AddressDetail = (props) => {
         let userData = props.route.params.userData;
         let registerUser='';
         if (!validateAddressDetailForm()) {
-            if (!validateOTPCode()) {
+            if (validateOTPCode()) {
                 //preparing for Database
                 let user = {
                     username: values.contact.value,
@@ -66,10 +80,11 @@ const AddressDetail = (props) => {
                 }
                 setLoading(true);
                 authHandlers.handleSignUp(user, (res) => {
-                    if (!res) {
-                        console.log('result from signup error ' + err.reason);
+                    console.log('Result from register' + res);
+                    if (res.error) {
+                        console.log('result from signup error '+ res.reason);
                         ToastAndroid.showWithGravityAndOffset(
-                            err.reason,
+                            res.reason,
                             ToastAndroid.LONG,
                             ToastAndroid.TOP,
                             0,
@@ -132,7 +147,22 @@ const AddressDetail = (props) => {
         //}
     }
     const getOTPCode = (mobileNumber) => {
-        console.log(mobileNumber);
+        let otpCode = generateOTPCode();
+        let message = 'Your OTP code is '+ otpCode +' for Geniee verification.';
+        if(otpCode && mobileNumber){
+            authHandlers.PostSendSMS(mobileNumber, message, (res =>{
+                if(res){
+                    setsendOTPCode(otpCode);
+                    ToastAndroid.showWithGravityAndOffset(
+                        'OTP Code has been sent to register number.',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
+            }))
+        }
     }
 
     const handleSkipCall = () => {
@@ -164,7 +194,7 @@ const AddressDetail = (props) => {
                                 </RNPButton>
                             </Left>
                             <Right>
-                                <RNPButton
+                                {/* <RNPButton
                                     transparent
                                     uppercase={false}
                                     onPress={() => {
@@ -173,7 +203,7 @@ const AddressDetail = (props) => {
                                     <Text style={{ color: colors.whiteText }}>
                                         Skip
                                     </Text>
-                                </RNPButton>
+                                </RNPButton> */}
                             </Right>
                         </Header>
 
@@ -284,7 +314,7 @@ const AddressDetail = (props) => {
                                             mode='contained'
                                             uppercase={false}
                                             onPress={() => {
-                                                getOTPCode()
+                                                getOTPCode(values.contact.value)
                                             }}
                                             style={{ marginTop: 8, height: 45, borderRadius: 4 }}>
                                             <Text style={{ fontSize: 12, textAlign: 'center' }}>Get OTP</Text>
