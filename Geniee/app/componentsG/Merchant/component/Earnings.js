@@ -75,7 +75,7 @@ const RevenueReport = (props) => {
     )
 }
 
-const MerchantDashboard = (props) => {
+const Earnings = (props) => {
 
     const [totalSale, setTotalSale] = useState(12340);
 
@@ -156,4 +156,4 @@ const styles = StyleSheet.create({
         marginHorizontal: 15
     },
 });
-export default MerchantDashboard;
+export default Earnings;
