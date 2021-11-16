@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import { ProgressViewIOSComponent, Image } from 'react-native';
 import { SliderBox } from "react-native-image-slider-box";
 import productHandlers from "../../../store/services/product/handlers";
+import FIcon from 'react-native-vector-icons/FontAwesome';
 
 const RNFS = require('react-native-fs');
 
@@ -136,8 +137,9 @@ const ProductPreview = (props) => {
     const renderColor = (item, index) => {
         let items = item.colorName.toLowerCase();
         return (
-            <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop:12 }}>
-                <RadioButton.Android value={null} status='checked' color={items} />
+            <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 12 }}>
+                <FIcon name = 'circle' style={{color: items, fontSize:20, marginLeft:15, marginTop:8}}/>
+                {/* <RadioButton.Android value={null} status='checked' color={items} /> */}
             </View>
         )
     }

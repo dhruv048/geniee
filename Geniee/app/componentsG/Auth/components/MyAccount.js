@@ -112,7 +112,7 @@ const MyAccount = (props) => {
                                             <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
                                         </View>
                                     </TouchableOpacity> : <TouchableOpacity
-                                        onPress={() => { props.navigation.navigate('ProductInfo',{loggedUser:loggedUser})}}>
+                                        onPress={() => { props.navigation.navigate('Inventory',{loggedUser:loggedUser})}}>
                                         <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                             <MIcon style={{ fontSize: 20 }} name='playlist-add-check' />
                                             <Text style={{ fontSize: 14, marginLeft: 10 }}>My Inventory</Text>
@@ -129,7 +129,7 @@ const MyAccount = (props) => {
                                 </TouchableOpacity>
                                 <View><Text style={{ fontWeight: 'bold', marginTop: 30, marginBottom: 10 }}>Buy & Selling</Text></View>
                                 {isMerchant ? <TouchableOpacity
-                                    onPress={() => { }}>
+                                    onPress={() => {props.navigation.navigate('Earnings',{loggedUser:loggedUser})}}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='money' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>Earnings</Text>
