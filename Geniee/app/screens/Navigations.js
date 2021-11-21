@@ -11,6 +11,7 @@ import SearchResult from './SearchResult';
 import MyOrders from '../componentsG/Shopping/components/MyOrders';
 import MerchantDashboard from '../componentsG/Merchant/component/MerchantDashboard';
 import MyCart from '../componentsG/Shopping/components/MyCart';
+import MerchantOrder from '../componentsG/Merchant/component/MerchantOrder';
 // import SideMenu from './SideMenu';
 
 const Tab = createBottomTabNavigator();
@@ -29,7 +30,7 @@ export function ButtomTabs() {
 
       {/* Merchant Bottom Tab */}
       <Tab.Screen name="MerchantDashboard" component={MerchantDashboard} />
-      <Tab.Screen name="MyOrders" component={MyOrders} />
+      <Tab.Screen name="MerchantOrder" component={MerchantOrder} />
 
     </Tab.Navigator>
   );

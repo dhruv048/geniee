@@ -779,7 +779,7 @@ const Home = props => {
               <RNPButton
                 mode='outlined'
                 uppercase={false}
-                onPress={() => { props.navigation.navigate('BecomeSeller', {data : loggedUser}) }}
+                onPress={() => { loggedUser ? props.navigation.navigate('BecomeSeller', {data : loggedUser}):  props.navigation.navigate('SignIn') }}
                 style={{ borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted' }}
               >
                 <Text style={{ color: colors.statusBar }}>Become a Merchant & Sell</Text>

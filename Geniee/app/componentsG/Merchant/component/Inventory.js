@@ -120,25 +120,25 @@ const Inventory = (props) => {
         return (
             <ListItem
                 key={product._id}
-                // last={payMethod.length === index + 1}
-                style={{ width: '100%' }}
+            // last={payMethod.length === index + 1}
             >
                 {/* <TouchableOpacity
                         onPress={() => { }}
                     > */}
-                <View style={{ flexDirection: 'row' }}>
-                    <Image
-                        source={{ uri: settings.IMAGE_URLS + product.images[0] }}
-                        style={{
-                            width: undefined, height: 85, width: 80, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
-                        }}
-                    />
-                    <View style={{ marginLeft: 15, marginVertical: 10 }}>
+                <View style={{ flexDirection: 'row',}}>
+                    <View>
+                        <Image
+                            source={{ uri: settings.IMAGE_URLS + product.images[0] }}
+                            style={{
+                                height: 85, width: 80, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
+                            }}
+                        />
+                    </View>
+                    <View style={{ marginLeft: 15, marginVertical: 10, }}>
 
-                            <Text style={{  fontSize: 16, fontWeight: 'bold', color: colors.gray_300 }} numberOfLines={2}> {product.title}
-                            </Text>
-                        
-                        
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.gray_300,width:'90%' }} numberOfLines={2}> 
+                        {product.title}
+                        </Text>
                         <View style={{ flexDirection: 'row' }}>
                             <Text
                                 style={{
@@ -184,7 +184,7 @@ const Inventory = (props) => {
                             </RNPButton>
                         </Header>
                         <View style={styles.content}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Your Listed Product</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', marginHorizontal: 15 }}>Your Listed Product</Text>
                             <View>
                                 <FlatList
                                     data={productList}
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     content: {
         backgroundColor: colors.appBackground,
         flex: 1,
-        marginHorizontal: 15,
+        //marginHorizontal: 15,
         marginVertical: 15
     },
 })
