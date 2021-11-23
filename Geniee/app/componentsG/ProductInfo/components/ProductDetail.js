@@ -35,6 +35,7 @@ import productHandlers from "../../../store/services/product/handlers";
 import Meteor from '../../../react-native-meteor';
 import { FlatList } from 'react-native-gesture-handler';
 import Product from '../../../components/Store/Product';
+import FIcon from 'react-native-vector-icons/FontAwesome';
 
 const RNFS = require('react-native-fs');
 
@@ -92,12 +93,13 @@ const ProductDetail = (props) => {
     const [selectedSize, setSelectedSize] = useState('');
     const [similarProducts, setSimilarProducts] = useState([]);
     const [question, setQuestion] = useState('');
+    const [colorIndex, setColorIndex] = useState();
+    const [sizeIndex, setSizeIndex] = useState();
 
     const [liked, setLiked] = useState(0);
 
     useEffect(async () => {
         //get the product with id of this.props.product.id from your server
-        debugger;
         let productId = props.route.params.Id;
         let _product = props.route.params.data;
         _product = productTest;//using for Testing
@@ -115,7 +117,6 @@ const ProductDetail = (props) => {
                 if (err) {
                     console.log('this is due to error. ' + err);
                 } else {
-                    console.log(res);
                     productId = res._id;
                     setProductData(_product);
                     setLiked(wishList.includes(_product._id) ? true : false)
@@ -139,54 +140,74 @@ const ProductDetail = (props) => {
 
     const orderNow = () => {
         let product = productData;
-        product['orderQuantity'] = quantity;
-        product['color'] = selectedColor ? selectedColor : productData.colors[0];
-        product['size'] = selectedSize ? selectedSize : product.sizes[0];
-        product['finalPrice'] = Math.round(
-            productData.price -
-            (productData.discount
-                ? productData.price * (productData.discount / 100)
-                : 0),
-        );
-        props.navigation.navigate('CheckoutEF', { productOrder: product });
+        if (selectedColor === '' && selectedSize === '') {
+            ToastAndroid.showWithGravityAndOffset(
+                'Please select favourite color and size !',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
+        } else {
+            product['orderQuantity'] = quantity;
+            product['color'] = selectedColor ? selectedColor : productData.color[0];
+            product['size'] = selectedSize ? selectedSize : product.size[0];
+            product['finalPrice'] = Math.round(
+                productData.price -
+                (productData.discount
+                    ? productData.price * (productData.discount / 100)
+                    : 0),
+            );
+            props.navigation.navigate('Checkout', { productOrder: product });
+        }
     }
 
     const addToCart = async () => {
         var product = productData;
-        product['orderQuantity'] = quantity;
-        product['color'] = selectedColor ? selectedColor : productData.colors[0];
-        product['size'] = selectedSize ? selectedSize : product.sizes[0];
-        // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
-        let cartList = await AsyncStorage.getItem('myCart');
-        let cartItem = {
-            id: product._id,
-            orderQuantity: product.orderQuantity,
-            color: product.color,
-            size: product.size,
-        };
-        if (cartList) {
-            cartList = JSON.parse(cartList);
+        if (selectedColor === '' && selectedSize === '') {
+            ToastAndroid.showWithGravityAndOffset(
+                'Please select favourite color and size !',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
         } else {
-            cartList = [];
+            product['orderQuantity'] = quantity;
+            product['color'] = selectedColor ? selectedColor : productData.color[0];
+            product['size'] = selectedSize ? selectedSize : productData.size[0];
+            // product['finalPrice'] = Math.round(this.state.product.price - (this.state.product.price * (this.state.product.discount / 100)));
+            let cartList = await AsyncStorage.getItem('myCart');
+            let cartItem = {
+                id: product._id,
+                orderQuantity: product.orderQuantity,
+                color: product.color,
+                size: product.size,
+            };
+            if (cartList) {
+                cartList = JSON.parse(cartList);
+            } else {
+                cartList = [];
+            }
+            let index = cartList.findIndex(item => {
+                return item.id == product._id;
+            });
+            if (index > -1) {
+                cartList.splice(index, 1);
+                cartList.push(cartItem);
+            } else {
+                cartList.push(cartItem);
+            }
+            ToastAndroid.showWithGravityAndOffset(
+                'Product added to your cart !',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
+            AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+            EventRegister.emit('cartItemsChanged', 'it works!!!')
         }
-        let index = cartList.findIndex(item => {
-            return item.id == product._id;
-        });
-        if (index > -1) {
-            cartList.splice(index, 1);
-            cartList.push(cartItem);
-        } else {
-            cartList.push(cartItem);
-        }
-        ToastAndroid.showWithGravityAndOffset(
-            'Product added to your cart !',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-            0,
-            50,
-        );
-        AsyncStorage.setItem('myCart', JSON.stringify(cartList));
-        EventRegister.emit('cartItemsChanged', 'it works!!!')
     }
 
     const addToWishlist = async () => {
@@ -246,10 +267,12 @@ const ProductDetail = (props) => {
         return (
             <TouchableOpacity onPress={() => {
                 setSelectedSize(items);
+                setSizeIndex(index);
+                console.log('selected size: ' + items);
             }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft: 10 }}>
-                <Text style={{ marginTop: 20, marginBottom: 10 }}>{items}</Text>
-            </View>
+                <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft: 15, marginTop: 20, marginBottom: 10 }}>
+                    <Text style={{ fontWeight: index == sizeIndex ? 'bold' : null, fontSize: index == sizeIndex ? 18 : null }}>{items}</Text>
+                </View>
             </TouchableOpacity>
         )
     }
@@ -257,9 +280,15 @@ const ProductDetail = (props) => {
     const renderColor = (item, index) => {
         let items = item.colorName.toLowerCase();
         return (
-            <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 12 }}>
-                <RadioButton.Android value={null} status='checked' color={items} />
-            </View>
+            <TouchableOpacity onPress={() => {
+                setSelectedColor(items);
+                setColorIndex(index);
+                console.log('selected color: ' + items);
+            }}>
+                <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 12, marginLeft: 15, marginTop: 20 }}>
+                    <FIcon name='circle' style={{ color: items, fontSize: index == colorIndex ? 25 : 20 }} />
+                </View>
+            </TouchableOpacity>
         )
     }
 
@@ -298,7 +327,7 @@ const ProductDetail = (props) => {
                                     props.navigation.goBack();
                                 }}>
                                 <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                {/* <Text style={{ color: colors.whiteText, fontSize: 20 }}>Product Preview</Text> */}
+                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
                             </RNPButton>
                         </Header>
                         <View style={styles.containerRegister}>
@@ -317,14 +346,20 @@ const ProductDetail = (props) => {
                                 <Text style={{ fontWeight: 'bold', color: 'red' }}>-{productData.discount}% Off</Text>
                             </View>
                             <Text style={{ color: colors.statusBar }}>Rs. {productData.price - (productData.price * productData.discount) / 100}</Text>
+                            <View style={{ flexDirection: 'row', marginTop: 20, marginBottom: 10 }}>
+                                <Text style={{ fontWeight: 'bold', }}>Quantity : </Text>
+                                <Icon name='minus' onPress={() => { quantity > 1 ? setQuantity(quantity - 1) : null }} style={{ fontSize: 20, marginHorizontal: 15 }} />
+                                <Text>{quantity}</Text>
+                                <Icon name='plus' onPress={() => { setQuantity(quantity + 1) }} style={{ fontSize: 20, marginHorizontal: 15 }} />
+                            </View>
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Color : </Text>
                                 {productData.color && productData.color.length > 0 ? productData.color.map((item, index) => renderColor(item, index)) : <Text>N/A</Text>}
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Icon style={{ fontSize: 14, marginTop:5 }} name='star'/>
-                                <Text style={{fontWeight:'bold'}}>3.5</Text>
-                                <Text style={{fontSize:14, marginBottom: 10 }}>(12.5k)Ratings </Text>
+                                <Icon style={{ fontSize: 14, marginTop: 5 }} name='star' />
+                                <Text style={{ fontWeight: 'bold' }}>3.5</Text>
+                                <Text style={{ fontSize: 14, marginBottom: 10 }}>(12.5k)Ratings </Text>
 
                             </View>
                             <View style={{ flexDirection: 'row' }}>
@@ -422,7 +457,7 @@ const ProductDetail = (props) => {
                                 <RNPButton
                                     mode="contained"
                                     uppercase={false}
-                                    style={{ width: '50%', marginLeft: '25%', marginBottom: 15 }}
+                                    style={{ width: '50%', marginLeft: '25%', marginBottom: 15, borderRadius: 4 }}
                                     onPress={() => { }}>
                                     <Text style={{ fontSize: 14, color: colors.whiteText }}>
                                         Post question
@@ -443,8 +478,8 @@ const ProductDetail = (props) => {
                                         contentContainerStyle={styles.mainContainer}
                                         data={similarProducts}
                                         keyExtracter={(item, index) => item._id}
-                                       //horizontal={false}
-                                         numColumns={3}
+                                        //horizontal={false}
+                                        numColumns={3}
                                         renderItem={(item, index) =>
                                             _renderProduct(item, index)
                                         }

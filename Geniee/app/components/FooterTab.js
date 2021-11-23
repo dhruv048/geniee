@@ -47,84 +47,77 @@ const FooterTabs = (props) => {
     else
       props.navigation.navigate('SignIn')
   }
+
+  const handleDashboard = () => {
+    if(merchantUser){
+      props.navigation.navigate('MerchantDashboard')
+    }else{
+      props.navigation.navigate('Home')
+    }
+  }
+
+  const handleCartOrder = () => {
+    props.navigation.navigate('MerchantOrder');
+  }
+
   return (
     <Footer style={{ backgroundColor: colors.whiteText, borderTopWidth: 0 }}>
       <View style={styles.footerTab}>
-          <View >
-            <Button transparent style={styles.btnTab}
-              onPress={() => props.navigation.navigate('Home')}
-            >
-              <AIcon name="home" style={{ color: props.state.index == getIndex('Home') ? colors.statusBar : colors.gray_200, }} size={25} ></AIcon>
-              {props.state.index == getIndex('Home') ?
-                <Text note style={{ color: colors.statusBar, fontSize: 8 }}>Home</Text> 
-                : <Text note style={{ color: colors.gray_200, fontSize: 8 }}>Home</Text>}
-            </Button >
-          </View> 
-          {/* :
-          <View >
-            <Button transparent style={styles.btnTab}
-              onPress={() => props.navigation.navigate('MerchantDashboard')}
-            >
-              <AIcon name="home" style={{ color: props.state.index == getIndex('MerchantDashboard') ? colors.statusBar : colors.gray_200, }} size={30} ></AIcon>
-              {props.state.index == getIndex('MerchantDashboard') ?
-                <Text note style={{ color: colors.statusBar, fontSize: 8 }}>Dash</Text> 
-                : <Text note style={{ color: colors.gray_200, fontSize: 8 }}>Dash</Text>}
-            </Button >
-          </View>
-        } */}
+        <View >
+          <Button transparent style={styles.btnTab}
+            onPress={() => handleDashboard()}
+          >
+            <AIcon name="home" style={{ color: props.state.index == getIndex('Home') || props.state.index == getIndex('MerchantDashboard') ? colors.statusBar : colors.gray_200, }} size={25} ></AIcon>
+            {merchantUser ?
+              <Text note style={{ color: props.state.index == getIndex('MerchantDashboard') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Dash</Text>
+              :
+              <Text note style={{ color: props.state.index == getIndex('Home') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Home</Text>
+            }
+          </Button >
+        </View>
         <View>
           <Button transparent style={styles.btnTab}
             onPress={() => props.navigation.navigate('Message')}
           >
             <AIcon name="message1" style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
-            {props.state.index == getIndex('Chat') ?
-              <Text note style={{ fontSize: 9, fontWeight: 'bold' }}>Message</Text> 
-              : <Text note style={{ fontSize: 9, fontWeight: 'bold' }}>Message</Text>}
+              <Text note style={{color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200, fontSize: 8}}>Message</Text>
           </Button>
         </View>
-          <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 10, }}>
-            <Button onPress={() => { props.navigation.navigate('SearchResult') }}
-              style={styles.searchBtn} >
-              <AIcon name="search1" style={{ color: colors.whiteText }} size={25}></AIcon>
-            </Button>
-          </View> 
-          {/* /* :
-          <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 10, }}>
-            <Button onPress={() => { actionSheetRef.current?.setModalVisible(); }}
-              // <Button onPress={() => {}}
+        <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 10, }}>
+          {merchantUser ?
+            <Button onPress={() => { props.navigation.navigate('ProductInfo') }}
               style={styles.searchBtn} >
               <AIcon name="plus" style={{ color: colors.whiteText }} size={25}></AIcon>
             </Button>
-          </View>
-        } */}
+            :
+            <Button onPress={() => { props.navigation.navigate('SearchResult') }}
+              style={styles.searchBtn} >
+              <AIcon name="search1" style={{ color: colors.whiteText }} size={25}></AIcon>
+            </Button>}
+        </View>
+        {!merchantUser ?
           <View>
             <CartIcon
               navigation={props.navigation}
               style={customStyle.actionIcon}
             />
-            {/* {props.state.index == getIndex('MyCart') ?
-              <Text style={{ color: colors.statusBar, fontSize: 8, paddingLeft: 15 }}>CART</Text> 
-              : <Text style={{ color:colors.gray_200, fontSize: 8 }}>CART</Text>} */}
-          </View> 
-          {/* :
+          </View>
+          :
           <View>
             <Button transparent style={styles.btnTab}
-              onPress={() => props.navigation.navigate('MyOrders')}
+              onPress={() => handleCartOrder()}
             >
-              <Icon name="list" style={{ color: props.state.index == getIndex('MyOrders') ? colors.statusBar : colors.gray_200 }} size={20}></Icon>
-              {props.state.index == getIndex('MyOrders') ?
-                <Text note style={{ color: props.state.index == getIndex('MyOrders') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Account</Text> : <Text note style={{ color: props.state.index == getIndex('MyOrders') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Orders</Text>}
+              <Icon name="list" style={{ color: props.state.index == getIndex('MerchantOrder') ? colors.statusBar : colors.gray_200 }} size={20}></Icon>
+              <Text note style={{ color: props.state.index == getIndex('MerchantOrder') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Orders</Text>
             </Button>
           </View>
-        } */}
+        }
         <View>
           <Button transparent style={styles.btnTab}
             onPress={() => handleAccount()}
           >
             <AIcon name="user" style={{ color: props.state.index == getIndex('MyAccount') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
-            {props.state.index == getIndex('MyAccount') ?
-              <Text note style={{ color: colors.statusBar, fontSize: 8 }}>Account</Text> 
-              : <Text note style={{ color: colors.gray_200, fontSize: 8 }}>Account</Text>}
+            <Text note style={{ color: props.state.index == getIndex('MyAccount') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Account</Text>
           </Button>
         </View>
       </View>
@@ -183,7 +176,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'white',
-    marginHorizontal:10
+    marginHorizontal: 10
   },
 
   footer: {
