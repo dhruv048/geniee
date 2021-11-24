@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator,Image } from 'react-native';
 import styles from './styles';
 import PropTypes from 'prop-types';
 import {colors} from "../../config/styles";
@@ -7,12 +7,16 @@ import {colors} from "../../config/styles";
 const Loading = (props) => {
   return (
     <View style={styles.container}>
-      <ActivityIndicator
+      {/* <ActivityIndicator
           animating
           size={props.size}
           {...props}
           color={colors.appLayout}
-      />
+      /> */}
+      <Image
+      style={{height:40,width:40}}
+        source={require('../../images/loading.gif')}
+       />
     </View>
   );
 };
