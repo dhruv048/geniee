@@ -45,39 +45,40 @@ const PaymentMethod = (props) => {
         let Item = orderItems;
         Item.PaymentType = paymentType;
 
-        Meteor.call('addOrder', Item, async (err, res) => {
-            if (err) {
-                console.log(err.reason);
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    80,
-                );
-            } else {
-                try {
-                    ToastAndroid.showWithGravityAndOffset(
-                        'Order Made Successfully!!',
-                        ToastAndroid.SHORT,
-                        ToastAndroid.BOTTOM,
-                        0,
-                        50,
-                    );
-                    props.navigation.navigate('OrdersCompleted');
-                }
-                catch (e) {
-                    Meteor.call('removeOrder', res.result);
-                    ToastAndroid.showWithGravityAndOffset(
-                        e.message,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        80,
-                    );
-                }
-            }
-        });
+        // Meteor.call('addOrder', Item, async (err, res) => {
+        //     if (err) {
+        //         console.log(err.reason);
+        //         ToastAndroid.showWithGravityAndOffset(
+        //             err.reason,
+        //             ToastAndroid.LONG,
+        //             ToastAndroid.TOP,
+        //             0,
+        //             80,
+        //         );
+        //     } else {
+        //         try {
+        //             ToastAndroid.showWithGravityAndOffset(
+        //                 'Order Made Successfully!!',
+        //                 ToastAndroid.SHORT,
+        //                 ToastAndroid.BOTTOM,
+        //                 0,
+        //                 50,
+        //             );
+                    
+        //         }
+        //         catch (e) {
+        //             Meteor.call('removeOrder', res.result);
+        //             ToastAndroid.showWithGravityAndOffset(
+        //                 e.message,
+        //                 ToastAndroid.LONG,
+        //                 ToastAndroid.TOP,
+        //                 0,
+        //                 80,
+        //             );
+        //         }
+        //     }
+        // });
+        props.navigation.navigate('OrdersCompleted');
     };
 
     const selectPaymentMethod = (paymentTitle) => {
@@ -104,9 +105,9 @@ const PaymentMethod = (props) => {
                     <TouchableOpacity
                         onPress={() => { selectPaymentMethod(payMethod.title) }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image square style={{ width: 55, height: 55 }}
+                            <Image square style={{ width: 40, height: 40 }}
                                 source={url} />
-                            <View style={{ marginLeft: 15, marginVertical: 10 }}>
+                            <View style={{ marginLeft: 15, marginVertical: 5 }}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
                                     {payMethod.title}
                                 </Text>

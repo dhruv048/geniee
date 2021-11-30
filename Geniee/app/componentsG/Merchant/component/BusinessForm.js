@@ -71,7 +71,7 @@ const BusinessForm = (props) => {
         }
 
         delete location.address_components;
-        setLocation(location);
+        setLocation(location.formatted_address);
         handleInputChange('district', district.long_name);
         handleInputChange('city', city.long_name)
         setPickLocation(false);

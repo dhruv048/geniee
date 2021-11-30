@@ -137,13 +137,13 @@ const MyCart = (props) => {
                 >
                     <View style={styles.lstItem}>
                         <Thumbnail square style={{ width: 80, height: 80, borderRadius: 4 }}
-                            source={{ uri: settings.IMAGE_URL + item.images[0] }} />
+                            source={{ uri: settings.IMAGE_URLS + item.images[0] }} />
                         <View style={{ marginLeft: 15 }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                                 <Text style={{ fontSize: 10 }}> From Chaudhary Group</Text>
                                 <TouchableOpacity
                                     transparent
-                                    style={{ marginLeft: 130 }}
+                                    style={{ marginLeft: 85 }}
                                     onPress={() => removeItemPressed(data.item)}>
                                     <FIcon name='x-circle' size={15} style={{ color: 'red' }} />
                                 </TouchableOpacity>
