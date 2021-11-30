@@ -86,6 +86,7 @@ const Home = props => {
   const [popularProducts, setPopularProducts] = useState([]);
   const [isActionButtonVisible, setIsActionButtonVisible] = useState(true);
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
+  const [currentLocation, setCurrentLocation] = useState('N/A');
 
   const [resturants, setResturants] = useState([
     {
@@ -239,6 +240,8 @@ const Home = props => {
       }
     });
 
+    //Getting current Location
+    fetchAddress();
     //Store All Catefories
     // Meteor.subscribe('categories-list', () => {
     //     //console.log(MainCategories)
@@ -253,6 +256,34 @@ const Home = props => {
     //     }
     // });
   }, []);
+
+  const fetchAddress = () => {
+    let currentLocation = 'N/A';
+    fetch("https://maps.googleapis.com/maps/api/geocode/json?address=" + region.latitude + "," + region.longitude + "&key=" + settings.GOOGLE_MAP_API_KEY)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson)
+        const userLocation = responseJson.results[0];
+        handleOnLocationSelect(userLocation);
+      });
+  };
+
+  const handleOnLocationSelect = (location) => {
+    let city = '';
+    for (var i = 0; i < location.address_components.length; i++) {
+        for (var b = 0; b < location.address_components[i].types.length; b++) {
+
+            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+            if (location.address_components[i].types[b] == "locality") {
+                //this is the object you are looking for
+                city = location.address_components[i];
+            }
+        }
+    }
+
+    delete location.address_components;
+    setCurrentLocation(city.long_name);
+}
 
   const _fetchNearByServices = () => {
     console.log('_fetchNearByServices');
@@ -565,7 +596,7 @@ const Home = props => {
           style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
           <View style={{ width: '100%', borderRadius: 5 }}>
             <Image
-              source={{ uri: settings.IMAGE_URL + item.images[0] }}
+              source={{ uri: IMAGE_URL + item.images[0] }}
               style={{
                 flex: 1,
                 width: undefined,
@@ -649,7 +680,7 @@ const Home = props => {
           style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
           <View style={{ width: '100%', borderRadius: 5 }}>
             <Image
-              source={{ uri: settings.IMAGE_URL + item.images[0] }}
+              source={{ uri: IMAGE_URL + item.images[0] }}
               style={{
                 flex: 1,
                 width: undefined,
@@ -753,7 +784,7 @@ const Home = props => {
                     marginRight: 8,
                   }}
                 />
-                <Text style={{ fontSize: 15 }}>Kathmandu</Text>
+                <Text style={{ fontSize: 15 }}>{currentLocation}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -779,7 +810,7 @@ const Home = props => {
               <RNPButton
                 mode='outlined'
                 uppercase={false}
-                onPress={() => { loggedUser ? props.navigation.navigate('BecomeSeller', {data : loggedUser}):  props.navigation.navigate('SignIn') }}
+                onPress={() => { loggedUser ? props.navigation.navigate('BecomeSeller', { data: loggedUser }) : props.navigation.navigate('SignIn') }}
                 style={{ borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted' }}
               >
                 <Text style={{ color: colors.statusBar }}>Become a Merchant & Sell</Text>
@@ -800,7 +831,7 @@ const Home = props => {
                   contentContainerStyle={{
                     marginTop: 10,
                     paddingBottom: 10,
-                    alignItems:'center',
+                    alignItems: 'center',
                     justifyContent: 'space-around',
                     flexDirection: 'column',
                   }}
@@ -968,7 +999,7 @@ const Home = props => {
                           square
                           source={
                             item.coverImage
-                              ? { uri: settings.IMAGE_URL + item.coverImage }
+                              ? { uri: IMAGE_URL + item.coverImage }
                               : require('../../../images/no-image.png')
                           }
                         />
@@ -1348,7 +1379,7 @@ const styles = StyleSheet.create({
     borderColor: '#808080',
     borderWidth: 0,
     //elevation: 5,
-    width: (viewportWidth-60)/5,
+    width: (viewportWidth - 60) / 5,
     width: 55,
     margin: 7,
     height: 50,

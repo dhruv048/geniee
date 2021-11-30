@@ -1,5 +1,5 @@
 import { Container, Content, Header,Left,Right } from 'native-base';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard, View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -8,9 +8,14 @@ import { colors } from '../../../config/styles';
 
 const OrdersCompleted = (props) => {
 
+    const[orderId, setOrderId] = useState();
+
+    useEffect(() =>{
+        setOrderId('#1224axfe34io');
+    },[])
     const trackMyOrders = () => {  
         //const orderItems = props.route.params.data;
-        props.navigation.navigate('MyOrders');
+        props.navigation.navigate('OrderTrack',{order : orderId});
     }
     return (
         <Container>
@@ -18,23 +23,22 @@ const OrdersCompleted = (props) => {
             <Header
                     androidStatusBarColor={colors.statusBar}
                     style={{ backgroundColor: '#4d94ff' }}
-                ><Left>
+                >
                     <Button
-                    transparent
-                    uppercase={false}
-                    onPress={()=>props.navigation.navigate('Home')}>
-                        <FIcon style={{ color: '#ffffff', fontSize: 18 }} name='arrow-left' />
-                        <Text style={{ color: colors.whiteText, fontSize:18}}>Home</Text>
+                        transparent
+                        uppercase={false}
+                        style={{ width: '100%', alignItems: 'flex-start' }}
+                        onPress={() => {
+                            props.navigation.goBack();
+                        }}>
+                        <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Home</Text>
                     </Button>
-                </Left>
-                <Right>
-
-                </Right>
                 </Header>
                 <View style={styles.container}>
                     <Icon name='check-circle' style={{ fontSize: 70, color: 'green' }} />
                     <Text style={{ fontSize: 20, marginTop: 35, marginBottom: 20 }}>Your orders are on the way to your doorsteps</Text>
-                    <Text>Your order is #1224axfe34io</Text>
+                    <Text>Your order is {orderId}</Text>
                     <Button
                         mode='contained'
                         uppercase={false}
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '50%',
+        marginTop: '30%',
     },
 
     btnComplete: {
