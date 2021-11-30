@@ -77,7 +77,7 @@ const FooterTabs = (props) => {
         </View>
         <View>
           <Button transparent style={styles.btnTab}
-            onPress={() => props.navigation.navigate('Message')}
+            onPress={() => props.navigation.navigate('Chat')}
           >
             <AIcon name="message1" style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
               <Text note style={{color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200, fontSize: 8}}>Message</Text>
@@ -95,14 +95,14 @@ const FooterTabs = (props) => {
               <AIcon name="search1" style={{ color: colors.whiteText }} size={25}></AIcon>
             </Button>}
         </View>
-        {!merchantUser ?
+        {/* {!merchantUser ? */}
           <View>
             <CartIcon
               navigation={props.navigation}
               style={customStyle.actionIcon}
             />
           </View>
-          :
+          {/* :
           <View>
             <Button transparent style={styles.btnTab}
               onPress={() => handleCartOrder()}
@@ -111,7 +111,7 @@ const FooterTabs = (props) => {
               <Text note style={{ color: props.state.index == getIndex('MerchantOrder') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Orders</Text>
             </Button>
           </View>
-        }
+        } */}
         <View>
           <Button transparent style={styles.btnTab}
             onPress={() => handleAccount()}
