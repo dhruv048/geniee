@@ -47,7 +47,7 @@ import StarRating from '../../../components/StarRating/StarRating';
 import Product from '../../../components/Store/Product';
 import MyFunctions from '../../../lib/MyFunctions';
 import CogMenu from '../../../components/CogMenu';
-import SplashScreen from 'react-native-splash-screen';
+import SplashScreen from 'react-native-lottie-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import {getProfileImage} from '../../../config/settings';
@@ -352,8 +352,11 @@ const Home = props => {
 
   const updateCounts = async () => {
     let wishList = await AsyncStorage.getItem('myWhishList');
-    if (wishList) wishList = JSON.parse(wishList);
-    else wishList = [];
+    if (wishList) {
+      wishList = JSON.parse(wishList);
+    } else {
+      wishList = [];
+    }
 
     let cartList = await AsyncStorage.getItem('myCart');
     if (cartList) {
@@ -366,11 +369,12 @@ const Home = props => {
   };
 
   const _search = text => {
-    if (query)
+    if (query) {
       props.navigation.navigate('SearchResult', {
         SearchText: query,
         Region: region,
       });
+    }
   };
 
   const _handlItemPress = service => {
@@ -394,7 +398,6 @@ const Home = props => {
     });
     props.navigation.navigate('ServiceList', {
       Id: Ids,
-      Item: item,
       Region: region,
     });
   };
@@ -408,12 +411,18 @@ const Home = props => {
     props.navigation.navigate('ProductsBB');
   };
 
+  const onCategoryClick = item => {
+    props.navigation.navigate('StoreList', {
+      categoryId: item._id,
+      title: item.title,
+    });
+  };
   const renderCategoryItem = (data, index) => {
     var item = data.item;
     return (
       <View>
         <View key={data.index.toString()} style={styles.containerStyle}>
-          <TouchableOpacity onPress={() => _itemClick(item)}>
+          <TouchableOpacity onPress={() => onCategoryClick(item)}>
             <Image
               style={{height: 50, width: 50}}
               source={{
@@ -434,13 +443,14 @@ const Home = props => {
   const _getListItem = data => {
     let rowData = data.item;
     let distance;
-    if (rowData.location && rowData.location.geometry)
+    if (rowData.location && rowData.location.geometry) {
       distance = MyFunctions.calculateDistance(
         region.latitude,
         region.longitude,
         rowData.location.geometry.location.lat,
         rowData.location.geometry.location.lng,
       );
+    }
     // console.log(distance);
     return (
       <View key={data.item._id} style={styles.serviceList}>
@@ -771,7 +781,13 @@ const Home = props => {
               <RNPButton
                 mode="outlined"
                 uppercase={false}
-                onPress={() => {}}
+                onPress={() => {
+                  loggedUser
+                    ? props.navigation.navigate('BecomeSeller', {
+                        data: loggedUser,
+                      })
+                    : props.navigation.navigate('SignIn');
+                }}
                 style={{
                   borderColor: colors.statusBar,
                   borderWidth: 2,
@@ -783,9 +799,10 @@ const Home = props => {
               </RNPButton>
             </View>
             {/*CATEGORIES LIST START*/}
-            {props.categories.length > 0 ? (
-              <View style={[styles.block, {marginVertical: 15}]}>
-                {/* <View style={styles.blockHeader}>
+            {props.categories ? (
+              props.categories.length > 0 ? (
+                <View style={[styles.block, {marginVertical: 15}]}>
+                  {/* <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent onPress={() => handleViewAll()}>
                                     <Text style={customStyle.buttonOutlinePrimaryText}>
@@ -793,23 +810,23 @@ const Home = props => {
                                     </Text>
                                 </Button>
                             </View> */}
-                <FlatList
-                  contentContainerStyle={{
-                    marginTop: 10,
-                    paddingBottom: 10,
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                    // flexWrap: 'wrap',
-                    // flexDirection: 'row',
-                  }}
-                  data={categories}
-                  //horizontal={true}
-                  keyExtractor={(item, index) => index.toString()}
-                  // showsHorizontalScrollIndicator={false}
-                  renderItem={renderCategoryItem}
-                  numColumns={5}
-                />
-              </View>
+                  <FlatList
+                    contentContainerStyle={{
+                      marginTop: 10,
+                      paddingBottom: 10,
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      flexDirection: 'column',
+                    }}
+                    data={categories}
+                    //horizontal={true}
+                    keyExtractor={(item, index) => index.toString()}
+                    // showsHorizontalScrollIndicator={false}
+                    renderItem={renderCategoryItem}
+                    numColumns={5}
+                  />
+                </View>
+              ) : null
             ) : null}
 
             {/*Deal that might excite you*/}
@@ -1345,7 +1362,7 @@ const styles = StyleSheet.create({
     borderColor: '#808080',
     borderWidth: 0,
     //elevation: 5,
-    //width: (viewportWidth-60)/3,
+    width: (viewportWidth - 60) / 5,
     width: 55,
     margin: 7,
     height: 50,

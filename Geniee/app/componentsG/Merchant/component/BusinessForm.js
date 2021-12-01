@@ -43,25 +43,25 @@ const BusinessForm = (props) => {
     const merchantOwner = Meteor.userId() ? Meteor.userId() : registerUser;
 
     const [modalVisible, setModalVisible] = useState(false);
+
     useEffect(() => {
-        console.log('This is categories : ' + props.categories);
-        handlers.getAllBusinessType((res) =>{
-            if(res){
+        handlers.getAllBusinessType((res) => {
+            if (res) {
                 //setBusinessTypes(res.result);
             }
         });
     }, []);
 
     const handleOnLocationSelect = (location) => {
-        let city='';
-        let district='';
-        for (var i=0; i<location.address_components.length; i++) {
-            for (var b=0;b<location.address_components[i].types.length;b++) {
+        let city = '';
+        let district = '';
+        for (var i = 0; i < location.address_components.length; i++) {
+            for (var b = 0; b < location.address_components[i].types.length; b++) {
 
-            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
                 if (location.address_components[i].types[b] == "locality") {
                     //this is the object you are looking for
-                    city= location.address_components[i];
+                    city = location.address_components[i];
                 }
                 if (location.address_components[i].types[b] == "administrative_area_level_2") {
                     //this is the object you are looking for
@@ -71,7 +71,7 @@ const BusinessForm = (props) => {
         }
 
         delete location.address_components;
-        setLocation(location); 
+        setLocation(location);
         handleInputChange('district', district.long_name);
         handleInputChange('city', city.long_name)
         setPickLocation(false);
@@ -84,7 +84,7 @@ const BusinessForm = (props) => {
     const loadBusinessTypes = useCallback(() => {
         if (!props.businessTypes) return;
         return props.businessTypes.map(item => (
-            <Picker.Item key={item._id} label={item.title} value={item._id} style={styles.inputBox}/>
+            <Picker.Item key={item._id} label={item.title} value={item._id} style={styles.inputBox} />
         ))
     }, [props.businessTypes]);
 
@@ -92,9 +92,12 @@ const BusinessForm = (props) => {
     const loadCategoriesTypes = useCallback(() => {
         if (!props.categories) return;
         return props.categories.map(category => (
-            <Picker.Item key={category._id} label={category.title} value={category._id} style={styles.inputBox}/>
+            category.subCategories.map(subCategory => (
+                <Picker.Item key={subCategory._id} label={subCategory.title} value={subCategory._id} style={styles.inputBox} />
+            )
+            )
         ))
-    }, [props.categories]);
+    });
 
     const handleMerchantInfo = () => {
         //if(!validateBusinessForm()){
@@ -102,7 +105,7 @@ const BusinessForm = (props) => {
         let business = {
             businessName: values.merchantName.value,
             selectedCategory: values.selectedCategory.value,
-            businessTypes : values.businessType.value,
+            businessTypes: values.businessType.value,
             district: values.district.value,
             city: values.city.value,
             nearestLandmark: values.nearestLandmark.value,
@@ -113,7 +116,7 @@ const BusinessForm = (props) => {
             owner: merchantOwner
         };
         //}
-        props.navigation.navigate('BusinessDocument',{businessData : business});
+        props.navigation.navigate('BusinessDocument', { businessData: business });
         resetBusinessForm();
     }
 
@@ -175,7 +178,7 @@ const BusinessForm = (props) => {
                                     selectedValue={values.businessType.value}
                                     onValueChange={(itemValue, itemIndex) => handleInputChange('businessType', itemValue)
                                     }>
-                                    <Picker.Item label='Select Business Type' value='0' style={styles.inputBox}/>
+                                    <Picker.Item label='Select Business Type' value='0' style={styles.inputBox} />
                                     {loadBusinessTypes()}
                                 </Picker>
                             </View>
@@ -186,7 +189,7 @@ const BusinessForm = (props) => {
                                     selectedValue={values.selectedCategory.value}
                                     onValueChange={(itemValue, itemIndex) => handleInputChange('selectedCategory', itemValue)
                                     }>
-                                    <Picker.Item label='Select Category' value='0' style={styles.inputBox}/>
+                                    <Picker.Item label='Select Category' value='0' style={styles.inputBox} />
                                     {loadCategoriesTypes()}
                                 </Picker>
                             </View>
@@ -200,7 +203,7 @@ const BusinessForm = (props) => {
                                 value={location}
                                 //   onChangeText={(radius) => this.setState({radius})}
                                 style={styles.inputBox}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
                             <View style={styles.textInputNameView}>
                                 <TextInput
@@ -243,7 +246,7 @@ const BusinessForm = (props) => {
                                 error={values.nearestLandmark.error}
                                 theme={{ roundness: 6 }}
                             />
-                            
+
                             <TextInput
                                 mode="outlined"
                                 color={customGalioTheme.COLORS.INPUT_TEXT}
@@ -305,7 +308,7 @@ const BusinessForm = (props) => {
     );
 }
 
-const combinedSelector = combineSelectors(categorySelector,businessTypesSelector);
+const combinedSelector = combineSelectors(categorySelector, businessTypesSelector);
 export default connect(combinedSelector)(BusinessForm);
 
 const styles = StyleSheet.create({

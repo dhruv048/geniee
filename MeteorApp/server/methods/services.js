@@ -40,6 +40,7 @@ const uploadImage = async (baseImage) => {
             fs.mkdirSync(localPath);
         }
         fs.writeFileSync(localPath + fileName, base64Data, 'base64');
+        console.log('This is filename: '+ fileName +' and path is '+ localPath);
         return { fileName, localPath };
 
     } catch (e) {
@@ -559,6 +560,13 @@ Meteor.methods({
     addNewProduct: (productInfo) => {
         try {
             console.log("addNewProducr:::=>>>");
+            let imageIds = [];   
+            if(productInfo.images){
+                productInfo.images.forEach(async(image) => {
+                    let Id = await uploadImage(image);
+                    imageIds.push(Id.fileName);
+                })
+            }
             productInfo.productOwner = ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId;
@@ -568,20 +576,10 @@ Meteor.methods({
             productInfo.discount = parseInt(productInfo.discount);
             //productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
-            let _service = Service.findOne({ _id: productInfo.service });
-            let imageIds = [];
+            let _service = Service.findOne({ _id: productInfo.service });        
             if (productInfo.images) {
-                productInfo.images.forEach(async (image) => {
-                    let Id = await uploadImage(image);
-                    imageIds.push(Id);
-                })
-                // let Id =
-                //     moment().format("DDMMYYx") +
-                //     "." +
-                //     image.mime.substr(image.mime.indexOf("/") + 1);
-
                 productInfo.images = imageIds;
-                console.log("insert");
+                console.log('filename '+ productInfo.images);
                 let pId = Products.insert(productInfo);
                 try {
                     FIREBASE_MESSAGING.notificationToAll(
@@ -667,7 +665,7 @@ Meteor.methods({
         let imageIds = [];
         productInfo.images.forEach(async (image) => {
             let Id = await uploadImage(image);
-            imageIds.push(Id);
+            imageIds.push(Id.fileName);
         });
         productInfo.images = imageIds;
         // if (productInfo.images.length < 1) {

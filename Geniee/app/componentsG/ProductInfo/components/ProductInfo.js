@@ -56,9 +56,9 @@ const ProductInfo = (props) => {
     const [isDescriptionValid, setIsDescriptionValid] = useState(false);
     const [imageBeRemove, setImageBeRemove] = useState([]);
     const [warranty, setWarranty] = useState(0);
-    const [warrantyTime, setWarrantyTime] = useState('');
+    const [warrantyTime, setWarrantyTime] = useState(2);
     const [returnPolicy, setReturnPolicy] = useState(0);
-    const [returnPolicyTime, setReturnPolicyTime] = useState('');
+    const [returnPolicyTime, setReturnPolicyTime] = useState(2);
     const [stockAvailability, setStockAvailability] = React.useState(true);
     const [colorAvailability, setColorAvailability] = React.useState(true);
     const [sizeAvailability, setSizeAvailability] = React.useState(true);
@@ -234,7 +234,6 @@ const ProductInfo = (props) => {
     const _onImageChange = (image) => {
         image.uri = `data:${image.mime};base64,${image.data}`;
         imageData = image.uri;
-        console.log('This is image' + imageData);
         // this.setState(prevState => ({
         //     images: [...prevState.images, image]
         // }))
@@ -271,6 +270,19 @@ const ProductInfo = (props) => {
         //}
         props.navigation.navigate('ProductPreview', { productInfo: product });
         //props.navigation.navigate('ProductCompleted');
+    }
+
+    const resetProductForm = () => {
+        productTitle = '';
+        price = '';
+        discount ='';
+        warranty = '';
+        returnPolicy = '';
+        description = '';
+        productImage =[];
+        customFields = [{ metaName: 'value', metaValue: 'value' }];
+        colorField = [{ colorName: 'Color1' }];
+        sizeField = [{ size: 'Color1' }];
     }
 
     const renderImage = (data, index) => {

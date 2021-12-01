@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import { ProgressViewIOSComponent, Image } from 'react-native';
 import { SliderBox } from "react-native-image-slider-box";
 import productHandlers from "../../../store/services/product/handlers";
+import FIcon from 'react-native-vector-icons/FontAwesome';
 
 const RNFS = require('react-native-fs');
 
@@ -125,17 +126,22 @@ const ProductPreview = (props) => {
     }
 
     const renderSize = (item, index) => {
-        let items = item.toUpperCase();
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <Text style={{marginTop: 20, marginBottom: 10 }}>{items}</Text>
-        </View>
+        let items = item.size.toUpperCase();
+        return (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft:10 }}>
+                <Text style={{ marginTop: 20, marginBottom: 10 }}>{items}</Text>
+            </View>
+        )
     }
 
-    const renderColor = (item, index) =>{
-        let items = item.toLowerCase();
-        <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <RadioButton.Android value={null} status='unchecked' color={items} disabled={true} />
-        </View>
+    const renderColor = (item, index) => {
+        let items = item.colorName.toLowerCase();
+        return (
+            <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 12 }}>
+                <FIcon name = 'circle' style={{color: items, fontSize:20, marginLeft:15, marginTop:8}}/>
+                {/* <RadioButton.Android value={null} status='checked' color={items} /> */}
+            </View>
+        )
     }
 
     return (
@@ -179,18 +185,18 @@ const ProductPreview = (props) => {
                             </View>
                             <Text style={{ color: colors.statusBar }}>Rs. {productData.price - (productData.price * productData.discount) / 100}</Text>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Color</Text>
-                                {productData.color.map((item,index) => renderColor(item,index))}
+                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Color : </Text>
+                                {productData.color && productData.color.length>0 ? productData.color.map((item, index) => renderColor(item, index)) : <Text>N/A</Text>}
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Size</Text>
-                                {productData.size.map((item, index) => renderSize(item, index))}
+                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Size : </Text>
+                                {productData.size && productData.size.length>0 ? productData.size.map((item, index) => renderSize(item, index)) : <Text>N/A</Text>}
                             </View>
                             <View>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Description</Text>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Description : </Text>
                                 <Text style={{ fontSize: 16 }}>{productData.description}</Text>
                             </View>
-                            <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Specification</Text>
+                            <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Specification : </Text>
                             {productData.productProperty.map((item, index) => renderProductProperty(item, index))}
                         </View>
                         <View style={styles.horizontalView}>

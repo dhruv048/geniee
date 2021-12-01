@@ -387,7 +387,7 @@ const Checkout = (props) => {
                             style={styles.btnContinue}
                             onPress={() => { proceedCheckOut() }}
                         >
-                            <Text>Proceed to Payment</Text>
+                            <Text style={{fontSize:13}}>Proceed to Payment</Text>
                             <FIcon style={{ color: '#ffffff', fontSize: 15, marginTop: 10 }} name="arrow-right" />
                         </Button>
                     </View>

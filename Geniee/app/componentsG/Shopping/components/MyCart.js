@@ -130,46 +130,46 @@ const MyCart = (props) => {
     const renderItems = (data, index) => {
         let item = data.item;
         return (
-            <View style={{marginVertical:20}}>
+            <View style={{ marginVertical: 20 }}>
                 <ListItem
-                key={data.item._id}
-                last={cartItems.length === index + 1}
-            >
-                <View style={styles.lstItem}>
-                    <Thumbnail square style={{ width: 80, height: 80, borderRadius: 4 }}
-                        source={{ uri: settings.IMAGE_URL + item.images[0] }} />
-                    <View style={{ marginLeft: 15 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                            <Text style={{ fontSize: 10 }}> From Chaudhary Group</Text>
-                            <TouchableOpacity
-                                transparent
-                                style={{ marginLeft: 130}}
-                                onPress={() => removeItemPressed(data.item)}>
-                                <FIcon name='x-circle' size={15} style={{color:'red'}} />
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
-                            {item.title}
-                        </Text>
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>Rs. {item.finalPrice}</Text>
-                            <Text style={{ fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid', marginTop: 3 }}>Rs. {item.price}</Text>
-                        </View>
-                        {/* <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text> */}
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <Button block icon transparent onPress={() => { _minusQuantity(item) }}
-                            >
-                                <FIcon name='minus' size={16} style={{ marginRight: 12 }} />
-                            </Button>
-                            <Text style={{ fontSize: 16, marginTop: 5 }}>{item.orderQuantity}</Text>
-                            <Button block icon transparent onPress={() => { _plusQuantity(item) }}
-                            >
-                                <FIcon style={{ marginLeft: 12 }} size={16} name='plus' />
-                            </Button>
+                    key={data.item._id}
+                    last={cartItems.length === index + 1}
+                >
+                    <View style={styles.lstItem}>
+                        <Thumbnail square style={{ width: 80, height: 80, borderRadius: 4 }}
+                            source={{ uri: settings.IMAGE_URL + item.images[0] }} />
+                        <View style={{ marginLeft: 15 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                <Text style={{ fontSize: 10 }}> From Chaudhary Group</Text>
+                                <TouchableOpacity
+                                    transparent
+                                    style={{ marginLeft: 130 }}
+                                    onPress={() => removeItemPressed(data.item)}>
+                                    <FIcon name='x-circle' size={15} style={{ color: 'red' }} />
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
+                                {item.title}
+                            </Text>
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>Rs. {item.finalPrice}</Text>
+                                <Text style={{ fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid', marginTop: 3 }}>Rs. {item.price}</Text>
+                            </View>
+                            {/* <Text style={{ fontSize: 12, fontWeight: '300' }}>{item.discount} %OFF</Text> */}
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <Button block icon transparent onPress={() => { _minusQuantity(item) }}
+                                >
+                                    <FIcon name='minus' size={16} style={{ marginRight: 12 }} />
+                                </Button>
+                                <Text style={{ fontSize: 16, marginTop: 5 }}>{item.orderQuantity}</Text>
+                                <Button block icon transparent onPress={() => { _plusQuantity(item) }}
+                                >
+                                    <FIcon style={{ marginLeft: 12 }} size={16} name='plus' />
+                                </Button>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </ListItem>
+                </ListItem>
             </View>
         );
     }
@@ -189,7 +189,7 @@ const MyCart = (props) => {
                                 props.navigation.goBack();
                             }}>
                             <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                            <Text style={{ color: colors.whiteText, fontSize:20}}>
+                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>
                                 Cart
                             </Text>
                         </Button>
@@ -208,31 +208,34 @@ const MyCart = (props) => {
                                 </View>
                                 :
                                 <View>
-                                    {cartItems ?
-                                        <FlatList
-                                            data={cartItems}
-                                            renderItem={(item, index) => renderItems(item, index)}
-                                            keyExtractor={(item, index) => {
-                                                return item._id
-                                            }}
-                                        /> : null}
+                                    <View>
+                                        {cartItems ?
+                                            <FlatList
+                                                data={cartItems}
+                                                renderItem={(item, index) => renderItems(item, index)}
+                                                keyExtractor={(item, index) => {
+                                                    return item._id
+                                                }}
+                                            /> : null}
+                                    </View>
+                                    <View style={{ flexDirection: 'row', marginVertical: 10, marginHorizontal: 10, justifyContent: 'space-between' }}>
+                                        <Text style={{ fontWeight: 'bold', fontSize: 20 }}> Total</Text>
+                                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>{totalPrice}</Text>
+                                    </View>
+                                    <Button
+                                        mode='contained'
+                                        uppercase={false}
+                                        style={styles.btnContinue}
+                                        onPress={() => { handleCheckout() }}
+                                    >
+                                        <Text style={{fontSize:13}}>Continue to checkout</Text>
+                                        <FIcon style={{ color: '#ffffff', fontSize: 15, marginTop: 10 }} name="arrow-right" />
+                                    </Button>
                                 </View>
                         }
 
                     </View>
-                    <View style={{flexDirection:'row',marginVertical:10,marginHorizontal:10,justifyContent:'space-between'}}>
-                        <Text style={{fontWeight:'bold',fontSize:20}}> Total</Text>
-                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>{totalPrice}</Text>
-                    </View>
-                    <Button
-                        mode='contained'
-                        uppercase={false}
-                        style={styles.btnContinue}
-                        onPress={() => { handleCheckout() }}
-                    >
-                        <Text>Continue to checkout</Text>
-                        <FIcon style={{ color: '#ffffff', fontSize: 15, marginTop: 10 }} name="arrow-right" />
-                    </Button>
+
                 </View>
             </Content>
         </Container>
@@ -256,7 +259,7 @@ const styles = StyleSheet.create({
         height: 45,
     },
 
-    lstItem :{
-        flexDirection:'row'
+    lstItem: {
+        flexDirection: 'row'
     }
 })

@@ -35,9 +35,9 @@ const ProductCompleted = (props) => {
           <Text style={{ fontSize: 20, marginTop: 35, marginBottom: 20, fontWeight: 'bold' }}>Your product has been posted.</Text>
 
           <View style={{ flexDirection: 'row',justifyContent:'flex-start',marginHorizontal:25 }}>
-            {productData.length>0?
+            {productData && productData.images.length > 0 ?
               <Image
-              style={{ width: 60, height: 60, resizeMode: 'cover' }}
+              style={{ width: 70, height: 70, resizeMode: 'cover' }}
               source={{ uri:productData.images[0] }} />: null}
             <View style={{marginLeft:10,marginBottom:30}}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}> {productData.productTitle}</Text>
