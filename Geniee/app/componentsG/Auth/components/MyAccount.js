@@ -6,7 +6,7 @@ import { Container, Content, Header, Item, Label, Text, Radio, Left, Body, Title
 import UploadProfilePic from '../../../components/UploadProfilePic/UploadProfilePic';
 import {
     KeyboardAvoidingView, SafeAreaView, StatusBar, TouchableNativeFeedback, View,
-    StyleSheet, ToastAndroid, TouchableWithoutFeedback, Keyboard, TouchableOpacity,Alert
+    StyleSheet, ToastAndroid, TouchableWithoutFeedback, Keyboard, TouchableOpacity,Alert,Image
 } from "react-native";
 import { Button as RNPButton, Switch, ToggleButton } from 'react-native-paper'
 import FIcon from 'react-native-vector-icons/Feather';
@@ -15,6 +15,8 @@ import AIcon from 'react-native-vector-icons/AntDesign';
 import authHandlers from '../../../store/services/auth/handlers';
 import merchantHandlers from "../../../store/services/merchant/handlers";
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
+import Share from 'react-native-share';
+import Loading from '../../../components/Loading';
 
 const MyAccount = (props) => {
 
@@ -60,6 +62,19 @@ const MyAccount = (props) => {
             ],
             { cancelable: false }
         );
+    }
+
+    inviteFriends = async() => {
+        const shareOptions = {
+            message : 'Geniee App',
+            url : 'www.google.com'
+        }
+        try{
+            const shareResponse = await Share.open(shareOptions);
+            console.log(JSON.stringify(shareResponse));
+        } catch(error){
+            console.log(' Error => ',error);
+        }
     }
 
     return (
@@ -137,7 +152,7 @@ const MyAccount = (props) => {
                                     </View>
                                 </TouchableOpacity> : null}
                                 <TouchableOpacity
-                                    onPress={() => { }}>
+                                    onPress={() => {props.navigation.navigate('MyOrders',{loggedUser:loggedUser})}}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='view-carousel' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>My Orders</Text>
@@ -170,7 +185,7 @@ const MyAccount = (props) => {
                                     </View>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => { }}>
+                                    onPress={() => {inviteFriends()}}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='insert-invitation' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>Invite Friends</Text>
@@ -196,7 +211,7 @@ const MyAccount = (props) => {
                              </TouchableOpacity>
                              }
                                 <TouchableOpacity
-                                    onPress={() => { }}>
+                                    onPress={() => {props.navigation.navigate('ContactUs')}}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <AIcon style={{ fontSize: 20 }} name='customerservice' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>Support Customer Care</Text>

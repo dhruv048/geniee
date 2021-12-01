@@ -126,7 +126,7 @@ class ChatList extends Component {
     return (
       <Container>
        
-        <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{backgroundColor: colors.appLayout}}>
+        <Header androidStatusBarColor={colors.statusBar} searchBar rounded>
           <Left>
             {/*<Button onPress={() => Navigation.pop(this.props.componentId)} transparent>*/}
             {/*<Icon name='arrow-left' color='white' size={25}/>*/}

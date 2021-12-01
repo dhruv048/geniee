@@ -28,7 +28,7 @@ tunguska:reactive-aggregate
 sakulstra:aggregate
 accounts-facebook@1.3.2
 service-configuration@1.0.11
-http@1.4.2
+http
 email@1.2.3
 kadira:flow-router
 kadira:blaze-layout

@@ -3,6 +3,7 @@ import { FIREBASE_MESSAGING } from "../API/fire-base-admin";
 import { Ratings } from "../../lib/collections/genieeRepair/ratings";
 import { EFProducts } from "../../lib/collections/eatFit/efProducts";
 import { ProductOwner, NotificationTypes, BusinessType } from "../../lib/utils";
+import { HTTP } from 'meteor/http';
 
 const fs = require("fs");
 
@@ -40,13 +41,40 @@ const uploadImage = async (baseImage) => {
             fs.mkdirSync(localPath);
         }
         fs.writeFileSync(localPath + fileName, base64Data, 'base64');
-        console.log('This is filename: '+ fileName +' and path is '+ localPath);
+        console.log('This is filename: ' + fileName + ' and path is ' + localPath);
         return { fileName, localPath };
 
     } catch (e) {
         console.log(e)
         // next(e);
     }
+};
+
+const handleImageUpload = (formData) => new Promise((resolve, reject) => {
+    let jsonImage = {base64Data  : formData};
+    HTTP.post('http://localhost:5000/api/upload', {
+        headers:{
+        'Content-Type': 'application/json'
+        },
+        data:jsonImage}
+        ,(error, result) => {
+            if (error) reject({ target: 'handleImageUpload', error });
+            else {
+                resolve(result.data);
+            }
+        });
+});
+
+const handleBulkImageUpload = (formData, cb) => {
+    let imageFileName = [];
+    Promise.all(
+        formData.map((imageData) => handleImageUpload(imageData).then((res) => {
+            imageFileName.push(res.fileName);
+        }),
+        )).then(() => cb(imageFileName))
+            .catch((err) => {
+                console.log('error', err);
+            })
 };
 
 Meteor.methods({
@@ -560,13 +588,7 @@ Meteor.methods({
     addNewProduct: (productInfo) => {
         try {
             console.log("addNewProducr:::=>>>");
-            let imageIds = [];   
-            if(productInfo.images){
-                productInfo.images.forEach(async(image) => {
-                    let Id = await uploadImage(image);
-                    imageIds.push(Id.fileName);
-                })
-            }
+            let imageIds = [];
             productInfo.productOwner = ProductOwner.REGULAR_USERS;
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId;
@@ -576,46 +598,55 @@ Meteor.methods({
             productInfo.discount = parseInt(productInfo.discount);
             //productInfo.radius = parseInt(productInfo.radius);
             productInfo.createDate = new Date(new Date().toUTCString());
-            let _service = Service.findOne({ _id: productInfo.service });        
+            let _service = Service.findOne({ _id: productInfo.service });
+
             if (productInfo.images) {
-                productInfo.images = imageIds;
-                console.log('filename '+ productInfo.images);
-                let pId = Products.insert(productInfo);
-                try {
-                    FIREBASE_MESSAGING.notificationToAll(
-                        "newPoductStaging",
-                        // `New Product by - ${_service.title}`,
-                        `New Product by - ${productInfo.productTitle}`,
-                        productInfo.productTitle,
-                        {
-                            Id: pId,
-                            navigate: "true",
-                            route: "ProductDetail",
-                            image:
-                                productInfo.images[0] || "",
-                            // icon: _service.coverImage || "",
-                        }
+                // productInfo.images.forEach(async (image) => {
+                //     let Id = await imageUploadWithExternalAPI(image);
+                //     imageIds.push(Id.fileName);
+                // })
+                handleBulkImageUpload(productInfo.images,(res) => {
+                    imageIds = res;
+
+                    productInfo.images = imageIds;
+                    console.log('filename ' + productInfo.images);
+                    let pId = Products.insert(productInfo);
+                    try {
+                        FIREBASE_MESSAGING.notificationToAll(
+                            "newPoductStaging",
+                            // `New Product by - ${_service.title}`,
+                            `New Product by - ${productInfo.productTitle}`,
+                            productInfo.productTitle,
+                            {
+                                Id: pId,
+                                navigate: "true",
+                                route: "ProductDetail",
+                                image:
+                                    productInfo.images[0] || "",
+                                // icon: _service.coverImage || "",
+                            }
+                        );
+                    } catch (e) {
+                        throw new Meteor.Error(403, e.message);
+                    }
+                    const notification = {
+                        // title: `New Product by- ${_service.title}`,
+                        title: `New Product by- ${productInfo.productTitle}`,
+                        description: productInfo.productTitle,
+                        owner: productInfo.owner,
+                        navigateId: pId,
+                        productOwner:
+                            ProductOwner.REGULAR_USERS,
+                        receiver: [],
+                        removedBy: [],
+                        type: NotificationTypes.ADD_PRODUCT,
+                    };
+                    Meteor.call(
+                        "addNotification",
+                        notification
                     );
-                } catch (e) {
-                    throw new Meteor.Error(403, e.message);
-                }
-                const notification = {
-                    // title: `New Product by- ${_service.title}`,
-                    title: `New Product by- ${productInfo.productTitle}`,
-                    description: productInfo.productTitle,
-                    owner: productInfo.owner,
-                    navigateId: pId,
-                    productOwner:
-                        ProductOwner.REGULAR_USERS,
-                    receiver: [],
-                    removedBy: [],
-                    type: NotificationTypes.ADD_PRODUCT,
-                };
-                Meteor.call(
-                    "addNotification",
-                    notification
-                );
-                return pId;
+                    return pId;
+                });
             } else {
                 productInfo.images = [];
                 console.log("insert");

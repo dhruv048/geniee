@@ -74,7 +74,11 @@ import StoreDetail from './app/componentsG/stores/StoreDetail';
 import Inventory from './app/componentsG/Merchant/component/Inventory';
 import Earnings from './app/componentsG/Merchant/component/Earnings';
 import MerchantOrder from './app/componentsG/Merchant/component/MerchantOrder';
+<<<<<<< HEAD
 >>>>>>> 22420658e3feac8bc030332132a540b3100106f6
+=======
+import OrderTrack from './app/componentsG/Shopping/components/OrderTrack';
+>>>>>>> ecd727252101c405290876377ee8fc7b0a0f7095
 
 export default function Appp({navigation}) {
   const routeNameRef = React.useRef();
@@ -482,6 +486,7 @@ export default function Appp({navigation}) {
                             <Stack.Screen name ='Inventory' component={Inventory}></Stack.Screen>
                             <Stack.Screen name='Earnings' component={Earnings}></Stack.Screen>
                             <Stack.Screen name='MerchantOrder' component={MerchantOrder}></Stack.Screen>
+                            <Stack.Screen name='OrderTrack' component={OrderTrack}></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>

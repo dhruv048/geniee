@@ -1,5 +1,5 @@
 MeteorApp/node_modules/
-MeteorApp/.deploy/
+# MeteorApp/.deploy/
 .idea/
 Geniee/node_modules/
 Geniee/app/config/settings.js
