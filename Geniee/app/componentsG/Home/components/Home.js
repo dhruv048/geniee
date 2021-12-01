@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import Meteor from '../../../react-native-meteor';
 import {
   StyleSheet,
@@ -39,9 +39,9 @@ import {
 } from 'native-base';
 import Icon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
-import { colors, customStyle, variables } from '../../../config/styles';
-import { Badge, Avatar } from 'react-native-paper';
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+import {colors, customStyle, variables} from '../../../config/styles';
+import {Badge, Avatar} from 'react-native-paper';
+const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 import settings from '../../../config/settings';
 import StarRating from '../../../components/StarRating/StarRating';
 import Product from '../../../components/Store/Product';
@@ -50,19 +50,19 @@ import CogMenu from '../../../components/CogMenu';
 import SplashScreen from 'react-native-lottie-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getProfileImage } from '../../../config/settings';
+import {getProfileImage} from '../../../config/settings';
 import LinearGradient from 'react-native-linear-gradient';
 import FooterTabs from '../../../components/FooterTab';
 import NotificationIcon from '../../../components/HeaderIcons/NotificationIcon';
 import CartIcon from '../../../components/HeaderIcons/CartIcon';
-import { customPaperTheme } from '../../../config/themes';
-import { MaterialColors } from '../../../constants/material-colors';
-import { Button as RNPButton } from 'react-native-paper';
-import { lowerCase } from 'lodash';
+import {customPaperTheme} from '../../../config/themes';
+import {MaterialColors} from '../../../constants/material-colors';
+import {Button as RNPButton} from 'react-native-paper';
+import {lowerCase} from 'lodash';
 import Moment from 'moment';
 import Data from '../../../react-native-meteor/Data';
-import { connect } from 'react-redux';
-import { categorySelector } from '../../../store/selectors';
+import {connect} from 'react-redux';
+import {categorySelector} from '../../../store/selectors';
 
 let isDashBoard = true;
 
@@ -86,7 +86,6 @@ const Home = props => {
   const [popularProducts, setPopularProducts] = useState([]);
   const [isActionButtonVisible, setIsActionButtonVisible] = useState(true);
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
-  const [currentLocation, setCurrentLocation] = useState('N/A');
 
   const [resturants, setResturants] = useState([
     {
@@ -208,7 +207,7 @@ const Home = props => {
           // See error code charts below.
           console.log(error.code, error.message);
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
       );
     } else {
       console.log('Location permission denied');
@@ -227,7 +226,7 @@ const Home = props => {
         // See error code charts below.
         console.log(error.code, error.message);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
 
     messageListener().catch(e => {
@@ -240,8 +239,6 @@ const Home = props => {
       }
     });
 
-    //Getting current Location
-    fetchAddress();
     //Store All Catefories
     // Meteor.subscribe('categories-list', () => {
     //     //console.log(MainCategories)
@@ -256,34 +253,6 @@ const Home = props => {
     //     }
     // });
   }, []);
-
-  const fetchAddress = () => {
-    let currentLocation = 'N/A';
-    fetch("https://maps.googleapis.com/maps/api/geocode/json?address=" + region.latitude + "," + region.longitude + "&key=" + settings.GOOGLE_MAP_API_KEY)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson)
-        const userLocation = responseJson.results[0];
-        handleOnLocationSelect(userLocation);
-      });
-  };
-
-  const handleOnLocationSelect = (location) => {
-    let city = '';
-    for (var i = 0; i < location.address_components.length; i++) {
-        for (var b = 0; b < location.address_components[i].types.length; b++) {
-
-            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
-            if (location.address_components[i].types[b] == "locality") {
-                //this is the object you are looking for
-                city = location.address_components[i];
-            }
-        }
-    }
-
-    delete location.address_components;
-    setCurrentLocation(city.long_name);
-}
 
   const _fetchNearByServices = () => {
     console.log('_fetchNearByServices');
@@ -329,7 +298,7 @@ const Home = props => {
       50,
     );
 
-    setState({ backClickCount: 1 }, () => {
+    setState({backClickCount: 1}, () => {
       Animated.sequence([
         Animated.spring(springValue, {
           toValue: -0.15 * viewportHeight,
@@ -351,7 +320,7 @@ const Home = props => {
   const messageListener = async () => {
     notificationOpenedListener = messaging().onNotificationOpenedApp(
       notificationOpen => {
-        const { title, body } = notificationOpen.notification;
+        const {title, body} = notificationOpen.notification;
         // showAlert(title, body);
         console.log('onNotificationOpened', notificationOpen);
 
@@ -367,7 +336,7 @@ const Home = props => {
         return remoteMessage;
       });
     if (notificationOpen) {
-      const { title, body } = notificationOpen.notification;
+      const {title, body} = notificationOpen.notification;
       //  showAlert(title, body);
       console.log('notificationOpen', notificationOpen.notification);
       if (notificationOpen.notification.data.title == 'REMOVE_AUTH_TOKEN') {
@@ -410,7 +379,7 @@ const Home = props => {
 
   const _handlItemPress = service => {
     service.avgRate = averageRating(service.ratings);
-    props.navigation.push('ServiceDetail', { Id: service._id });
+    props.navigation.push('ServiceDetail', {Id: service._id});
   };
 
   const averageRating = arr => {
@@ -442,10 +411,12 @@ const Home = props => {
     props.navigation.navigate('ProductsBB');
   };
 
-  const onCategoryClick = (item) => {
-    props.navigation.navigate('StoreList', { categoryId: item._id, title: item.title });
-
-  }
+  const onCategoryClick = item => {
+    props.navigation.navigate('StoreList', {
+      categoryId: item._id,
+      title: item.title,
+    });
+  };
   const renderCategoryItem = (data, index) => {
     var item = data.item;
     return (
@@ -453,7 +424,7 @@ const Home = props => {
         <View key={data.index.toString()} style={styles.containerStyle}>
           <TouchableOpacity onPress={() => onCategoryClick(item)}>
             <Image
-              style={{ height: 50, width: 50 }}
+              style={{height: 50, width: 50}}
               source={{
                 uri: IMAGE_URL + item.image,
               }}
@@ -462,8 +433,8 @@ const Home = props => {
                 </ImageBackground>*/}
           </TouchableOpacity>
         </View>
-        <View style={{ width: 65, marginBottom: 5 }}>
-          <Text style={{ textAlign: 'center', fontSize: 10 }}> {item.title}</Text>
+        <View style={{width: 65, marginBottom: 5}}>
+          <Text style={{textAlign: 'center', fontSize: 10}}> {item.title}</Text>
         </View>
       </View>
     );
@@ -547,7 +518,7 @@ const Home = props => {
   };
 
   const _handleProductPress = pro => {
-    props.navigation.navigate('ProductDetail', { Id: pro._id });
+    props.navigation.navigate('ProductDetail', {Id: pro._id});
   };
 
   const _onScroll = event => {
@@ -575,7 +546,7 @@ const Home = props => {
     const isActionButtonVisible = direction === 'up';
     if (isActionButtonVisible !== isActionButtonVisible) {
       LayoutAnimation.configureNext(CustomLayoutLinear);
-      setState({ isActionButtonVisible });
+      setState({isActionButtonVisible});
     }
     // Update your scroll position
     _listViewOffset = currentOffset;
@@ -589,14 +560,14 @@ const Home = props => {
         onPress={() => _handleProductPress(item)}
         style={[
           customStyle.productContainerStyle,
-          { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
+          {borderTopLeftRadius: 4, borderTopRightRadius: 5},
         ]}>
         <View
           key={item._id}
-          style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
-          <View style={{ width: '100%', borderRadius: 5 }}>
+          style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
+          <View style={{width: '100%', borderRadius: 5}}>
             <Image
-              source={{ uri: IMAGE_URL + item.images[0] }}
+              source={{uri: settings.IMAGE_URL + item.images[0]}}
               style={{
                 flex: 1,
                 width: undefined,
@@ -610,7 +581,7 @@ const Home = props => {
           </View>
           <View>
             <View>
-              <Text numberOfLines={1} style={{ fontSize: 10 }}>
+              <Text numberOfLines={1} style={{fontSize: 10}}>
                 From ABC group
               </Text>
               <Text
@@ -625,7 +596,7 @@ const Home = props => {
                 {/* //{item.title} */}Phis is a title of product/ 200gb ram
                 600Gb memory
               </Text>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 {item.discount ? (
                   <>
                     <Text
@@ -673,14 +644,14 @@ const Home = props => {
         onPress={() => _handleProductPress(item)}
         style={[
           customStyle.productContainerStyle,
-          { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
+          {borderTopLeftRadius: 4, borderTopRightRadius: 5},
         ]}>
         <View
           key={item._id}
-          style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
-          <View style={{ width: '100%', borderRadius: 5 }}>
+          style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
+          <View style={{width: '100%', borderRadius: 5}}>
             <Image
-              source={{ uri: IMAGE_URL + item.images[0] }}
+              source={{uri: settings.IMAGE_URL + item.images[0]}}
               style={{
                 flex: 1,
                 width: undefined,
@@ -694,7 +665,7 @@ const Home = props => {
           </View>
           <View>
             <View>
-              <Text numberOfLines={1} style={{ fontSize: 10 }}>
+              <Text numberOfLines={1} style={{fontSize: 10}}>
                 Butwal
               </Text>
               <Text
@@ -709,17 +680,17 @@ const Home = props => {
                 {/* //{item.title} */}Phis is a title of product/ 200gb ram
                 600Gb memory
               </Text>
-              <View style={{ marginTop: 5, marginRight: 5 }}>
+              <View style={{marginTop: 5, marginRight: 5}}>
                 <RNPButton
                   mode="text"
                   uppercase={false}
                   onPress={() => {
                     console.log('Visit Prssed');
                   }}>
-                  <Text style={{ fontSize: 10 }}>Visit</Text>
+                  <Text style={{fontSize: 10}}>Visit</Text>
                   <Icon
                     name="chevron-right"
-                    style={{ marginLeft: 10, marginTop: 10 }}
+                    style={{marginLeft: 10, marginTop: 10}}
                   />
                 </RNPButton>
               </View>
@@ -747,7 +718,7 @@ const Home = props => {
   return (
     <>
       <StatusBar backgroundColor={colors.statusBar} />
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+      <SafeAreaView style={{flex: 1, backgroundColor: colors.whiteText}}>
         <View
           style={{
             backgroundColor: colors.appLayout,
@@ -755,7 +726,7 @@ const Home = props => {
           }}>
           <View style={customStyle.topbarHeader}>
             <Image
-              style={{ height: 30, width: 80 }}
+              style={{height: 30, width: 80}}
               source={require('../../../images/geniee_logo.png')}
             />
             <View style={customStyle.topbarActionIcons}>
@@ -775,7 +746,7 @@ const Home = props => {
                                 <Icon name="user" style={customStyle.actionIcon} />
                             </TouchableOpacity> */}
               <TouchableOpacity
-                style={{ marginHorizontal: 0, flexDirection: 'row' }}>
+                style={{marginHorizontal: 0, flexDirection: 'row'}}>
                 <FAIcon
                   name="map-marker"
                   style={{
@@ -784,7 +755,7 @@ const Home = props => {
                     marginRight: 8,
                   }}
                 />
-                <Text style={{ fontSize: 15 }}>{currentLocation}</Text>
+                <Text style={{fontSize: 15}}>Kathmandu</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -802,24 +773,36 @@ const Home = props => {
           <View>
             <View>
               <Image
-                style={{ height: 70, width: '100%' }}
+                style={{height: 70, width: '100%'}}
                 source={require('../../../images/geniee_banner.png')}
               />
             </View>
-            <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+            <View style={{marginHorizontal: 15, marginVertical: 15}}>
               <RNPButton
-                mode='outlined'
+                mode="outlined"
                 uppercase={false}
-                onPress={() => { loggedUser ? props.navigation.navigate('BecomeSeller', { data: loggedUser }) : props.navigation.navigate('SignIn') }}
-                style={{ borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted' }}
-              >
-                <Text style={{ color: colors.statusBar }}>Become a Merchant & Sell</Text>
+                onPress={() => {
+                  loggedUser
+                    ? props.navigation.navigate('BecomeSeller', {
+                        data: loggedUser,
+                      })
+                    : props.navigation.navigate('SignIn');
+                }}
+                style={{
+                  borderColor: colors.statusBar,
+                  borderWidth: 2,
+                  borderStyle: 'dotted',
+                }}>
+                <Text style={{color: colors.statusBar}}>
+                  Become a Merchant & Sell
+                </Text>
               </RNPButton>
             </View>
             {/*CATEGORIES LIST START*/}
-            {props.categories ? props.categories.length > 0 ? (
-              <View style={[styles.block, { marginVertical: 15 }]}>
-                {/* <View style={styles.blockHeader}>
+            {props.categories ? (
+              props.categories.length > 0 ? (
+                <View style={[styles.block, {marginVertical: 15}]}>
+                  {/* <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent onPress={() => handleViewAll()}>
                                     <Text style={customStyle.buttonOutlinePrimaryText}>
@@ -827,30 +810,30 @@ const Home = props => {
                                     </Text>
                                 </Button>
                             </View> */}
-                <FlatList
-                  contentContainerStyle={{
-                    marginTop: 10,
-                    paddingBottom: 10,
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                    flexDirection: 'column',
-                  }}
-                  data={categories}
-                  //horizontal={true}
-                  keyExtractor={(item, index) => index.toString()}
-                  // showsHorizontalScrollIndicator={false}
-                  renderItem={renderCategoryItem}
-                  numColumns={5}
-                />
-
-              </View>
-            ) : null : null}
+                  <FlatList
+                    contentContainerStyle={{
+                      marginTop: 10,
+                      paddingBottom: 10,
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      flexDirection: 'column',
+                    }}
+                    data={categories}
+                    //horizontal={true}
+                    keyExtractor={(item, index) => index.toString()}
+                    // showsHorizontalScrollIndicator={false}
+                    renderItem={renderCategoryItem}
+                    numColumns={5}
+                  />
+                </View>
+              ) : null
+            ) : null}
 
             {/*Deal that might excite you*/}
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Deals that might excite you
                   </Text>
                   <Text
@@ -875,17 +858,17 @@ const Home = props => {
                   showsHorizontalScrollIndicator={false}
                   renderItem={(item, index) => _renderProduct(item, index)}
                 />
-                <View style={{ marginTop: 5, marginRight: 5 }}>
+                <View style={{marginTop: 5, marginRight: 5}}>
                   <RNPButton
                     mode="text"
                     uppercase={false}
                     onPress={() => {
                       console.log('See All Prssed');
                     }}>
-                    <Text style={{ fontSize: 12 }}>See All</Text>
+                    <Text style={{fontSize: 12}}>See All</Text>
                     <Icon
                       name="chevron-right"
-                      style={{ marginLeft: 10, marginTop: 10 }}
+                      style={{marginLeft: 10, marginTop: 10}}
                     />
                   </RNPButton>
                 </View>
@@ -896,7 +879,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Featured Store
                   </Text>
                   <RNPButton
@@ -907,7 +890,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
@@ -936,7 +919,7 @@ const Home = props => {
             {/* {nearByservice === '' ? null : nearByservice > 0 ? ( */}
             <View style={styles.block}>
               <View style={customStyle.blockHeader}>
-                <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                <Text style={[styles.blockTitle, {fontSize: 16}]}>
                   Nearby Stores
                 </Text>
                 <RNPButton
@@ -947,7 +930,7 @@ const Home = props => {
                       Region: region,
                     })
                   }>
-                  <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                  <Text style={{fontSize: 10, color: colors.statusBar}}>
                     See All
                   </Text>
                   <Icon
@@ -967,7 +950,7 @@ const Home = props => {
                 horizontal={true}
                 keyExtractor={(item, index) => item._id}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({ item, index }) => (
+                renderItem={({item, index}) => (
                   <TouchableOpacity
                     onPress={() => {
                       props.navigation.navigate('ServiceDetail', {
@@ -987,7 +970,7 @@ const Home = props => {
                         // paddingBottom: 10,
                         borderRadius: 4,
                       }}>
-                      <View style={{ height: 147, width: 310, borderRadius: 4 }}>
+                      <View style={{height: 147, width: 310, borderRadius: 4}}>
                         <Thumbnail
                           style={{
                             width: 310,
@@ -999,7 +982,7 @@ const Home = props => {
                           square
                           source={
                             item.coverImage
-                              ? { uri: IMAGE_URL + item.coverImage }
+                              ? {uri: settings.IMAGE_URL + item.coverImage}
                               : require('../../../images/no-image.png')
                           }
                         />
@@ -1018,12 +1001,12 @@ const Home = props => {
                             borderBottomLeftRadius: 5,
                             borderBottomRightRadius: 5,
                           }}>
-                          <Text style={{ color: 'white', fontSize: 15 }}>
+                          <Text style={{color: 'white', fontSize: 15}}>
                             {item.title}
                           </Text>
                         </LinearGradient>
                       </View>
-                      <View style={{ flexDirection: 'row', padding: 0 }}>
+                      <View style={{flexDirection: 'row', padding: 0}}>
                         <View
                           style={{
                             flex: 3,
@@ -1123,7 +1106,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Popular Stores
                   </Text>
                   <RNPButton
@@ -1134,7 +1117,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
@@ -1163,7 +1146,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Popular in Stores
                   </Text>
                   <RNPButton
@@ -1174,7 +1157,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
@@ -1203,7 +1186,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Popular Restaurants
                   </Text>
                   <RNPButton
@@ -1214,7 +1197,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
@@ -1243,7 +1226,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Popular in Restaurants
                   </Text>
                   <RNPButton
@@ -1254,7 +1237,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
@@ -1283,7 +1266,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Popular Travel Agency
                   </Text>
                   <RNPButton
@@ -1294,7 +1277,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
@@ -1323,7 +1306,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
                     Popular Destination
                   </Text>
                   <RNPButton
@@ -1334,7 +1317,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                    <Text style={{fontSize: 10, color: colors.statusBar}}>
                       See All
                     </Text>
                     <Icon
