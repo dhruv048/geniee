@@ -518,7 +518,7 @@ const Home = props => {
   };
 
   const _handleProductPress = pro => {
-    props.navigation.navigate('ProductDetail', {Id: pro._id});
+    props.navigation.navigate('ProductDetail', { Id: pro._id, data: pro });
   };
 
   const _onScroll = event => {

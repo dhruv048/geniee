@@ -12,7 +12,7 @@ import MyOrders from '../componentsG/Shopping/components/MyOrders';
 import MerchantDashboard from '../componentsG/Merchant/component/MerchantDashboard';
 import MyCart from '../componentsG/Shopping/components/MyCart';
 import MerchantOrder from '../componentsG/Merchant/component/MerchantOrder';
-import Geniee from '../components/GenieeDemo';
+import Geniee from '../components/GenieeDemo/Geniee';
 // import SideMenu from './SideMenu';
 
 const Tab = createBottomTabNavigator();

@@ -17,42 +17,9 @@ const removeProductsByServiceId = (Id) => {
     });
 };
 
-const uploadImage = async (baseImage) => {
-    try {
-        /*path of the folder where your project is saved. (In my case i got it from config file, root path of project).*/
-        const uploadPath = '/home/geniee';
-        //path of folder where you want to save the image.
-        const localPath = `${uploadPath}/images/`;
-        //Find extension of file
-        const ext = baseImage.substring(baseImage.indexOf("/") + 1, baseImage.indexOf(";base64"));
-        const fileType = baseImage.substring("data:".length, baseImage.indexOf("/"));
-        //Forming regex to extract base64 data of file.
-        const regex = new RegExp(`^data:${fileType}\/${ext};base64,`, 'gi');
-        //Extract base64 data.
-        const base64Data = baseImage.replace(regex, "");
-        //Random photo name with timeStamp so it will not overide previous images.
-        const fileName = `${Date.now()}.${ext}`;
-
-        //Check that if directory is present or not.
-        if (!fs.existsSync(`${uploadPath}/images/`)) {
-            fs.mkdirSync(`${uploadPath}/images/`);
-        }
-        if (!fs.existsSync(localPath)) {
-            fs.mkdirSync(localPath);
-        }
-        fs.writeFileSync(localPath + fileName, base64Data, 'base64');
-        console.log('This is filename: ' + fileName + ' and path is ' + localPath);
-        return { fileName, localPath };
-
-    } catch (e) {
-        console.log(e)
-        // next(e);
-    }
-};
-
 const handleImageUpload = (formData) => new Promise((resolve, reject) => {
     let jsonImage = {base64Data  : formData};
-    HTTP.post('http://localhost:5000/api/upload', {
+    HTTP.post('http://139.59.59.117/api/upload', {
         headers:{
         'Content-Type': 'application/json'
         },
@@ -81,13 +48,13 @@ Meteor.methods({
     addNewBusiness: async (businessInfo) => {
         try {
             var currentUserId = Meteor.userId();
-            var existingMerchantTitle = Business.findOne({ businessName: businessInfo.merchantName });
+            var existingMerchantTitle = Business.findOne({ businessName: businessInfo.businessName });
             if (existingMerchantTitle) {
                 throw new Meteor.Error('This business is already exist. Please try with other business');
             }
-            const merchantImage = await uploadImage(businessInfo.merchantImage);
-            const PANImage = await uploadImage(businessInfo.PANImage);
-            const registrationImage = await uploadImage(businessInfo.registrationImage);
+            const merchantImage = await handleImageUpload(businessInfo.merchantImage);
+            const PANImage = await handleImageUpload(businessInfo.PANImage);
+            const registrationImage = await handleImageUpload(businessInfo.registrationImage);
             // let location = {
             //     geometry: {
             //         coordinates: [
@@ -110,10 +77,10 @@ Meteor.methods({
 
             businessInfo.createdAt = new Date(new Date().toUTCString());
             businessInfo.createdBy = currentUserId;
-            businessInfo.coverImage = null;
-            businessInfo.categoryId = '';
+            businessInfo.coverImage = registrationImage ? registrationImage.fileName : '';;
+            businessInfo.categoryId = businessInfo.selectedCategory;
             businessInfo.ratings = [{ count: 0 }];
-            businessInfo.Image = null;
+            businessInfo.Image = registrationImage ? registrationImage.fileName : '';;
             businessInfo.isApproved = false;
             businessInfo.approvedBy = null;
             businessInfo.approvedDate = null;
@@ -444,6 +411,12 @@ Meteor.methods({
 
     getBusinessType: function () {
         var data = BusinessTypes.find().fetch();
+        return data;
+    },
+
+    getBusinessList: function(userId){
+        var currentUserId = userId != null? userId : Meteor.userId();
+        var data = Business.find({owner : currentUserId}).fetch();
         return data;
     },
 
@@ -1272,6 +1245,12 @@ Meteor.methods({
             foreignField: "_id",
             as: "services",
         };
+        const BusinessLookup = {
+            from: "business",
+            localField: "owner",
+            foreignField: "owner",
+            as: "business",
+        };
         const addValues = {
             Service: { $arrayElemAt: ["$services", 0] },
         };
@@ -1279,7 +1258,7 @@ Meteor.methods({
             aggregate(
                 [
                     { $sort: { views: -1 } },
-                    { $lookup: OwnerLookup },
+                    { $lookup: BusinessLookup },
                     { $addFields: addValues },
                     { $limit: _skip + _limit },
                     { $skip: _skip },
