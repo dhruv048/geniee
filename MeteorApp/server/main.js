@@ -7,7 +7,7 @@ const path = require('path')
 
 process.env.MAIL_URL = "smtps://genieeinfo:icmjzpofzjbsywvy@smtp.gmail.com:465";
 var admin = require("firebase-admin");
-var serviceAccount = process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json') : 'D:/Projects/sapp/MeteorApp' + '/private/geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json';
+var serviceAccount = process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json') : Assets.absoluteFilePath('geniee-e9e27-firebase-adminsdk-vecjf-9f72cf3f05.json');
 
 
 Meteor.startup(async function () {
@@ -163,7 +163,7 @@ Meteor.startup(async function () {
 
     if (MainCategories.find().count() < 1) {
 
-        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/newCategories.csv') : 'D:/Projects/sapp/MeteorApp' + '/private/csvFiles/newCategories.csv', {
+        CSV.readCsvFileLineByLine(process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/newCategories.csv') : Assets.absoluteFilePath('csvFiles/newCategories.csv'), {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
@@ -185,7 +185,7 @@ Meteor.startup(async function () {
         //      MainCategories.insert(cat);
         //  });
 
-        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/subcategories.csv') : 'D:/Projects/sapp/MeteorApp' + '/private/csvFiles/subcategories.csv'), {
+        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/subcategories.csv') : Assets.absoluteFilePath('csvFiles/subcategories.csv')), {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {
@@ -200,7 +200,7 @@ Meteor.startup(async function () {
                 $addToSet: {subCategories: data}
             })
         }));
-        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/emergency.csv') : 'D:/Projects/sapp/MeteorApp' + '/private/csvFiles/emergency.csv'), {
+        CSV.readCsvFileLineByLine((process.env.NODE_ENV === "production" ? Assets.absoluteFilePath('csvFiles/emergency.csv') : Assets.absoluteFilePath('csvFiles/emergency.csv')), {
             headers: true,
             delimiter: ",",
         }, Meteor.bindEnvironment(function (line, index, rawParsedLine) {

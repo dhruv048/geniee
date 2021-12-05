@@ -109,7 +109,7 @@ const BusinessForm = (props) => {
             district: values.district.value,
             city: values.city.value,
             nearestLandmark: values.nearestLandmark.value,
-            location: null,
+            location: location,
             panNumber: values.panNumber.value,
             contact: values.contact.value,
             email: values.email.value,

@@ -39,9 +39,9 @@ const RNFS = require('react-native-fs');
 const ProductPreview = (props) => {
     const productData = props.route.params.productInfo;
 
-    productData.size.map((x) => {
-        console.log('This is prodcut from preveri ' + x.size);
-    })
+    // productData.size.map((x) => {
+    //     console.log('This is prodcut from preveri ' + x.size);
+    // })
 
     const editProduct = () => {
         props.navigation.goBack();
@@ -118,7 +118,7 @@ const ProductPreview = (props) => {
         return (
             <View key={index}>
                 <View style={styles.propertyView}>
-                    <View style={{ width: '50%' }}><Text>{item.metaName}</Text></View>
+                    <View style={{ width: '50%'}}><Text style={{fontWeight:'bold'}}>{item.metaName} :</Text></View>
                     <View style={{ width: '50%' }}><Text>{item.metaValue}</Text></View>
                 </View>
             </View>

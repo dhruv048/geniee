@@ -426,7 +426,7 @@ const Home = props => {
             <Image
               style={{height: 50, width: 50}}
               source={{
-                uri: IMAGE_URL + item.image,
+                uri: settings.IMAGE_URLS  + item.image,
               }}
             />
             {/*</View>
@@ -518,7 +518,7 @@ const Home = props => {
   };
 
   const _handleProductPress = pro => {
-    props.navigation.navigate('ProductDetail', {Id: pro._id});
+    props.navigation.navigate('ProductDetail', { Id: pro._id, data: pro });
   };
 
   const _onScroll = event => {
@@ -567,7 +567,7 @@ const Home = props => {
           style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
           <View style={{width: '100%', borderRadius: 5}}>
             <Image
-              source={{uri: settings.IMAGE_URL + item.images[0]}}
+              source={{uri: settings.IMAGE_URLS + item.images[0]}}
               style={{
                 flex: 1,
                 width: undefined,
@@ -651,7 +651,7 @@ const Home = props => {
           style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
           <View style={{width: '100%', borderRadius: 5}}>
             <Image
-              source={{uri: settings.IMAGE_URL + item.images[0]}}
+              source={{uri: settings.IMAGE_URLS + item.images[0]}}
               style={{
                 flex: 1,
                 width: undefined,

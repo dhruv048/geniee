@@ -69,11 +69,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '50%',
+    marginTop: '30%',
+    marginHorizontal:10
   },
 
   btnComplete: {
-    width: '55%',
+    width: '60%',
     marginBottom: 20,
     marginTop: 10,
     marginLeft: '3%',

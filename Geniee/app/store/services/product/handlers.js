@@ -24,7 +24,19 @@ const updateProduct = (product,productId,imageTobeRemove, cb) => {
 
 }
 
+const getBusinessList = (loggedUser, callBack) => {
+  Meteor.call('getBusinessList', loggedUser, (err, res) => {
+      if (err) {
+          console.log('Please contact administrator.')
+          callBack(err);
+      } else {
+          callBack(res);
+      }
+  })
+}
+
 export default {
     saveProduct,
     updateProduct,
+    getBusinessList
 }

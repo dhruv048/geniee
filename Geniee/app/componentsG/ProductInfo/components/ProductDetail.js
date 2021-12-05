@@ -36,6 +36,7 @@ import Meteor from '../../../react-native-meteor';
 import { FlatList } from 'react-native-gesture-handler';
 import Product from '../../../components/Store/Product';
 import FIcon from 'react-native-vector-icons/FontAwesome';
+import settings from '../../../config/settings';
 
 const RNFS = require('react-native-fs');
 
@@ -102,7 +103,7 @@ const ProductDetail = (props) => {
         //get the product with id of this.props.product.id from your server
         let productId = props.route.params.Id;
         let _product = props.route.params.data;
-        _product = productTest;//using for Testing
+        //_product = productTest;//using for Testing
         let wishList = await AsyncStorage.getItem('myWhishList');
         console.log('wishList', wishList);
         if (wishList) wishList = JSON.parse(wishList);
@@ -239,9 +240,13 @@ const ProductDetail = (props) => {
     }
 
     const renderImage = () => {
+        const imageList = [];
+        productData.images.map((item)=>{
+            imageList.push(settings.IMAGE_URLS+item);
+        });
         return (
             <SliderBox
-                images={productData.images}
+                images={imageList}
                 sliderBoxHeight={250}
                 onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                 dotColor="#FFEE58"

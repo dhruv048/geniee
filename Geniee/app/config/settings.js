@@ -10,10 +10,10 @@ let WEB_URL = 'http://192.168.1.118:3000/';
 let METEOR_URL = 'ws://192.168.1.118:3000/websocket';
 let IMAGE_URLS = 'http://139.59.59.117/api/files/';
 
-// let API_URL = 'http://api.krishisansaar.com/api/';
-// let IMAGE_URL = 'http://api.krishisansaar.com/api/images/';
-// let METEOR_URL = 'ws://api.krishisansaar.com/websocket';
-// let WEB_URL = 'http://api.krishisansaar.com/';
+// let API_URL = 'http://139.59.59.117/api/';
+// let IMAGE_URL = 'http://139.59.59.117/api/images/';
+// let METEOR_URL = 'ws://139.59.59.117/websocket';
+// let WEB_URL = 'http://139.59.59.117/';
 
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 
@@ -63,9 +63,9 @@ export const ProductOwner = {
 };
 
 export const BusinessType = {
-  SERVICE_PROVIDER: 0,
-  PRODUCTS_GOODS_SELLER: 1,
-  STORE: 2,
+  SERVICE_PROVIDER: 2,
+  PRODUCTS_GOODS_SELLER: 4,
+  STORE: 1,
   RESTURANT: 3,
 };
 
