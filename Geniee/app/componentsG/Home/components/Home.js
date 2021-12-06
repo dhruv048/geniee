@@ -63,6 +63,7 @@ import Moment from 'moment';
 import Data from '../../../react-native-meteor/Data';
 import {connect} from 'react-redux';
 import {categorySelector} from '../../../store/selectors';
+import AIcon from 'react-native-vector-icons/AntDesign';
 
 let isDashBoard = true;
 
@@ -86,6 +87,7 @@ const Home = props => {
   const [popularProducts, setPopularProducts] = useState([]);
   const [isActionButtonVisible, setIsActionButtonVisible] = useState(true);
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
+  const [storesList, setStoresList] = useState([]);
 
   const [resturants, setResturants] = useState([
     {
@@ -173,6 +175,16 @@ const Home = props => {
       console.log(err, res);
       if (!err) {
         setPopularProducts(res.result);
+      } else {
+        console.log(err);
+      }
+    });
+
+    //Get Popular Products
+    Meteor.call('getPopularStores', (err, res) => {
+      console.log(err, res);
+      if (!err) {
+        setStoresList(res);
       } else {
         console.log(err);
       }
@@ -582,7 +594,7 @@ const Home = props => {
           <View>
             <View>
               <Text numberOfLines={1} style={{fontSize: 10}}>
-                From ABC group
+               From {item.business[0].businessName}
               </Text>
               <Text
                 numberOfLines={2}
@@ -593,8 +605,8 @@ const Home = props => {
                 }}>
                 {/* style={{ fontSize: 12, color: colors.primaryText }}
                                  numberOfLines={1}> */}
-                {/* //{item.title} */}Phis is a title of product/ 200gb ram
-                600Gb memory
+                {/* //{item.title} */}
+                {item.description}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 {item.discount ? (
@@ -641,7 +653,7 @@ const Home = props => {
     return (
       <View
         key={item._id}
-        onPress={() => _handleProductPress(item)}
+        onPress={() => {console.log('Visit Prssed');}}
         style={[
           customStyle.productContainerStyle,
           {borderTopLeftRadius: 4, borderTopRightRadius: 5},
@@ -651,7 +663,7 @@ const Home = props => {
           style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
           <View style={{width: '100%', borderRadius: 5}}>
             <Image
-              source={{uri: settings.IMAGE_URLS + item.images[0]}}
+              source={{uri: settings.IMAGE_URLS + item.registrationImage}}
               style={{
                 flex: 1,
                 width: undefined,
@@ -663,10 +675,14 @@ const Home = props => {
               }}
             />
           </View>
+          {item.isApproved ? <View style={{ flexDirection: 'row', position: 'absolute', top: 50, left: 3 }}>
+                        <AIcon name='checkcircle' size={12} style={{ marginRight: 3, color: colors.statusBar }} />
+                        <Text style={{ fontSize: 12,}}>Verified</Text>
+                    </View> : null}
           <View>
             <View>
               <Text numberOfLines={1} style={{fontSize: 10}}>
-                Butwal
+                {item.city}
               </Text>
               <Text
                 numberOfLines={2}
@@ -677,15 +693,16 @@ const Home = props => {
                 }}>
                 {/* style={{ fontSize: 12, color: colors.primaryText }}
                                  numberOfLines={1}> */}
-                {/* //{item.title} */}Phis is a title of product/ 200gb ram
-                600Gb memory
+                {/* //{item.title} */}
+                {item.businessName}
               </Text>
               <View style={{marginTop: 5, marginRight: 5}}>
                 <RNPButton
                   mode="text"
                   uppercase={false}
                   onPress={() => {
-                    console.log('Visit Prssed');
+                    props.navigation.navigate('StoreDetail', { data: item })
+                    
                   }}>
                   <Text style={{fontSize: 10}}>Visit</Text>
                   <Icon
@@ -876,7 +893,7 @@ const Home = props => {
             ) : null}
 
             {/*FEATURE STORE*/}
-            {popularProducts.length > 0 ? (
+            {storesList && storesList.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
                   <Text style={[styles.blockTitle, {fontSize: 16}]}>
@@ -905,7 +922,7 @@ const Home = props => {
                     marginHorizontal: 8,
                     marginTop: 15,
                   }}
-                  data={popularProducts}
+                  data={storesList}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
                   showsHorizontalScrollIndicator={false}
@@ -1103,7 +1120,7 @@ const Home = props => {
             {/* ) : null} */}
 
             {/*POPULAR STORE*/}
-            {popularProducts.length > 0 ? (
+            {storesList && storesList.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
                   <Text style={[styles.blockTitle, {fontSize: 16}]}>
@@ -1132,7 +1149,7 @@ const Home = props => {
                     marginHorizontal: 8,
                     marginTop: 15,
                   }}
-                  data={popularProducts}
+                  data={storesList}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
                   showsHorizontalScrollIndicator={false}
