@@ -37,90 +37,91 @@ import settings from '../../config/settings';
 import { Button as RNPButton, TextInput } from 'react-native-paper';
 import Moment from 'moment';
 import EIcon from 'react-native-vector-icons/EvilIcons';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view'
+import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import AsyncStorage from '@react-native-community/async-storage';
+import productHandlers from "../../store/services/product/handlers";
+import { customPaperTheme } from '../../config/themes';
 
-const popularProducts = [
-    {
-        "_id": "4755jPwTynSgwZgzQ",
-        "businessName": "Omkar Iphone Store",
-        "title": "This is title of product.This is tested.",
-        "description": "Love",
-        "contact": "",
-        "radius": 0,
-        "homeDelivery": false,
-        "price": 300,
-        "discount": 5,
-        "unit": "200",
-        "images": [
-            "1635072638975.png"
-        ],
-        "city": "kathmandu",
-        "availableQuantity": 100,
-        "instock": true
-    },
-    {
-        "_id": "mXuQTExhKZcSw8J7Q",
-        "businessName": "Omkar Iphone Store",
-        "title": "This is title of product.This is tested.",
-        "description": "Love",
-        "contact": "",
-        "radius": 0,
-        "homeDelivery": false,
-        "price": 300,
-        "discount": 5,
-        "unit": "200",
-        "images": [
-            "1635072638975.png"
-        ],
-        "city": "kathmandu",
-        "availableQuantity": 0,
-        "instock": false
-    },
-    {
-        "_id": "4755jPwTynSgwZgzQ",
-        "businessName": "Omkar Iphone Store",
-        "title": "This is title of product.This is tested.",
-        "description": "Love",
-        "contact": "",
-        "radius": 0,
-        "homeDelivery": false,
-        "price": 300,
-        "discount": 5,
-        "unit": "200",
-        "images": [
-            "1635072638975.png"
-        ],
-        "city": "kathmandu",
-        "availableQuantity": 100,
-        "instock": true
-    },
-    {
-        "_id": "mXuQTExhKZcSw8J7Q",
-        "businessName": "Omkar Iphone Store",
-        "title": "This is title of product.This is tested.",
-        "description": "Love",
-        "contact": "",
-        "radius": 0,
-        "homeDelivery": false,
-        "price": 300,
-        "discount": 5,
-        "unit": "200",
-        "images": [
-            "1635072638975.png"
-        ],
-        "city": "kathmandu",
-        "availableQuantity": 100,
-        "instock": true
+const StoreDetail = (props) => {
+
+    const [loggedUser, setLoggedUser] = useState(Meteor.user());
+    const [searchText, setSearchText] = useState('');
+    const [productButtonActive, setProductButtonActive] = useState(true);
+    const [allProductButtonActive, setAllProductButtonActive] = useState(false);
+    const [aboutButtonActive, setAboutButtonActive] = useState(false);
+    const [popularProduct, setPopularProduct] = useState([]);
+    const [allProduct, setAllProduct] = useState([]);
+    const [outOfStockProduct, setoutOfStockProduct] = useState([]);
+    const [liked, setLiked] = useState(false);
+
+    let wishList = [];
+
+    const businessInfo = props.route.params.data;
+
+    useEffect( async() => {
+        productHandlers.getMyProducts(loggedUser._id, (res) => {
+            if (res) {
+                setAllProduct(res);
+            }
+        });
+
+        let wishListItem = await AsyncStorage.getItem('myWhishList');
+        console.log('This is wislist Item '+wishListItem);
+        if (wishListItem) {
+            wishList = JSON.parse(wishListItem);
+        }
+        else {
+            wishList = [];
+        }
+
+        //set liked based on wishlist
+        allProduct.map((item) => {
+            setLiked(wishList.includes(item._id))
+        })
+    },[])
+
+    const _handleSearchText = () => {
+        console.log('Testedt')
     }
-]
 
-const PopularProductTab = (props) => {
-    const _handleProductPress = pro => {
-        props.route.navigation.navigate('ProductDetail', { Id: pro._id });
+    const _handleProductPress = product => {
+        props.navigation.navigate('ProductDetail', { data: product });
     };
 
-    const addToWishlist = () => {
-        //Add to wishlist
+    const addToWishlist = (productId) => {
+        setLiked(!liked);
+        let index = wishList.findIndex(item => { return item == productId });
+        if (index > -1)
+            wishList.splice(index, 1);
+        else
+            wishList.push(productId);
+
+        AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
+        ToastAndroid.showWithGravityAndOffset(
+            liked ? 'Product added to  Wishlist !' : 'Product removed from  Wishlist !',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            50,
+        );
+    };
+
+    const handleProductButton = () => {
+        setProductButtonActive(true);
+        setAllProductButtonActive(false);
+        setAboutButtonActive(false);
+    }
+
+    const handleAllProductButton = () => {
+        setProductButtonActive(false);
+        setAllProductButtonActive(true);
+        setAboutButtonActive(false);
+    }
+
+    const handleAboutButton = () => {
+        setProductButtonActive(false);
+        setAllProductButtonActive(false);
+        setAboutButtonActive(true);
     }
     const _renderProducts = (data, index) => {
         let item = data.item;
@@ -132,7 +133,7 @@ const PopularProductTab = (props) => {
                     customStyle.productContainerStyle,
                     { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
                 ]}
-                >
+            >
                 <View
                     key={item._id}
                     style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
@@ -145,7 +146,9 @@ const PopularProductTab = (props) => {
                         />
                     </View>
                     <View style={{ position: 'absolute', top: 4, right: 4 }}>
-                        <Icon name='heart' onPress={() => { addToWishlist() }} style={{ fontSize: 25 }} />
+                        {item.liked ?
+                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.likedColor }} /> :
+                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.disLikedColor }} />}
                     </View>
                     {!item.instock || item.availableQuantity < 0 ?
                         <View style={{ flexDirection: 'row', position: 'absolute', top: 90, left: 6, backgroundColor: 'red' }}>
@@ -180,198 +183,14 @@ const PopularProductTab = (props) => {
                         </View>
                     </View>
                 </View>
+               
             </TouchableOpacity>
         );
     };
-    return (
-        <Content style={{ marginTop: 20, marginHorizontal: 10 }}>
-            <View>
-                <View>
-                    <Image
-                        style={{ height: 85, width: '100%' }}
-                        source={require('../../images/geniee_banner.png')}
-                    />
-                </View>
-                <View>
-                    <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Popular in here</Text>
-                        <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Top 10 Selling Product</Icon>
-                    </View>
-                    <FlatList
-                        contentContainerStyle={{
-                            paddingBottom: 15,
-                           // marginHorizontal: 8,
-                            marginTop: 15
-                        }}
-                        data={popularProducts}
-                        horizontal={true}
-                        keyExtractor={(item, index) => item._id}
-                        showsHorizontalScrollIndicator={false}
-                        //numColumns={3}
-                        renderItem={(item, index) => _renderProducts(item, index)}
-                    />
-                </View>
-                <View>
-                    <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Runinng out of stock soon</Text>
-                        <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Get % discount</Icon>
-                    </View>
-                    <FlatList
-                        contentContainerStyle={{
-                            paddingBottom: 15,
-                            //marginHorizontal: 6,
-                            marginTop: 15
-                        }}
-                        data={popularProducts}
-                        //horizontal={true}
-                        keyExtractor={(item, index) => item._id}
-                        showsHorizontalScrollIndicator={false}
-                        numColumns={3}
-                        renderItem={(item, index) => _renderProducts(item, index)}
-                    />
-                </View>
-            </View>
-        </Content>
-    )
-}
-
-const AllProductTab = (props) => {
-
-    const _handleProductPress = pro => {
-        props.route.navigation.navigate('ProductDetail', { Id: pro._id });
-    };
-
-    const addToWishlist = () => {
-        //Add to wishlist
-    }
-
-    const _renderProducts = (data, index) => {
-        let item = data.item;
-        return (
-            <TouchableOpacity
-                key={item._id}
-                onPress={() => _handleProductPress(item)}
-                style={[
-                    customStyle.productContainerStyle,
-                    { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
-                ]}>
-                <View
-                    key={item._id}
-                    style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
-                    <View style={{ width: '100%', borderRadius: 5 }}>
-                        <Image
-                            source={{ uri: settings.IMAGE_URLS + item.images[0] }}
-                            style={{
-                                flex: 1, width: undefined, height: 160, width: 104, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
-                            }}
-                        />
-                    </View>
-                    <View style={{ position: 'absolute', top: 15, right: 12 }}>
-                        <Icon name='heart' onPress={() => { addToWishlist() }} style={{ fontSize: 25 }} />
-                    </View>
-                    {!item.instock || item.availableQuantity < 0 ?
-                        <View style={{ flexDirection: 'row', position: 'absolute', top: 90, left: 8, backgroundColor: 'red' }}>
-                            <Text style={{ fontSize: 16, color: colors.whiteText }}>Out of Stock</Text>
-                        </View> : null}
-                    <View>
-                        <View>
-                            <Text numberOfLines={1} style={{ fontSize: 10 }}>From {item.businessName}</Text>
-                            <Text numberOfLines={2} style={{ fontSize: 12, fontWeight: 'bold', color: colors.gray_100 }}>
-                                {item.title}
-                            </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                {item.discount ? (
-                                    <>
-                                        <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>
-                                            Rs. {item.price}
-                                        </Text>
-                                        <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 10, marginLeft: 5, }}>
-                                            {item.discount}% off
-                                        </Text>
-                                    </>
-                                ) : null}
-                            </View>
-                            <Text
-                                style={{
-                                    color: colors.primary,
-                                    fontWeight: '700',
-                                    fontSize: 12,
-                                }}>
-                                Rs. {item.price - (item.price * item.discount) / 100}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        );
-    };
-    return (
-        <Content style={{ marginTop: 20, marginHorizontal: 10 }}>
-            <View>
-                <FlatList
-                    contentContainerStyle={{
-                        paddingBottom: 15,
-                        marginHorizontal: 8,
-                        marginTop: 15
-                    }}
-                    data={popularProducts}
-                    //horizontal={true}
-                    keyExtractor={(item, index) => item._id}
-                    showsHorizontalScrollIndicator={false}
-                    numColumns={3}
-                    renderItem={(item, index) => _renderProducts(item, index)}
-                />
-            </View>
-        </Content>
-    )
-}
-
-const AboutTab = () => {
-    return (
-        <View>
-            <Text> About</Text>
-        </View>
-    )
-}
-
-const StoreDetail = (props) => {
-
-    const [loggedUser, setLoggedUser] = useState(Meteor.user());
-    const [searchText, setSearchText] = useState('');
-
-    const businessId = props.route.params.id;
-
-    const layout = useWindowDimensions();
-
-    const [index, setIndex] = React.useState(0);
-    const [routes] = React.useState([
-        { key: 'first', title: 'Popular', navigation :props.navigation },
-        { key: 'second', title: 'Products',navigation :props.navigation },
-        { key: 'third', title: 'About',navigation :props.navigation },
-    ]);
-
-    const renderScene = SceneMap({
-        first: PopularProductTab,
-        second: AllProductTab,
-        third: AboutTab,
-    });
-
-    const renderTabBar = (props) => (
-        <TabBar
-            {...props}
-            activeColor={'black'}
-            inactiveColor={'black'}
-            style={{ marginTop: 15, backgroundColor: 'white' }}
-        />
-    );
-
-    const _handleSearchText = () => {
-        console.log('Testedt')
-    }
 
     return (
         <>
-            <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+            <SafeAreaView style={{flex:1, backgroundColor: colors.whiteText }}>
                 <View
                     style={{
                         backgroundColor: colors.appLayout,
@@ -405,19 +224,19 @@ const StoreDetail = (props) => {
                         </View>
                     </Header>
                 </View>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', marginHorizontal: 15 }}>
                     <Image
-                        source={{ uri: settings.IMAGE_URLS + popularProducts[0].images[0] }}
+                        source={{ uri: settings.IMAGE_URLS + businessInfo.registrationImage }}
                         style={{
-                            height: 100, width: 100, resizeMode: 'cover', borderRadius: 100,
+                            height: 75, width: 75, resizeMode: 'cover', borderRadius: 75,
                         }}
                     />
                     <View style={{ marginLeft: 10 }}>
-                        <Text style={{ marginTop: 15, fontWeight: 'bold', color: colors.gray_100 }}>{popularProducts[0].businessName}</Text>
-                        <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>({popularProducts[0].city})</Text>
+                        <Text style={{ marginTop: 15, fontWeight: 'bold', color: colors.gray_100, width: '95%' }} numberOfLines={2}>{businessInfo.businessName}</Text>
+                        <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>({businessInfo.city})</Text>
                         <View style={{ flexDirection: 'row', marginTop: 10 }}>
                             <EIcon name='location' style={{ fontSize: 20 }}></EIcon>
-                            <Text style={{ fontSize: 12 }}>{popularProducts[0].city}</Text>
+                            <Text style={{ fontSize: 12 }}>{businessInfo.city}</Text>
                         </View>
                     </View>
                     <View style={{ marginLeft: 'auto', marginTop: 15, paddingRight: 10 }}>
@@ -425,13 +244,104 @@ const StoreDetail = (props) => {
                         <Text>Chat</Text>
                     </View>
                 </View>
-                <TabView
-                    navigationState={{ index, routes }}
-                    renderScene={renderScene}
-                    renderTabBar={renderTabBar}
-                    onIndexChange={setIndex}
-                    initialLayout={{ width: layout.width }}
-                />
+                <View style={{ flexDirection: 'row', paddingHorizontal: 10, justifyContent: 'space-between', marginVertical: 10 }}>
+                    <View>
+                        <RNPButton mode='text'
+                            uppercase={false}
+                            onPress={() => handleProductButton()}
+                            style={productButtonActive ? styles.activeButton : ''}
+                        >
+                            <Text style={productButtonActive ? styles.activeText : ''}>Product</Text>
+                        </RNPButton>
+                    </View>
+                    <View>
+                        <RNPButton
+                            mode='text'
+                            uppercase={false}
+                            onPress={() => handleAllProductButton()}
+                            style={allProductButtonActive ? styles.activeButton : ''}
+                        >
+                            <Text style={allProductButtonActive ? styles.activeText : ''}>All Product</Text>
+                        </RNPButton>
+                    </View>
+                    <View>
+                        <RNPButton
+                            mode='text'
+                            uppercase={false}
+                            onPress={() => handleAboutButton()}
+                            style={aboutButtonActive ? styles.activeButton : ''}
+                        >
+                            <Text style={aboutButtonActive ? styles.activeText : ''}>About</Text>
+                        </RNPButton>
+                    </View>
+                </View>
+                <Content style={{ marginHorizontal: 10 }}>
+                <View>
+                    {productButtonActive === true ?
+                        <View>
+                            <View>
+                                <Image
+                                    style={{ height: 85, width: '100%' }}
+                                    source={require('../../images/geniee_banner.png')}
+                                />
+                            </View>
+                            <View>
+                                <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Popular in here</Text>
+                                    <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Top 10 Selling Product</Icon>
+                                </View>
+                                <FlatList
+                                    // contentContainerStyle={{
+                                    //     paddingBottom: 15,
+                                    //     // marginHorizontal: 8,
+                                    //     marginTop: 15
+                                    // }}
+                                    data={allProduct.sort((a, b) => b.views - a.views)}
+                                    horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    //numColumns={3}
+                                    renderItem={(item, index) => _renderProducts(item, index)}
+                                />
+                            </View>
+                            <View>
+                                <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Runinng out of stock soon</Text>
+                                    <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Get % discount</Icon>
+                                </View>
+                                <FlatList
+                                    // contentContainerStyle={{
+                                    //     paddingBottom: 15,
+                                    //     //marginHorizontal: 6,
+                                    //     marginTop: 15
+                                    // }}
+                                    data={allProduct.sort((a, b) => b.views - a.views)}
+                                    //horizontal={true}
+                                    keyExtractor={(item, index) => item._id}
+                                    showsHorizontalScrollIndicator={false}
+                                    numColumns={3}
+                                    renderItem={(item, index) => _renderProducts(item, index)}
+                                />
+                            </View>
+                        </View> : null}
+                    {allProductButtonActive === true ?
+                        <View>
+                            <FlatList
+                                // contentContainerStyle={{
+                                //     paddingBottom: 15,
+                                //     //marginHorizontal: 6,
+                                //     marginTop: 15
+                                // }}
+                                data={allProduct}
+                                //horizontal={true}
+                                keyExtractor={(item, index) => item._id}
+                                showsHorizontalScrollIndicator={false}
+                                numColumns={3}
+                                renderItem={(item, index) => _renderProducts(item, index)}
+                            />
+                        </View> : null}
+                </View>
+                </Content>
             </SafeAreaView>
         </>
     );
@@ -459,5 +369,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    activeButton: {
+        borderBottomWidth: 1,
+        borderColor: '#3DA9FC',
+    },
+    activeText: {
+        color: '#3DA9FC',
+    }
 });
 export default StoreDetail;

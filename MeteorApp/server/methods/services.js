@@ -1285,8 +1285,8 @@ Meteor.methods({
         });
     },
 
-    getMyProducts() {
-        let loggedUser = Meteor.userId() || "NA";
+    getMyProducts(userId) {
+        let loggedUser = userId === null ?  Meteor.userId() || "NA" : userId;
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
@@ -1302,9 +1302,9 @@ Meteor.methods({
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {
-                        $match: { serviceOwner: loggedUser },
-                    },
+                    // {
+                    //     $match: { ServiceOwner: loggedUser },
+                    // },
                     { $lookup: OwnerLookup },
                     { $addFields: addValues },
                     { $sort: { createDate: -1 } },

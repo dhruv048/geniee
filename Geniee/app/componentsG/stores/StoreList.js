@@ -37,85 +37,12 @@ import settings from '../../config/settings';
 import { Button as RNPButton, TextInput } from 'react-native-paper';
 import Moment from 'moment';
 import AIcon from 'react-native-vector-icons/AntDesign';
-
-const stores = [
-    {
-        "_id": "55430308-5ab2-454d-82fd-2567ac0450c3",
-        "isApproved": true,
-        "businessName": "Omkar Iphone Store",
-        "selectedCategory": "20211004051531",
-        "city": "Butwal",
-        "district": "Butwal",
-        "nearestLandmark": "Milanchowk",
-        "image": "1635072638975.png",
-        "businessImage": "1635072638977.jpeg",
-        "registrationImage": "1635072638978.png",
-        "panNumber": "121212",
-        "PANImage": "1635072638978.png",
-        "contact": "9843580327",
-        "email": "peace.shrizaa@gmail.com",
-        "location": "P8HM+PX Kathmandu, Nepal",
-        "coverImage": "1635072638978.png",
-    },
-    {
-        "_id": "55430308-5ab2-454d-82fd-2567ac0450c3",
-        "isApproved": false,
-        "businessName": "Narayan Dai ko Kirana Pasal",
-        "selectedCategory": "20211004051531",
-        "city": "Kathmandu",
-        "district": "Kathmandu",
-        "nearestLandmark": "balkot",
-        "image": "1635072638975.png",
-        "businessImage": "1635072638977.jpeg",
-        "registrationImage": "1635072638978.png",
-        "panNumber": "121212",
-        "PANImage": "1635072638978.png",
-        "contact": "9843580327",
-        "email": "peace.shrizaa@gmail.com",
-        "location": "P8HM+PX Kathmandu, Nepal",
-        "coverImage": "1635072638978.png",
-    },
-    {
-        "_id": "55430308-5ab2-454d-82fd-2567ac0450c3",
-        "isApproved": true,
-        "businessName": "Riddhi Siddhi Electronis Gadgets",
-        "selectedCategory": "20211004051531",
-        "city": "Kathmandu",
-        "district": "Kathmandu",
-        "nearestLandmark": "balkot",
-        "image": "1635072638975.png",
-        "businessImage": "1635072638977.jpeg",
-        "registrationImage": "1635072638978.png",
-        "panNumber": "121212",
-        "PANImage": "1635072638978.png",
-        "contact": "9843580327",
-        "email": "peace.shrizaa@gmail.com",
-        "location": "P8HM+PX Kathmandu, Nepal",
-        "coverImage": "1635072638978.png",
-    },
-    {
-        "_id": "55430308-5ab2-454d-82fd-2567ac0450c3",
-        "isApproved": false,
-        "businessName": "Met Life Insurance Pvt Ltd",
-        "selectedCategory": "20211004051531",
-        "city": "Kathmandu",
-        "district": "Kathmandu",
-        "nearestLandmark": "balkot",
-        "image": "1635072638975.png",
-        "businessImage": "1635072638977.jpeg",
-        "registrationImage": "1635072638978.png",
-        "panNumber": "121212",
-        "PANImage": "1635072638978.png",
-        "contact": "9843580327",
-        "email": "peace.shrizaa@gmail.com",
-        "location": "P8HM+PX Kathmandu, Nepal",
-        "coverImage": "1635072638978.png",
-    },
-]
+import productHandler from '../../store/services/product/handlers';
 
 const StoreList = (props) => {
     const [loggedUser, setLoggedUser] = useState(Meteor.user());
-    const [storesList, setStoresList] = useState(stores);
+    const [storesList, setStoresList] = useState([]);
+    const [filterStoreList, setfilterStoreList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [filterItem, setFilterItem] = useState();
     let storeLocationList = [];
@@ -123,29 +50,32 @@ const StoreList = (props) => {
     const categoryId = props.route.params.categoryId;
     const categoryTitle = props.route.params.title;
 
-    storesList.map(item => storeLocationList.push(item.city));
-    storeLocationList = Array.from(new Set(storeLocationList));
-
-   // useEffect(() => {
+    useEffect(() => {
         //
         //Get Categorieswise store
-        Meteor.call('getStoreCategoriesWise', categoryId, (err, res) => {
-            console.log(err, res);
-            if (!err) {
-                //console.log(res.result);
-                //setStoresList(res.result);
-            } else {
-                console.log(err);
+        productHandler.getStoreCategoriesWise(categoryId, (res) => {
+            if (res) {
+                console.log(res);
+                setStoresList(res);
+                setfilterStoreList(res);
             }
         });
-    //})
+
+
+    }, [])
 
     const _handleProductPress = (item) => {
-        props.navigation.navigate('StoreDetail', { id: item._id });
+        props.navigation.navigate('StoreDetail', { data: item });
     }
 
     const loadStoreLocation = () => {
-        return storeLocationList.map(item => (
+        if (storesList && storesList.length > 0) {
+            storesList.map(item => {
+                storeLocationList.push(item.city)
+            });
+        };
+        const storeLocations = Array.from(new Set(storeLocationList));
+        return storeLocations.map(item => (
             <Picker.Item label={item} value={item} style={styles.locationDropdown} />
         ))
     };
@@ -158,24 +88,27 @@ const StoreList = (props) => {
                 const textData = text.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             })
-            setStoresList(filterData);
+            setfilterStoreList(filterData);
         } else {
-            setStoresList(storesList);
+            setfilterStoreList(storesList);
         }
     }
 
     const _handleLocationChange = (filterLocation) => {
-        if(filterLocation === 'Store Location') return;
-        let filterData = storesList.filter(item => {
-            const itemData = item.city ? item.city.toUpperCase() : ''.toUpperCase();
-            const textData = filterLocation.toUpperCase();
-            return itemData.indexOf(textData) > -1;
-        })
-        if (filterData) {
-            setStoresList(filterData);
-        }
-        else {
-            setStoresList(storesList);
+        if (filterLocation === 'Store Location') {
+            setfilterStoreList(storesList);
+        } else {
+            let filterData = storesList.filter(item => {
+                const itemData = item.city ? item.city.toUpperCase() : ''.toUpperCase();
+                const textData = filterLocation.toUpperCase();
+                return itemData.indexOf(textData) > -1;
+            })
+            if (filterData) {
+                setfilterStoreList(filterData);
+            }
+            else {
+                setfilterStoreList(storesList);
+            }
         }
     }
 
@@ -184,7 +117,7 @@ const StoreList = (props) => {
         return (
             <View
                 key={item._id}
-               // onPress={() => _handleProductPress(item)}
+                // onPress={() => _handleProductPress(item)}
                 style={[
                     customStyle.productContainerStyle,
                     { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
@@ -194,14 +127,12 @@ const StoreList = (props) => {
                     style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
                     <View style={{ width: '100%', borderRadius: 5 }}>
                         <Image
-                            source={{ uri: settings.IMAGE_URLS + item.image }}
-                            style={{
-                                flex: 1, width: undefined, height: 70, width: 100, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
-                            }}
+                            source={{ uri: settings.IMAGE_URLS + item.registrationImage }}
+                            style={styles.imageStyle}
                         />
                     </View>
                     {item.isApproved ? <View style={{ flexDirection: 'row', position: 'absolute', top: 55, left: 6 }}>
-                        <AIcon name='checkcircle' size={10} style={{ marginRight: 3, color: colors.statusBar }} />
+                        <AIcon name='checkcircle' style={{ marginRight: 3, color: colors.statusBar }} />
                         <Text style={{ fontSize: 10 }}>Verified</Text>
                     </View> : null}
                     <View>
@@ -214,7 +145,7 @@ const StoreList = (props) => {
                                 <RNPButton
                                     mode='text'
                                     uppercase={false}
-                                    onPress={() => { _handleProductPress(item)}}
+                                    onPress={() => { _handleProductPress(item) }}
                                 >
                                     <Text style={{ fontSize: 10 }}>Visit</Text>
                                     <Icon name='chevron-right' style={{ marginLeft: 10, marginTop: 10 }} />
@@ -278,7 +209,7 @@ const StoreList = (props) => {
                             />
                         </View>
                         {/* STORE*/}
-                        {storesList.length > 0 ? (
+                        {storesList && storesList.length > 0 ? (
                             <View style={styles.block}>
                                 <View style={{ width: '50%' }}>
                                     <Picker
@@ -296,7 +227,7 @@ const StoreList = (props) => {
                                         marginHorizontal: 8,
                                         marginTop: 15
                                     }}
-                                    data={storesList}
+                                    data={filterStoreList}
                                     //horizontal={true}
                                     keyExtractor={(item, index) => item._id}
                                     showsHorizontalScrollIndicator={false}
@@ -315,27 +246,7 @@ const StoreList = (props) => {
 }
 
 const styles = StyleSheet.create({
-    mainContainer: {
-        flex: 1,
-        // flexDirection: 'column',
-        // flexWrap: 'wrap',
-    },
-    containerStyle: {
-        paddingLeft: 5,
-        paddingVertical: 5,
-        //backgroundColor: 'white',
-        borderWidth: 0,
-        // marginVertical: 4,
-        borderColor: '#808080',
-        //elevation: 5,
-        //width: (viewportWidth-60)/3,
-        width: 100,
-        margin: 5,
-        height: 100,
-        borderRadius: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+
     inputBox: {
         width: '100%',
         height: 40,
@@ -349,6 +260,15 @@ const styles = StyleSheet.create({
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 17,
         marginBottom: 10,
+    },
+    imageStyle: {
+        flex: 1,
+        width: undefined,
+        height: 70,
+        width: 100,
+        resizeMode: 'cover',
+        borderRadius: 4,
+        marginBottom: 8,
     }
 });
 export default StoreList;

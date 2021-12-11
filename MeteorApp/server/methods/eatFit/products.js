@@ -1,13 +1,13 @@
-import {Meteor} from 'meteor/meteor';
-import {EFProducts,EFOrder} from "../../../lib/collections/eatFit/efProducts";
-import {ProductOwner, Business,Product} from "../../../lib/utils";
-import {FIREBASE_MESSAGING} from "../../API/fire-base-admin";
+import { Meteor } from 'meteor/meteor';
+import { EFProducts, EFOrder } from "../../../lib/collections/eatFit/efProducts";
+import { ProductOwner, Product } from "../../../lib/utils";
+import { FIREBASE_MESSAGING } from "../../API/fire-base-admin";
 
 Meteor.methods({
     'addNewProductEF': (productInfo) => {
         try {
-            productInfo.productOwner=ProductOwner.EAT_FIT;
-            console.log('addNewProduEF:::=>>>',productInfo._id);
+            productInfo.productOwner = ProductOwner.EAT_FIT;
+            console.log('addNewProduEF:::=>>>', productInfo._id);
             var currentUserId = Meteor.userId();
             productInfo.createdBy = currentUserId,
                 productInfo.createDate = new Date(new Date().toUTCString())
@@ -18,40 +18,40 @@ Meteor.methods({
                     let Id = moment().format('DDMMYYx');
                     EFProductImages.write(new Buffer(image.data, 'base64'),
                         {
-                            fileName:  image.name,
+                            fileName: image.name,
                             type: image.type
                         },
                         (err, res) => {
                             if (err) {
-                                console.log('error',err)
+                                console.log('error', err)
                             }
                             else {
-                                const imageId=res._id.toString()
-                                console.log('res:',imageId);
+                                const imageId = res._id.toString()
+                                console.log('res:', imageId);
 
                                 imageIds.push(imageId);
-                                if(productInfo.images.length===imageIds.length){
+                                if (productInfo.images.length === imageIds.length) {
                                     productInfo.images = imageIds;
                                     console.log('insert');
-                                  let Id=  EFProducts.insert(productInfo);
-                                    const notification={
-                                        title:'New Product by- EAT-FIT',
+                                    let Id = EFProducts.insert(productInfo);
+                                    const notification = {
+                                        title: 'New Product by- EAT-FIT',
                                         description: productInfo.title,
                                         owner: currentUserId,
-                                        productOwner:ProductOwner.EAT_FIT,
+                                        productOwner: ProductOwner.EAT_FIT,
                                         navigateId: Id,
-                                        receiver:[],
-                                        removedBy:[],
+                                        receiver: [],
+                                        removedBy: [],
                                         type: NotificationTypes.ADD_PRODUCT
                                     };
-                                    Meteor.call('addNotification',notification);
+                                    Meteor.call('addNotification', notification);
                                     try {
                                         FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - EAT-FIT`, productInfo.title, {
                                             Id: Id,
                                             navigate: "true",
                                             route: "ProductDetailEF",
                                             image: productInfo.images[0],
-                                          //  icon:_service.coverImage
+                                            //  icon:_service.coverImage
                                         })
                                     } catch (e) {
                                         throw new Meteor.Error(403, e.message);
@@ -65,18 +65,18 @@ Meteor.methods({
             else {
                 productInfo.images = [];
                 console.log('insert');
-                let Id= EFProducts.insert(productInfo);
-                const notification={
-                    title:'New Product by- EAT-FIT',
+                let Id = EFProducts.insert(productInfo);
+                const notification = {
+                    title: 'New Product by- EAT-FIT',
                     description: productInfo.title,
                     owner: Meteor.userId(),
-                    productOwner:ProductOwner.EAT_FIT,
+                    productOwner: ProductOwner.EAT_FIT,
                     navigateId: Id,
-                    receiver:[],
-                    removedBy:[],
+                    receiver: [],
+                    removedBy: [],
                     type: NotificationTypes.ADD_PRODUCT
                 };
-                Meteor.call('addNotification',notification);
+                Meteor.call('addNotification', notification);
                 try {
                     FIREBASE_MESSAGING.notificationToAll("newPoductStaging", `New Product by - EAT-FIT`, productInfo.title, {
                         Id: Id,
@@ -98,22 +98,22 @@ Meteor.methods({
     },
 
     'EFProductsByCategory': (_categoryId) => {
-        return EFProducts.find({category: _categoryId},{sort:{views:-1}}).fetch();
+        return EFProducts.find({ category: _categoryId }, { sort: { views: -1 } }).fetch();
     },
 
     'getSingleProductEF': (Id) => {
-        return EFProducts.findOne({_id: Id});
+        return EFProducts.findOne({ _id: Id });
     },
     'getSimilarProductEF': (Id) => {
-        let cat = EFProducts.findOne({_id: Id}).category;
-        return EFProducts.find({category: cat,_id:{$ne:Id}},{sort:{views:-1}}).fetch();
+        let cat = EFProducts.findOne({ _id: Id }).category;
+        return EFProducts.find({ category: cat, _id: { $ne: Id } }, { sort: { views: -1 } }).fetch();
     },
 
-    'updateViewCountEF':(productId)=>{
-        let _product=EFProducts.findOne(productId);
-        if(_product) {
+    'updateViewCountEF': (productId) => {
+        let _product = EFProducts.findOne(productId);
+        if (_product) {
             let views = _product.views || 0;
-            EFProducts.update({_id: productId}, {
+            EFProducts.update({ _id: productId }, {
                 $set: {
                     views: views + 1
                 }
@@ -128,7 +128,7 @@ Meteor.methods({
         let itemsUpdated = [];
         return Async.runSync(function (done) {
             order.items.forEach(async (item, index) => {
-                let product = await EFProducts.findOne({_id: item.productId});
+                let product = await EFProducts.findOne({ _id: item.productId });
                 // if (product.availabeQuantity >= item.quantity) {
                 //   //  await Products.update({_id: item.productId}, {$set: {'availabeQuantity': product.availabeQuantity - item.quantity}});
                 //     if (isOrder === 0) {
@@ -143,7 +143,7 @@ Meteor.methods({
                 if (index === order.items.length - 1) {
                     order.items = order.items;
                     let loggedUser = Meteor.user();
-                    order.owner=loggedUser? loggedUser._id:null;
+                    order.owner = loggedUser ? loggedUser._id : null;
                     EFOrder.insert(order, (err, res) => {
                         if (res) {
                             // let notification = {
@@ -170,10 +170,10 @@ Meteor.methods({
 
     'WishListItemsEF': (wishList) => {
         try {
-            let EFProductss = EFProducts.find({_id: {$in: wishList}}, {$sort: {views: -1}}).fetch();
-            let RProducts = Products.find({_id: {$in: wishList}}, {$sort: {views: -1}}).fetch();
+            let EFProductss = EFProducts.find({ _id: { $in: wishList } }, { $sort: { views: -1 } }).fetch();
+            let RProducts = Products.find({ _id: { $in: wishList } }, { $sort: { views: -1 } }).fetch();
             return Async.runSync(function (done) {
-                 done(null, EFProductss.concat(RProducts));
+                done(null, EFProductss.concat(RProducts));
             });
 
         }
@@ -182,9 +182,9 @@ Meteor.methods({
         }
     },
 
-    'getOrdersEF':(deviceId)=>{
-        let userId=Meteor.userId()? Meteor.userId():undefined;
-        return EFOrder.find({$or:[{owner:userId},{deviceId:deviceId}]}).fetch()
+    'getOrdersEF': (deviceId) => {
+        let userId = Meteor.userId() ? Meteor.userId() : undefined;
+        return EFOrder.find({ $or: [{ owner: userId }, { deviceId: deviceId }] }).fetch()
     },
 
 
@@ -207,7 +207,7 @@ Meteor.methods({
                     },
                 },
             },
-            {$sort: {"orderDate": -1}},
+            { $sort: { "orderDate": -1 } },
             {
                 $project: {
                     _id: 1,
@@ -226,7 +226,7 @@ Meteor.methods({
 
         ];
         return Async.runSync(function (done) {
-            aggregate(pipeline, {cursor: {}}).toArray(function (err, doc) {
+            aggregate(pipeline, { cursor: {} }).toArray(function (err, doc) {
                 if (doc) {
                     // console.log(doc)
                 }
@@ -236,10 +236,10 @@ Meteor.methods({
     },
     'updateOrderStatusEF': (Id, status) => {
         let loggedUser = Meteor.user();
-        let order = EFOrder.findOne({_id: Id});
-        EFOrder.update({_id: Id},
+        let order = EFOrder.findOne({ _id: Id });
+        EFOrder.update({ _id: Id },
             {
-                $set: {status: status}
+                $set: { status: status }
             }, (err, res) => {
                 if (err) {
                     return err
@@ -257,34 +257,30 @@ Meteor.methods({
             })
     },
 
-    'removeProductEF':(Id)=>{
+    'removeProductEF': (Id) => {
         EFProducts.remove(Id);
     },
 
-    'getStoreCategoriesWise' :(categoryId) =>{
+    'getStoreCategoriesWise': (categoryId) => {
         try {
             let subCategoryId = [];
-            let category = Categories.find({_id : categoryId}).fetch();
-            console.log('THis is category: '+category.values);
-            console.log('THis is category: '+category.subCategories);
+            let category = Categories.findOne({_id : categoryId});
+            category.subCategories.forEach((item) =>{
+                subCategoryId.push(item._id);
+            }); 
 
-            category.forEach((item) =>{
-                subCategoryId.push(item.subCategories._id);
-            });
-
-            console.log('This is subcatgoryId: '+subCategoryId);
             let business = Business.find({selectedCategory :{$in: subCategoryId}}).fetch();
-            console.log('This is business: '+ business);
 
             return business;
+            
         }
         catch (e) {
             console.log(e.message);
         }
     },
 
-    'getproductStoreWise' :(id) =>{
-        let product = Product.find({owner : id}).fetch();
+    'getproductStoreWise': (id) => {
+        let product = Product.find({ owner: id }).fetch();
         return product;
     }
 })
