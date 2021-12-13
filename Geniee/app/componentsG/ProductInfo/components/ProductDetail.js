@@ -40,52 +40,6 @@ import settings from '../../../config/settings';
 
 const RNFS = require('react-native-fs');
 
-const productTest = {
-    "_id": "w5Hd7rZmP4eX2JaDn",
-    "productTitle": "test",
-    "price": 600,
-    "discount": 5,
-    "warranty": "0",
-    "stockAvailability": true,
-    "warrantyTime": 2,
-    "returnPolicy": "0",
-    "returnPolicyTime": 2,
-    "color": [
-        {
-            "colorName": "red"
-        },
-        {
-            "colorName": "blue"
-        },
-        {
-            "colorName": "green"
-        }
-    ],
-    "size": [
-        {
-            "size": "M"
-        },
-        {
-            "size": "l"
-        },
-        {
-            "size": "xl"
-        }
-    ],
-    "description": "test descr",
-    "images": [],
-    "productProperty": [
-        {
-            "metaName": "Brand",
-            "metaValue": " zeepi"
-        }
-    ],
-    "owner": "YSdhXJ2cdKL57XbeS",
-    "imageBeRemove": [],
-    "productOwner": 0,
-    "createdBy": "YSdhXJ2cdKL57XbeS"
-};
-
 const ProductDetail = (props) => {
 
     const [productData, setProductData] = useState('');
@@ -229,7 +183,7 @@ const ProductDetail = (props) => {
 
         AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
         ToastAndroid.showWithGravityAndOffset(
-            liked
+            !liked
                 ? 'Product removed from  Wishlist !'
                 : 'Product added to  Wishlist !',
             ToastAndroid.LONG,
@@ -303,10 +257,10 @@ const ProductDetail = (props) => {
         return (
             <View key={item._id}>
                 <View>
-                    {/* <Product
+                    <Product
                         product={item}
                         navigation={props.navigation}
-                    /> */}
+                    />
                 </View>
             </View>
         );

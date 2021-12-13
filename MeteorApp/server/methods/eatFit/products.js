@@ -171,10 +171,36 @@ Meteor.methods({
     'WishListItemsEF': (wishList) => {
         try {
             let EFProductss = EFProducts.find({ _id: { $in: wishList } }, { $sort: { views: -1 } }).fetch();
-            let RProducts = Products.find({ _id: { $in: wishList } }, { $sort: { views: -1 } }).fetch();
+
+            const collection = Products.rawCollection();
+            const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+            const BusinessLookup = {
+                from: "business",
+                localField: "businessType",
+                foreignField: "businessTypes",
+                as: "business",
+            };
+
             return Async.runSync(function (done) {
-                done(null, EFProductss.concat(RProducts));
+                aggregate(
+                    [
+                        { $match: {_id : { $in: wishList }}},
+                        // { $match: { $expr: { $in: ["$serviceId", "$$serviceId"] } } },
+                        { $sort: { views: -1 } },
+                        { $lookup: BusinessLookup },
+                    ],
+                    { cursor: {} }
+                ).toArray(function (err, doc) {
+                    if (doc) {
+                        //   console.log('doc', doc.length,doc)
+                    }
+                    done(err, EFProductss.concat(doc));
+                });
             });
+            // let RProducts = Products.find({ _id: { $in: wishList } }, { $sort: { views: -1 } }).fetch();
+            // return Async.runSync(function (done) {
+            //     done(null, EFProductss.concat(RProducts));
+            // });
 
         }
         catch (e) {
@@ -264,15 +290,15 @@ Meteor.methods({
     'getStoreCategoriesWise': (categoryId) => {
         try {
             let subCategoryId = [];
-            let category = Categories.findOne({_id : categoryId});
-            category.subCategories.forEach((item) =>{
+            let category = Categories.findOne({ _id: categoryId });
+            category.subCategories.forEach((item) => {
                 subCategoryId.push(item._id);
-            }); 
+            });
 
-            let business = Business.find({selectedCategory :{$in: subCategoryId}}).fetch();
+            let business = Business.find({ selectedCategory: { $in: subCategoryId } }).fetch();
 
             return business;
-            
+
         }
         catch (e) {
             console.log(e.message);

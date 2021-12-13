@@ -42,6 +42,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import productHandlers from "../../store/services/product/handlers";
 import { customPaperTheme } from '../../config/themes';
 
+let wishList = [];
 const StoreDetail = (props) => {
 
     const [loggedUser, setLoggedUser] = useState(Meteor.user());
@@ -53,8 +54,6 @@ const StoreDetail = (props) => {
     const [allProduct, setAllProduct] = useState([]);
     const [outOfStockProduct, setoutOfStockProduct] = useState([]);
     const [liked, setLiked] = useState(false);
-
-    let wishList = [];
 
     const businessInfo = props.route.params.data;
 
@@ -125,6 +124,7 @@ const StoreDetail = (props) => {
     }
     const _renderProducts = (data, index) => {
         let item = data.item;
+        let isInWishlist = wishList.includes(item._id);
         return (
             <TouchableOpacity
                 key={item._id}
@@ -146,7 +146,7 @@ const StoreDetail = (props) => {
                         />
                     </View>
                     <View style={{ position: 'absolute', top: 4, right: 4 }}>
-                        {item.liked ?
+                        {isInWishlist ?
                             <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.likedColor }} /> :
                             <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.disLikedColor }} />}
                     </View>

@@ -98,7 +98,7 @@ const Checkout = (props) => {
                     product.orderQuantity = cartItem.orderQuantity;
                     product.size = cartItem.size;
                     product.color = cartItem.color;
-                    product.finalPrice = Math.round(product.price - (product.discount ? (product.price * (product.discount / 100)) : 0));
+                    product.finalPrice = Math.round((product.price - (product.discount ? (product.price * (product.discount / 100)) : 0))*cartItem.orderQuantity);
                 });
                 setCartItems(res.result);
                 updateTotal(res.result);
