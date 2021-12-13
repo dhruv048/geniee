@@ -18,13 +18,14 @@ const removeProductsByServiceId = (Id) => {
 };
 
 const handleImageUpload = (formData) => new Promise((resolve, reject) => {
-    let jsonImage = {base64Data  : formData};
+    let jsonImage = { base64Data: formData };
     HTTP.post('http://139.59.59.117/api/upload', {
-        headers:{
-        'Content-Type': 'application/json'
+        headers: {
+            'Content-Type': 'application/json'
         },
-        data:jsonImage}
-        ,(error, result) => {
+        data: jsonImage
+    }
+        , (error, result) => {
             if (error) reject({ target: 'handleImageUpload', error });
             else {
                 resolve(result.data);
@@ -39,9 +40,9 @@ const handleBulkImageUpload = (formData, cb) => {
             imageFileName.push(res.fileName);
         }),
         )).then(() => cb(imageFileName))
-            .catch((err) => {
-                console.log('error', err);
-            })
+        .catch((err) => {
+            console.log('error', err);
+        })
 };
 
 Meteor.methods({
@@ -414,9 +415,19 @@ Meteor.methods({
         return data;
     },
 
-    getBusinessList: function(userId){
-        var currentUserId = userId != null? userId : Meteor.userId();
-        var data = Business.find({owner : currentUserId}).fetch();
+    getBusinessList: function (userId) {
+        try {
+            var currentUserId = userId != null ? userId : Meteor.userId();
+            var data = Business.find({ owner: currentUserId }).fetch();
+            return data;
+        } catch(error){
+            throw new Meteor.Error('Please first add your business Type');
+        }
+
+    },
+
+    getPopularStores: function () {
+        var data = Business.find({ businessTypes: { $in: [1,2,4] } }).fetch();
         return data;
     },
 
@@ -578,7 +589,7 @@ Meteor.methods({
                 //     let Id = await imageUploadWithExternalAPI(image);
                 //     imageIds.push(Id.fileName);
                 // })
-                handleBulkImageUpload(productInfo.images,(res) => {
+                handleBulkImageUpload(productInfo.images, (res) => {
                     imageIds = res;
 
                     productInfo.images = imageIds;
@@ -1236,19 +1247,20 @@ Meteor.methods({
     // },
 
     getPopularProducts(_skip = 0, _limit = 0) {
+        let loggedUser = Meteor.userId();
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
-        const OwnerLookup = {
-            from: "service",
-            localField: "service",
-            foreignField: "_id",
-            as: "services",
-        };
+        // const OwnerLookup = {
+        //     from: "service",
+        //     localField: "service",
+        //     foreignField: "_id",
+        //     as: "services",
+        // };
         const BusinessLookup = {
             from: "business",
-            localField: "owner",
-            foreignField: "owner",
+            localField: "businessType",
+            foreignField: "businessTypes",
             as: "business",
         };
         const addValues = {
@@ -1273,8 +1285,8 @@ Meteor.methods({
         });
     },
 
-    getMyProducts() {
-        let loggedUser = Meteor.userId() || "NA";
+    getMyProducts(userId) {
+        let loggedUser = userId === null ?  Meteor.userId() || "NA" : userId;
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
@@ -1290,9 +1302,9 @@ Meteor.methods({
         return Async.runSync(function (done) {
             aggregate(
                 [
-                    {
-                        $match: { serviceOwner: loggedUser },
-                    },
+                    // {
+                    //     $match: { ServiceOwner: loggedUser },
+                    // },
                     { $lookup: OwnerLookup },
                     { $addFields: addValues },
                     { $sort: { createDate: -1 } },

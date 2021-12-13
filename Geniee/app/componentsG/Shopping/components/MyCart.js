@@ -9,21 +9,22 @@ import {
     Icon
 } from 'native-base';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Keyboard, View, Text, StyleSheet, FlatList, Alert, AsyncStorage, ToastAndroid, TouchableOpacity } from 'react-native';
+import { Keyboard, View, Text, StyleSheet, FlatList, Alert, ToastAndroid, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 import settings, { ProductOwner } from "../../../config/settings";
 import { colors } from '../../../config/styles';
 import FIcon from 'react-native-vector-icons/Feather';
 import Meteor from '../../../react-native-meteor';
+import AsyncStorage from '@react-native-community/async-storage';
 
+let cartList = [];
 const MyCart = (props) => {
-    const [cartItems, setCartItems] = useState('');
+    const [cartItems, setCartItems] = useState([]);
     const [liked, setLiked] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
 
-    let cartList = [];
 
-    useEffect(async () => {
+    useEffect(async() => {
         let products = [];
         let mycart = await AsyncStorage.getItem('myCart');
         if (mycart) {
@@ -46,10 +47,8 @@ const MyCart = (props) => {
             return true;
         }
         Meteor.call('WishListItemsEF', products, (err, res) => {
-
-            console.log(err, res);
-            if (err) {
-                console.log('this is due to error. ' + err);
+            if (res.error) {
+                console.log('this is due to error. ' + res.error);
             }
             else {
                 let totalPrice = 0;
@@ -139,17 +138,17 @@ const MyCart = (props) => {
                         <Thumbnail square style={{ width: 80, height: 80, borderRadius: 4 }}
                             source={{ uri: settings.IMAGE_URLS + item.images[0] }} />
                         <View style={{ marginLeft: 15 }}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                                <Text style={{ fontSize: 10 }}> From Chaudhary Group</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around',marginRight:'auto'  }}>
+                                <Text style={{ fontSize: 10,}}> From  {item.business[0].businessName}</Text>
                                 <TouchableOpacity
                                     transparent
-                                    style={{ marginLeft: 85 }}
+                                    style={{ marginLeft: '25%' }}
                                     onPress={() => removeItemPressed(data.item)}>
                                     <FIcon name='x-circle' size={15} style={{ color: 'red' }} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold' }} numberOfLines={2}>
-                                {item.title}
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', width: '75%' }} numberOfLines={2}>
+                                {item.productTitle}
                             </Text>
                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'blue', marginRight: 10 }}>Rs. {item.finalPrice}</Text>

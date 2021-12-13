@@ -14,6 +14,30 @@ export const customPaperTheme = {
     regular: 'Roboto',
     medium: 'Helvetica Neue Light',
   },
+  GenieeButton : {
+    buttonMaxWidth :'100%',
+    buttonMinWidth :'55%',
+    buttonHeight : '48px' 
+  },
+  GenieeColor : {
+    primaryColor :'#3DA9FC',
+    boldTextColor : '#353945',
+    likedColor :'#FC2165',
+    disLikedColor :'#DCDCDC'
+  },
+  GenieeText : {
+    boldFontSize : '20px',
+    boldFontWeight :'bold',
+    fontMinSize : 10,
+    fontMaxSize : 18,
+  },
+  GenieeInput : {
+    roundness : 6,
+    inputHeight : 45,
+    inputMaxWidth :'100%',
+    inputMinWidth : '55%',
+    inputFontSize : 18,
+  }
 };
 
 export const customGalioTheme = {
