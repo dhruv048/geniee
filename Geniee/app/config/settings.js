@@ -97,7 +97,7 @@ export const ServiceDuration = {
 
 export const OTPConfig = {
   SMS_TOKEN: 'v2_W3RXKmhMIH4vzstomppdRcLLVxH.rLCW',
-  SMS_URL: 'http://api.sparrowsms.com/v2/sms',
+  SMS_URL: 'http://api.sparrowsms.com/v2/sms/',
 };
 
 export default settings;

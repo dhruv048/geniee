@@ -5,7 +5,8 @@ import {
     ToastAndroid,
     TouchableWithoutFeedback,
     Keyboard,
-    TouchableOpacity
+    TouchableOpacity,
+    StatusBar
 } from 'react-native';
 import { colors, customStyle } from '../../../config/styles';
 import {
@@ -26,7 +27,7 @@ import LocationPicker from '../../../components/LocationPicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import _, { round, set } from 'lodash';
 import { Title, Button as RNPButton, TextInput, Checkbox, RadioButton } from 'react-native-paper';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
 import { ProgressViewIOSComponent, Image } from 'react-native';
@@ -37,6 +38,10 @@ import { FlatList } from 'react-native-gesture-handler';
 import Product from '../../../components/Store/Product';
 import FIcon from 'react-native-vector-icons/FontAwesome';
 import settings from '../../../config/settings';
+import CartIcon from "../../../components/HeaderIcons/CartIcon";
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import IIcon from 'react-native-vector-icons/Ionicons';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 const RNFS = require('react-native-fs');
 
@@ -91,7 +96,7 @@ const ProductDetail = (props) => {
 
         //Update View Count
         Meteor.call('updateViewCount', productId);
-    }, [])
+    })
 
     const orderNow = () => {
         let product = productData;
@@ -195,8 +200,8 @@ const ProductDetail = (props) => {
 
     const renderImage = () => {
         const imageList = [];
-        productData.images.map((item)=>{
-            imageList.push(settings.IMAGE_URLS+item);
+        productData.images.map((item) => {
+            imageList.push(settings.IMAGE_URLS + item);
         });
         return (
             <SliderBox
@@ -253,16 +258,66 @@ const ProductDetail = (props) => {
 
     const _renderProduct = (data, index) => {
         let item = data.item;
-        console.log(item);
         return (
-            <View key={item._id}>
-                <View>
-                    <Product
-                        product={item}
-                        navigation={props.navigation}
-                    />
+            <TouchableOpacity
+                key={item._id}
+                onPress={() =>  props.navigation.navigate('ProductDetail', { data: product })}
+                style={[
+                    customStyle.productContainerStyle,
+                    { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
+                ]}
+            >
+                <View
+                    key={item._id}
+                    style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
+                    <View style={{ width: '100%', borderRadius: 5 }}>
+                        <Image
+                            source={{ uri: settings.IMAGE_URLS + item.images[0] }}
+                            style={{
+                                flex: 1, width: undefined, height: 160, width: 104, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
+                            }}
+                        />
+                    </View>
+                    {/* <View style={{ position: 'absolute', top: 4, right: 4 }}>
+                        {isInWishlist ?
+                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.likedColor }} /> :
+                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.disLikedColor }} />}
+                    </View> */}
+                    {!item.instock || item.availableQuantity < 0 ?
+                        <View style={{ flexDirection: 'row', position: 'absolute', top: 90, left: 6, backgroundColor: 'red' }}>
+                            <Text style={{ fontSize: 16, color: colors.whiteText }}>Out of Stock</Text>
+                        </View> : null}
+                    <View>
+                        <View>
+                            <Text numberOfLines={1} style={{ fontSize: 10 }}>From {item.businessName}</Text>
+                            <Text numberOfLines={2} style={{ fontSize: 12, fontWeight: 'bold', color: colors.gray_100 }}>
+                                {item.title}
+                            </Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                {item.discount ? (
+                                    <>
+                                        <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 12, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>
+                                            Rs. {item.price}
+                                        </Text>
+                                        <Text style={{ color: colors.body_color, fontWeight: '400', fontSize: 10, marginLeft: 5, }}>
+                                            {item.discount}% off
+                                        </Text>
+                                    </>
+                                ) : null}
+                            </View>
+                            <Text
+                                style={{
+                                    color: colors.primary,
+                                    fontWeight: '700',
+                                    fontSize: 12,
+                                }}>
+                                Rs. {item.price - (item.price * item.discount) / 100}
+                            </Text>
+                        </View>
+                    </View>
                 </View>
-            </View>
+               
+            </TouchableOpacity>
         );
     };
 
@@ -274,26 +329,38 @@ const ProductDetail = (props) => {
                     accessible={false}>
                     <View style={{ paddingTop: 0 }}>
                         {/* <Logo />*/}
-                        <Header
-                            androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}
-                        >
-                            <RNPButton
-                                transparent
-                                uppercase={false}
-                                style={{ width: '100%', alignItems: 'flex-start' }}
-                                onPress={() => {
-                                    props.navigation.goBack();
-                                }}>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
-                            </RNPButton>
-                        </Header>
-                        <View style={styles.containerRegister}>
-                            <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
-                        </View>
+                        <StatusBar 
+                        backgroundColor= 'transparent'
+                        barStyle='dark-content'
+                        translucent={true}
+                        />
                         <View style={styles.sliderBox}>
                             {productData.images && productData.images.length > 0 ? renderImage() : null}
+                            <View style={{ position: 'absolute', flexDirection: 'row', justifyContent:'space-between',marginTop:'10%',marginHorizontal:5}}>
+                                <Icon
+                                    style={{ color: colors.whiteText, fontSize: 20, marginRight:'70%'}}
+                                    onPress={() => {
+                                        props.navigation.goBack();
+                                    }}
+                                    name="arrow-left" />
+                                <CartIcon></CartIcon>
+                                <Icon
+                                    style={{color: colors.whiteText, fontSize: 20, marginLeft:15 }}
+                                    onPress={() => {
+                                        console.log('SearchPressed');
+                                    }}
+                                    name="search" />
+                            </View>
+                        </View>
+                        {productData.business[0].isApproved ? <View style={styles.verifiedContainer}>
+                            <IIcon name='shield-checkmark' size={15} style={styles.verifiedIcon} />
+                            <Text style={styles.verifiedText}>Geniee verified seller</Text>
+                        </View> : null}
+                        <View style={{flexDirection:'row',marginTop:10}}>
+                            <MIcon name='storefront' size={14} style={styles.storeIcon} />
+                            <Text style={styles.storeName}>{productData.business[0].businessName}</Text>
+                            <MIcon name='my-location' size={14} style={styles.storeLocationIcon} />
+                            <Text style={styles.storeLocation}>{productData.business[0].city},{productData.business[0].district}</Text>
                         </View>
                         <View style={styles.containerRegister}>
 
@@ -327,7 +394,7 @@ const ProductDetail = (props) => {
                             </View>
                             <View>
                                 <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Description : </Text>
-                                <Text style={{ fontSize: 16 }}>{productData.description}</Text>
+                                <Text style={{ fontSize: 16, color:'#B8B8B8' }}>{productData.description}</Text>
                             </View>
                             <View>
                                 <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Specification : </Text>
@@ -424,17 +491,18 @@ const ProductDetail = (props) => {
                                 </RNPButton>
                             </View>
                             {/* Similar Products Sections */}
-                            <View style={styles.blockHeader}>
+                            <View style={{flexDirection:'row'}}>
                                 <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                                     Similar Products
                                 </Text>
                                 <Text style={{ fontSize: 10, color: colors.statusBar, marginLeft: '35%' }}>
                                     You may also like
                                 </Text>
-                                <View style={{ marginTop: 15, flex: 1 }}>
+                                
+                            </View>
+                            <View style={{ marginVertical: 15, }}>
 
                                     <FlatList
-                                        contentContainerStyle={styles.mainContainer}
                                         data={similarProducts}
                                         keyExtracter={(item, index) => item._id}
                                         //horizontal={false}
@@ -444,7 +512,6 @@ const ProductDetail = (props) => {
                                         }
                                     />
                                 </View>
-                            </View>
                         </View>
 
                     </View>
@@ -460,6 +527,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.whiteText,
         flex: 1,
+        
     },
     content: {
         backgroundColor: colors.appBackground,
@@ -469,7 +537,7 @@ const styles = StyleSheet.create({
     },
 
     containerRegister: {
-        marginHorizontal: 25,
+        marginHorizontal: 20,
         //marginTop: 5,
     },
 
@@ -538,4 +606,47 @@ const styles = StyleSheet.create({
         color: customGalioTheme.COLORS.INPUT_TEXT,
         marginVertical: 15,
     },
+    verifiedContainer:{
+        flexDirection:'row', 
+        backgroundColor:customPaperTheme.GenieeColor.lightPrimaryColor, 
+        marginHorizontal:15, 
+        height:25, 
+        width:'60%'
+        },
+        
+        verifiedIcon : {
+        marginLeft:15, 
+        marginTop:3, 
+        color:customPaperTheme.GenieeColor.primaryColor
+        },
+        
+        verifiedText : {
+        marginLeft:10,
+        color:customPaperTheme.GenieeColor.primaryColor
+        },
+        
+        storeIcon: {
+        marginLeft:15, 
+        marginTop:3, 
+        color:customPaperTheme.GenieeColor.darkColor
+        },
+        
+        storeName: {
+        marginLeft:10,
+        color:customPaperTheme.GenieeColor.darkColor, 
+        fontSize:14,
+        fontWeight:'bold'
+        },
+        
+        storeLocationIcon : {
+        marginLeft:15, 
+        marginTop:3,
+        color:customPaperTheme.GenieeColor.lightTextColor
+        },
+        
+        storeLocation : {
+        marginLeft:10,
+        color:customPaperTheme.GenieeColor.lightTextColor, 
+        fontSize:14
+        }
 });

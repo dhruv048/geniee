@@ -15,6 +15,7 @@ import { customGalioTheme } from '../../../config/themes';
 import { Title, Button as RNPButton, TextInput, Checkbox, HelperText } from 'react-native-paper';
 import authHandlers from '../../../store/services/auth/handlers';
 import useAddressDetailForm from '../../../hooks/useAddressDetailForm';
+import { OTPConfig } from '../../../config/settings';
 
 const AddressDetail = (props) => {
     const { values, handleInputChange, validateAddressDetailForm, resetAddressDetailForm } = useAddressDetailForm();
@@ -33,7 +34,7 @@ const AddressDetail = (props) => {
             setOTPCodeValid(false);
             otpValid = true;
         }
-        else{
+        else {
             setOTPCodeValid(true);
             otpValid = false;
         }
@@ -44,17 +45,17 @@ const AddressDetail = (props) => {
         const digits = '0123456789';
         let OTPCode = '';
         for (let i = 0; i < 6; i++) {
-          OTPCode += digits[Math.floor(Math.random() * 10)];
+            OTPCode += digits[Math.floor(Math.random() * 10)];
         }
         return OTPCode;
-      };
+    };
     //Design Purpose
     // const handleCreateAccount = () => {
     //     props.navigation.navigate('RegisterCompleted',{data:'user'});
     // }
     const handleCreateAccount = () => {
         let userData = props.route.params.userData;
-        let registerUser='';
+        let registerUser = '';
         if (!validateAddressDetailForm()) {
             if (validateOTPCode()) {
                 //preparing for Database
@@ -82,7 +83,7 @@ const AddressDetail = (props) => {
                 authHandlers.handleSignUp(user, (res) => {
                     console.log('Result from register' + res);
                     if (res.error) {
-                        console.log('result from signup error '+ res.reason);
+                        console.log('result from signup error ' + res.reason);
                         ToastAndroid.showWithGravityAndOffset(
                             res.reason,
                             ToastAndroid.LONG,
@@ -103,7 +104,7 @@ const AddressDetail = (props) => {
                         registerUser = res;
                         setLoading(false);
                         resetAddressDetailForm();
-                        props.navigation.navigate('RegisterCompleted',{data:registerUser});
+                        props.navigation.navigate('RegisterCompleted', { data: registerUser });
                     }
                 });
                 setLoading(false);
@@ -112,16 +113,16 @@ const AddressDetail = (props) => {
     }
 
     const handleOnLocationSelect = (location) => {
-        let city='';
-        let district='';
-        if(location != '' ){
-            for (var i=0; i<location.address_components.length; i++) {
-                for (var b=0;b<location.address_components[i].types.length;b++) {
-    
-                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+        let city = '';
+        let district = '';
+        if (location != '') {
+            for (var i = 0; i < location.address_components.length; i++) {
+                for (var b = 0; b < location.address_components[i].types.length; b++) {
+
+                    //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
                     if (location.address_components[i].types[b] == "locality") {
                         //this is the object you are looking for
-                        city= location.address_components[i];
+                        city = location.address_components[i];
                     }
                     if (location.address_components[i].types[b] == "administrative_area_level_2") {
                         //this is the object you are looking for
@@ -129,9 +130,9 @@ const AddressDetail = (props) => {
                     }
                 }
             }
-    
+
             delete location.address_components;
-            setLocation(location); 
+            setLocation(location);
             handleInputChange('district', district.long_name);
             handleInputChange('city', city.long_name)
         }
@@ -148,20 +149,43 @@ const AddressDetail = (props) => {
     }
     const getOTPCode = (mobileNumber) => {
         let otpCode = generateOTPCode();
-        let message = 'Your OTP code is '+ otpCode +' for Geniee verification.';
-        if(otpCode && mobileNumber){
-            authHandlers.PostSendSMS(mobileNumber, message, (res =>{
-                if(res){
-                    setsendOTPCode(otpCode);
-                    ToastAndroid.showWithGravityAndOffset(
-                        'OTP Code has been sent to register number.',
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        50,
-                    );
-                }
-            }))
+        let message = 'Your OTP code is ' + otpCode + ' for Geniee verification.';
+        if (otpCode && mobileNumber) {
+            // authHandlers.PostSendSMS(mobileNumber, message, (res) =>{
+            //     if(res){
+            //         setsendOTPCode(otpCode);
+            //         ToastAndroid.showWithGravityAndOffset(
+            //             'OTP Code has been sent to register number.',
+            //             ToastAndroid.LONG,
+            //             ToastAndroid.TOP,
+            //             0,
+            //             50,
+            //         );
+            //     }
+            // })
+            fetch(OTPConfig.SMS_URL, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({
+                    token :OTPConfig.SMS_TOKEN,
+                    from: 'Geniee',
+                    to: mobileNumber,
+                    text: message,
+                }),
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    //Showing response message coming from server 
+                    console.log(responseJson);
+                })
+                .catch((error) => {
+                    //display error message
+                    console.log(error);
+                });
         }
     }
 
@@ -218,7 +242,7 @@ const AddressDetail = (props) => {
                             </Text>
                         </View>
                         <View style={styles.containerRegister}>
-                        <TextInput
+                            <TextInput
                                 mode="outlined"
                                 right={<TextInput.Icon name="map-marker" />}
                                 family="feather"
@@ -232,9 +256,9 @@ const AddressDetail = (props) => {
                                 onFocus={() => setPickLocation(true)}
                                 style={styles.inputBox}
                                 // error={values.location.error}
-                                theme={{roundness:6}}
+                                theme={{ roundness: 6 }}
                             />
-                            <View style={styles.textInputNameView}>                            
+                            <View style={styles.textInputNameView}>
                                 <TextInput
                                     mode="outlined"
                                     color={customGalioTheme.COLORS.INPUT_TEXT}

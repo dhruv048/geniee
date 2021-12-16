@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import Meteor from '../../../react-native-meteor';
 import {
   StyleSheet,
@@ -39,9 +39,9 @@ import {
 } from 'native-base';
 import Icon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
-import {colors, customStyle, variables} from '../../../config/styles';
-import {Badge, Avatar} from 'react-native-paper';
-const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+import { colors, customStyle, variables } from '../../../config/styles';
+import { Badge, Avatar } from 'react-native-paper';
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 import settings from '../../../config/settings';
 import StarRating from '../../../components/StarRating/StarRating';
 import Product from '../../../components/Store/Product';
@@ -50,20 +50,21 @@ import CogMenu from '../../../components/CogMenu';
 import SplashScreen from 'react-native-lottie-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getProfileImage} from '../../../config/settings';
+import { getProfileImage } from '../../../config/settings';
 import LinearGradient from 'react-native-linear-gradient';
 import FooterTabs from '../../../components/FooterTab';
 import NotificationIcon from '../../../components/HeaderIcons/NotificationIcon';
 import CartIcon from '../../../components/HeaderIcons/CartIcon';
-import {customPaperTheme} from '../../../config/themes';
-import {MaterialColors} from '../../../constants/material-colors';
-import {Button as RNPButton} from 'react-native-paper';
-import {lowerCase} from 'lodash';
+import { customPaperTheme } from '../../../config/themes';
+import { MaterialColors } from '../../../constants/material-colors';
+import { Button as RNPButton } from 'react-native-paper';
+import { lowerCase } from 'lodash';
 import Moment from 'moment';
 import Data from '../../../react-native-meteor/Data';
-import {connect} from 'react-redux';
-import {categorySelector} from '../../../store/selectors';
+import { connect } from 'react-redux';
+import { categorySelector } from '../../../store/selectors';
 import AIcon from 'react-native-vector-icons/AntDesign';
+import Statusbar from '../../Shared/components/Statusbar';
 
 let isDashBoard = true;
 
@@ -219,7 +220,7 @@ const Home = props => {
           // See error code charts below.
           console.log(error.code, error.message);
         },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
       );
     } else {
       console.log('Location permission denied');
@@ -238,7 +239,7 @@ const Home = props => {
         // See error code charts below.
         console.log(error.code, error.message);
       },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
     );
 
     messageListener().catch(e => {
@@ -310,7 +311,7 @@ const Home = props => {
       50,
     );
 
-    setState({backClickCount: 1}, () => {
+    setState({ backClickCount: 1 }, () => {
       Animated.sequence([
         Animated.spring(springValue, {
           toValue: -0.15 * viewportHeight,
@@ -332,7 +333,7 @@ const Home = props => {
   const messageListener = async () => {
     notificationOpenedListener = messaging().onNotificationOpenedApp(
       notificationOpen => {
-        const {title, body} = notificationOpen.notification;
+        const { title, body } = notificationOpen.notification;
         // showAlert(title, body);
         console.log('onNotificationOpened', notificationOpen);
 
@@ -348,7 +349,7 @@ const Home = props => {
         return remoteMessage;
       });
     if (notificationOpen) {
-      const {title, body} = notificationOpen.notification;
+      const { title, body } = notificationOpen.notification;
       //  showAlert(title, body);
       console.log('notificationOpen', notificationOpen.notification);
       if (notificationOpen.notification.data.title == 'REMOVE_AUTH_TOKEN') {
@@ -391,7 +392,7 @@ const Home = props => {
 
   const _handlItemPress = service => {
     service.avgRate = averageRating(service.ratings);
-    props.navigation.push('ServiceDetail', {Id: service._id});
+    props.navigation.push('ServiceDetail', { Id: service._id });
   };
 
   const averageRating = arr => {
@@ -436,17 +437,17 @@ const Home = props => {
         <View key={data.index.toString()} style={styles.containerStyle}>
           <TouchableOpacity onPress={() => onCategoryClick(item)}>
             <Image
-              style={{height: 50, width: 50}}
+              style={{ height: 50, width: 50 }}
               source={{
-                uri: settings.IMAGE_URLS  + item.image,
+                uri: settings.IMAGE_URLS + item.image,
               }}
             />
             {/*</View>
                 </ImageBackground>*/}
           </TouchableOpacity>
         </View>
-        <View style={{width: 65, marginBottom: 5}}>
-          <Text style={{textAlign: 'center', fontSize: 10}}> {item.title}</Text>
+        <View style={{ width: 65, marginBottom: 5 }}>
+          <Text style={{ textAlign: 'center', fontSize: 10 }}> {item.title}</Text>
         </View>
       </View>
     );
@@ -558,7 +559,7 @@ const Home = props => {
     const isActionButtonVisible = direction === 'up';
     if (isActionButtonVisible !== isActionButtonVisible) {
       LayoutAnimation.configureNext(CustomLayoutLinear);
-      setState({isActionButtonVisible});
+      setState({ isActionButtonVisible });
     }
     // Update your scroll position
     _listViewOffset = currentOffset;
@@ -572,14 +573,14 @@ const Home = props => {
         onPress={() => _handleProductPress(item)}
         style={[
           customStyle.productContainerStyle,
-          {borderTopLeftRadius: 4, borderTopRightRadius: 5},
+          { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
         ]}>
         <View
           key={item._id}
-          style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
-          <View style={{width: '100%', borderRadius: 5}}>
+          style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
+          <View style={{ width: '100%', borderRadius: 5 }}>
             <Image
-              source={{uri: settings.IMAGE_URLS + item.images[0]}}
+              source={{ uri: settings.IMAGE_URLS + item.images[0] }}
               style={{
                 flex: 1,
                 width: undefined,
@@ -593,8 +594,8 @@ const Home = props => {
           </View>
           <View>
             <View>
-              <Text numberOfLines={1} style={{fontSize: 10}}>
-               From {item.business[0].businessName}
+              <Text numberOfLines={1} style={{ fontSize: 10 }}>
+                From {item.business[0].businessName}
               </Text>
               <Text
                 numberOfLines={2}
@@ -608,7 +609,7 @@ const Home = props => {
                 {/* //{item.title} */}
                 {item.description}
               </Text>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 {item.discount ? (
                   <>
                     <Text
@@ -653,17 +654,17 @@ const Home = props => {
     return (
       <View
         key={item._id}
-        onPress={() => {console.log('Visit Prssed');}}
+        onPress={() => { console.log('Visit Prssed'); }}
         style={[
           customStyle.productContainerStyle,
-          {borderTopLeftRadius: 4, borderTopRightRadius: 5},
+          { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
         ]}>
         <View
           key={item._id}
-          style={[customStyle.Card, {top: 0, left: 0, rigth: 0}]}>
-          <View style={{width: '100%', borderRadius: 5}}>
+          style={[customStyle.Card, { top: 0, left: 0, rigth: 0 }]}>
+          <View style={{ width: '100%', borderRadius: 5 }}>
             <Image
-              source={{uri: settings.IMAGE_URLS + item.registrationImage}}
+              source={{ uri: settings.IMAGE_URLS + item.registrationImage }}
               style={{
                 flex: 1,
                 width: undefined,
@@ -676,12 +677,12 @@ const Home = props => {
             />
           </View>
           {item.isApproved ? <View style={{ flexDirection: 'row', position: 'absolute', top: 50, left: 3 }}>
-                        <AIcon name='checkcircle' size={12} style={{ marginRight: 3, color: colors.statusBar }} />
-                        <Text style={{ fontSize: 12,}}>Verified</Text>
-                    </View> : null}
+            <AIcon name='checkcircle' size={12} style={{ marginRight: 3, color: colors.statusBar }} />
+            <Text style={{ fontSize: 12, }}>Verified</Text>
+          </View> : null}
           <View>
             <View>
-              <Text numberOfLines={1} style={{fontSize: 10}}>
+              <Text numberOfLines={1} style={{ fontSize: 10 }}>
                 {item.city}
               </Text>
               <Text
@@ -696,18 +697,18 @@ const Home = props => {
                 {/* //{item.title} */}
                 {item.businessName}
               </Text>
-              <View style={{marginTop: 5, marginRight: 5}}>
+              <View style={{ marginTop: 5, marginRight: 5 }}>
                 <RNPButton
                   mode="text"
                   uppercase={false}
                   onPress={() => {
                     props.navigation.navigate('StoreDetail', { data: item })
-                    
+
                   }}>
-                  <Text style={{fontSize: 10}}>Visit</Text>
+                  <Text style={{ fontSize: 10 }}>Visit</Text>
                   <Icon
                     name="chevron-right"
-                    style={{marginLeft: 10, marginTop: 10}}
+                    style={{ marginLeft: 10, marginTop: 10 }}
                   />
                 </RNPButton>
               </View>
@@ -734,49 +735,8 @@ const Home = props => {
   // console.log(loggedUser,profileImage)
   return (
     <>
-      <StatusBar backgroundColor={colors.statusBar} />
-      <SafeAreaView style={{flex: 1, backgroundColor: colors.whiteText}}>
-        <View
-          style={{
-            backgroundColor: colors.appLayout,
-            height: 80,
-          }}>
-          <View style={customStyle.topbarHeader}>
-            <Image
-              style={{height: 30, width: 80}}
-              source={require('../../../images/geniee_logo.png')}
-            />
-            <View style={customStyle.topbarActionIcons}>
-              {/* <NotificationIcon navigation={props.navigation} />
-                            <CartIcon
-                                navigation={props.navigation}
-                                style={customStyle.actionIcon}
-                            />
-
-                            <TouchableOpacity
-                                style={{ marginHorizontal: 0 }}
-                                onPress={() =>
-                                    props.navigation.navigate(
-                                        loggedUser ? 'Profile' : 'SignIn',
-                                    )
-                                }>
-                                <Icon name="user" style={customStyle.actionIcon} />
-                            </TouchableOpacity> */}
-              <TouchableOpacity
-                style={{marginHorizontal: 0, flexDirection: 'row'}}>
-                <FAIcon
-                  name="map-marker"
-                  style={{
-                    color: colors.statusBar,
-                    fontSize: 20,
-                    marginRight: 8,
-                  }}
-                />
-                <Text style={{fontSize: 15}}>Kathmandu</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+        <Statusbar />
         {/*{loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
 
         <Content
@@ -788,21 +748,39 @@ const Home = props => {
           }}>
           {/* GENIEE BANNER */}
           <View>
-            <View>
+            <View style={styles.logoContainer}>
               <Image
-                style={{height: 70, width: '100%'}}
+                style={{ height: 30, width: 80 }}
+                source={require('../../../images/geniee_logo.png')}
+              />
+              <TouchableOpacity
+                style={{ marginHorizontal: 0, flexDirection: 'row' }}>
+                <FAIcon
+                  name="map-marker"
+                  style={{
+                    color: colors.statusBar,
+                    fontSize: 20,
+                    marginRight: 8,
+                  }}
+                />
+                <Text style={{ fontSize: 15 }}>Kathmandu</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{marginHorizontal:15}}>
+              <Image
+                style={{ height: 120, width: '100%', resizeMode:'stretch'  }}
                 source={require('../../../images/geniee_banner.png')}
               />
             </View>
-            <View style={{marginHorizontal: 15, marginVertical: 15}}>
+            <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
               <RNPButton
                 mode="outlined"
                 uppercase={false}
                 onPress={() => {
                   loggedUser
                     ? props.navigation.navigate('BecomeSeller', {
-                        data: loggedUser,
-                      })
+                      data: loggedUser,
+                    })
                     : props.navigation.navigate('SignIn');
                 }}
                 style={{
@@ -810,7 +788,7 @@ const Home = props => {
                   borderWidth: 2,
                   borderStyle: 'dotted',
                 }}>
-                <Text style={{color: colors.statusBar}}>
+                <Text style={{ color: colors.statusBar }}>
                   Become a Merchant & Sell
                 </Text>
               </RNPButton>
@@ -818,7 +796,7 @@ const Home = props => {
             {/*CATEGORIES LIST START*/}
             {props.categories ? (
               props.categories.length > 0 ? (
-                <View style={[styles.block, {marginVertical: 15}]}>
+                <View style={[styles.block, { marginVertical: 15 }]}>
                   {/* <View style={styles.blockHeader}>
                                 <Text style={styles.blockTitle}>Categories</Text>
                                 <Button transparent onPress={() => handleViewAll()}>
@@ -850,7 +828,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Deals that might excite you
                   </Text>
                   <Text
@@ -875,17 +853,17 @@ const Home = props => {
                   showsHorizontalScrollIndicator={false}
                   renderItem={(item, index) => _renderProduct(item, index)}
                 />
-                <View style={{marginTop: 5, marginRight: 5}}>
+                <View style={{ marginTop: 5, marginRight: 5 }}>
                   <RNPButton
                     mode="text"
                     uppercase={false}
                     onPress={() => {
                       console.log('See All Prssed');
                     }}>
-                    <Text style={{fontSize: 12}}>See All</Text>
+                    <Text style={{ fontSize: 12 }}>See All</Text>
                     <Icon
                       name="chevron-right"
-                      style={{marginLeft: 10, marginTop: 10}}
+                      style={{ marginLeft: 10, marginTop: 10 }}
                     />
                   </RNPButton>
                 </View>
@@ -896,7 +874,7 @@ const Home = props => {
             {storesList && storesList.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Featured Store
                   </Text>
                   <RNPButton
@@ -907,7 +885,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -936,7 +914,7 @@ const Home = props => {
             {/* {nearByservice === '' ? null : nearByservice > 0 ? ( */}
             <View style={styles.block}>
               <View style={customStyle.blockHeader}>
-                <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                   Nearby Stores
                 </Text>
                 <RNPButton
@@ -947,7 +925,7 @@ const Home = props => {
                       Region: region,
                     })
                   }>
-                  <Text style={{fontSize: 10, color: colors.statusBar}}>
+                  <Text style={{ fontSize: 10, color: colors.statusBar }}>
                     See All
                   </Text>
                   <Icon
@@ -967,7 +945,7 @@ const Home = props => {
                 horizontal={true}
                 keyExtractor={(item, index) => item._id}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({item, index}) => (
+                renderItem={({ item, index }) => (
                   <TouchableOpacity
                     onPress={() => {
                       props.navigation.navigate('ServiceDetail', {
@@ -987,7 +965,7 @@ const Home = props => {
                         // paddingBottom: 10,
                         borderRadius: 4,
                       }}>
-                      <View style={{height: 147, width: 310, borderRadius: 4}}>
+                      <View style={{ height: 147, width: 310, borderRadius: 4 }}>
                         <Thumbnail
                           style={{
                             width: 310,
@@ -999,7 +977,7 @@ const Home = props => {
                           square
                           source={
                             item.coverImage
-                              ? {uri: settings.IMAGE_URL + item.coverImage}
+                              ? { uri: settings.IMAGE_URL + item.coverImage }
                               : require('../../../images/no-image.png')
                           }
                         />
@@ -1018,12 +996,12 @@ const Home = props => {
                             borderBottomLeftRadius: 5,
                             borderBottomRightRadius: 5,
                           }}>
-                          <Text style={{color: 'white', fontSize: 15}}>
+                          <Text style={{ color: 'white', fontSize: 15 }}>
                             {item.title}
                           </Text>
                         </LinearGradient>
                       </View>
-                      <View style={{flexDirection: 'row', padding: 0}}>
+                      <View style={{ flexDirection: 'row', padding: 0 }}>
                         <View
                           style={{
                             flex: 3,
@@ -1123,7 +1101,7 @@ const Home = props => {
             {storesList && storesList.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Popular Stores
                   </Text>
                   <RNPButton
@@ -1134,7 +1112,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -1163,7 +1141,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Popular in Stores
                   </Text>
                   <RNPButton
@@ -1174,7 +1152,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -1203,7 +1181,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Popular Restaurants
                   </Text>
                   <RNPButton
@@ -1214,7 +1192,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -1243,7 +1221,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Popular in Restaurants
                   </Text>
                   <RNPButton
@@ -1254,7 +1232,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -1283,7 +1261,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Popular Travel Agency
                   </Text>
                   <RNPButton
@@ -1294,7 +1272,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -1323,7 +1301,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, {fontSize: 16}]}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                     Popular Destination
                   </Text>
                   <RNPButton
@@ -1334,7 +1312,7 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{fontSize: 10, color: colors.statusBar}}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
                     <Icon
@@ -1372,6 +1350,13 @@ const styles = StyleSheet.create({
     // flexDirection: 'column',
     // flexWrap: 'wrap',
   },
+  logoContainer:{
+    flexDirection:'row', 
+    justifyContent:'space-between', 
+    marginHorizontal:15, 
+    marginTop:'15%', 
+    marginBottom:'10%'},
+
   containerStyle: {
     borderWidth: 0,
     borderRadius: 300,

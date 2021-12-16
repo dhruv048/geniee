@@ -41,6 +41,7 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import AsyncStorage from '@react-native-community/async-storage';
 import productHandlers from "../../store/services/product/handlers";
 import { customPaperTheme } from '../../config/themes';
+import Statusbar from '../Shared/components/Statusbar';
 
 let wishList = [];
 const StoreDetail = (props) => {
@@ -57,7 +58,7 @@ const StoreDetail = (props) => {
 
     const businessInfo = props.route.params.data;
 
-    useEffect( async() => {
+    useEffect(async () => {
         productHandlers.getMyProducts(loggedUser._id, (res) => {
             if (res) {
                 setAllProduct(res);
@@ -65,7 +66,7 @@ const StoreDetail = (props) => {
         });
 
         let wishListItem = await AsyncStorage.getItem('myWhishList');
-        console.log('This is wislist Item '+wishListItem);
+        console.log('This is wislist Item ' + wishListItem);
         if (wishListItem) {
             wishList = JSON.parse(wishListItem);
         }
@@ -77,7 +78,7 @@ const StoreDetail = (props) => {
         allProduct.map((item) => {
             setLiked(wishList.includes(item._id))
         })
-    },[])
+    }, [])
 
     const _handleSearchText = () => {
         console.log('Testedt')
@@ -183,22 +184,19 @@ const StoreDetail = (props) => {
                         </View>
                     </View>
                 </View>
-               
+
             </TouchableOpacity>
         );
     };
 
     return (
         <>
-            <SafeAreaView style={{flex:1, backgroundColor: colors.whiteText }}>
-                <View
-                    style={{
-                        backgroundColor: colors.appLayout,
-                        height: 80,
-                    }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+                <Statusbar />
+                <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
                     <Header
                         androidStatusBarColor={colors.statusBar}
-                        style={{ backgroundColor: '#4d94ff' }}
+                        style={{ backgroundColor: colors.statusBar }}
                     >
                         <View style={{ flexDirection: 'row' }}>
                             <RNPButton
@@ -276,71 +274,71 @@ const StoreDetail = (props) => {
                     </View>
                 </View>
                 <Content style={{ marginHorizontal: 10 }}>
-                <View>
-                    {productButtonActive === true ?
-                        <View>
+                    <View>
+                        {productButtonActive === true ?
                             <View>
-                                <Image
-                                    style={{ height: 85, width: '100%' }}
-                                    source={require('../../images/geniee_banner.png')}
-                                />
-                            </View>
-                            <View>
-                                <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
-                                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Popular in here</Text>
-                                    <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Top 10 Selling Product</Icon>
+                                <View>
+                                    <Image
+                                        style={{ height: 85, width: '100%' }}
+                                        source={require('../../images/geniee_banner.png')}
+                                    />
                                 </View>
-                                <FlatList
-                                    // contentContainerStyle={{
-                                    //     paddingBottom: 15,
-                                    //     // marginHorizontal: 8,
-                                    //     marginTop: 15
-                                    // }}
-                                    data={allProduct.sort((a, b) => b.views - a.views)}
-                                    horizontal={true}
-                                    keyExtractor={(item, index) => item._id}
-                                    showsHorizontalScrollIndicator={false}
-                                    //numColumns={3}
-                                    renderItem={(item, index) => _renderProducts(item, index)}
-                                />
-                            </View>
-                            <View>
-                                <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
-                                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Runinng out of stock soon</Text>
-                                    <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Get % discount</Icon>
+                                <View>
+                                    <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
+                                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Popular in here</Text>
+                                        <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Top 10 Selling Product</Icon>
+                                    </View>
+                                    <FlatList
+                                        // contentContainerStyle={{
+                                        //     paddingBottom: 15,
+                                        //     // marginHorizontal: 8,
+                                        //     marginTop: 15
+                                        // }}
+                                        data={allProduct.sort((a, b) => b.views - a.views)}
+                                        horizontal={true}
+                                        keyExtractor={(item, index) => item._id}
+                                        showsHorizontalScrollIndicator={false}
+                                        //numColumns={3}
+                                        renderItem={(item, index) => _renderProducts(item, index)}
+                                    />
                                 </View>
+                                <View>
+                                    <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
+                                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.gray_100 }}>Runinng out of stock soon</Text>
+                                        <Icon name='star' style={{ fontSize: 12, color: colors.statusBar, marginTop: 8 }}>Get % discount</Icon>
+                                    </View>
+                                    <FlatList
+                                        // contentContainerStyle={{
+                                        //     paddingBottom: 15,
+                                        //     //marginHorizontal: 6,
+                                        //     marginTop: 15
+                                        // }}
+                                        data={allProduct.sort((a, b) => b.views - a.views)}
+                                        //horizontal={true}
+                                        keyExtractor={(item, index) => item._id}
+                                        showsHorizontalScrollIndicator={false}
+                                        numColumns={3}
+                                        renderItem={(item, index) => _renderProducts(item, index)}
+                                    />
+                                </View>
+                            </View> : null}
+                        {allProductButtonActive === true ?
+                            <View>
                                 <FlatList
                                     // contentContainerStyle={{
                                     //     paddingBottom: 15,
                                     //     //marginHorizontal: 6,
                                     //     marginTop: 15
                                     // }}
-                                    data={allProduct.sort((a, b) => b.views - a.views)}
+                                    data={allProduct}
                                     //horizontal={true}
                                     keyExtractor={(item, index) => item._id}
                                     showsHorizontalScrollIndicator={false}
                                     numColumns={3}
                                     renderItem={(item, index) => _renderProducts(item, index)}
                                 />
-                            </View>
-                        </View> : null}
-                    {allProductButtonActive === true ?
-                        <View>
-                            <FlatList
-                                // contentContainerStyle={{
-                                //     paddingBottom: 15,
-                                //     //marginHorizontal: 6,
-                                //     marginTop: 15
-                                // }}
-                                data={allProduct}
-                                //horizontal={true}
-                                keyExtractor={(item, index) => item._id}
-                                showsHorizontalScrollIndicator={false}
-                                numColumns={3}
-                                renderItem={(item, index) => _renderProducts(item, index)}
-                            />
-                        </View> : null}
-                </View>
+                            </View> : null}
+                    </View>
                 </Content>
             </SafeAreaView>
         </>
