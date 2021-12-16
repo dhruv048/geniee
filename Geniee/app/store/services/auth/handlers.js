@@ -81,8 +81,9 @@ const PostSendSMS = (mobileNumber,message,cb) =>{
   axios({
     method :'post',
     url: OTPConfig.SMS_URL,
-    data:{from:'Geniee', token:OTPConfig.SMS_TOKEN, to:mobileNumber, text:message}
+    data:{token:OTPConfig.SMS_TOKEN, from:'Geniee', to:mobileNumber, text:message}
   }).then((response)=>{
+    console.log('This is response from Sparrow sms '+response);
     cb(response);
   })
 }

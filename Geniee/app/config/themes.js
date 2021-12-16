@@ -21,9 +21,12 @@ export const customPaperTheme = {
   },
   GenieeColor : {
     primaryColor :'#3DA9FC',
-    boldTextColor : '#353945',
-    likedColor :'#FC2165',
-    disLikedColor :'#DCDCDC'
+    lightPrimaryColor :'#F0F3FF',
+    pinkColor :'#FC2165',
+    lightDarkColor :'#DCDCDC',
+    lightTextColor :'#B8B8B8',
+    darkColor :'#353945',
+    yellowColor :'#FFC940'
   },
   GenieeText : {
     boldFontSize : '20px',
@@ -37,7 +40,8 @@ export const customPaperTheme = {
     inputMaxWidth :'100%',
     inputMinWidth : '55%',
     inputFontSize : 18,
-  }
+  },
+  headerMarginVertical :'6%'
 };
 
 export const customGalioTheme = {

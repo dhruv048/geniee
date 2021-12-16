@@ -38,6 +38,8 @@ import { Button as RNPButton, TextInput } from 'react-native-paper';
 import Moment from 'moment';
 import AIcon from 'react-native-vector-icons/AntDesign';
 import productHandler from '../../store/services/product/handlers';
+import Statusbar from '../Shared/components/Statusbar';
+import { customPaperTheme } from '../../config/themes';
 
 const StoreList = (props) => {
     const [loggedUser, setLoggedUser] = useState(Meteor.user());
@@ -160,16 +162,13 @@ const StoreList = (props) => {
 
     return (
         <>
-            <StatusBar backgroundColor={colors.statusBar} />
+
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
-                <View
-                    style={{
-                        backgroundColor: colors.appLayout,
-                        height: 60,
-                    }}>
+                <Statusbar />
+                <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
                     <Header
                         androidStatusBarColor={colors.statusBar}
-                        style={{ backgroundColor: '#4d94ff' }}
+                        style={{ backgroundColor: colors.statusBar }}
                     >
                         <RNPButton
                             transparent

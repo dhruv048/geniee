@@ -16,6 +16,7 @@ import { colors } from '../../../config/styles';
 import FIcon from 'react-native-vector-icons/Feather';
 import Meteor from '../../../react-native-meteor';
 import AsyncStorage from '@react-native-community/async-storage';
+import { customPaperTheme } from '../../../config/themes';
 
 let cartList = [];
 const MyCart = (props) => {
@@ -129,7 +130,7 @@ const MyCart = (props) => {
     const renderItems = (data, index) => {
         let item = data.item;
         return (
-            <View style={{ marginVertical: 20 }}>
+            <View style={{ marginVertical: 10 }}>
                 <ListItem
                     key={data.item._id}
                     last={cartItems.length === index + 1}
@@ -176,28 +177,25 @@ const MyCart = (props) => {
     return (
         <Container style={styles.container}>
             <Content style={{ backgroundColor: colors.appBackground }}>
-                <Header
-                    androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}
-                >
-                    <Left>
+            <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
+                    <Header
+                        androidStatusBarColor={colors.statusBar}
+                        style={{ backgroundColor: colors.statusBar }}
+                    >
                         <Button
                             transparent
                             uppercase={false}
+                            style={{ width: '100%', alignItems: 'flex-start' }}
                             onPress={() => {
                                 props.navigation.goBack();
                             }}>
                             <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>
-                                Cart
-                            </Text>
+                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>Cart</Text>
                         </Button>
-                    </Left>
-                    <Right>
-
-                    </Right>
-                </Header>
+                    </Header>
+                </View>
                 <View style={styles.container}>
+                    <Text style={{marginHorizontal:15,fontWeight:'bold',color:customPaperTheme.GenieeColor.darkColor, fontSize:20}}>Items :</Text>
                     <View style={styles.cartList}>
                         {
                             cartItems && cartItems.length <= 0 ?
