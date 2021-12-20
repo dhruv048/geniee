@@ -24,12 +24,13 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   BackHandler,
+  SafeAreaView,
 } from 'react-native';
 import { hashPassword } from '../../../react-native-meteor/lib/utils';
 import { colors } from '../../../config/styles';
 import AsyncStorage from '@react-native-community/async-storage';
 //import { GalioProvider, Input, Button as GButton } from 'galio-framework';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import UseForgetPasswordForm from '../../../hooks/useForgetPasswordForm';
 import { mapValues } from 'lodash';
 //import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -37,8 +38,10 @@ import { Button as RNPButton, TextInput } from 'react-native-paper';
 import { loggedUserSelector } from '../../../store/selectors/auth';
 import authHandlers from '../../../store/services/auth/handlers';
 import { connect } from 'react-redux';
+import Statusbar from '../../Shared/components/Statusbar';
+import FIcon from 'react-native-vector-icons/Feather';
 
-const ForgotPassword = ({loggedUser, navigation}) => {
+const ForgotPassword = ({ loggedUser, navigation }) => {
 
   const { values, handleInputChange, validateForgetPasswordForm, resetForgetPasswordForm } = UseForgetPasswordForm();
 
@@ -55,7 +58,7 @@ const ForgotPassword = ({loggedUser, navigation}) => {
     }
     try {
       handleInputChange('loading', true);
-      authHandlers.forgetPassword(values.email.value, (res,err) => {
+      authHandlers.forgetPassword(values.email.value, (res, err) => {
         handleInputChange('loading', false);
         if (res === true) {
           ToastAndroid.showWithGravityAndOffset(
@@ -136,27 +139,26 @@ const ForgotPassword = ({loggedUser, navigation}) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-    <Container style={styles.container}>
+      <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+        <Statusbar />
         <Header
           androidStatusBarColor={colors.statusBar}
-          style={{ backgroundColor: '#4d94ff' }}>
-          <Left>
-            <Button
-              transparent
-              onPress={() => {
-                navigation.goBack();
-              }}>
-              <Icon style={{ color: '#ffffff' }} name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title style={styles.screenHeader}>Forgot Password</Title>
-          </Body>
+          style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+        >
+          <RNPButton
+            transparent
+            uppercase={false}
+            style={{ width: '100%', alignItems: 'flex-start' }}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+            <Text style={{ color: colors.whiteText, fontSize: 20 }}>Forgot Password</Text>
+          </RNPButton>
         </Header>
-
         {values.setPassword.value === false ? (
           <View style={styles.contentContainer}>
-            <KeyboardAvoidingView style={{ padding: 20 }}>
+            <KeyboardAvoidingView style={{ padding: 10 }}>
               <Title
                 style={{
                   fontSize: 24,
@@ -272,7 +274,7 @@ const ForgotPassword = ({loggedUser, navigation}) => {
               <View>
                 <RNPButton
                   mode='contained'
-                  onPress={() =>_setNewPassword()}
+                  onPress={() => _setNewPassword()}
                   style={{ width: '100%', marginVertical: 20 }}
                   loading={values.loading.value}
                   disabled={values.loading.value}>
@@ -299,8 +301,8 @@ const ForgotPassword = ({loggedUser, navigation}) => {
             </KeyboardAvoidingView>
           </View>
         )}
-        </Container>
-      </TouchableWithoutFeedback>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 

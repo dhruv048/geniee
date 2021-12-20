@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, NativeModules, ToastAndroid, Alert, AsyncStorage } from 'react-native';
+import { FlatList, StyleSheet, Text, NativeModules, ToastAndroid, Alert, AsyncStorage, SafeAreaView } from 'react-native';
 import {
     Container,
     Content,
@@ -19,7 +19,7 @@ import { PaymentType, TransactionTypes, OrderStatus } from "../../../config/sett
 import DeviceInfo from 'react-native-device-info'
 import FIcon from 'react-native-vector-icons/Feather';
 import { Button, TextInput } from 'react-native-paper';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { settings } from '../../../config/settings';
 
 const Checkout = (props) => {
@@ -47,11 +47,11 @@ const Checkout = (props) => {
         else {
             getCartItems();
         }
-        props.user? getShippingAddress():null;
+        props.user ? getShippingAddress() : null;
     }, []);
 
     const getShippingAddress = () => {
-        setName(props.user.profile.firstName+ ' '+ props.user.profile.lastName);
+        setName(props.user.profile.firstName + ' ' + props.user.profile.lastName);
         setEmail(props.user.profile.primaryEmail);
         setAddress(props.user.profile.city);
         setPhone(props.user.profile.contactNo);
@@ -64,7 +64,7 @@ const Checkout = (props) => {
             total += parseFloat(item.finalPrice) * parseInt(item.orderQuantity);
             setTotal(total);
         });
-        setFinalAmont(total+shippingCharge);
+        setFinalAmont(total + shippingCharge);
     }
 
     const getdeviceId = () => {
@@ -98,7 +98,7 @@ const Checkout = (props) => {
                     product.orderQuantity = cartItem.orderQuantity;
                     product.size = cartItem.size;
                     product.color = cartItem.color;
-                    product.finalPrice = Math.round((product.price - (product.discount ? (product.price * (product.discount / 100)) : 0))*cartItem.orderQuantity);
+                    product.finalPrice = Math.round((product.price - (product.discount ? (product.price * (product.discount / 100)) : 0)) * cartItem.orderQuantity);
                 });
                 setCartItems(res.result);
                 updateTotal(res.result);
@@ -118,8 +118,8 @@ const Checkout = (props) => {
             Alert.alert('Incomplete Contact Info', 'Please Enter all the contact info to complete Order.');
             return true;
         }
-        const userToken= AsyncStorage.getItem(settings.USER_TOKEN_KEY);
-        if(userToken){
+        const userToken = AsyncStorage.getItem(settings.USER_TOKEN_KEY);
+        if (userToken) {
             checkout()
         }
         else {
@@ -133,13 +133,13 @@ const Checkout = (props) => {
                         }
                     }
                     , {
-                    text: 'Log In Now'
-                    ,
-                    onPress: () => {
-                        props.navigation.navigate( 'SignIn', {needReturn: true}
-                        )
-                    }
-                }],
+                        text: 'Log In Now'
+                        ,
+                        onPress: () => {
+                            props.navigation.navigate('SignIn', { needReturn: true }
+                            )
+                        }
+                    }],
                 {
                     cancelable: false
                 }
@@ -176,8 +176,8 @@ const Checkout = (props) => {
                                     serviceOwner: item.serviceOwner || '',
                                     productImage: item.images[0],
                                     status: OrderStatus.ORDER_REQUESTED,
-                                     color: item.colors,
-                                     size: item.sizes,
+                                    color: item.colors,
+                                    size: item.sizes,
                                 };
                                 items.push(product);
                             });
@@ -206,23 +206,23 @@ const Checkout = (props) => {
                     }
                 }
             ],
-            {cancelable: false}
+            { cancelable: false }
         );
     }
 
     const _performOrder = (Item) => {
-        console.log('This is order items '+ Item);
-        props.navigation.navigate('PaymentMethod',{data : Item,totalAmount:finalAmount});
+        console.log('This is order items ' + Item);
+        props.navigation.navigate('PaymentMethod', { data: Item, totalAmount: finalAmount });
     }
     const renderItem = (data, i) => {
         let item = data.item;
         return (
             <ListItem
                 key={data.item._id}
-                style={{width:'100%'}}
+                style={{ width: '100%' }}
             >
-                <Body style={{flex: 4 }}>
-                    <Text style={{ fontSize: 18, fontWeight:'bold' }}>
+                <Body style={{ flex: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
                         {/* {item.orderQuantity > 1 ? item.orderQuantity + "x " : null} */}
                         {item.title}
                     </Text>
@@ -239,7 +239,7 @@ const Checkout = (props) => {
                             }}>Size: {item.size}</Text> : null}
                     </View> */}
                 </Body>
-                <Right style={{flex:2,alignItems:'flex-end'}}>
+                <Right style={{ flex: 2, alignItems: 'flex-end' }}>
                     <Text style={{
                         fontSize: 18,
                         fontWeight: 'bold',
@@ -251,11 +251,11 @@ const Checkout = (props) => {
     }
 
     return (
-        <Container style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
             <Content style={{ backgroundColor: colors.appBackground }}>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                 >
                     <Button
                         transparent
@@ -267,10 +267,6 @@ const Checkout = (props) => {
                         <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                         <Text style={{ color: colors.whiteText, fontSize: 20 }}>Checkout Info</Text>
                     </Button>
-                    {/* <Left style={{marginLeft:0}}>
-                          
-                    </Left>
-                    <Right></Right> */}
                 </Header>
                 <View style={{ marginHorizontal: 20 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%' }}>
@@ -278,48 +274,48 @@ const Checkout = (props) => {
                         <Button
                             uppercase={false}
                             style={{ height: 45 }}
-                            onPress={() => {setDisableShipping(false)}}>
+                            onPress={() => { setDisableShipping(false) }}>
                             <Text>Edit</Text>
                         </Button>
                     </View>
                     {disableShipping ?
-                    <View>
-                        <Text style={{fontSize:18,fontWeight:'bold',marginLeft:'18%'}}>To,{name}</Text>
-                        <Text style={{marginLeft:'18%'}}>{address}</Text>
-                    </View>
-                        :<View>
-                        <TextInput
-                            mode="outlined"
-                            disabled={disableShipping}
-                            color='#F5F7FF'
-                            // style={{width:'90%'}}
-                            label="Name"
-                            placeholder="Name"
-                            placeholderTextColor='#F5F7FF'
-                            onChangeText={(value) => setName(value)}
-                            value={name}
-                            style={styles.shippingName}
-                            theme={{ roundness: 6 }}
-                        />
-                        <TextInput
-                            mode="outlined"
-                            disabled={disableShipping}
-                            color={customGalioTheme.COLORS.INPUT_TEXT}
-                            label="Address"
-                            placeholder="Address"
-                            placeholderTextColor='#808080'
-                            onChangeText={(value) => setAddress(value)}
-                            value={address}
-                            style={styles.shippingAddress}
-                            theme={{ roundness: 6 }}
-                        />
-                    </View>}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop:10 }}>
+                        <View>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: '18%' }}>To,{name}</Text>
+                            <Text style={{ marginLeft: '18%' }}>{address}</Text>
+                        </View>
+                        : <View>
+                            <TextInput
+                                mode="outlined"
+                                disabled={disableShipping}
+                                color='#F5F7FF'
+                                // style={{width:'90%'}}
+                                label="Name"
+                                placeholder="Name"
+                                placeholderTextColor='#F5F7FF'
+                                onChangeText={(value) => setName(value)}
+                                value={name}
+                                style={styles.shippingName}
+                                theme={{ roundness: 6 }}
+                            />
+                            <TextInput
+                                mode="outlined"
+                                disabled={disableShipping}
+                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                label="Address"
+                                placeholder="Address"
+                                placeholderTextColor='#808080'
+                                onChangeText={(value) => setAddress(value)}
+                                value={address}
+                                style={styles.shippingAddress}
+                                theme={{ roundness: 6 }}
+                            />
+                        </View>}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                         <Text style={styles.textField}>Who is picking</Text>
                         <Button
                             uppercase={false}
                             style={{ height: 45 }}
-                            onPress={() => {setDisablePicking(false)}}>
+                            onPress={() => { setDisablePicking(false) }}>
                             <Text>Edit</Text>
                         </Button>
                     </View>
@@ -327,7 +323,7 @@ const Checkout = (props) => {
                         <TextInput
                             mode="outlined"
                             disabled={disablePicking}
-                            left={<TextInput.Icon name="phone"/>}
+                            left={<TextInput.Icon name="phone" />}
                             color={customGalioTheme.COLORS.INPUT_TEXT}
                             label="Number"
                             placeholder="Number"
@@ -341,7 +337,7 @@ const Checkout = (props) => {
                         <TextInput
                             mode="outlined"
                             disabled={disablePicking}
-                            left={<TextInput.Icon name="email"/>}
+                            left={<TextInput.Icon name="email" />}
                             color={customGalioTheme.COLORS.INPUT_TEXT}
                             label="Email"
                             placeholder="Email"
@@ -387,14 +383,14 @@ const Checkout = (props) => {
                             style={styles.btnContinue}
                             onPress={() => { proceedCheckOut() }}
                         >
-                            <Text style={{fontSize:13}}>Proceed to Payment</Text>
+                            <Text style={{ fontSize: 13 }}>Proceed to Payment</Text>
                             <FIcon style={{ color: '#ffffff', fontSize: 15, marginTop: 10 }} name="arrow-right" />
                         </Button>
                     </View>
                 </View>
 
             </Content>
-        </Container>
+        </SafeAreaView>
     );
 }
 
@@ -416,9 +412,9 @@ const styles = StyleSheet.create({
         height: 30,
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 18,
-        fontWeight:'bold',
+        fontWeight: 'bold',
         //backgroundColor: colors.transparent,
-        marginLeft:'15%',
+        marginLeft: '15%',
         marginTop: 10,
     },
     shippingAddress: {
@@ -428,7 +424,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         //backgroundColor: colors.transparent,
         marginBottom: 10,
-        marginLeft:'18%'
+        marginLeft: '18%'
     },
     inputBox: {
         width: '100%',
@@ -438,10 +434,10 @@ const styles = StyleSheet.create({
         //backgroundColor: colors.transparent,
         marginTop: 10,
     },
-    textField:{ 
-        fontSize: 18, 
-        fontWeight: 'bold', 
-        marginTop: 5, 
+    textField: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 5,
     }
 });
 

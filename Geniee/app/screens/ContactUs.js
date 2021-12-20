@@ -10,6 +10,7 @@ import {
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
     Keyboard,
+    SafeAreaView,
 } from 'react-native';
 import Meteor from '../react-native-meteor';
 import { colors } from '../config/styles';
@@ -17,11 +18,12 @@ import { Header, Left, Body, Text, Container, Content, Button, Textarea, Title, 
 import CogMenu from "../components/CogMenu";
 import { Navigation } from "react-native-navigation/lib/dist/index";
 import { backToRoot, goToRoute, navigateToRoutefromSideMenu } from "../Navigation";
-import { customGalioTheme } from '../config/themes';
+import { customGalioTheme, customPaperTheme } from '../config/themes';
 import { PaperProvider, TextInput, Button as RNPButton } from 'react-native-paper';
 import UseContactForm from '../hooks/useContactForm';
 import authHandlers from '../store/services/contact/handlers';
 import FIcon from 'react-native-vector-icons/Feather';
+import Statusbar from '../componentsG/Shared/components/Statusbar';
 
 const window = Dimensions.get('window');
 
@@ -74,10 +76,12 @@ const ContactUs = (props) => {
         <TouchableWithoutFeedback
             onPress={Keyboard.dismiss}
             accessible={false}>
-            <Container style={styles.container}>
-
-                <Header androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}>
+            <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+                <Statusbar />
+                <Header
+                    androidStatusBarColor={colors.statusBar}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+                >
                     <RNPButton
                         transparent
                         uppercase={false}
@@ -89,90 +93,91 @@ const ContactUs = (props) => {
                         <Text style={{ color: colors.whiteText, fontSize: 20 }}>Contact us</Text>
                     </RNPButton>
                 </Header>
+
                 <Content>
-                <View style={{ marginVertical: 20 }}>
-                    <KeyboardAvoidingView style={{ padding: 10 }}>
-                        {/*<View style={styles.header}>*/}
-                        <Text style={styles.subHeaderText}>
-                            Want to get in touch with us? Fill out the form below to send us a message and we
-                            will try
-                            to get back to you within 24 hours!
-                        </Text>
-                        {/*</View>*/}
+                    <View style={{ marginVertical: 20 }}>
+                        <KeyboardAvoidingView style={{ padding: 10 }}>
+                            {/*<View style={styles.header}>*/}
+                            <Text style={styles.subHeaderText}>
+                                Want to get in touch with us? Fill out the form below to send us a message and we
+                                will try
+                                to get back to you within 24 hours!
+                            </Text>
+                            {/*</View>*/}
 
-                        <View style={{ marginVertical: 15 }}>
-                            <TextInput
-                                mode="outlined"
-                                label="Name"
-                                color={customGalioTheme.COLORS.INPUT_TEXT}
-                                placeholder='Name'
-                                value={values.name.value}
-                                onChangeText={(name) => handleInputChange('name', name)}
-                                style={styles.textInputNameBox}
-                                theme={{ roundness: 6 }}
-                                error={values.name.error} />
+                            <View style={{ marginVertical: 15 }}>
+                                <TextInput
+                                    mode="outlined"
+                                    label="Name"
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    placeholder='Name'
+                                    value={values.name.value}
+                                    onChangeText={(name) => handleInputChange('name', name)}
+                                    style={styles.textInputNameBox}
+                                    theme={{ roundness: 6 }}
+                                    error={values.name.error} />
 
-                            <TextInput
-                                mode="outlined"
-                                color={customGalioTheme.COLORS.INPUT_TEXT}
-                                label="Email address"
-                                placeholder='Email address'
-                                keyboardType='email-address'
-                                value={values.email.value}
-                                onChangeText={(email) => handleInputChange('email', email)}
-                                textContentType={'emailAddress'}
-                                style={styles.textInputNameBox}
-                                theme={{ roundness: 6 }}
-                                error={values.email.error}
-                            />
+                                <TextInput
+                                    mode="outlined"
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    label="Email address"
+                                    placeholder='Email address'
+                                    keyboardType='email-address'
+                                    value={values.email.value}
+                                    onChangeText={(email) => handleInputChange('email', email)}
+                                    textContentType={'emailAddress'}
+                                    style={styles.textInputNameBox}
+                                    theme={{ roundness: 6 }}
+                                    error={values.email.error}
+                                />
 
-                            <TextInput
-                                mode="outlined"
-                                color={customGalioTheme.COLORS.INPUT_TEXT}
-                                label="Phone No"
-                                placeholder='Phone No'
-                                keyboardType='phone-pad'
-                                value={values.contact.value}
-                                onChangeText={(contact) => handleInputChange('contact', contact)}
-                                style={styles.textInputNameBox}
-                                theme={{ roundness: 6 }}
-                                error={values.contact.error}
-                            />
-                            <Textarea
-                                        rowSpan={3}
-                                        placeholder="Message"
-                                        label="Message"
-                                        style={styles.inputTextarea}
-                                        placeholderTextColor="#808080"
-                                        underlineColorAndroid='red'
-                                        value={values.message.value}
-                                        onChangeText={(message) => handleInputChange('message', message)}
-                                        _dark={{
-                                            placeholderTextColor: "gray.300",
-                                        }}
-                                    />
-                        </View>
-                        <View style={styles.error}>
-                            <Text style={styles.errorText}>{values.error.value}</Text>
-                        </View>
-                        <View>
-                            <RNPButton
-                                mode='contained'
-                                loading = {values.loading.value}
-                                onPress={() => { handleContactUS() }}
-                                uppercase={false}
-                                style={styles.btnContinue}
-                            >
-                                <Text
-                                    style={styles.btnContinueText}>
-                                    Send
-                                </Text>
-                            </RNPButton>
-                        </View>
-                    </KeyboardAvoidingView>
-                </View>
+                                <TextInput
+                                    mode="outlined"
+                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                    label="Phone No"
+                                    placeholder='Phone No'
+                                    keyboardType='phone-pad'
+                                    value={values.contact.value}
+                                    onChangeText={(contact) => handleInputChange('contact', contact)}
+                                    style={styles.textInputNameBox}
+                                    theme={{ roundness: 6 }}
+                                    error={values.contact.error}
+                                />
+                                <Textarea
+                                    rowSpan={3}
+                                    placeholder="Message"
+                                    label="Message"
+                                    style={styles.inputTextarea}
+                                    placeholderTextColor="#808080"
+                                    underlineColorAndroid='red'
+                                    value={values.message.value}
+                                    onChangeText={(message) => handleInputChange('message', message)}
+                                    _dark={{
+                                        placeholderTextColor: "gray.300",
+                                    }}
+                                />
+                            </View>
+                            <View style={styles.error}>
+                                <Text style={styles.errorText}>{values.error.value}</Text>
+                            </View>
+                            <View>
+                                <RNPButton
+                                    mode='contained'
+                                    loading={values.loading.value}
+                                    onPress={() => { handleContactUS() }}
+                                    uppercase={false}
+                                    style={styles.btnContinue}
+                                >
+                                    <Text
+                                        style={styles.btnContinueText}>
+                                        Send
+                                    </Text>
+                                </RNPButton>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </View>
                 </Content>
-            </Container >
+            </SafeAreaView >
         </TouchableWithoutFeedback>
     );
 }

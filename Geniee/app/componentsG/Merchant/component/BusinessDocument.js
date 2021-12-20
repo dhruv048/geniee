@@ -21,7 +21,7 @@ import ActionSheet from 'react-native-actionsheet';
 import Icon from 'react-native-vector-icons/Feather';
 import ImagePicker from 'react-native-image-crop-picker';
 import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { launchImageLibrary } from 'react-native-image-picker';
 import merchantHandlers from '../../../store/services/merchant/handlers';
 
@@ -109,8 +109,8 @@ const BusinessForm = (props) => {
                 );
                 setLoading(false);
                 //resetAddressDetailForm();
-                props.navigation.navigate('BusinessCompleted',{data : business.owner});
-                
+                props.navigation.navigate('BusinessCompleted', { data: business.owner });
+
             } else {
                 console.log('result from Merchant error ' + res.reason);
                 ToastAndroid.showWithGravityAndOffset(
@@ -135,24 +135,18 @@ const BusinessForm = (props) => {
                         {/* <Logo />*/}
                         <Header
                             androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}
+                            style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                         >
-                            <Left>
-                                <RNPButton
-                                    transparent
-                                    uppercase={false}
-                                    onPress={() => {
-                                        props.navigation.goBack();
-                                    }}>
-                                    <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                    <Text style={{ color: colors.whiteText }}>
-                                        Back
-                                    </Text>
-                                </RNPButton>
-                            </Left>
-                            <Right>
-
-                            </Right>
+                            <RNPButton
+                                transparent
+                                uppercase={false}
+                                style={{ width: '100%', alignItems: 'flex-start' }}
+                                onPress={() => {
+                                    props.navigation.goBack();
+                                }}>
+                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
+                            </RNPButton>
                         </Header>
                         <View style={styles.welcomeText}>
                             <Text
@@ -185,17 +179,17 @@ const BusinessForm = (props) => {
                                         actionsheet.current.show();
                                     }}>
                                     {merchantImage ?
-                                    <View>
-                                        <Image
-                                        source={{ uri: merchantImage }}
-                                        style={{ width: 65, height: 65,}}
-                                    /> 
-                                    <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft:42,marginBottom:7 }} />
-                                    </View>: <Image
-                                    source={require('Geniee/app/images/uploadimage.png')}
-                                    style={{ width: 65, height: 65, }}
-                                />
-                                }
+                                        <View>
+                                            <Image
+                                                source={{ uri: merchantImage }}
+                                                style={{ width: 65, height: 65, }}
+                                            />
+                                            <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft: 42, marginBottom: 7 }} />
+                                        </View> : <Image
+                                            source={require('Geniee/app/images/uploadimage.png')}
+                                            style={{ width: 65, height: 65, }}
+                                        />
+                                    }
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.textInputNameView}>
@@ -218,17 +212,17 @@ const BusinessForm = (props) => {
                                         actionsheet.current.show();
                                     }}>
                                     {PANImage ?
-                                    <View>
-                                        <Image
-                                        source={{ uri: PANImage }}
-                                        style={{ width: 65, height: 65,}}
-                                    /> 
-                                    <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft:42,marginBottom:7 }} />
-                                    </View>: <Image
-                                    source={require('Geniee/app/images/uploadimage.png')}
-                                    style={{ width: 65, height: 65, }}
-                                />
-                                }
+                                        <View>
+                                            <Image
+                                                source={{ uri: PANImage }}
+                                                style={{ width: 65, height: 65, }}
+                                            />
+                                            <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft: 42, marginBottom: 7 }} />
+                                        </View> : <Image
+                                            source={require('Geniee/app/images/uploadimage.png')}
+                                            style={{ width: 65, height: 65, }}
+                                        />
+                                    }
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.textInputNameView}>
@@ -251,17 +245,17 @@ const BusinessForm = (props) => {
                                         actionsheet.current.show();
                                     }}>
                                     {registrationImage ?
-                                    <View>
-                                        <Image
-                                        source={{ uri: registrationImage }}
-                                        style={{ width: 65, height: 65}}
-                                    /> 
-                                    <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft:42,marginBottom:7 }} />
-                                    </View>: <Image
-                                    source={require('Geniee/app/images/uploadimage.png')}
-                                    style={{ width: 65, height: 65 }}
-                                />
-                                }
+                                        <View>
+                                            <Image
+                                                source={{ uri: registrationImage }}
+                                                style={{ width: 65, height: 65 }}
+                                            />
+                                            <Icon name="edit" color="#4F8EF7" size={30} style={{ position: 'absolute', bottom: 0, marginLeft: 42, marginBottom: 7 }} />
+                                        </View> : <Image
+                                            source={require('Geniee/app/images/uploadimage.png')}
+                                            style={{ width: 65, height: 65 }}
+                                        />
+                                    }
                                 </TouchableOpacity>
                             </View>
                             <RNPButton

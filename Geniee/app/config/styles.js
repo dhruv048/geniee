@@ -171,7 +171,7 @@ export const customStyle = StyleSheet.create({
     //height: 200,
     // flex: 1,
     borderWidth: 0,
-    marginHorizontal: 8,
+    //marginHorizontal: 8,
     marginVertical: 4,
     borderColor: '#ffffff',
     // elevation: 1,

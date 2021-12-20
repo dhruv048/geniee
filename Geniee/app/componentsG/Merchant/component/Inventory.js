@@ -7,7 +7,8 @@ import {
     StyleSheet,
     Keyboard,
     FlatList,
-    Image
+    Image,
+    SafeAreaView
 } from "react-native";
 import { Container, Content, Header, ListItem, Body } from "native-base";
 import { Button as RNPButton } from "react-native-paper";
@@ -15,6 +16,8 @@ import Icon from 'react-native-vector-icons/Feather';
 import { colors, customStyle } from '../../../config/styles';
 import { Avatar } from "react-native-elements";
 import settings from "../../../config/settings";
+import Statusbar from "../../Shared/components/Statusbar";
+import { customPaperTheme } from "../../../config/themes";
 
 const productList = [
     {
@@ -125,7 +128,7 @@ const Inventory = (props) => {
                 {/* <TouchableOpacity
                         onPress={() => { }}
                     > */}
-                <View style={{ flexDirection: 'row',}}>
+                <View style={{ flexDirection: 'row', }}>
                     <View>
                         <Image
                             source={{ uri: settings.IMAGE_URLS + product.images[0] }}
@@ -136,8 +139,8 @@ const Inventory = (props) => {
                     </View>
                     <View style={{ marginLeft: 15, marginVertical: 10, }}>
 
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.gray_300,width:'90%' }} numberOfLines={2}> 
-                        {product.title}
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.gray_300, width: '90%' }} numberOfLines={2}>
+                            {product.title}
                         </Text>
                         <View style={{ flexDirection: 'row' }}>
                             <Text
@@ -163,26 +166,28 @@ const Inventory = (props) => {
     }
 
     return (
-        <Container style={styles.container}>
-            <Content style={{ padding: Platform.OS === 'ios' ? 20 : 0 }}>
+        <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+            <Statusbar />
+            <Header
+                androidStatusBarColor={colors.statusBar}
+                style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+            >
+                <RNPButton
+                    transparent
+                    uppercase={false}
+                    style={{ width: '100%', alignItems: 'flex-start' }}
+                    onPress={() => {
+                        props.navigation.goBack();
+                    }}>
+                    <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                    <Text style={{ color: colors.whiteText, fontSize: 20 }}>Inventory Preview</Text>
+                </RNPButton>
+            </Header>
+            <Content>
                 <TouchableWithoutFeedback
                     onPress={Keyboard.dismiss}
                     accessible={false}>
                     <View>
-                        <Header
-                            androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}>
-                            <RNPButton
-                                transparent
-                                uppercase={false}
-                                style={{ width: '100%', alignItems: 'flex-start' }}
-                                onPress={() => {
-                                    props.navigation.goBack();
-                                }}>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Inventory Preview</Text>
-                            </RNPButton>
-                        </Header>
                         <View style={styles.content}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', marginHorizontal: 15 }}>Your Listed Product</Text>
                             <View>
@@ -198,7 +203,7 @@ const Inventory = (props) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Content>
-        </Container>
+        </SafeAreaView>
     )
 }
 export default Inventory;
@@ -212,6 +217,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.appBackground,
         flex: 1,
         //marginHorizontal: 15,
-        marginVertical: 15
+        //marginBottom: 15
     },
 })

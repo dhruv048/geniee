@@ -96,7 +96,7 @@ const ProductDetail = (props) => {
 
         //Update View Count
         Meteor.call('updateViewCount', productId);
-    })
+    }, [])
 
     const orderNow = () => {
         let product = productData;
@@ -219,8 +219,8 @@ const ProductDetail = (props) => {
         return (
             <View key={index}>
                 <View style={styles.propertyView}>
-                    <View style={{ width: '50%' }}><Text>{item.metaName}</Text></View>
-                    <View style={{ width: '50%' }}><Text>{item.metaValue}</Text></View>
+                    <View style={{ width: '50%' }}><Text>{item.metaName}  :</Text></View>
+                    <View style={{ width: '50%'}}><Text style={{color:customPaperTheme.GenieeColor.lightTextColor}}>{item.metaValue}</Text></View>
                 </View>
             </View>
         )
@@ -261,7 +261,7 @@ const ProductDetail = (props) => {
         return (
             <TouchableOpacity
                 key={item._id}
-                onPress={() =>  props.navigation.navigate('ProductDetail', { data: product })}
+                onPress={() => props.navigation.navigate('ProductDetail', { data: product })}
                 style={[
                     customStyle.productContainerStyle,
                     { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
@@ -274,7 +274,7 @@ const ProductDetail = (props) => {
                         <Image
                             source={{ uri: settings.IMAGE_URLS + item.images[0] }}
                             style={{
-                                flex: 1, width: undefined, height: 160, width: 104, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
+                                flex: 1, width: undefined, height: 140, width: 90, resizeMode: 'cover', borderRadius: 4, marginBottom: 8,
                             }}
                         />
                     </View>
@@ -285,7 +285,7 @@ const ProductDetail = (props) => {
                     </View> */}
                     {!item.instock || item.availableQuantity < 0 ?
                         <View style={{ flexDirection: 'row', position: 'absolute', top: 90, left: 6, backgroundColor: 'red' }}>
-                            <Text style={{ fontSize: 16, color: colors.whiteText }}>Out of Stock</Text>
+                            <Text style={{ fontSize: 14, color: colors.whiteText }}>Out of Stock</Text>
                         </View> : null}
                     <View>
                         <View>
@@ -316,7 +316,7 @@ const ProductDetail = (props) => {
                         </View>
                     </View>
                 </View>
-               
+
             </TouchableOpacity>
         );
     };
@@ -329,39 +329,39 @@ const ProductDetail = (props) => {
                     accessible={false}>
                     <View style={{ paddingTop: 0 }}>
                         {/* <Logo />*/}
-                        <StatusBar 
-                        backgroundColor= 'transparent'
-                        barStyle='dark-content'
-                        translucent={true}
+                        <StatusBar
+                            backgroundColor='transparent'
+                            barStyle='dark-content'
+                            translucent={true}
                         />
                         <View style={styles.sliderBox}>
                             {productData.images && productData.images.length > 0 ? renderImage() : null}
-                            <View style={{ position: 'absolute', flexDirection: 'row', justifyContent:'space-between',marginTop:'10%',marginHorizontal:5}}>
+                            <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%', marginHorizontal: 5 }}>
                                 <Icon
-                                    style={{ color: colors.whiteText, fontSize: 20, marginRight:'70%'}}
+                                    style={{ color: colors.whiteText, fontSize: 20, marginRight: '70%' }}
                                     onPress={() => {
                                         props.navigation.goBack();
                                     }}
                                     name="arrow-left" />
                                 <CartIcon></CartIcon>
                                 <Icon
-                                    style={{color: colors.whiteText, fontSize: 20, marginLeft:15 }}
+                                    style={{ color: colors.whiteText, fontSize: 20, marginLeft: 15 }}
                                     onPress={() => {
                                         console.log('SearchPressed');
                                     }}
                                     name="search" />
                             </View>
                         </View>
-                        {productData.business[0].isApproved ? <View style={styles.verifiedContainer}>
+                        {productData && productData.business[0].isApproved ? <View style={styles.verifiedContainer}>
                             <IIcon name='shield-checkmark' size={15} style={styles.verifiedIcon} />
                             <Text style={styles.verifiedText}>Geniee verified seller</Text>
                         </View> : null}
-                        <View style={{flexDirection:'row',marginTop:10}}>
+                        {productData ? <View style={{ flexDirection: 'row', marginTop: 10 }}>
                             <MIcon name='storefront' size={14} style={styles.storeIcon} />
                             <Text style={styles.storeName}>{productData.business[0].businessName}</Text>
                             <MIcon name='my-location' size={14} style={styles.storeLocationIcon} />
                             <Text style={styles.storeLocation}>{productData.business[0].city},{productData.business[0].district}</Text>
-                        </View>
+                        </View> : null}
                         <View style={styles.containerRegister}>
 
                             <View>
@@ -372,32 +372,39 @@ const ProductDetail = (props) => {
                                 <Text style={{ fontWeight: 'bold', color: 'red' }}>-{productData.discount}% Off</Text>
                             </View>
                             <Text style={{ color: colors.statusBar }}>Rs. {productData.price - (productData.price * productData.discount) / 100}</Text>
-                            <View style={{ flexDirection: 'row', marginTop: 20, marginBottom: 10 }}>
+                            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                                <Icon style={{ fontSize: 14, marginTop: 5 }} name='star' />
+                                <Text style={{ fontWeight: 'bold' }}>3.5</Text>
+                                <Text style={{ fontSize: 14, marginBottom: 10,color:customPaperTheme.GenieeColor.lightTextColor }}>(12.5k)Ratings </Text>
+                                <TouchableOpacity onPress={() =>{console.log('see all views pressed')}}>
+                                <View style={{ flexDirection: 'row', marginTop:1}}>
+                                    <Text style={{fontSize:14,color:customPaperTheme.GenieeColor.lightTextColor}}>
+                                        |  See reviews
+                                    </Text>
+                                    <IIcon style={{ color: 'black', fontSize: 14, marginTop:3, marginLeft:5,color:customPaperTheme.GenieeColor.lightTextColor }} name="open-sharp" />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: 10 }}>
                                 <Text style={{ fontWeight: 'bold', }}>Quantity : </Text>
                                 <Icon name='minus' onPress={() => { quantity > 1 ? setQuantity(quantity - 1) : null }} style={{ fontSize: 20, marginHorizontal: 15 }} />
                                 <Text>{quantity}</Text>
                                 <Icon name='plus' onPress={() => { setQuantity(quantity + 1) }} style={{ fontSize: 20, marginHorizontal: 15 }} />
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Color : </Text>
+                                <Text style={styles.titleStyle}>Choose Color : </Text>
                                 {productData.color && productData.color.length > 0 ? productData.color.map((item, index) => renderColor(item, index)) : <Text>N/A</Text>}
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Icon style={{ fontSize: 14, marginTop: 5 }} name='star' />
-                                <Text style={{ fontWeight: 'bold' }}>3.5</Text>
-                                <Text style={{ fontSize: 14, marginBottom: 10 }}>(12.5k)Ratings </Text>
-
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Size : </Text>
+                                <Text style={styles.titleStyle}>Choose Size : </Text>
                                 {productData.size && productData.size.length > 0 ? productData.size.map((item, index) => renderSize(item, index)) : <Text>N/A</Text>}
                             </View>
                             <View>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Description : </Text>
-                                <Text style={{ fontSize: 16, color:'#B8B8B8' }}>{productData.description}</Text>
+                                <Text style={styles.titleStyle}>Product Description : </Text>
+                                <Text style={{ fontSize: 16, color: '#B8B8B8' }}>{productData.description}</Text>
                             </View>
                             <View>
-                                <Text style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Product Specification : </Text>
+                                <Text style={styles.titleStyle}>Product Specification : </Text>
                                 {productData.productProperty && productData.productProperty.length > 0 ? productData.productProperty.map((item, index) => renderProductProperty(item, index)) : <Text>N/A</Text>}
                             </View>
                             <View style={styles.horizontalView}>
@@ -491,27 +498,27 @@ const ProductDetail = (props) => {
                                 </RNPButton>
                             </View>
                             {/* Similar Products Sections */}
-                            <View style={{flexDirection:'row'}}>
+                            <View style={{ flexDirection: 'row' }}>
                                 <Text style={[styles.blockTitle, { fontSize: 16 }]}>
                                     Similar Products
                                 </Text>
                                 <Text style={{ fontSize: 10, color: colors.statusBar, marginLeft: '35%' }}>
                                     You may also like
                                 </Text>
-                                
-                            </View>
-                            <View style={{ marginVertical: 15, }}>
 
-                                    <FlatList
-                                        data={similarProducts}
-                                        keyExtracter={(item, index) => item._id}
-                                        //horizontal={false}
-                                        numColumns={3}
-                                        renderItem={(item, index) =>
-                                            _renderProduct(item, index)
-                                        }
-                                    />
-                                </View>
+                            </View>
+                            <View style={{ marginVertical: 15 }}>
+
+                                <FlatList
+                                    data={similarProducts}
+                                    keyExtracter={(item, index) => item._id}
+                                    //horizontal={false}
+                                    numColumns={3}
+                                    renderItem={(item, index) =>
+                                        _renderProduct(item, index)
+                                    }
+                                />
+                            </View>
                         </View>
 
                     </View>
@@ -527,7 +534,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.whiteText,
         flex: 1,
-        
+
     },
     content: {
         backgroundColor: colors.appBackground,
@@ -606,47 +613,53 @@ const styles = StyleSheet.create({
         color: customGalioTheme.COLORS.INPUT_TEXT,
         marginVertical: 15,
     },
-    verifiedContainer:{
-        flexDirection:'row', 
-        backgroundColor:customPaperTheme.GenieeColor.lightPrimaryColor, 
-        marginHorizontal:15, 
-        height:25, 
-        width:'60%'
-        },
-        
-        verifiedIcon : {
-        marginLeft:15, 
-        marginTop:3, 
-        color:customPaperTheme.GenieeColor.primaryColor
-        },
-        
-        verifiedText : {
-        marginLeft:10,
-        color:customPaperTheme.GenieeColor.primaryColor
-        },
-        
-        storeIcon: {
-        marginLeft:15, 
-        marginTop:3, 
-        color:customPaperTheme.GenieeColor.darkColor
-        },
-        
-        storeName: {
-        marginLeft:10,
-        color:customPaperTheme.GenieeColor.darkColor, 
-        fontSize:14,
-        fontWeight:'bold'
-        },
-        
-        storeLocationIcon : {
-        marginLeft:15, 
-        marginTop:3,
-        color:customPaperTheme.GenieeColor.lightTextColor
-        },
-        
-        storeLocation : {
-        marginLeft:10,
-        color:customPaperTheme.GenieeColor.lightTextColor, 
-        fontSize:14
-        }
+    verifiedContainer: {
+        flexDirection: 'row',
+        backgroundColor: customPaperTheme.GenieeColor.lightPrimaryColor,
+        marginHorizontal: 15,
+        height: 25,
+        width: '60%'
+    },
+
+    verifiedIcon: {
+        marginLeft: 15,
+        marginTop: 3,
+        color: customPaperTheme.GenieeColor.primaryColor
+    },
+
+    verifiedText: {
+        marginLeft: 10,
+        color: customPaperTheme.GenieeColor.primaryColor
+    },
+
+    storeIcon: {
+        marginLeft: 15,
+        marginTop: 3,
+        color: customPaperTheme.GenieeColor.darkColor
+    },
+
+    storeName: {
+        marginLeft: 10,
+        color: customPaperTheme.GenieeColor.darkColor,
+        fontSize: 14,
+        fontWeight: 'bold'
+    },
+
+    storeLocationIcon: {
+        marginLeft: 15,
+        marginTop: 3,
+        color: customPaperTheme.GenieeColor.lightTextColor
+    },
+
+    storeLocation: {
+        marginLeft: 10,
+        color: customPaperTheme.GenieeColor.lightTextColor,
+        fontSize: 14
+    },
+
+    titleStyle: {
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginBottom: 10
+    },
 });

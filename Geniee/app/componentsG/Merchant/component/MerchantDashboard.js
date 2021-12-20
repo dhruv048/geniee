@@ -39,6 +39,8 @@ import Moment from 'moment';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import ProgressCircle from 'react-native-progress-circle';
 import AIcon from 'react-native-vector-icons/AntDesign';
+import Statusbar from '../../Shared/components/Statusbar';
+import { customPaperTheme } from '../../../config/themes';
 
 const productList = [
     {
@@ -341,314 +343,307 @@ const MerchantDashboard = (props) => {
     return (
         <>
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
-                <Container>
-
-                    <View
-                        style={{
-                            backgroundColor: colors.appLayout,
-                            height: 60,
+                <Statusbar />
+                <Header
+                    androidStatusBarColor={colors.statusBar}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+                >
+                    <RNPButton
+                        transparent
+                        uppercase={false}
+                        style={{ width: '100%', alignItems: 'flex-start' }}
+                        onPress={() => {
+                            props.navigation.goBack();
                         }}>
-                        <Header
-                            androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}>
-                            <RNPButton
-                                transparent
-                                uppercase={false}
-                                style={{ width: '100%', alignItems: 'flex-start' }}
-                                onPress={() => {
-                                    props.navigation.navigate('Home');
-                                }}>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Your Dashboard</Text>
-                            </RNPButton>
-                        </Header>
+                        <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Your Dashboard</Text>
+                    </RNPButton>
+                </Header>
+                <Content style={styles.content}>
+                    {/* Performance Section */}
+                    <View style={{ backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15 }}>
+                            <View style={{ flexDirection: 'row', paddingHorizontal: 10, justifyContent: 'space-between' }}>
+                                <View>
+                                    <RNPButton mode='text'
+                                        uppercase={false}
+                                        onPress={() => { handleWeekButton() }}
+                                        style={weekButtonActive ? styles.activeButton : ''}
+                                    >
+                                        <Text style={weekButtonActive ? styles.activeText : ''}>This Week</Text>
+                                    </RNPButton>
+                                </View>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { handleMonthlyButton() }}
+                                        style={monthButtonActive ? styles.activeButton : ''}
+                                    >
+                                        <Text style={monthButtonActive ? styles.activeText : ''}>{Moment(new Date()).format('MMM')}</Text>
+                                    </RNPButton>
+                                </View>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { handleYearlyButton() }}
+                                        style={yearlyButtonActive ? styles.activeButton : ''}
+                                    >
+                                        <Text style={yearlyButtonActive ? styles.activeText : ''}>{Moment(new Date()).format('yyyy')}</Text>
+                                    </RNPButton>
+                                </View>
+                            </View>
+                            <View
+                                style={{
+                                    borderBottomColor: '#EEEDED',
+                                    borderBottomWidth: 1,
+                                    marginBottom: 10,
+                                }}
+                            />
+                            <View>
+                                <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Here's your performance</Text>
+                                <View style={{ flexDirection: 'row', paddingTop: 5 }}>
+                                    <Text>Seller's Rank</Text>
+                                    <Icon name='chevrons-up' style={{ marginLeft: 'auto', fontSize: 16, color: '#00B35E' }}>
+                                        <Text style={{ fontSize: 16, color: '#00B35E' }}>{increasedRank}</Text>
+                                    </Icon>
+                                    <Text style={{ fontWeight: 'bold', color: colors.gray_100, marginLeft: 8 }}>{sellersRank}th</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', paddingTop: 5 }}>
+                                    <Text>Product Sold</Text>
+                                    <Text style={{ marginLeft: 'auto', fontWeight: 'bold', color: colors.gray_100 }}>{productSold}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', paddingTop: 5 }}>
+                                    <Text>Revenue 2021</Text>
+                                    <Text style={{ marginLeft: 'auto', fontWeight: 'bold', color: '#3DA9FC' }}>Rs.{revenue}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', marginVertical: 20, justifyContent: 'space-between' }}>
+                                    <View>
+                                        <ProgressCircle
+                                            percent={responseTime}
+                                            radius={40}
+                                            borderWidth={6}
+                                            color={responseTime > 74 ? '#00B35E' : responseTime > 24 ? '#FFC940' : '#FF3131'}
+                                            shadowColor="#999"
+                                            bgColor="#fff"
+                                        >
+                                            {responseTime > 0 ? <Text style={{ fontSize: 18, color: responseTime > 74 ? '#00B35E' : responseTime > 24 ? '#FFC940' : '#FF3131' }}>{responseTime}%</Text> : <Text>N/A</Text>}
+                                        </ProgressCircle>
+                                        <View style={{ flexGrow: 1, flexDirection: 'row' }}>
+                                            <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Response Time</Text>
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <ProgressCircle
+                                            percent={orderCompletion}
+                                            radius={40}
+                                            borderWidth={6}
+                                            color={orderCompletion > 74 ? '#00B35E' : orderCompletion > 24 ? '#FFC940' : '#FF3131'}
+                                            shadowColor="#999"
+                                            bgColor="#fff"
+                                        >
+                                            {orderCompletion > 0 ? <Text style={{ fontSize: 18, color: orderCompletion > 74 ? '#00B35E' : orderCompletion > 24 ? '#FFC940' : '#FF3131' }}>{orderCompletion}%</Text> : <Text>N/A</Text>}
+                                        </ProgressCircle>
+                                        <View style={{ flexGrow: 1, flexDirection: 'row' }}>
+                                            <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Order Completion</Text>
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <ProgressCircle
+                                            percent={deliveryTime}
+                                            radius={40}
+                                            borderWidth={6}
+                                            color={deliveryTime > 74 ? '#00B35E' : deliveryTime > 24 ? '#FFC940' : '#FF3131'}
+                                            shadowColor="#999"
+                                            bgColor="#fff"
+                                        >
+                                            {deliveryTime > 0 ? <Text style={{ fontSize: 18, color: deliveryTime > 74 ? '#00B35E' : deliveryTime > 24 ? '#FFC940' : '#FF3131' }}>{deliveryTime}%</Text> : <Text>N/A</Text>}
+                                        </ProgressCircle>
+                                        <View style={{ flexGrow: 1, flexDirection: 'row' }}>
+                                            <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Delivery Time</Text>
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <ProgressCircle
+                                            percent={customerRating}
+                                            radius={40}
+                                            borderWidth={6}
+                                            color={customerRating > 74 ? '#00B35E' : customerRating > 24 ? '#FFC940' : '#FF3131'}
+                                            shadowColor="#999"
+                                            bgColor="#fff"
+                                        >
+                                            {customerRating > 0 ? <Text style={{ fontSize: 18, color: customerRating > 74 ? '#00B35E' : customerRating > 24 ? '#FFC940' : '#FF3131' }}>{customerRating}%</Text> : <Text>N/A</Text>}
+                                        </ProgressCircle>
+                                        <View style={{ flexGrow: 1, flexDirection: 'row' }}>
+                                            <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Customer Rating</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
                     </View>
-                    <Content style={styles.content}>
-                        {/* Performance Section */}
-                        <View style={{ backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15 }}>
-                                <View style={{ flexDirection: 'row', paddingHorizontal: 10, justifyContent: 'space-between' }}>
-                                    <View>
-                                        <RNPButton mode='text'
-                                            uppercase={false}
-                                            onPress={() => { handleWeekButton() }}
-                                            style={weekButtonActive ? styles.activeButton : ''}
-                                        >
-                                            <Text style={weekButtonActive ? styles.activeText : ''}>This Week</Text>
-                                        </RNPButton>
-                                    </View>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { handleMonthlyButton() }}
-                                            style={monthButtonActive ? styles.activeButton : ''}
-                                        >
-                                            <Text style={monthButtonActive ? styles.activeText : ''}>{Moment(new Date()).format('MMM')}</Text>
-                                        </RNPButton>
-                                    </View>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { handleYearlyButton() }}
-                                            style={yearlyButtonActive ? styles.activeButton : ''}
-                                        >
-                                            <Text style={yearlyButtonActive ? styles.activeText : ''}>{Moment(new Date()).format('yyyy')}</Text>
-                                        </RNPButton>
-                                    </View>
-                                </View>
-                                <View
-                                    style={{
-                                        borderBottomColor: '#EEEDED',
-                                        borderBottomWidth: 1,
-                                        marginBottom:10,
-                                    }}
-                                />
+                    {/* Sales Overview  Section*/}
+                    <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15, paddingVertical: 15 }}>
+                            <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Sales Overview</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                                 <View>
-                                    <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Here's your performance</Text>
-                                    <View style={{ flexDirection: 'row', paddingTop: 5 }}>
-                                        <Text>Seller's Rank</Text>
-                                        <Icon name='chevrons-up' style={{ marginLeft: 'auto', fontSize: 16, color: '#00B35E' }}>
-                                            <Text style={{ fontSize: 16, color: '#00B35E' }}>{increasedRank}</Text>
+                                    <Text style={{ fontSize: 14 }}>Sep Revenue</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#00B35E' }}>Rs.12435</Text>
+                                </View>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>2021 Revenue</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_100 }}>Rs.12435</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>Total Revenue</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_100 }}>Rs.12435</Text>
+                                </View>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>Avg Yearly Selling</Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Icon name='chevrons-up' style={{ marginLeft: 'auto', fontSize: 14, color: '#00B35E' }}>
+                                            <Text style={{ fontSize: 14, color: '#00B35E' }}>12%</Text>
                                         </Icon>
-                                        <Text style={{ fontWeight: 'bold', color: colors.gray_100, marginLeft: 8 }}>{sellersRank}th</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', paddingTop: 5 }}>
-                                        <Text>Product Sold</Text>
-                                        <Text style={{ marginLeft: 'auto', fontWeight: 'bold', color: colors.gray_100 }}>{productSold}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', paddingTop: 5 }}>
-                                        <Text>Revenue 2021</Text>
-                                        <Text style={{ marginLeft: 'auto', fontWeight: 'bold', color: '#3DA9FC' }}>Rs.{revenue}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', marginVertical: 20, justifyContent: 'space-between' }}>
-                                        <View>
-                                            <ProgressCircle
-                                                percent={responseTime}
-                                                radius={40}
-                                                borderWidth={6}
-                                                color={responseTime > 74 ? '#00B35E' : responseTime > 24 ? '#FFC940' : '#FF3131'}
-                                                shadowColor="#999"
-                                                bgColor="#fff"
-                                            >
-                                                {responseTime > 0 ? <Text style={{ fontSize: 18, color: responseTime > 74 ? '#00B35E' : responseTime > 24 ? '#FFC940' : '#FF3131' }}>{responseTime}%</Text> : <Text>N/A</Text>}
-                                            </ProgressCircle>
-                                            <View style={{ flexGrow: 1, flexDirection: 'row' }}>
-                                                <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Response Time</Text>
-                                            </View>
-                                        </View>
-                                        <View>
-                                            <ProgressCircle
-                                                percent={orderCompletion}
-                                                radius={40}
-                                                borderWidth={6}
-                                                color={orderCompletion > 74 ? '#00B35E' : orderCompletion > 24 ? '#FFC940' : '#FF3131'}
-                                                shadowColor="#999"
-                                                bgColor="#fff"
-                                            >
-                                                {orderCompletion > 0 ? <Text style={{ fontSize: 18, color: orderCompletion > 74 ? '#00B35E' : orderCompletion > 24 ? '#FFC940' : '#FF3131' }}>{orderCompletion}%</Text> : <Text>N/A</Text>}
-                                            </ProgressCircle>
-                                            <View style={{ flexGrow: 1, flexDirection: 'row' }}>
-                                                <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Order Completion</Text>
-                                            </View>
-                                        </View>
-                                        <View>
-                                            <ProgressCircle
-                                                percent={deliveryTime}
-                                                radius={40}
-                                                borderWidth={6}
-                                                color={deliveryTime > 74 ? '#00B35E' : deliveryTime > 24 ? '#FFC940' : '#FF3131'}
-                                                shadowColor="#999"
-                                                bgColor="#fff"
-                                            >
-                                                {deliveryTime > 0 ? <Text style={{ fontSize: 18, color: deliveryTime > 74 ? '#00B35E' : deliveryTime > 24 ? '#FFC940' : '#FF3131' }}>{deliveryTime}%</Text> : <Text>N/A</Text>}
-                                            </ProgressCircle>
-                                            <View style={{ flexGrow: 1, flexDirection: 'row' }}>
-                                                <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Delivery Time</Text>
-                                            </View>
-                                        </View>
-                                        <View>
-                                            <ProgressCircle
-                                                percent={customerRating}
-                                                radius={40}
-                                                borderWidth={6}
-                                                color={customerRating > 74 ? '#00B35E' : customerRating > 24 ? '#FFC940' : '#FF3131'}
-                                                shadowColor="#999"
-                                                bgColor="#fff"
-                                            >
-                                                {customerRating > 0 ? <Text style={{ fontSize: 18, color: customerRating > 74 ? '#00B35E' : customerRating > 24 ? '#FFC940' : '#FF3131' }}>{customerRating}%</Text> : <Text>N/A</Text>}
-                                            </ProgressCircle>
-                                            <View style={{ flexGrow: 1, flexDirection: 'row' }}>
-                                                <Text style={{ flex: 1, width: 1, fontSize: 14 }}>Customer Rating</Text>
-                                            </View>
-                                        </View>
+                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_100, marginLeft: 8 }}>Rs.12435</Text>
                                     </View>
                                 </View>
                             </View>
                         </View>
-                        {/* Sales Overview  Section*/}
-                        <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15, paddingVertical: 15 }}>
-                                <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Sales Overview</Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Sep Revenue</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#00B35E' }}>Rs.12435</Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>2021 Revenue</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_100 }}>Rs.12435</Text>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Total Revenue</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_100 }}>Rs.12435</Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Avg Yearly Selling</Text>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <Icon name='chevrons-up' style={{ marginLeft: 'auto', fontSize: 14, color: '#00B35E' }}>
-                                                <Text style={{ fontSize: 14, color: '#00B35E' }}>12%</Text>
-                                            </Icon>
-                                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.gray_100, marginLeft: 8 }}>Rs.12435</Text>
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                        {/* Order Overview Section */}
-                        <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15, paddingVertical: 15 }}>
-                                <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Orders</Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Delivered Orders</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#00B35E' }}>Rs.12435</Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Shipped Orders</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#3DA9FC' }}>Rs.12435</Text>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Pending Orders</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFC940' }}>Rs.12435</Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Cancelled Orders</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FF3131', marginLeft: 8 }}>Rs.12435</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                        {/* Inventory Section */}
-                        <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15, paddingVertical: 15 }}>
-                                <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Inventory</Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Total Items</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#00B35E' }}>Rs.12435</Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ fontSize: 14 }}>Out of Stock</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFC940' }}>Rs.12435</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                        {/* Listed Product Section */}
-                        <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15, paddingVertical: 10 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                                    <Text style={{ fontWeight: 'bold', color: colors.gray_100, paddingTop: 10 }}>Your Listed Product</Text>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { }}
-                                        >
-                                            <Text style={{ fontSize: 14, color: colors.statusBar }}>See all</Text>
-                                            <Icon name='arrow-right' />
-                                        </RNPButton>
-                                    </View>
+                    </View>
+                    {/* Order Overview Section */}
+                    <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15, paddingVertical: 15 }}>
+                            <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Orders</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>Delivered Orders</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#00B35E' }}>Rs.12435</Text>
                                 </View>
                                 <View>
-                                    <FlatList
-                                        data={productList}
-                                        renderItem={(item, index) => renderProductItem(item, index)}
-                                        _keyExtractor={(item, index) => {
-                                            return item.id
-                                        }}
-                                    />
+                                    <Text style={{ fontSize: 14 }}>Shipped Orders</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#3DA9FC' }}>Rs.12435</Text>
                                 </View>
                             </View>
-                        </View>
-                        {/* Most Selling Product Section */}
-                        <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15, paddingVertical: 10 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                                    <Text style={{ fontWeight: 'bold', color: colors.gray_100, paddingTop: 10 }}>Most Selling Product</Text>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { }}
-                                        >
-                                            <Text style={{ fontSize: 14, color: colors.statusBar }}>See all</Text>
-                                            <Icon name='arrow-right' />
-                                        </RNPButton>
-                                    </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>Pending Orders</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFC940' }}>Rs.12435</Text>
                                 </View>
                                 <View>
-                                    <FlatList
-                                        data={productList}
-                                        renderItem={(item, index) => renderProductItem(item, index)}
-                                        _keyExtractor={(item, index) => {
-                                            return item.id
-                                        }}
-                                    />
+                                    <Text style={{ fontSize: 14 }}>Cancelled Orders</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FF3131', marginLeft: 8 }}>Rs.12435</Text>
                                 </View>
                             </View>
                         </View>
-                        {/* Other Merchants Section */}
-                        <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
-                            <View style={{ marginHorizontal: 15, paddingVertical: 10 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                                    <Text style={{ fontWeight: 'bold', color: colors.gray_100, paddingTop: 10 }}>Other Merchants</Text>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { }}
-                                        >
-                                            <Text style={{ fontSize: 14, color: colors.statusBar }}>See all</Text>
-                                            <Icon name='arrow-right' />
-                                        </RNPButton>
-                                    </View>
+                    </View>
+                    {/* Inventory Section */}
+                    <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15, paddingVertical: 15 }}>
+                            <Text style={{ fontWeight: 'bold', color: colors.gray_100 }}>Inventory</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>Total Items</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#00B35E' }}>Rs.12435</Text>
+                                </View>
+                                <View>
+                                    <Text style={{ fontSize: 14 }}>Out of Stock</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFC940' }}>Rs.12435</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    {/* Listed Product Section */}
+                    <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15, paddingVertical: 10 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <Text style={{ fontWeight: 'bold', color: colors.gray_100, paddingTop: 10 }}>Your Listed Product</Text>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { }}
+                                    >
+                                        <Text style={{ fontSize: 14, color: colors.statusBar }}>See all</Text>
+                                        <Icon name='arrow-right' />
+                                    </RNPButton>
                                 </View>
                             </View>
                             <View>
                                 <FlatList
-                                    contentContainerStyle={{
-                                        paddingBottom: 15,
-                                        marginHorizontal: 8,
-                                        marginTop: 15
+                                    data={productList}
+                                    renderItem={(item, index) => renderProductItem(item, index)}
+                                    _keyExtractor={(item, index) => {
+                                        return item.id
                                     }}
-                                    data={stores}
-                                    //horizontal={true}
-                                    keyExtractor={(item, index) => item._id}
-                                    showsHorizontalScrollIndicator={false}
-                                    numColumns={3}
-                                    renderItem={(item, index) => _renderStore(item, index)}
                                 />
                             </View>
                         </View>
-                    </Content>
-                </Container>
+                    </View>
+                    {/* Most Selling Product Section */}
+                    <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15, paddingVertical: 10 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <Text style={{ fontWeight: 'bold', color: colors.gray_100, paddingTop: 10 }}>Most Selling Product</Text>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { }}
+                                    >
+                                        <Text style={{ fontSize: 14, color: colors.statusBar }}>See all</Text>
+                                        <Icon name='arrow-right' />
+                                    </RNPButton>
+                                </View>
+                            </View>
+                            <View>
+                                <FlatList
+                                    data={productList}
+                                    renderItem={(item, index) => renderProductItem(item, index)}
+                                    _keyExtractor={(item, index) => {
+                                        return item.id
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                    {/* Other Merchants Section */}
+                    <View style={{ marginTop: 20, backgroundColor: '#ffffff' }}>
+                        <View style={{ marginHorizontal: 15, paddingVertical: 10 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <Text style={{ fontWeight: 'bold', color: colors.gray_100, paddingTop: 10 }}>Other Merchants</Text>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { }}
+                                    >
+                                        <Text style={{ fontSize: 14, color: colors.statusBar }}>See all</Text>
+                                        <Icon name='arrow-right' />
+                                    </RNPButton>
+                                </View>
+                            </View>
+                        </View>
+                        <View>
+                            <FlatList
+                                contentContainerStyle={{
+                                    paddingBottom: 15,
+                                    marginHorizontal: 8,
+                                    marginTop: 15
+                                }}
+                                data={stores}
+                                //horizontal={true}
+                                keyExtractor={(item, index) => item._id}
+                                showsHorizontalScrollIndicator={false}
+                                numColumns={3}
+                                renderItem={(item, index) => _renderStore(item, index)}
+                            />
+                        </View>
+                    </View>
+                </Content>
             </SafeAreaView>
         </>
     );

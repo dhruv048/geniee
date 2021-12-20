@@ -1,28 +1,29 @@
-import { Container, Content, Header,Left,Right } from 'native-base';
+import { Container, Content, Header, Left, Right } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, View, Text, StyleSheet } from 'react-native';
+import { Keyboard, View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FIcon from 'react-native-vector-icons/Feather';
 import { colors } from '../../../config/styles';
+import { customPaperTheme } from '../../../config/themes';
 
 const OrdersCompleted = (props) => {
 
-    const[orderId, setOrderId] = useState();
+    const [orderId, setOrderId] = useState();
 
-    useEffect(() =>{
+    useEffect(() => {
         setOrderId('#1224axfe34io');
-    },[])
-    const trackMyOrders = () => {  
+    }, [])
+    const trackMyOrders = () => {
         //const orderItems = props.route.params.data;
-        props.navigation.navigate('OrderTrack',{order : orderId});
+        props.navigation.navigate('OrderTrack', { order: orderId });
     }
     return (
-        <Container>
+        <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
             <Content style={{ backgroundColor: colors.appBackground }}>
-            <Header
+                <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                 >
                     <Button
                         transparent
@@ -32,7 +33,7 @@ const OrdersCompleted = (props) => {
                             props.navigation.goBack();
                         }}>
                         <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Home</Text>
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
                     </Button>
                 </Header>
                 <View style={styles.container}>
@@ -44,16 +45,16 @@ const OrdersCompleted = (props) => {
                         uppercase={false}
                         icon='shopping'
                         style={styles.btnComplete}
-                        onPress={() => {trackMyOrders()}}
+                        onPress={() => { trackMyOrders() }}
                     >
                         <Text style={styles.btnCompleteText}>Track My orders</Text>
                     </Button>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text>Product similar to your orders</Text>            
+                        <Text>Product similar to your orders</Text>
                     </View>
                 </View>
             </Content>
-        </Container>
+        </SafeAreaView>
     );
 }
 
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     btnComplete: {
         width: '55%',
         marginBottom: 20,
-        marginTop:20,
+        marginTop: 20,
         marginLeft: '3%',
         borderRadius: 6,
         height: 45,
