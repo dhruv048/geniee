@@ -30,6 +30,8 @@ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 const materialColors=['#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2','#AFB42B','#D32F2F','#0288D1' ,'#5D4037','#0097A7','#FBC02D','#00796B', '#388E3C', '#F57C00','#689F38','#E64A19',
 '#616161','#FFA000','#455A64' ];
 import ServiceItem from "../components/Service/ServiceItem";
+import { customPaperTheme } from '../config/themes';
+import Statusbar from '../componentsG/Shared/components/Statusbar';
 
 const SearchResult = (props) => {
     const [query, setQuery]= useState('');
@@ -190,11 +192,12 @@ const SearchResult = (props) => {
 
         return (
             <Container>
+                <Statusbar />
                 <Header
                     searchBar
                     rounded
                     androidStatusBarColor={colors.statusBar}
-                    style={{backgroundColor: '#4d94ff'}}>
+                    style={{backgroundColor: '#4d94ff', marginTop:customPaperTheme.headerMarginVertical}}>
                     <Left style={{flex: 1}}>
                     <Button transparent onPress={() => 
                     props.navigation.goBack()}>

@@ -5,7 +5,8 @@ import {
     ToastAndroid,
     TouchableWithoutFeedback,
     Keyboard,
-    TouchableOpacity
+    TouchableOpacity,
+    SafeAreaView
 } from 'react-native';
 import { colors, customStyle } from '../../../config/styles';
 import {
@@ -26,7 +27,7 @@ import LocationPicker from '../../../components/LocationPicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import _, { set } from 'lodash';
 import { Title, Button as RNPButton, TextInput, Checkbox, Switch } from 'react-native-paper';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import UseBusinessForm from '../../../hooks/useBusinessForm';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
@@ -340,7 +341,7 @@ const ProductInfo = (props) => {
     };
 
     return (
-        <Container style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
             <Content style={{ padding: Platform.OS === 'ios' ? 20 : 0 }}>
                 <TouchableWithoutFeedback
                     onPress={Keyboard.dismiss}
@@ -349,24 +350,18 @@ const ProductInfo = (props) => {
                         {/* <Logo />*/}
                         <Header
                             androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}
+                            style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                         >
-                            <Left>
-                                <RNPButton
-                                    transparent
-                                    uppercase={false}
-                                    onPress={() => {
-                                        props.navigation.goBack();
-                                    }}>
-                                    <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                    <Text style={{ color: colors.whiteText }}>
-                                        Back
-                                    </Text>
-                                </RNPButton>
-                            </Left>
-                            <Right>
-
-                            </Right>
+                            <RNPButton
+                                transparent
+                                uppercase={false}
+                                style={{ width: '100%', alignItems: 'flex-start' }}
+                                onPress={() => {
+                                    props.navigation.goBack();
+                                }}>
+                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
+                            </RNPButton>
                         </Header>
                         <View style={{paddingHorizontal:25,marginTop:15}}>
                         <View style={styles.categoryPicker}>
@@ -811,7 +806,7 @@ const ProductInfo = (props) => {
                     }}
                 />
             </Content>
-        </Container>
+        </SafeAreaView>
 
     );
 }

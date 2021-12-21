@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, NativeModules, ToastAndroid, Alert, AsyncStorage, Image, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, Text, NativeModules, ToastAndroid, Alert, AsyncStorage, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import {
     Container,
     Content,
@@ -21,7 +21,7 @@ import { PaymentType, TransactionTypes, OrderStatus } from "../../../config/sett
 import DeviceInfo from 'react-native-device-info'
 import FIcon from 'react-native-vector-icons/Feather';
 import { Button, TextInput } from 'react-native-paper';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { variables, customStyle } from '../../../config/styles';
 import AIcon from 'react-native-vector-icons/AntDesign';
 
@@ -64,7 +64,7 @@ const PaymentMethod = (props) => {
         //                 0,
         //                 50,
         //             );
-                    
+
         //         }
         //         catch (e) {
         //             Meteor.call('removeOrder', res.result);
@@ -127,11 +127,11 @@ const PaymentMethod = (props) => {
     }
 
     return (
-        <Container style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
             <Content style={{ backgroundColor: colors.appBackground }}>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                 >
                     <Button
                         transparent
@@ -141,12 +141,8 @@ const PaymentMethod = (props) => {
                             props.navigation.goBack();
                         }}>
                         <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Select Payment</Text>
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
                     </Button>
-                    {/* <Left style={{marginLeft:0}}>
-                          
-                    </Left>
-                    <Right></Right> */}
                 </Header>
                 <View style={{ marginHorizontal: 20 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%' }}>
@@ -191,7 +187,7 @@ const PaymentMethod = (props) => {
                 </View>
 
             </Content>
-        </Container>
+        </SafeAreaView>
     );
 }
 

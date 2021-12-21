@@ -1,21 +1,22 @@
 import { Container, Content, Header, Left, Right } from 'native-base';
 import React from 'react';
-import { Keyboard, View, Text, StyleSheet } from 'react-native';
+import { Keyboard, View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FIcon from 'react-native-vector-icons/Feather';
 import { colors } from '../../../config/styles';
 import MapView from 'react-native-maps';
+import { customPaperTheme } from '../../../config/themes';
 
 const OrderTrack = (props) => {
 
     const orderId = props.route.params.order;
     return (
-        <Container style={{ backgroundColor: colors.appBackground }}>
+        <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
             <Content>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                 >
                     <Button
                         transparent
@@ -25,14 +26,13 @@ const OrderTrack = (props) => {
                             props.navigation.goBack();
                         }}>
                         <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>{orderId}</Text>
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
                     </Button>
                 </Header>
-
                 <View style={{ marginTop: '1%' }}>
                     <View>
                         <MapView
-                            style={{ height: 250}}
+                            style={{ height: 250 }}
                             initialRegion={{
                                 latitude: 27.712020,
                                 longitude: 85.312950,
@@ -46,7 +46,7 @@ const OrderTrack = (props) => {
                     </View>
                 </View>
             </Content>
-        </Container>
+        </SafeAreaView>
     )
 }
 

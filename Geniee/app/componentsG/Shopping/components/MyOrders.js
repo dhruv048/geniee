@@ -39,6 +39,8 @@ import Moment from 'moment';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import ProgressCircle from 'react-native-progress-circle';
 import AIcon from 'react-native-vector-icons/AntDesign';
+import { customPaperTheme } from '../../../config/themes';
+import Statusbar from '../../Shared/components/Statusbar';
 
 const productLists = [
     {
@@ -60,7 +62,7 @@ const productLists = [
         "availableQuantity": 100,
         "instock": true,
         "date": "2021-08-08",
-        "orderStatus":0,
+        "orderStatus": 0,
     },
     {
         "_id": "mXuQTExhKZcSw8J7Q",
@@ -81,7 +83,7 @@ const productLists = [
         "availableQuantity": 0,
         "instock": false,
         "date": "2021-08-08",
-        "orderStatus":0,
+        "orderStatus": 0,
     },
     {
         "_id": "4755jPwTynSgwZgzQ",
@@ -102,7 +104,7 @@ const productLists = [
         "availableQuantity": 100,
         "instock": true,
         "date": "2021-08-08",
-        "orderStatus":1,
+        "orderStatus": 1,
     },
     {
         "_id": "mXuQTExhKZcSw8J7Q",
@@ -123,7 +125,7 @@ const productLists = [
         "availableQuantity": 100,
         "instock": true,
         "date": "2021-08-08",
-        "orderStatus":2,
+        "orderStatus": 2,
     },
     {
         "_id": "mXuQTExhKZcSw8J7Q",
@@ -144,7 +146,7 @@ const productLists = [
         "availableQuantity": 100,
         "instock": true,
         "date": "2021-08-08",
-        "orderStatus":2,
+        "orderStatus": 2,
     }
 ]
 
@@ -154,14 +156,14 @@ const MyOrders = (props) => {
     const [onGoingButtonActive, setOnGoingButtonActive] = useState(false);
     const [completedButtonActive, setCompletedButtonActive] = useState(false);
 
-    var data =  productLists.filter(item => item.orderStatus == 0);
+    var data = productLists.filter(item => item.orderStatus == 0);
     const [productList, setProductList] = useState(data);
 
     const handleShipButton = () => {
         setShipButtonActive(true);
         setOnGoingButtonActive(false);
         setCompletedButtonActive(false);
-        var data =  productLists.filter(item => item.orderStatus == 0);
+        var data = productLists.filter(item => item.orderStatus == 0);
         setProductList(data);
     }
 
@@ -169,7 +171,7 @@ const MyOrders = (props) => {
         setShipButtonActive(false);
         setOnGoingButtonActive(true);
         setCompletedButtonActive(false);
-        var data =  productLists.filter(item => item.orderStatus == 1);
+        var data = productLists.filter(item => item.orderStatus == 1);
         setProductList(data);
     }
 
@@ -177,7 +179,7 @@ const MyOrders = (props) => {
         setShipButtonActive(false);
         setOnGoingButtonActive(false);
         setCompletedButtonActive(true);
-        var data =  productLists.filter(item => item.orderStatus == 2);
+        var data = productLists.filter(item => item.orderStatus == 2);
         setProductList(data);
     }
 
@@ -200,12 +202,12 @@ const MyOrders = (props) => {
                             }}
                         />
                     </View>
-                    <View  style={{ marginLeft: 10}}>
+                    <View style={{ marginLeft: 10 }}>
                         <Text style={styles.OrderText} >Order #{product.orderId}</Text>
-                        <View style={{width:'85%', flexWrap : 'wrap', flexDirection:'row'}}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.gray_100,}} numberOfLines={2}>
-                            {product.title}
-                        </Text>
+                        <View style={{ width: '85%', flexWrap: 'wrap', flexDirection: 'row' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.gray_100, }} numberOfLines={2}>
+                                {product.title}
+                            </Text>
                         </View>
                         {shipButtonActive ?
                             <View style={{ flexDirection: 'row' }}>
@@ -232,83 +234,76 @@ const MyOrders = (props) => {
     return (
         <>
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
-                <Container>
-
-                    <View
-                        style={{
-                            backgroundColor: colors.appLayout,
-                            height: 60,
+                <Statusbar />
+                <Header
+                    androidStatusBarColor={colors.statusBar}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+                >
+                    <RNPButton
+                        transparent
+                        uppercase={false}
+                        style={{ width: '100%', alignItems: 'flex-start' }}
+                        onPress={() => {
+                            props.navigation.goBack();
                         }}>
-                        <Header
-                            androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}>
-                            <RNPButton
-                                transparent
-                                uppercase={false}
-                                style={{ width: '100%', alignItems: 'flex-start' }}
-                                onPress={() => {
-                                    props.navigation.goBack();
-                                }}>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>My Orders</Text>
-                            </RNPButton>
-                        </Header>
-                    </View>
-                    <Content style={styles.content}>
-                        {/* Performance Section */}
-                        <View style={{ backgroundColor: '#ffffff' }}>
-                            <View>
-                                <View style={{ flexDirection: 'row', paddingHorizontal: 10, justifyContent: 'space-between' }}>
-                                    <View>
-                                        <RNPButton mode='text'
-                                            uppercase={false}
-                                            onPress={() => { handleShipButton() }}
-                                            style={shipButtonActive ? styles.activeButton : ''}
-                                        >
-                                            <Text style={shipButtonActive ? styles.activeText : ''}>To Ship</Text>
-                                        </RNPButton>
-                                    </View>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { handleOngoingButton() }}
-                                            style={onGoingButtonActive ? styles.activeButton : ''}
-                                        >
-                                            <Text style={onGoingButtonActive ? styles.activeText : ''}>Ongoing</Text>
-                                        </RNPButton>
-                                    </View>
-                                    <View>
-                                        <RNPButton
-                                            mode='text'
-                                            uppercase={false}
-                                            onPress={() => { handleCompletedButton() }}
-                                            style={completedButtonActive ? styles.activeButton : ''}
-                                        >
-                                            <Text style={completedButtonActive ? styles.activeText : ''}>Completed</Text>
-                                        </RNPButton>
-                                    </View>
-                                </View>
-                                <View
-                                    style={{
-                                        borderBottomColor: '#EEEDED',
-                                        borderBottomWidth: 1,
-                                        marginBottom: 10,
-                                    }}
-                                />
+                        <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>My Orders</Text>
+                    </RNPButton>
+                </Header>
+                <Content style={styles.content}>
+                    {/* Performance Section */}
+                    <View style={{ backgroundColor: '#ffffff' }}>
+                        <View>
+                            <View style={{ flexDirection: 'row', paddingHorizontal: 10, justifyContent: 'space-between' }}>
                                 <View>
-                                    <FlatList
-                                        data={productList}
-                                        renderItem={(item, index) => renderProductItem(item, index)}
-                                        _keyExtractor={(item, index) => {
-                                            return item.id
-                                        }}
-                                    />
+                                    <RNPButton mode='text'
+                                        uppercase={false}
+                                        onPress={() => { handleShipButton() }}
+                                        style={shipButtonActive ? styles.activeButton : ''}
+                                    >
+                                        <Text style={shipButtonActive ? styles.activeText : ''}>To Ship</Text>
+                                    </RNPButton>
+                                </View>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { handleOngoingButton() }}
+                                        style={onGoingButtonActive ? styles.activeButton : ''}
+                                    >
+                                        <Text style={onGoingButtonActive ? styles.activeText : ''}>Ongoing</Text>
+                                    </RNPButton>
+                                </View>
+                                <View>
+                                    <RNPButton
+                                        mode='text'
+                                        uppercase={false}
+                                        onPress={() => { handleCompletedButton() }}
+                                        style={completedButtonActive ? styles.activeButton : ''}
+                                    >
+                                        <Text style={completedButtonActive ? styles.activeText : ''}>Completed</Text>
+                                    </RNPButton>
                                 </View>
                             </View>
+                            <View
+                                style={{
+                                    borderBottomColor: '#EEEDED',
+                                    borderBottomWidth: 1,
+                                    marginBottom: 10,
+                                }}
+                            />
+                            <View>
+                                <FlatList
+                                    data={productList}
+                                    renderItem={(item, index) => renderProductItem(item, index)}
+                                    _keyExtractor={(item, index) => {
+                                        return item.id
+                                    }}
+                                />
+                            </View>
                         </View>
-                    </Content>
-                </Container>
+                    </View>
+                </Content>
             </SafeAreaView>
         </>
     );

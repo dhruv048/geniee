@@ -38,6 +38,8 @@ import { Button as RNPButton, TextInput } from 'react-native-paper';
 import Moment from 'moment';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view'
+import Statusbar from '../../Shared/components/Statusbar';
+import { customPaperTheme } from '../../../config/themes';
 
 const RevenueReport = (props) => {
     const [sale, setSale] = useState(12000);
@@ -106,40 +108,36 @@ const Earnings = (props) => {
     return (
         <>
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+                <Statusbar />
+                <Header
+                    androidStatusBarColor={colors.statusBar}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+                >
+                    <RNPButton
+                        transparent
+                        uppercase={false}
+                        style={{ width: '100%', alignItems: 'flex-start' }}
+                        onPress={() => {
+                            props.navigation.goBack();
+                        }}>
+                        <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>Sales Preview</Text>
+                    </RNPButton>
+                </Header>
                 <Container>
-                <View
-                    style={{
-                        backgroundColor: colors.appLayout,
-                        height: 80,
-                    }}>
-                    <Header
-                        androidStatusBarColor={colors.statusBar}
-                        style={{ backgroundColor: '#4d94ff' }}>
-                        <RNPButton
-                            transparent
-                            uppercase={false}
-                            style={{ width: '100%', alignItems: 'flex-start' }}
-                            onPress={() => {
-                                props.navigation.goBack();
-                            }}>
-                            <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>Sales Overview</Text>
-                        </RNPButton>
-                    </Header>
-                </View>
-                <View style={styles.content}>
-                    <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center', backgroundColor: '#EEEDED', height: 100 }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.statusBar }}>Rs.{totalSale}</Text>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Total Sale</Text>
+                    <View style={styles.content}>
+                        <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center', backgroundColor: '#EEEDED', height: 100 }}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.statusBar }}>Rs.{totalSale}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Total Sale</Text>
+                        </View>
                     </View>
-                </View>
-                <TabView
-                    navigationState={{ index, routes }}
-                    renderScene={renderScene}
-                    renderTabBar={renderTabBar}
-                    onIndexChange={setIndex}
-                    initialLayout={{ width: layout.width }}
-                />
+                    <TabView
+                        navigationState={{ index, routes }}
+                        renderScene={renderScene}
+                        renderTabBar={renderTabBar}
+                        onIndexChange={setIndex}
+                        initialLayout={{ width: layout.width }}
+                    />
                 </Container>
             </SafeAreaView>
         </>
@@ -153,7 +151,8 @@ const styles = StyleSheet.create({
     },
     content: {
         backgroundColor: colors.appBackground,
-        marginHorizontal: 15
+        marginHorizontal: 15,
+        marginTop:10
     },
 });
 export default Earnings;

@@ -6,7 +6,7 @@ import { Container, Content, Header, Item, Label, Text, Radio, Left, Body, Title
 import UploadProfilePic from '../../../components/UploadProfilePic/UploadProfilePic';
 import {
     KeyboardAvoidingView, SafeAreaView, StatusBar, TouchableNativeFeedback, View,
-    StyleSheet, ToastAndroid, TouchableWithoutFeedback, Keyboard, TouchableOpacity,Alert,Image
+    StyleSheet, ToastAndroid, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Alert, Image
 } from "react-native";
 import { Button as RNPButton, Switch, ToggleButton } from 'react-native-paper'
 import FIcon from 'react-native-vector-icons/Feather';
@@ -17,6 +17,8 @@ import merchantHandlers from "../../../store/services/merchant/handlers";
 const USER_TOKEN_KEY = 'USER_TOKEN_KEY_GENNIE';
 import Share from 'react-native-share';
 import Loading from '../../../components/Loading';
+import Statusbar from '../../Shared/components/Statusbar';
+import { customPaperTheme } from '../../../config/themes';
 
 const MyAccount = (props) => {
 
@@ -35,11 +37,11 @@ const MyAccount = (props) => {
 
         merchantHandlers.getBusinessInfo(loggedUser, (res) => {
             if (res) {
-              setMerchantUser(true);
+                setMerchantUser(true);
             } else {
-              setMerchantUser(false);
+                setMerchantUser(false);
             }
-          })
+        })
     }, [])
 
     const _signOut = async () => {
@@ -64,37 +66,40 @@ const MyAccount = (props) => {
         );
     }
 
-    inviteFriends = async() => {
+    inviteFriends = async () => {
         const shareOptions = {
-            message : 'Geniee App',
-            url : 'www.google.com'
+            message: 'Geniee App',
+            url: 'www.google.com'
         }
-        try{
+        try {
             const shareResponse = await Share.open(shareOptions);
             console.log(JSON.stringify(shareResponse));
-        } catch(error){
-            console.log(' Error => ',error);
+        } catch (error) {
+            console.log(' Error => ', error);
         }
     }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <Container style={styles.container}>
-                <Header androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}>
-                    <RNPButton
-                        transparent
-                        uppercase={false}
-                        style={{ width: '100%', alignItems: 'flex-start' }}
-                        onPress={() => {
-                            props.navigation.goBack();
-                        }}>
-                        <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>My Account</Text>
-                    </RNPButton>
-                </Header>
+            <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+                <Statusbar />
+                <Header
+                        androidStatusBarColor={colors.statusBar}
+                        style={{ backgroundColor: colors.statusBar ,marginTop:customPaperTheme.headerMarginVertical}}
+                    >
+                        <RNPButton
+                            transparent
+                            uppercase={false}
+                            style={{ width: '100%', alignItems: 'flex-start' }}
+                            onPress={() => {
+                                props.navigation.goBack();
+                            }}>
+                            <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>My Account</Text>
+                        </RNPButton>
+                    </Header>
                 <Content>
-                    <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+                    <View>
                         <View style={[{ flexDirection: 'row', backgroundColor: '#F0F8FF' }]}>
                             <UploadProfilePic />
                             <View style={{ marginTop: 30, marginLeft: 20, }}>
@@ -103,19 +108,19 @@ const MyAccount = (props) => {
                             </View>
                         </View>
                         {!merchantUser ?
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#F0F8FF', paddingBottom: 15,marginLeft:15 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#F0F8FF', paddingBottom: 15, marginLeft: 15 }}>
                                 <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text>
                             </View>
                             :
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#F0F8FF', paddingBottom: 15 }}>
-                            {!isMerchant ? <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text> : <Text style={{ color: colors.statusBar }}>User</Text>}
-                            <Switch
-                                value={isMerchant}
-                                onValueChange={() => setIsMerchant(!isMerchant)}
-                                color={colors.statusBar}
-                            />
-                            {isMerchant ? <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>Merchant</Text> : <Text style={{ color: colors.statusBar }}>Merchant</Text>}
-                        </View>}
+                                {!isMerchant ? <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text> : <Text style={{ color: colors.statusBar }}>User</Text>}
+                                <Switch
+                                    value={isMerchant}
+                                    onValueChange={() => setIsMerchant(!isMerchant)}
+                                    color={colors.statusBar}
+                                />
+                                {isMerchant ? <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>Merchant</Text> : <Text style={{ color: colors.statusBar }}>Merchant</Text>}
+                            </View>}
                         <KeyboardAvoidingView>
                             <View style={styles.containerRegister}>
                                 {!isMerchant ?
@@ -127,7 +132,7 @@ const MyAccount = (props) => {
                                             <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
                                         </View>
                                     </TouchableOpacity> : <TouchableOpacity
-                                        onPress={() => { props.navigation.navigate('Inventory',{loggedUser:loggedUser})}}>
+                                        onPress={() => { props.navigation.navigate('Inventory', { loggedUser: loggedUser }) }}>
                                         <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                             <MIcon style={{ fontSize: 20 }} name='playlist-add-check' />
                                             <Text style={{ fontSize: 14, marginLeft: 10 }}>My Inventory</Text>
@@ -144,7 +149,7 @@ const MyAccount = (props) => {
                                 </TouchableOpacity>
                                 <View><Text style={{ fontWeight: 'bold', marginTop: 30, marginBottom: 10 }}>Buy & Selling</Text></View>
                                 {isMerchant ? <TouchableOpacity
-                                    onPress={() => {props.navigation.navigate('Earnings',{loggedUser:loggedUser})}}>
+                                    onPress={() => { props.navigation.navigate('Earnings', { loggedUser: loggedUser }) }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='money' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>Earnings</Text>
@@ -152,7 +157,7 @@ const MyAccount = (props) => {
                                     </View>
                                 </TouchableOpacity> : null}
                                 <TouchableOpacity
-                                    onPress={() => {props.navigation.navigate('MyOrders',{loggedUser:loggedUser})}}>
+                                    onPress={() => { props.navigation.navigate('MyOrders', { loggedUser: loggedUser }) }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='view-carousel' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>My Orders</Text>
@@ -185,33 +190,33 @@ const MyAccount = (props) => {
                                     </View>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => {inviteFriends()}}>
+                                    onPress={() => { inviteFriends() }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <MIcon style={{ fontSize: 20 }} name='insert-invitation' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>Invite Friends</Text>
                                         <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
                                     </View>
                                 </TouchableOpacity>
-                               {isMerchant && merchantUser? 
-                               <TouchableOpacity
-                                    onPress={() => { props.navigation.navigate('ProductInfo',{data: loggedUser}) }}>
-                                    <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
-                                        <MIcon style={{ fontSize: 20 }} name='storefront' />
-                                        <Text style={{ fontSize: 14, marginLeft: 10 }}>Add Product</Text>
-                                        <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
-                                    </View>
-                                </TouchableOpacity>:
-                                 <TouchableOpacity
-                                 onPress={() => { props.navigation.navigate('BecomeSeller',{data: loggedUser}) }}>
-                                 <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
-                                     <MIcon style={{ fontSize: 20 }} name='storefront' />
-                                     <Text style={{ fontSize: 14, marginLeft: 10 }}>Become Merchant</Text>
-                                     <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
-                                 </View>
-                             </TouchableOpacity>
-                             }
+                                {isMerchant && merchantUser ?
+                                    <TouchableOpacity
+                                        onPress={() => { props.navigation.navigate('ProductInfo', { data: loggedUser }) }}>
+                                        <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                                            <MIcon style={{ fontSize: 20 }} name='storefront' />
+                                            <Text style={{ fontSize: 14, marginLeft: 10 }}>Add Product</Text>
+                                            <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
+                                        </View>
+                                    </TouchableOpacity> :
+                                    <TouchableOpacity
+                                        onPress={() => { props.navigation.navigate('BecomeSeller', { data: loggedUser }) }}>
+                                        <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                                            <MIcon style={{ fontSize: 20 }} name='storefront' />
+                                            <Text style={{ fontSize: 14, marginLeft: 10 }}>Become Merchant</Text>
+                                            <MIcon style={{ fontSize: 20, marginLeft: 'auto' }} name='chevron-right' />
+                                        </View>
+                                    </TouchableOpacity>
+                                }
                                 <TouchableOpacity
-                                    onPress={() => {props.navigation.navigate('ContactUs')}}>
+                                    onPress={() => { props.navigation.navigate('ContactUs') }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                                         <AIcon style={{ fontSize: 20 }} name='customerservice' />
                                         <Text style={{ fontSize: 14, marginLeft: 10 }}>Support Customer Care</Text>
@@ -219,17 +224,17 @@ const MyAccount = (props) => {
                                     </View>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => {_signOut()}}>
+                                    onPress={() => { _signOut() }}>
                                     <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
-                                        <AIcon style={{ fontSize: 20,fontWeight: 'bold' }} name='logout' />
-                                        <Text style={{ fontSize: 14, marginLeft: 10,fontWeight: 'bold' }}>Logout</Text>
+                                        <AIcon style={{ fontSize: 20, fontWeight: 'bold' }} name='logout' />
+                                        <Text style={{ fontSize: 14, marginLeft: 10, fontWeight: 'bold' }}>Logout</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                         </KeyboardAvoidingView>
-                    </SafeAreaView>
+                    </View>
                 </Content>
-            </Container>
+            </SafeAreaView>
         </TouchableWithoutFeedback>
     );
 };

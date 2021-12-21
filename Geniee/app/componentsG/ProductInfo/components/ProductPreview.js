@@ -26,7 +26,7 @@ import LocationPicker from '../../../components/LocationPicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import _, { set } from 'lodash';
 import { Title, Button as RNPButton, TextInput, Checkbox, RadioButton } from 'react-native-paper';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { categorySelector } from '../../../store/selectors';
 import { connect } from 'react-redux';
 import { ProgressViewIOSComponent, Image } from 'react-native';
@@ -153,20 +153,20 @@ const ProductPreview = (props) => {
                     <View style={{ paddingTop: 0 }}>
                         {/* <Logo />*/}
                         <Header
-                            androidStatusBarColor={colors.statusBar}
-                            style={{ backgroundColor: '#4d94ff' }}
-                        >
-                            <RNPButton
-                                transparent
-                                uppercase={false}
-                                style={{ width: '100%', alignItems: 'flex-start' }}
-                                onPress={() => {
-                                    props.navigation.goBack();
-                                }}>
-                                <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                                <Text style={{ color: colors.whiteText, fontSize: 20 }}>Product Preview</Text>
-                            </RNPButton>
-                        </Header>
+                        androidStatusBarColor={colors.statusBar}
+                        style={{ backgroundColor: colors.statusBar ,marginTop:customPaperTheme.headerMarginVertical}}
+                    >
+                        <RNPButton
+                            transparent
+                            uppercase={false}
+                            style={{ width: '100%', alignItems: 'flex-start' }}
+                            onPress={() => {
+                                props.navigation.goBack();
+                            }}>
+                            <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>Product Preview</Text>
+                        </RNPButton>
+                    </Header>
                         <View style={styles.containerRegister}>
                             <Text style={{ fontWeight: 'bold', marginVertical: 15, fontSize: 18 }}>{productData.productTitle}</Text>
                         </View>
