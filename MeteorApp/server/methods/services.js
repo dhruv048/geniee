@@ -1290,11 +1290,17 @@ Meteor.methods({
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
-        const OwnerLookup = {
-            from: "users",
-            localField: "owner",
-            foreignField: "_id",
-            as: "users",
+        // const OwnerLookup = {
+        //     from: "users",
+        //     localField: "owner",
+        //     foreignField: "_id",
+        //     as: "users",
+        // };
+        const BusinessLookup = {
+            from: "business",
+            localField: "businessType",
+            foreignField: "businessTypes",
+            as: "business",
         };
         const addValues = {
             Owner: { $arrayElemAt: ["$users", 0] },
@@ -1305,7 +1311,7 @@ Meteor.methods({
                     // {
                     //     $match: { ServiceOwner: loggedUser },
                     // },
-                    { $lookup: OwnerLookup },
+                    { $lookup: BusinessLookup },
                     { $addFields: addValues },
                     { $sort: { createDate: -1 } },
                 ],

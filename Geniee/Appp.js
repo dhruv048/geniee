@@ -71,6 +71,7 @@ import Inventory from './app/componentsG/Merchant/component/Inventory';
 import Earnings from './app/componentsG/Merchant/component/Earnings';
 import MerchantOrder from './app/componentsG/Merchant/component/MerchantOrder';
 import OrderTrack from './app/componentsG/Shopping/components/OrderTrack';
+import { BottomTab } from './app/componentsG/Shared/components/BottomTab';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();

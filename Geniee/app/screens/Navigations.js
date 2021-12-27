@@ -13,6 +13,7 @@ import MerchantDashboard from '../componentsG/Merchant/component/MerchantDashboa
 import MyCart from '../componentsG/Shopping/components/MyCart';
 import MerchantOrder from '../componentsG/Merchant/component/MerchantOrder';
 import Geniee from '../components/GenieeDemo/Geniee';
+import { BottomTab } from '../componentsG/Shared/components/BottomTab';
 // import SideMenu from './SideMenu';
 
 const Tab = createBottomTabNavigator();

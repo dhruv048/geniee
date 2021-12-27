@@ -1,25 +1,27 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Header,
   Text,
   Container,
   Content,
-      Left,
+  Left,
   Body,
+  View,
 } from 'native-base';
 
 import {
   StyleSheet,
-      FlatList,
+  FlatList,
   BackHandler,
-  } from 'react-native';
+} from 'react-native';
 
-import {colors} from '../../config/styles';
+import { colors } from '../../config/styles';
 import Meteor from '../../react-native-meteor';
 import Moment from 'moment/moment';
 import CogMenu from '../../components/CogMenu';
 import ChatListItem from '../../components/Chat/ChatListItem';
 import FooterTabs from '../../components/FooterTab';
+import { customPaperTheme } from '../../config/themes';
 
 class ChatList extends Component {
   constructor(props) {
@@ -32,12 +34,12 @@ class ChatList extends Component {
   }
 
   componentDidMount() {
-     
-    this.setState({chatList: this.props.chatChannels});
+
+    this.setState({ chatList: this.props.chatChannels });
   }
   handleBackButtonChat() {
     console.log('handlebackpressChatList');
-   this.props.navigation.navigate('Home');
+    this.props.navigation.navigate('Home');
     return true;
   }
   componentDidAppear() {
@@ -59,7 +61,7 @@ class ChatList extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState({chatList: []});
+    this.setState({ chatList: [] });
     let sorteData = newProps.chatChannels.sort((a, b) => {
       if (
         !a.hasOwnProperty('latestMessage') ||
@@ -94,7 +96,7 @@ class ChatList extends Component {
     });
     // console.log('received new props..', newProps.chatChannels)
     // console.log('sortedData', sorteData);
-    this.setState({chatList: sorteData});
+    this.setState({ chatList: sorteData });
   }
 
   _handlePress = channel => {
@@ -107,7 +109,7 @@ class ChatList extends Component {
       },
       service: channel.service,
     };
-    this.props.navigation.navigate('Message', {Channel: Channel});
+    this.props.navigation.navigate('Message', { Channel: Channel });
   };
 
   _renderList = data => {
@@ -118,33 +120,34 @@ class ChatList extends Component {
     item.user = item.Users.find(item => item._id !== logged);
 
     return (
-        <ChatListItem chatChannel={item} componentId={this.props.componentId}/>
+      <ChatListItem chatChannel={item} componentId={this.props.componentId} />
     );
   };
 
   render() {
     return (
       <Container>
-       
-        <Header androidStatusBarColor={colors.statusBar} searchBar rounded>
-          <Left>
-            {/*<Button onPress={() => Navigation.pop(this.props.componentId)} transparent>*/}
-            {/*<Icon name='arrow-left' color='white' size={25}/>*/}
-            {/*</Button>*/}
+        <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
+          <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{ backgroundColor: colors.statusBar }}>
+            <Left>
+              {/*<Button onPress={() => Navigation.pop(this.props.componentId)} transparent>*/}
+              {/*<Icon name='arrow-left' color='white' size={25}/>*/}
+              {/*</Button>*/}
 
-            <CogMenu componentId={this.props.componentId} />
-          </Left>
-          <Body>
-            <Text style={{color: 'white'}}>Messages</Text>
-          </Body>
-          {/*<Right style={{margin: 7}}>*/}
-          {/*<Button onPress={() => {*/}
-          {/*this.props.navigation.navigate('AddHospital')*/}
-          {/*}} transparent>*/}
-          {/*<Icon name='plus' color='white' size={25}/>*/}
-          {/*</Button>*/}
-          {/*</Right>*/}
-        </Header>
+              <CogMenu componentId={this.props.componentId} />
+            </Left>
+            <Body>
+              <Text style={{ color: 'white' }}>Messages</Text>
+            </Body>
+            {/*<Right style={{margin: 7}}>*/}
+            {/*<Button onPress={() => {*/}
+            {/*this.props.navigation.navigate('AddHospital')*/}
+            {/*}} transparent>*/}
+            {/*<Icon name='plus' color='white' size={25}/>*/}
+            {/*</Button>*/}
+            {/*</Right>*/}
+          </Header>
+        </View>
         <Content style={styles.content}>
           <FlatList
             data={this.state.chatList}
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: colors.appBackground,
     flex: 1,
-      padding:10
+    padding: 10
   },
   serviceList: {
     //backgroundColor: colors.inputBackground,

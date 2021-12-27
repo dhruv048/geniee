@@ -37,6 +37,8 @@ export const NotificationTypes = {
     ADD_SERVICE:10,
     ADD_PRODUCT:11,
     RATE_SERVICE:12,
+    ASK_QUESTION: 20,
+    ANSWER_QUESTION: 21
 };
 
 export const userType = {

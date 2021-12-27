@@ -12,6 +12,7 @@ import AIcon from 'react-native-vector-icons/AntDesign';
 import CartIcon from "./HeaderIcons/CartIcon";
 import merchantHandlers from "../store/services/merchant/handlers";
 import AddProduct from "../screens/store/AddProduct";
+import Svg, { Circle, Path } from "react-native-svg";
 
 const FooterTabs = (props) => {
 
@@ -49,9 +50,9 @@ const FooterTabs = (props) => {
   }
 
   const handleDashboard = () => {
-    if(merchantUser){
+    if (merchantUser) {
       props.navigation.navigate('MerchantDashboard')
-    }else{
+    } else {
       props.navigation.navigate('Home')
     }
   }
@@ -80,9 +81,14 @@ const FooterTabs = (props) => {
             onPress={() => props.navigation.navigate('Chat')}
           >
             <AIcon name="message1" style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
-              <Text note style={{color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200, fontSize: 8}}>Message</Text>
+            <Text note style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Message</Text>
           </Button>
         </View>
+        {/* <View>
+          <Svg height="100" width="100">
+            <Circle cx="35" cy="35" r="35" fill="pink" stroke="#BCBCBC" strokeWidth={6} />
+          </Svg>
+        </View> */}
         <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 10, }}>
           {merchantUser ?
             <Button onPress={() => { props.navigation.navigate('ProductInfo') }}
@@ -96,13 +102,13 @@ const FooterTabs = (props) => {
             </Button>}
         </View>
         {/* {!merchantUser ? */}
-          <View>
-            <CartIcon
-              navigation={props.navigation}
-              style={customStyle.actionIcon}
-            />
-          </View>
-          {/* :
+        <View>
+          <CartIcon
+            navigation={props.navigation}
+            style={customStyle.actionIcon}
+          />
+        </View>
+        {/* :
           <View>
             <Button transparent style={styles.btnTab}
               onPress={() => handleCartOrder()}

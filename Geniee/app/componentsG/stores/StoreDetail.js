@@ -85,11 +85,11 @@ const StoreDetail = (props) => {
     }
 
     const _handleProductPress = product => {
-        props.navigation.navigate('ProductDetail', { data: product });
+        props.navigation.navigate('ProductDetail', {Id: product._id, data: product });
     };
 
     const addToWishlist = (productId) => {
-        setLiked(!liked);
+        
         let index = wishList.findIndex(item => { return item == productId });
         if (index > -1)
             wishList.splice(index, 1);
@@ -98,12 +98,15 @@ const StoreDetail = (props) => {
 
         AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
         ToastAndroid.showWithGravityAndOffset(
-            liked ? 'Product added to  Wishlist !' : 'Product removed from  Wishlist !',
+            index > -1 ? 'Product removed from  Wishlist !' : 'Product added to  Wishlist !',
             ToastAndroid.LONG,
             ToastAndroid.TOP,
             0,
             50,
         );
+
+        //for re-render
+        setLiked(!liked);
     };
 
     const handleProductButton = () => {
@@ -146,10 +149,10 @@ const StoreDetail = (props) => {
                             }}
                         />
                     </View>
-                    <View style={{ position: 'absolute', top: 4, right: 4 }}>
+                    <View style={{ position: 'absolute', top: 4, right: 4, backgroundColor:'#FAFBFF', height:30,width:30, borderRadius:4, justifyContent:'center',alignItems:'center' }}>
                         {isInWishlist ?
-                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.likedColor }} /> :
-                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.disLikedColor }} />}
+                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.pinkColor }} /> :
+                            <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.lightDarkColor }} />}
                     </View>
                     {!item.instock || item.availableQuantity < 0 ?
                         <View style={{ flexDirection: 'row', position: 'absolute', top: 90, left: 6, backgroundColor: 'red' }}>
@@ -157,9 +160,9 @@ const StoreDetail = (props) => {
                         </View> : null}
                     <View>
                         <View>
-                            <Text numberOfLines={1} style={{ fontSize: 10 }}>From {item.businessName}</Text>
+                            <Text numberOfLines={1} style={{ fontSize: 10, color:customPaperTheme.GenieeColor.lightTextColor }}>{businessInfo.businessName}</Text>
                             <Text numberOfLines={2} style={{ fontSize: 12, fontWeight: 'bold', color: colors.gray_100 }}>
-                                {item.title}
+                                {item.productTitle}
                             </Text>
                             <View style={{ flexDirection: 'row' }}>
                                 {item.discount ? (
