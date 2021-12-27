@@ -565,8 +565,29 @@ const Home = props => {
     _listViewOffset = currentOffset;
   };
 
+  const addToWishlist = (productId) => {
+    //Added to wishlist
+    let index = wishList.findIndex(item => { return item == productId });
+    if (index > -1)
+      wishList.splice(index, 1);
+    else
+      wishList.push(productId);
+
+    AsyncStorage.setItem('myWhishList', JSON.stringify(wishList));
+    ToastAndroid.showWithGravityAndOffset(
+      index > - 1 ? 'Product removed from  Wishlist !' : 'Product added to  Wishlist !',
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      0,
+      50,
+    );
+    // to re-render after adding to to wishlist.
+    updateCounts();
+  }
+
   const _renderProduct = (data, index) => {
     let item = data.item;
+    let isInWishlist = wishList.includes(item._id);
     return (
       <TouchableOpacity
         key={item._id}
@@ -591,6 +612,11 @@ const Home = props => {
                 marginBottom: 8,
               }}
             />
+          </View>
+          <View style={{ position: 'absolute', top: 4, right: 4, backgroundColor: '#FAFBFF', height: 30, width: 30, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+            {isInWishlist ?
+              <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.pinkColor }} /> :
+              <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.lightDarkColor }} />}
           </View>
           <View>
             <View>
@@ -766,9 +792,9 @@ const Home = props => {
                 <Text style={{ fontSize: 15 }}>Kathmandu</Text>
               </TouchableOpacity>
             </View>
-            <View style={{marginHorizontal:15}}>
+            <View style={{ marginHorizontal: 15 }}>
               <Image
-                style={{ height: 120, width: '100%', resizeMode:'stretch'  }}
+                style={{ height: 120, width: '100%', resizeMode: 'stretch' }}
                 source={require('../../../images/geniee_banner.png')}
               />
             </View>
@@ -1350,12 +1376,13 @@ const styles = StyleSheet.create({
     // flexDirection: 'column',
     // flexWrap: 'wrap',
   },
-  logoContainer:{
-    flexDirection:'row', 
-    justifyContent:'space-between', 
-    marginHorizontal:15, 
-    marginTop:'15%', 
-    marginBottom:'10%'},
+  logoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 15,
+    marginTop: '15%',
+    marginBottom: '10%'
+  },
 
   containerStyle: {
     borderWidth: 0,

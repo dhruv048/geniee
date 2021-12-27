@@ -6,7 +6,9 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     TouchableOpacity,
-    StatusBar
+    StatusBar,
+    Dimensions,
+    Alert
 } from 'react-native';
 import { colors, customStyle } from '../../../config/styles';
 import {
@@ -43,6 +45,8 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import IIcon from 'react-native-vector-icons/Ionicons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
 const RNFS = require('react-native-fs');
 
 const ProductDetail = (props) => {
@@ -55,6 +59,7 @@ const ProductDetail = (props) => {
     const [question, setQuestion] = useState('');
     const [colorIndex, setColorIndex] = useState();
     const [sizeIndex, setSizeIndex] = useState();
+    const [questionList, setQuestionList] = useState([]);
 
     const [liked, setLiked] = useState(0);
 
@@ -96,7 +101,21 @@ const ProductDetail = (props) => {
 
         //Update View Count
         Meteor.call('updateViewCount', productId);
+
+        //Get Questions for products
+        getQuestion(productId);
     }, [])
+
+    const getQuestion = (productId) => {       
+        Meteor.call('getTopQuestion', productId, (err, res) => {
+            console.log(err, res);
+            if (err) {
+                console.log('this is due to error. ' + err);
+            } else {
+                setQuestionList(res.result);
+            }
+        });
+    }
 
     const orderNow = () => {
         let product = productData;
@@ -198,6 +217,37 @@ const ProductDetail = (props) => {
         );
     }
 
+    const askQuestion = () => {
+        let productId = productData._id;
+        if (question === '') {
+            ToastAndroid.showWithGravityAndOffset(
+                'Please add your questions.',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
+        } else {
+            Meteor.call('AddQuestionByUser', productId, question, (err, res) => {
+                console.log(err, res);
+                if (err) {
+                    console.log('this is due to error. ' + err);
+                } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Your Question is posted successfully. Thank you!',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+
+                    setQuestion('');
+                    getQuestion(productId);
+                }
+            });
+        }
+    }
+
     const renderImage = () => {
         const imageList = [];
         productData.images.map((item) => {
@@ -220,7 +270,7 @@ const ProductDetail = (props) => {
             <View key={index}>
                 <View style={styles.propertyView}>
                     <View style={{ width: '50%' }}><Text>{item.metaName}  :</Text></View>
-                    <View style={{ width: '50%'}}><Text style={{color:customPaperTheme.GenieeColor.lightTextColor}}>{item.metaValue}</Text></View>
+                    <View style={{ width: '50%' }}><Text style={{ color: customPaperTheme.GenieeColor.lightTextColor }}>{item.metaValue}</Text></View>
                 </View>
             </View>
         )
@@ -263,7 +313,7 @@ const ProductDetail = (props) => {
                 key={item._id}
                 onPress={() => props.navigation.navigate('ProductDetail', { data: product })}
                 style={[
-                    customStyle.productContainerStyle,
+                    styles.productStyle,
                     { borderTopLeftRadius: 4, borderTopRightRadius: 5 },
                 ]}
             >
@@ -321,6 +371,14 @@ const ProductDetail = (props) => {
         );
     };
 
+    const renderRatingAndReviews = () => {
+
+    }
+
+    const renderQuestions = () => {
+
+    }
+
     return (
         <Container style={styles.container}>
             <Content style={{ padding: Platform.OS === 'ios' ? 20 : 0 }}>
@@ -375,13 +433,13 @@ const ProductDetail = (props) => {
                             <View style={{ flexDirection: 'row', marginTop: 10 }}>
                                 <Icon style={{ fontSize: 14, marginTop: 5 }} name='star' />
                                 <Text style={{ fontWeight: 'bold' }}>3.5</Text>
-                                <Text style={{ fontSize: 14, marginBottom: 10,color:customPaperTheme.GenieeColor.lightTextColor }}>(12.5k)Ratings </Text>
-                                <TouchableOpacity onPress={() =>{console.log('see all views pressed')}}>
-                                <View style={{ flexDirection: 'row', marginTop:1}}>
-                                    <Text style={{fontSize:14,color:customPaperTheme.GenieeColor.lightTextColor}}>
-                                        |  See reviews
-                                    </Text>
-                                    <IIcon style={{ color: 'black', fontSize: 14, marginTop:3, marginLeft:5,color:customPaperTheme.GenieeColor.lightTextColor }} name="open-sharp" />
+                                <Text style={{ fontSize: 14, marginBottom: 10, color: customPaperTheme.GenieeColor.lightTextColor }}>(12.5k)Ratings </Text>
+                                <TouchableOpacity onPress={() => { console.log('see all views pressed') }}>
+                                    <View style={{ flexDirection: 'row', marginTop: 1 }}>
+                                        <Text style={{ fontSize: 14, color: customPaperTheme.GenieeColor.lightTextColor }}>
+                                            |  See reviews
+                                        </Text>
+                                        <IIcon style={{ color: 'black', fontSize: 14, marginTop: 3, marginLeft: 5, color: customPaperTheme.GenieeColor.lightTextColor }} name="open-sharp" />
                                     </View>
                                 </TouchableOpacity>
                             </View>
@@ -491,7 +549,7 @@ const ProductDetail = (props) => {
                                     mode="contained"
                                     uppercase={false}
                                     style={{ width: '50%', marginLeft: '25%', marginBottom: 15, borderRadius: 4 }}
-                                    onPress={() => { }}>
+                                    onPress={() => { askQuestion() }}>
                                     <Text style={{ fontSize: 14, color: colors.whiteText }}>
                                         Post question
                                     </Text>
@@ -661,5 +719,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 20,
         marginBottom: 10
+    },
+
+    productStyle: {
+        borderWidth: 0,
+        marginVertical: 4,
+        borderColor: '#ffffff',
+        width: viewportWidth / 3.5,
+        maxWidth: 130,
+        backgroundColor: 'white',
     },
 });

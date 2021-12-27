@@ -353,7 +353,7 @@ const MerchantDashboard = (props) => {
                         uppercase={false}
                         style={{ width: '100%', alignItems: 'flex-start' }}
                         onPress={() => {
-                            props.navigation.goBack();
+                            props.navigation.navigate('Home')
                         }}>
                         <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
                         <Text style={{ color: colors.whiteText, fontSize: 20 }}>Your Dashboard</Text>
