@@ -88,8 +88,8 @@ Meteor.methods({
             {
                 $lookup: {
                     from: "business",
-                    localField: "productOwner",
-                    foreignField: "answerBy",
+                    localField: "answerBy",
+                    foreignField: "productOwner",
                     as: "Owners"
                 }
             },
