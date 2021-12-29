@@ -64,8 +64,12 @@ const ProductDetail = (props) => {
     const [sizeIndex, setSizeIndex] = useState();
     const [questionList, setQuestionList] = useState([]);
     const [ratingValue, setRatingValue] = useState(3);
+    const [answer, setAnswer] = useState('');
+    const [isReply, setIsReply] = useState([]);
 
     const [liked, setLiked] = useState(0);
+
+    const loggedUser = Meteor.userId();
 
     useEffect(async () => {
         //get the product with id of this.props.product.id from your server
@@ -252,6 +256,25 @@ const ProductDetail = (props) => {
         }
     }
 
+    const replyToQuestion = (questionId) => {
+        Meteor.call('UpdateAnswerByProductOwner', questionId, answer, (err, res) => {
+            if (err) {
+                console.log('this is due to error. ' + err);
+            } else {
+                ToastAndroid.showWithGravityAndOffset(
+                    'You replied successfully.!',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    50,
+                );
+
+                setAnswer('');
+                getQuestion(productData._id);
+            }
+        });
+    }
+
     const renderImage = () => {
         const imageList = [];
         productData.images.map((item) => {
@@ -375,7 +398,15 @@ const ProductDetail = (props) => {
         );
     };
 
-    const renderRatingAndReviews = () => {
+    const onreplyPress = (_questionId) => {
+        let index = isReply.findIndex((item) => item.questionId === _questionId);
+        if (index === -1) {
+            setIsReply(prev => [...prev, { questionId: _questionId, reply: true }]);
+        }
+        else {
+            isReply.splice(index, 1);
+            setIsReply(isReply);
+        }
 
     }
 
@@ -419,19 +450,45 @@ const ProductDetail = (props) => {
                         </View>
                         {/* Answer */}
                         {!isRating ? <View style={{ marginTop: 10, marginLeft: 10 }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontSize: 12, color:customPaperTheme.GenieeColor.primaryColor}}>
-                                    {item.User[0].profile.firstName} {item.User[0].profile.lastName}
-                                </Text>
-                                <Text style={{ fontSize: 12, color: colors.gray_300, marginLeft: 8 }}>
-                                    {Moment(item.questionedDate).fromNow()}
-                                </Text>
-                            </View>
-                            <View style={{ width: '95%' }}>
-                                <Text style={{ fontSize: 12, color: colors.gray_300, marginRight: 'auto' }} numberOfLines={2}>
-                                    {item.question}
-                                </Text>
-                            </View>
+                            {item.answer !== "" ?
+                                <View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 12, color: customPaperTheme.GenieeColor.primaryColor }}>
+                                            {item.User[0].profile.firstName} {item.User[0].profile.lastName}
+                                        </Text>
+                                        <Text style={{ fontSize: 12, color: colors.gray_300, marginLeft: 8 }}>
+                                            {Moment(item.answerDate).fromNow()}
+                                        </Text>
+                                    </View>
+                                    <View style={{ width: '95%' }}>
+                                        <Text style={{ fontSize: 12, color: colors.gray_300, marginRight: 'auto' }} numberOfLines={2}>
+                                            {item.answer}
+                                        </Text>
+                                    </View>
+                                </View> :
+                                <View>
+                                    {productData.owner === loggedUser ?
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <FIcon name='reply' style={{ fontSize: 16, marginRight: 10, marginTop: 5 }} onPress={() => { onreplyPress(item._id) }} />
+                                            {isReply.findIndex((x) => x.questionId === item._id && x.reply === true) > -1 ?
+                                                <TextInput
+                                                    mode="outlined"
+                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                    right={<TextInput.Icon name="send" onPress={() => { replyToQuestion(item._id) }} style={{ marginTop: 13, marginLeft: 20 }} />}
+                                                    placeholder="reply"
+                                                    placeholderTextColor="#808080"
+                                                    label="reply"
+                                                    value={answer}
+                                                    onChangeText={(value) => setAnswer(value)}
+                                                    style={{ fontSize: 12, height: 25, width: '70%' }}
+                                                    error={answer === '' ? true : false}
+                                                    theme={{ roundness: 6 }}
+                                                /> : null}
+                                        </View> : null
+                                    }
+                                </View>
+                            }
+
                         </View> : null}
                     </View>
                 </View>
