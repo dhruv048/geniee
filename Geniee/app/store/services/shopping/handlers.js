@@ -19,7 +19,7 @@ const addOrder = (itemList ,cb) =>{
     if(err){
       console.log('Please contact an adminsitrator'+err);
     }else{
-      cb(true);
+      cb(res);
     }
   })
 }

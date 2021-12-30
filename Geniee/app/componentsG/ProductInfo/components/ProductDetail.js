@@ -519,7 +519,7 @@ const ProductDetail = (props) => {
                                         props.navigation.goBack();
                                     }}
                                     name="arrow-left" />
-                                <CartIcon></CartIcon>
+                                <CartIcon navigation = {props.navigation}></CartIcon>
                                 <Icon
                                     style={{ color: colors.whiteText, fontSize: 20, marginLeft: 15 }}
                                     onPress={() => {

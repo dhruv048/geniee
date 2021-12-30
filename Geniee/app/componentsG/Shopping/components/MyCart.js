@@ -17,6 +17,7 @@ import FIcon from 'react-native-vector-icons/Feather';
 import Meteor from '../../../react-native-meteor';
 import AsyncStorage from '@react-native-community/async-storage';
 import { customPaperTheme } from '../../../config/themes';
+import Loading from '../../../components/Loading/Loading';
 
 let cartList = [];
 const MyCart = (props) => {
@@ -25,7 +26,7 @@ const MyCart = (props) => {
     const [totalPrice, setTotalPrice] = useState(0);
 
 
-    useEffect(async() => {
+    useEffect(async () => {
         let products = [];
         let mycart = await AsyncStorage.getItem('myCart');
         if (mycart) {
@@ -43,8 +44,8 @@ const MyCart = (props) => {
     }, [])
 
     const getCartItems = (products) => {
-        if (products.length == 0) {
-            setCartItems();
+        if (products.length === 0) {
+            setCartItems([]);
             return true;
         }
         Meteor.call('WishListItemsEF', products, (err, res) => {
@@ -102,7 +103,7 @@ const MyCart = (props) => {
                         let index = cartItems.findIndex(item => item._id == Item._id);
                         if (index >= 0) {
                             cartItems.splice(index, 1);
-                            setCartItems(cartItems);
+
                         }
                         let idx = cartList.findIndex(item => item.id == Item._id);
                         if (idx >= 0) {
@@ -116,6 +117,7 @@ const MyCart = (props) => {
                             0,
                             80,
                         );
+                        setCartItems(cartItems);
                     }
                 },
             ]
@@ -139,8 +141,8 @@ const MyCart = (props) => {
                         <Thumbnail square style={{ width: 80, height: 80, borderRadius: 4 }}
                             source={{ uri: settings.IMAGE_URLS + item.images[0] }} />
                         <View style={{ marginLeft: 15 }}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around',marginRight:'auto'  }}>
-                                <Text style={{ fontSize: 10,}}> From  {item.business[0].businessName}</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginRight: 'auto' }}>
+                                <Text style={{ fontSize: 10, }}> From  {item.business[0].businessName}</Text>
                                 <TouchableOpacity
                                     transparent
                                     style={{ marginLeft: '25%' }}
@@ -177,7 +179,7 @@ const MyCart = (props) => {
     return (
         <Container style={styles.container}>
             <Content style={{ backgroundColor: colors.appBackground }}>
-            <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
+                <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
                     <Header
                         androidStatusBarColor={colors.statusBar}
                         style={{ backgroundColor: colors.statusBar }}
@@ -195,25 +197,26 @@ const MyCart = (props) => {
                     </Header>
                 </View>
                 <View style={styles.container}>
-                    <Text style={{marginHorizontal:15,fontWeight:'bold',color:customPaperTheme.GenieeColor.darkColor, fontSize:20}}>Items :</Text>
                     <View style={styles.cartList}>
-                        {
-                            cartItems && cartItems.length <= 0 ?
+                    {cartItems ?
+                        <View>
+                            {cartItems && cartItems.length <= 0 ?
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Icon name="ios-cart" size={100} style={{ fontSize: 100, color: '#95a5a6', marginBottom: 7 }} />
+                                    <Icon name="ios-cart" size={100} style={{ fontSize: 100, color: customPaperTheme.GenieeColor.primaryColor, marginBottom: 7, marginTop: '40%' }} />
                                     <Text style={{ fontSize: 16, color: '#A3A3A3', marginTop: 40 }}>Your cart is empty</Text>
                                 </View>
                                 :
                                 <View>
+                                    <Text style={{ marginHorizontal: 15, fontWeight: 'bold', color: customPaperTheme.GenieeColor.darkColor, fontSize: 20 }}>Items :</Text>
                                     <View>
-                                        {cartItems ?
+                                        
                                             <FlatList
                                                 data={cartItems}
                                                 renderItem={(item, index) => renderItems(item, index)}
                                                 keyExtractor={(item, index) => {
                                                     return item._id
                                                 }}
-                                            /> : null}
+                                            />
                                     </View>
                                     <View style={{ flexDirection: 'row', marginVertical: 10, marginHorizontal: 10, justifyContent: 'space-between' }}>
                                         <Text style={{ fontWeight: 'bold', fontSize: 20 }}> Total</Text>
@@ -225,11 +228,12 @@ const MyCart = (props) => {
                                         style={styles.btnContinue}
                                         onPress={() => { handleCheckout() }}
                                     >
-                                        <Text style={{fontSize:13}}>Continue to checkout</Text>
+                                        <Text style={{ fontSize: 13 }}>Continue to checkout</Text>
                                         <FIcon style={{ color: '#ffffff', fontSize: 15, marginTop: 10 }} name="arrow-right" />
                                     </Button>
                                 </View>
-                        }
+                            }
+                        </View> : <Loading />}
 
                     </View>
 

@@ -90,25 +90,6 @@ const Home = props => {
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
   const [storesList, setStoresList] = useState([]);
 
-  const [resturants, setResturants] = useState([
-    {
-      title: 'Baadshah Briyani',
-      imgSource: require('../../../images/baadshah_logo.jpg'),
-      onPress: gotoBB,
-      tags: 'Fast food restaurant',
-      description:
-        'Baadshah Biryani serves the most authentic Biryani in Kathmandu prepared by our expertise.Our Biryani will give you a burst of flavour in every bite as we use in-house spices',
-    },
-    {
-      title: 'Eat-Fit',
-      imgSource: require('../../../images/EF2.jpg'),
-      onPress: gotoEatFit,
-      tags: 'Hotel & Restaurant',
-      description:
-        'At cure.fit, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation, and medical & lifestyle care hassle-free. #BeBetterEveryDay',
-    },
-  ]);
-
   const currentDate = new Date();
   let arrayholder;
   let currentSearch = '';
@@ -120,18 +101,6 @@ const Home = props => {
   let watchID;
   let springValue = new Animated.Value(100);
 
-  const partners = [
-    {
-      title: '',
-      imgSource: require('../../../images/baadshah_logo.jpg'),
-      onPress: gotoBB,
-    },
-    {
-      title: 'EAT-FIT',
-      imgSource: require('../../../images/EF2.jpg'),
-      onPress: gotoEatFit,
-    },
-  ];
   _listViewOffset = 0;
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -145,23 +114,12 @@ const Home = props => {
     setCategories(props.categories);
     //
     Meteor.subscribe('aggChatChannels');
-    // if (props.notificationCount.length > 0)
-    //     setNotificationCount(props.notificationCount[0].totalCount);
-    // Meteor.call('getActiveAdvertises', (err, res) => {
-    //     if (!err) {
-    //         setAdds(res);
-    //     }
-    // });
-
-    //Services/Store Nearby
-    //   Meteor.call('getServicesNearBy', data, (err, res) => {
     Meteor.call(
       'getRandomServices',
       [region.longitude, region.latitude],
       15,
       10,
       (err, res) => {
-        console.log(err, res);
         setLoading(false);
         if (!err) {
           setNearByService(res.result);
@@ -173,7 +131,6 @@ const Home = props => {
 
     //Get Popular Products
     Meteor.call('getPopularProducts', 0, 6, (err, res) => {
-      console.log(err, res);
       if (!err) {
         setPopularProducts(res.result);
       } else {
@@ -183,7 +140,6 @@ const Home = props => {
 
     //Get Popular Products
     Meteor.call('getPopularStores', (err, res) => {
-      console.log(err, res);
       if (!err) {
         setStoresList(res);
       } else {
@@ -246,25 +202,12 @@ const Home = props => {
       console.log(e);
     });
 
-    Meteor.call('getPopularResturants', (err, res) => {
-      if (!err) {
-        setResturants(res, [...resturants, res]);
-      }
-    });
-
-    //Store All Catefories
-    // Meteor.subscribe('categories-list', () => {
-    //     //console.log(MainCategories)
-    //     if (props.categories.length > 0) {
-    //         let MainCategories = props.categories;
-    //         setCategories(viewAll
-    //             ? MainCategories
-    //             : MainCategories.slice(0, 6));
-    //         setLoading(false);
-    //         arrayholder = MainCategories;
-    //         AsyncStorage.setItem('Categories', JSON.stringify(MainCategories));
-    //     }
+    // Meteor.call('getPopularResturants', (err, res) => {
+    //   if (!err) {
+    //     setResturants(res, [...resturants, res]);
+    //   }
     // });
+
   }, []);
 
   const _fetchNearByServices = () => {
@@ -602,15 +545,7 @@ const Home = props => {
           <View style={{ width: '100%', borderRadius: 5 }}>
             <Image
               source={{ uri: settings.IMAGE_URLS + item.images[0] }}
-              style={{
-                flex: 1,
-                width: undefined,
-                height: 160,
-                width: 104,
-                resizeMode: 'cover',
-                borderRadius: 4,
-                marginBottom: 8,
-              }}
+              style={styles.productImage}
             />
           </View>
           <View style={{ position: 'absolute', top: 4, right: 4, backgroundColor: '#FAFBFF', height: 30, width: 30, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
@@ -620,54 +555,17 @@ const Home = props => {
           </View>
           <View>
             <View>
-              <Text numberOfLines={1} style={{ fontSize: 10 }}>
-                From {item.business[0].businessName}
-              </Text>
-              <Text
-                numberOfLines={2}
-                style={{
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  color: colors.gray_100,
-                }}>
-                {/* style={{ fontSize: 12, color: colors.primaryText }}
-                                 numberOfLines={1}> */}
-                {/* //{item.title} */}
-                {item.description}
-              </Text>
+              <Text numberOfLines={1} style={{ fontSize: 10 }}>From {item.business[0].businessName}</Text>
+              <Text numberOfLines={2} style={styles.storeDescription}>{item.description}</Text>
               <View style={{ flexDirection: 'row' }}>
                 {item.discount ? (
                   <>
-                    <Text
-                      style={{
-                        color: colors.body_color,
-                        fontWeight: '400',
-                        fontSize: 12,
-                        textDecorationLine: 'line-through',
-                        textDecorationStyle: 'solid',
-                      }}>
-                      Rs. {item.price}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.body_color,
-                        fontWeight: '400',
-                        fontSize: 10,
-                        marginLeft: 5,
-                      }}>
-                      {item.discount}% off
-                    </Text>
+                    <Text style={styles.originalPrice}>Rs. {item.price}</Text>
+                    <Text style={styles.discountPrice}>{item.discount}% off</Text>
                   </>
                 ) : null}
               </View>
-              <Text
-                style={{
-                  color: colors.primary,
-                  fontWeight: '700',
-                  fontSize: 12,
-                }}>
-                Rs. {item.price - (item.price * item.discount) / 100}
-              </Text>
+              <Text style={styles.finalPrice}>Rs. {item.price - (item.price * item.discount) / 100}</Text>
             </View>
           </View>
         </View>
@@ -691,15 +589,7 @@ const Home = props => {
           <View style={{ width: '100%', borderRadius: 5 }}>
             <Image
               source={{ uri: settings.IMAGE_URLS + item.registrationImage }}
-              style={{
-                flex: 1,
-                width: undefined,
-                height: 70,
-                width: 100,
-                resizeMode: 'cover',
-                borderRadius: 4,
-                marginBottom: 8,
-              }}
+              style={styles.storeImage}
             />
           </View>
           {item.isApproved ? <View style={{ flexDirection: 'row', position: 'absolute', top: 50, left: 3 }}>
@@ -708,29 +598,14 @@ const Home = props => {
           </View> : null}
           <View>
             <View>
-              <Text numberOfLines={1} style={{ fontSize: 10 }}>
-                {item.city}
-              </Text>
-              <Text
-                numberOfLines={2}
-                style={{
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  color: colors.gray_100,
-                }}>
-                {/* style={{ fontSize: 12, color: colors.primaryText }}
-                                 numberOfLines={1}> */}
-                {/* //{item.title} */}
-                {item.businessName}
-              </Text>
+              <Text numberOfLines={1} style={{ fontSize: 10 }}>{item.city}</Text>
+              <Text numberOfLines={2} style={styles.storeDescription}>{item.businessName}</Text>
               <View style={{ marginTop: 5, marginRight: 5 }}>
                 <RNPButton
                   mode="text"
                   uppercase={false}
-                  onPress={() => {
-                    props.navigation.navigate('StoreDetail', { data: item })
-
-                  }}>
+                  onPress={() => { props.navigation.navigate('StoreDetail', { data: item }) }}
+                >
                   <Text style={{ fontSize: 10 }}>Visit</Text>
                   <Icon
                     name="chevron-right"
@@ -768,9 +643,7 @@ const Home = props => {
         <Content
           onScroll={_onScroll}
           style={{
-            width: '100%',
-            flex: 1,
-            paddingTop: 8,
+            width: '100%', flex: 1, paddingTop: 8,
           }}>
           {/* GENIEE BANNER */}
           <View>
@@ -784,9 +657,7 @@ const Home = props => {
                 <FAIcon
                   name="map-marker"
                   style={{
-                    color: colors.statusBar,
-                    fontSize: 20,
-                    marginRight: 8,
+                    color: colors.statusBar, fontSize: 20, marginRight: 8,
                   }}
                 />
                 <Text style={{ fontSize: 15 }}>Kathmandu</Text>
@@ -810,9 +681,7 @@ const Home = props => {
                     : props.navigation.navigate('SignIn');
                 }}
                 style={{
-                  borderColor: colors.statusBar,
-                  borderWidth: 2,
-                  borderStyle: 'dotted',
+                  borderColor: colors.statusBar, borderWidth: 2, borderStyle: 'dotted',
                 }}>
                 <Text style={{ color: colors.statusBar }}>
                   Become a Merchant & Sell
@@ -823,22 +692,8 @@ const Home = props => {
             {props.categories ? (
               props.categories.length > 0 ? (
                 <View style={[styles.block, { marginVertical: 15 }]}>
-                  {/* <View style={styles.blockHeader}>
-                                <Text style={styles.blockTitle}>Categories</Text>
-                                <Button transparent onPress={() => handleViewAll()}>
-                                    <Text style={customStyle.buttonOutlinePrimaryText}>
-                                        {viewAll ? 'Vew Less' : 'View All'}
-                                    </Text>
-                                </Button>
-                            </View> */}
                   <FlatList
-                    contentContainerStyle={{
-                      marginTop: 10,
-                      paddingBottom: 10,
-                      alignItems: 'center',
-                      justifyContent: 'space-around',
-                      flexDirection: 'column',
-                    }}
+                    contentContainerStyle={styles.categoriesContentStyle}
                     data={categories}
                     //horizontal={true}
                     keyExtractor={(item, index) => index.toString()}
@@ -854,25 +709,16 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
-                    Deals that might excite you
-                  </Text>
-                  <Text
-                    uppercase={false}
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>Deals that might excite you</Text>
+                  <Text uppercase={false}
                     style={{
-                      fontSize: 10,
-                      color: colors.statusBar,
-                      marginLeft: 65,
+                      fontSize: 10, color: colors.statusBar, marginLeft: 65,
                     }}>
                     {Moment(currentDate).format('MMM Do YYYY')}{' '}
                   </Text>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={popularProducts.slice(0, 6)}
                   numColumns={3}
                   keyExtractor={(item, index) => item._id}
@@ -921,11 +767,7 @@ const Home = props => {
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={storesList}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1148,11 +990,7 @@ const Home = props => {
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={storesList}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1188,11 +1026,7 @@ const Home = props => {
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={popularProducts}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1228,11 +1062,7 @@ const Home = props => {
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={popularProducts}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1268,11 +1098,7 @@ const Home = props => {
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={popularProducts}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1308,11 +1134,7 @@ const Home = props => {
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={popularProducts}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1327,9 +1149,7 @@ const Home = props => {
             {popularProducts.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
-                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
-                    Popular Destination
-                  </Text>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>Popular Destination</Text>
                   <RNPButton
                     mode="text"
                     uppercase={false}
@@ -1338,21 +1158,12 @@ const Home = props => {
                         Region: region,
                       })
                     }>
-                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
-                      See All
-                    </Text>
-                    <Icon
-                      name="arrow-right"
-                      style={customStyle.blockHeaderArrow}
-                    />
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
+                    <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
                   </RNPButton>
                 </View>
                 <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 15,
-                    marginHorizontal: 8,
-                    marginTop: 15,
-                  }}
+                  contentContainerStyle={styles.popularProductsContentStyle}
                   data={popularProducts}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
@@ -1567,6 +1378,62 @@ const styles = StyleSheet.create({
   cardNote: {
     marginBottom: 5,
   },
+  productImage: {
+    flex: 1,
+    width: undefined,
+    height: 160,
+    width: 104,
+    resizeMode: 'cover',
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+
+  storeDescription: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: colors.gray_100,
+  },
+
+  originalPrice: {
+    color: colors.body_color,
+    fontWeight: '400',
+    fontSize: 12,
+    textDecorationLine: 'line-through',
+    textDecorationStyle: 'solid',
+  },
+  discountPrice: {
+    color: colors.body_color,
+    fontWeight: '400',
+    fontSize: 10,
+    marginLeft: 5,
+  },
+  finalPrice: {
+    color: colors.primary,
+    fontWeight: '700',
+    fontSize: 12,
+  },
+
+  storeImage: {
+    flex: 1,
+    width: undefined,
+    height: 70,
+    width: 100,
+    resizeMode: 'cover',
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  categoriesContentStyle: {
+    marginTop: 10,
+    paddingBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    flexDirection: 'column',
+  },
+  popularProductsContentStyle: {
+    paddingBottom: 15,
+    marginHorizontal: 8,
+    marginTop: 15,
+  }
 });
 // export default Meteor.withTracker(() => {
 //     return {

@@ -7,16 +7,16 @@ import {colors} from "../../config/styles";
 const Loading = (props) => {
   return (
     <View style={styles.container}>
-      {/* <ActivityIndicator
+      <ActivityIndicator
           animating
           size={props.size}
           {...props}
-          color={colors.appLayout}
-      /> */}
-      <Image
-      style={{height:40,width:40}}
+          color={colors.statusBar}
+      />
+      {/* <Image
+      style={{height:60,width:60}}
         source={require('../../images/loading.gif')}
-       />
+       /> */}
     </View>
   );
 };

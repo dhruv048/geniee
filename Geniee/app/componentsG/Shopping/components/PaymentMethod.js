@@ -24,6 +24,7 @@ import { Button, TextInput } from 'react-native-paper';
 import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { variables, customStyle } from '../../../config/styles';
 import AIcon from 'react-native-vector-icons/AntDesign';
+import shoppingHandler from '../../../store/services/shopping/handlers';
 
 const paymentMethodList = [
     { id: 1, title: 'Sajilo Pay', subtitle: 'Get 10% off', image: require('Geniee/app/images/sajilopay.png'), icon: 'chevron-right' },
@@ -40,45 +41,43 @@ const PaymentMethod = (props) => {
     const [paymentType, setPaymentType] = useState('');
 
     const placeMyOrders = async () => {
-        console.log('This is cart Items ' + orderItems);
         //prepare for database
         let Item = orderItems;
         Item.PaymentType = paymentType;
 
-        // Meteor.call('addOrder', Item, async (err, res) => {
-        //     if (err) {
-        //         console.log(err.reason);
-        //         ToastAndroid.showWithGravityAndOffset(
-        //             err.reason,
-        //             ToastAndroid.LONG,
-        //             ToastAndroid.TOP,
-        //             0,
-        //             80,
-        //         );
-        //     } else {
-        //         try {
-        //             ToastAndroid.showWithGravityAndOffset(
-        //                 'Order Made Successfully!!',
-        //                 ToastAndroid.SHORT,
-        //                 ToastAndroid.BOTTOM,
-        //                 0,
-        //                 50,
-        //             );
-
-        //         }
-        //         catch (e) {
-        //             Meteor.call('removeOrder', res.result);
-        //             ToastAndroid.showWithGravityAndOffset(
-        //                 e.message,
-        //                 ToastAndroid.LONG,
-        //                 ToastAndroid.TOP,
-        //                 0,
-        //                 80,
-        //             );
-        //         }
-        //     }
-        // });
-        props.navigation.navigate('OrdersCompleted');
+        shoppingHandler.addOrder(Item, async (err, res) => {
+            if (err) {
+                console.log(err.reason);
+                ToastAndroid.showWithGravityAndOffset(
+                    err.reason,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    80,
+                );
+            } else {
+                try {
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Order Made Successfully!!',
+                        ToastAndroid.SHORT,
+                        ToastAndroid.BOTTOM,
+                        0,
+                        50,
+                    );
+                    props.navigation.navigate('OrdersCompleted', { orderId: res.result });
+                }
+                catch (e) {
+                    Meteor.call('removeOrder', res.result);
+                    ToastAndroid.showWithGravityAndOffset(
+                        e.message,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        80,
+                    );
+                }
+            }
+        });
     };
 
     const selectPaymentMethod = (paymentTitle) => {

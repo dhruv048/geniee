@@ -35,7 +35,7 @@ const Checkout = (props) => {
     const [disablePicking, setDisablePicking] = useState(true);
     const [shippingCharge, setShippingCharge] = useState(100);
     const [finalAmount, setFinalAmont] = useState(0);
-    const [merchantName, setMerchantName] = useState('From chaudhary Group');
+    const [merchantName, setMerchantName] = useState('');
 
     useEffect(() => {
         const singleProduct = props.productOrder;
@@ -217,36 +217,24 @@ const Checkout = (props) => {
     const renderItem = (data, i) => {
         let item = data.item;
         return (
-            <ListItem
+            <View
                 key={data.item._id}
-                style={{ width: '100%' }}
+                style={{ width: '100%', flexDirection: 'row', marginVertical:5 }}
             >
-                <Body style={{ flex: 4 }}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-                        {/* {item.orderQuantity > 1 ? item.orderQuantity + "x " : null} */}
-                        {item.title}
+                <View style={{width:'80%'}}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: customPaperTheme.GenieeColor.darkColor }} numberOfLines={2}>
+                        {item.productTitle}
                     </Text>
-                    <Text>From {merchantName}</Text>
-                    {/* <Text style={{ fontSize: 15, fontStyle: 'italic' }}>Price: Rs. {item.finalPrice}</Text>
-                    <View style={{ flexDirection: 'row' }}>
-                        {item.color ?
-                            <Text style={{ fontSize: 14, fontStyle: 'italic' }}>Color: {item.color}</Text> : null}
-                        {item.size ?
-                            <Text style={{
-                                fontSize: 14,
-                                fontStyle: 'italic',
-                                marginLeft: item.color ? 10 : 0
-                            }}>Size: {item.size}</Text> : null}
-                    </View> */}
-                </Body>
-                <Right style={{ flex: 2, alignItems: 'flex-end' }}>
+                    <Text style={{fontSize:12}}>From {item.business[0].businessName}</Text>
+                </View>
+                <View style={{marginLeft:'auto'}}>
                     <Text style={{
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: 'bold',
-                        marginBottom: 10
+                        color:customPaperTheme.GenieeColor.primaryColor
                     }}>Rs. {item.finalPrice * item.orderQuantity}</Text>
-                </Right>
-            </ListItem>
+                </View>
+            </View>
         );
     }
 
@@ -365,16 +353,16 @@ const Checkout = (props) => {
                         />
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-                        <Text style={{ fontSize: 18, marginTop: 5 }}>Subtotal</Text>
+                        <Text style={{ fontSize: 16, marginTop: 5 }}>Subtotal</Text>
                         <Text style={styles.textField}>Rs.{total}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
-                        <Text style={{ fontSize: 18, marginTop: 5 }}>Delivery Cost</Text>
+                        <Text style={{ fontSize: 16, marginTop: 5 }}>Delivery Cost</Text>
                         <Text style={styles.textField}>Rs.{shippingCharge}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
-                        <Text style={{ fontSize: 18, marginTop: 5 }}>Total</Text>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 5, color: 'blue' }}>Rs.{finalAmount}</Text>
+                        <Text style={{ fontSize: 16, marginTop: 5 }}>Total</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 5, color: customPaperTheme.GenieeColor.primaryColor }}>Rs.{finalAmount}</Text>
                     </View>
                     <View>
                         <Button
@@ -438,6 +426,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 5,
+        color:customPaperTheme.GenieeColor.darkColor
     }
 });
 
