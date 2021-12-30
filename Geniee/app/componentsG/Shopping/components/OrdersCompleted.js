@@ -9,10 +9,9 @@ import { customPaperTheme } from '../../../config/themes';
 
 const OrdersCompleted = (props) => {
 
-    const [orderId, setOrderId] = useState();
+    const orderId = props.route.params.orderId;
 
     useEffect(() => {
-        setOrderId('#1224axfe34io');
     }, [])
     const trackMyOrders = () => {
         //const orderItems = props.route.params.data;
