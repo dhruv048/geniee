@@ -78,7 +78,7 @@ const StoreDetail = (props) => {
         allProduct.map((item) => {
             setLiked(wishList.includes(item._id))
         })
-    }, [])
+    }, [allProduct])
 
     const _handleSearchText = () => {
         console.log('Testedt')

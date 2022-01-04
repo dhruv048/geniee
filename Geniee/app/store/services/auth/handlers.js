@@ -77,14 +77,15 @@ const changeNewPassword = (email, confirmationcode, password,callBack) => {
   })
 };
 
-const PostSendSMS = (mobileNumber,message,cb) =>{
-  axios({
-    method :'post',
-    url: OTPConfig.SMS_URL,
-    data:{token:OTPConfig.SMS_TOKEN, from:'Geniee', to:mobileNumber, text:message}
-  }).then((response)=>{
-    console.log('This is response from Sparrow sms '+response);
-    cb(response);
+const PostSendSMS = (mobileNumber,message, callBack) =>{
+  Meteor.call('getOTPSMS',mobileNumber,message, (error, res) =>{
+    if (error) {
+      console.log('Please contact administrator.')
+      callBack(false);
+    } else {
+      console.log('Get OTP SMS successfully' + res.result);
+      callBack(true);
+    }
   })
 }
 
