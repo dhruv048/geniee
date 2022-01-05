@@ -691,7 +691,7 @@ class Dashboard extends Component {
   _onScroll = event => {
     // Simple fade-in / fade-out animation
     const CustomLayoutLinear = {
-      duration: 100,
+      duration: 1000,
       create: {
         type: LayoutAnimation.Types.linear,
         property: LayoutAnimation.Properties.opacity,
@@ -717,6 +717,7 @@ class Dashboard extends Component {
     }
     // Update your scroll position
     this._listViewOffset = currentOffset;
+    updateCounts();
   };
 
   _renderProduct = (data, index) => {

@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useCallback, useEffect, useState } from 'react';
 import Meteor from '../../../react-native-meteor';
 import {
   StyleSheet,
@@ -16,6 +16,7 @@ import {
   UIManager,
   SafeAreaView,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Geolocation from 'react-native-geolocation-service';
@@ -40,7 +41,7 @@ import {
 import Icon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import { colors, customStyle, variables } from '../../../config/styles';
-import { Badge, Avatar } from 'react-native-paper';
+import { Badge, Avatar, ActivityIndicator } from 'react-native-paper';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 import settings from '../../../config/settings';
 import StarRating from '../../../components/StarRating/StarRating';
@@ -89,6 +90,7 @@ const Home = props => {
   const [isActionButtonVisible, setIsActionButtonVisible] = useState(true);
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
   const [storesList, setStoresList] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(true);
 
   const currentDate = new Date();
   let arrayholder;
@@ -114,38 +116,14 @@ const Home = props => {
     setCategories(props.categories);
     //
     Meteor.subscribe('aggChatChannels');
-    Meteor.call(
-      'getRandomServices',
-      [region.longitude, region.latitude],
-      15,
-      10,
-      (err, res) => {
-        setLoading(false);
-        if (!err) {
-          setNearByService(res.result);
-        } else {
-          console.log(err);
-        }
-      },
-    );
+    // Get Nearby service
+    getNearByServices();
 
     //Get Popular Products
-    Meteor.call('getPopularProducts', 0, 6, (err, res) => {
-      if (!err) {
-        setPopularProducts(res.result);
-      } else {
-        console.log(err);
-      }
-    });
+    getPopularProducts()
 
     //Get Popular Products
-    Meteor.call('getPopularStores', (err, res) => {
-      if (!err) {
-        setStoresList(res);
-      } else {
-        console.log(err);
-      }
-    });
+    getPopularStores()
 
     if (Platform.OS === 'ios') {
       granted = await Geolocation.requestAuthorization('always');
@@ -209,6 +187,43 @@ const Home = props => {
     // });
 
   }, []);
+
+  const getNearByServices = useCallback(() => {
+    Meteor.call('getRandomServices', [region.longitude, region.latitude], 15, 10, (err, res) => {
+      setLoading(false);
+      setIsRefreshing(false);
+      if (!err) {
+        setNearByService(res.result);
+      } else {
+        console.log(err);
+      }
+    },
+    );
+  }, []);
+
+  const getPopularProducts = useCallback(() => {
+    Meteor.call('getPopularProducts', 0, 6, (err, res) => {
+      setLoading(false);
+      setIsRefreshing(false);
+      if (!err) {
+        setPopularProducts(res.result);
+      } else {
+        console.log(err);
+      }
+    });
+  }, []);
+
+  const getPopularStores = useCallback(() => {
+    Meteor.call('getPopularStores', (err, res) => {
+      setLoading(false);
+      setIsRefreshing(false);
+      if (!err) {
+        setStoresList(res);
+      } else {
+        console.log(err);
+      }
+    });
+  }, [])
 
   const _fetchNearByServices = () => {
     console.log('_fetchNearByServices');
@@ -499,10 +514,11 @@ const Home = props => {
     const direction =
       currentOffset > 0 && currentOffset > _listViewOffset ? 'down' : 'up';
     // If the user is scrolling down (and the action-button is still visible) hide it
-    const isActionButtonVisible = direction === 'up';
-    if (isActionButtonVisible !== isActionButtonVisible) {
+    const _isActionButtonVisible = direction === 'up';
+    if (_isActionButtonVisible !== isActionButtonVisible) {
       LayoutAnimation.configureNext(CustomLayoutLinear);
-      setState({ isActionButtonVisible });
+      setIsActionButtonVisible(_isActionButtonVisible);
+      //setState({ isActionButtonVisible });
     }
     // Update your scroll position
     _listViewOffset = currentOffset;
@@ -632,16 +648,27 @@ const Home = props => {
     setPickLocation(false);
   };
 
+  const onRefreshPage = () => {
+    getNearByServices();
+    getPopularProducts();
+    getPopularStores();
+  }
+
   const profileImage = loggedUser ? loggedUser.profile.profileImage : null;
   // console.log(loggedUser,profileImage)
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
         <Statusbar />
-        {/*{loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
+        {/* {isRefreshing ? <ActivityIndicator style={{flex: 1}}/> : null} */}
 
         <Content
           onScroll={_onScroll}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefreshPage} />
+          }
           style={{
             width: '100%', flex: 1, paddingTop: 8,
           }}>

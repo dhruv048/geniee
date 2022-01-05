@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useCallback, useEffect, useState } from 'react';
 import Meteor from '../../react-native-meteor';
 import {
     StyleSheet,
@@ -11,6 +11,7 @@ import {
     SafeAreaView,
     StatusBar,
     useWindowDimensions,
+    RefreshControl,
 } from 'react-native';
 import {
     Header,
@@ -55,16 +56,13 @@ const StoreDetail = (props) => {
     const [allProduct, setAllProduct] = useState([]);
     const [outOfStockProduct, setoutOfStockProduct] = useState([]);
     const [liked, setLiked] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(true);
 
     const businessInfo = props.route.params.data;
 
     useEffect(async () => {
-        productHandlers.getMyProducts(loggedUser._id, (res) => {
-            if (res) {
-                setAllProduct(res);
-            }
-        });
-
+        //Getting products
+        getMyProducts(businessInfo.owner);
         let wishListItem = await AsyncStorage.getItem('myWhishList');
         console.log('This is wislist Item ' + wishListItem);
         if (wishListItem) {
@@ -78,18 +76,26 @@ const StoreDetail = (props) => {
         allProduct.map((item) => {
             setLiked(wishList.includes(item._id))
         })
-    }, [allProduct])
+    }, [])
 
     const _handleSearchText = () => {
         console.log('Testedt')
     }
 
+    const getMyProducts = useCallback((storeOwnerId) => {
+        productHandlers.getMyProducts(storeOwnerId, (res) => {
+            setIsRefreshing(false);
+            if (res) {
+                setAllProduct(res);
+            }
+        });
+    }, []);
+
     const _handleProductPress = product => {
-        props.navigation.navigate('ProductDetail', {Id: product._id, data: product });
+        props.navigation.navigate('ProductDetail', { Id: product._id, data: product });
     };
 
     const addToWishlist = (productId) => {
-        
         let index = wishList.findIndex(item => { return item == productId });
         if (index > -1)
             wishList.splice(index, 1);
@@ -126,6 +132,11 @@ const StoreDetail = (props) => {
         setAllProductButtonActive(false);
         setAboutButtonActive(true);
     }
+
+    const onRefreshPage = () => {
+        getMyProducts(businessInfo.owner);
+    }
+
     const _renderProducts = (data, index) => {
         let item = data.item;
         let isInWishlist = wishList.includes(item._id);
@@ -149,7 +160,7 @@ const StoreDetail = (props) => {
                             }}
                         />
                     </View>
-                    <View style={{ position: 'absolute', top: 4, right: 4, backgroundColor:'#FAFBFF', height:30,width:30, borderRadius:4, justifyContent:'center',alignItems:'center' }}>
+                    <View style={{ position: 'absolute', top: 4, right: 4, backgroundColor: '#FAFBFF', height: 30, width: 30, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
                         {isInWishlist ?
                             <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.pinkColor }} /> :
                             <FAIcon name='heart' onPress={() => { addToWishlist(item._id) }} style={{ fontSize: 25, color: customPaperTheme.GenieeColor.lightDarkColor }} />}
@@ -160,7 +171,7 @@ const StoreDetail = (props) => {
                         </View> : null}
                     <View>
                         <View>
-                            <Text numberOfLines={1} style={{ fontSize: 10, color:customPaperTheme.GenieeColor.lightTextColor }}>{businessInfo.businessName}</Text>
+                            <Text numberOfLines={1} style={{ fontSize: 10, color: customPaperTheme.GenieeColor.lightTextColor }}>{businessInfo.businessName}</Text>
                             <Text numberOfLines={2} style={{ fontSize: 12, fontWeight: 'bold', color: colors.gray_100 }}>
                                 {item.productTitle}
                             </Text>
@@ -276,7 +287,11 @@ const StoreDetail = (props) => {
                         </RNPButton>
                     </View>
                 </View>
-                <Content style={{ marginHorizontal: 10 }}>
+                <Content style={{ marginHorizontal: 10 }}
+                    refreshControl={<RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={onRefreshPage} />}
+                >
                     <View>
                         {productButtonActive === true ?
                             <View>

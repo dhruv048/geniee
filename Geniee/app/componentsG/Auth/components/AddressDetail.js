@@ -23,7 +23,7 @@ const AddressDetail = (props) => {
     const [OTPCodeValid, setOTPCodeValid] = useState(false);
     const [loading, setLoading] = useState(false);
     const [pickLocation, setPickLocation] = useState(false);
-    const [location, setLocation] = useState('');
+    //const [location, setLocation] = useState('');
     const [sendOTPCode, setsendOTPCode] = useState('');
 
     const validateOTPCode = () => {
@@ -132,7 +132,8 @@ const AddressDetail = (props) => {
             }
 
             delete location.address_components;
-            setLocation(location);
+            handleInputChange('location',location.formatted_address);
+            //setLocation(location);
             handleInputChange('district', district.long_name);
             handleInputChange('city', city.long_name)
         }
@@ -230,7 +231,7 @@ const AddressDetail = (props) => {
                                 label="Location"
                                 placeholder="Location"
                                 placeholderTextColor="#808080"
-                                value={location ? location.formatted_address : ''}
+                                value={values.location.value}
                                 onFocus={() => setPickLocation(true)}
                                 style={styles.inputBox}
                                 // error={values.location.error}
