@@ -64,7 +64,7 @@ const PaymentMethod = (props) => {
                         0,
                         50,
                     );
-                    props.navigation.navigate('OrdersCompleted', { orderId: res.result });
+                    
                 }
                 catch (e) {
                     Meteor.call('removeOrder', res.result);
@@ -76,6 +76,7 @@ const PaymentMethod = (props) => {
                         80,
                     );
                 }
+                props.navigation.navigate('OrdersCompleted', { orderId: res.result });
             }
         });
     };

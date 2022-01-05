@@ -4,7 +4,7 @@ const useAddressDetailForm = () => {
     const initialState = {
         district: { value: '', error: false },
         city: { value: '', error: false },
-        //pickLocation: { value: '', error: false },
+        location: { value: '', error: false },
         nearestLandmark: { value: '', error: false },
         contact: { value: '', error: false },
         OTPCode: { value: '', error: false }

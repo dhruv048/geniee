@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useCallback, useEffect, useState } from 'react';
 import Meteor from '../../react-native-meteor';
 import {
     StyleSheet,
@@ -10,6 +10,7 @@ import {
     Image,
     SafeAreaView,
     StatusBar,
+    RefreshControl,
 } from 'react-native';
 import {
     Header,
@@ -47,6 +48,7 @@ const StoreList = (props) => {
     const [filterStoreList, setfilterStoreList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [filterItem, setFilterItem] = useState();
+    const [isRefreshing, setIsRefreshing] = useState(true);
     let storeLocationList = [];
 
     const categoryId = props.route.params.categoryId;
@@ -55,17 +57,19 @@ const StoreList = (props) => {
     useEffect(() => {
         //
         //Get Categorieswise store
+        getStoreCategoriesWise();
+    }, [])
+
+    const getStoreCategoriesWise = useCallback(() => {
         productHandler.getStoreCategoriesWise(categoryId, (res) => {
+            setIsRefreshing(false);
             if (res) {
                 console.log(res);
                 setStoresList(res);
                 setfilterStoreList(res);
             }
         });
-
-
-    }, [])
-
+    });
     const _handleProductPress = (item) => {
         props.navigation.navigate('StoreDetail', { data: item });
     }
@@ -112,6 +116,10 @@ const StoreList = (props) => {
                 setfilterStoreList(storesList);
             }
         }
+    }
+
+    const onRefreshPage = () => {
+        getStoreCategoriesWise();
     }
 
     const _renderStore = (data, index) => {
@@ -182,10 +190,12 @@ const StoreList = (props) => {
                         </RNPButton>
                     </Header>
                 </View>
-                {/*{loading ? <ActivityIndicator style={{flex: 1}}/> : null}*/}
-
                 <Content
                     // onScroll={_onScroll}
+                    refreshControl={<RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={onRefreshPage}
+                    />}
                     style={{
                         //width: '100%',
                         flex: 1,

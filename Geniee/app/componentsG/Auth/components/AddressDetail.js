@@ -23,13 +23,13 @@ const AddressDetail = (props) => {
     const [OTPCodeValid, setOTPCodeValid] = useState(false);
     const [loading, setLoading] = useState(false);
     const [pickLocation, setPickLocation] = useState(false);
-    const [location, setLocation] = useState('');
+    //const [location, setLocation] = useState('');
     const [sendOTPCode, setsendOTPCode] = useState('');
 
     const validateOTPCode = () => {
         // this code will be from API
         let otpValid = false;
-        let sendOTPCode = '123456';
+        //let sendOTPCode = '123456';
         if (sendOTPCode === values.OTPCode.value) {
             setOTPCodeValid(false);
             otpValid = true;
@@ -44,7 +44,7 @@ const AddressDetail = (props) => {
     const generateOTPCode = () => {
         const digits = '0123456789';
         let OTPCode = '';
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 5; i++) {
             OTPCode += digits[Math.floor(Math.random() * 10)];
         }
         return OTPCode;
@@ -132,7 +132,8 @@ const AddressDetail = (props) => {
             }
 
             delete location.address_components;
-            setLocation(location);
+            handleInputChange('location',location.formatted_address);
+            //setLocation(location);
             handleInputChange('district', district.long_name);
             handleInputChange('city', city.long_name)
         }
@@ -151,41 +152,19 @@ const AddressDetail = (props) => {
         let otpCode = generateOTPCode();
         let message = 'Your OTP code is ' + otpCode + ' for Geniee verification.';
         if (otpCode && mobileNumber) {
-            // authHandlers.PostSendSMS(mobileNumber, message, (res) =>{
-            //     if(res){
-            //         setsendOTPCode(otpCode);
-            //         ToastAndroid.showWithGravityAndOffset(
-            //             'OTP Code has been sent to register number.',
-            //             ToastAndroid.LONG,
-            //             ToastAndroid.TOP,
-            //             0,
-            //             50,
-            //         );
-            //     }
-            // })
-            fetch(OTPConfig.SMS_URL, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-
-                body: JSON.stringify({
-                    token :OTPConfig.SMS_TOKEN,
-                    from: 'Geniee',
-                    to: mobileNumber,
-                    text: message,
-                }),
+            authHandlers.PostSendSMS(mobileNumber, message, (res) =>{
+                if(res){
+                    setsendOTPCode(otpCode);
+                    ToastAndroid.showWithGravityAndOffset(
+                        'OTP Code has been sent to register number.',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
             })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    //Showing response message coming from server 
-                    console.log(responseJson);
-                })
-                .catch((error) => {
-                    //display error message
-                    console.log(error);
-                });
+            
         }
     }
 
@@ -252,7 +231,7 @@ const AddressDetail = (props) => {
                                 label="Location"
                                 placeholder="Location"
                                 placeholderTextColor="#808080"
-                                value={location ? location.formatted_address : ''}
+                                value={values.location.value}
                                 onFocus={() => setPickLocation(true)}
                                 style={styles.inputBox}
                                 // error={values.location.error}
