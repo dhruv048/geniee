@@ -18,6 +18,9 @@ import Meteor from '../../../react-native-meteor';
 import AsyncStorage from '@react-native-community/async-storage';
 import { customPaperTheme } from '../../../config/themes';
 import Loading from '../../../components/Loading/Loading';
+import { connect } from 'react-redux';
+import { cartItemSelector } from '../../../store/selectors/shopping';
+import shoppingHandlers from "../../../store/services/shopping/handlers";
 
 let cartList = [];
 const MyCart = (props) => {
@@ -28,9 +31,10 @@ const MyCart = (props) => {
 
     useEffect(async () => {
         let products = [];
-        let mycart = await AsyncStorage.getItem('myCart');
+        //let mycart = await AsyncStorage.getItem('myCart');
+        let mycart = props.cartItems ? props.cartItems : [];
         if (mycart) {
-            mycart = JSON.parse(mycart);
+           // mycart = JSON.parse(mycart);
             mycart.forEach(item => {
                 products.push(item.id)
             }
@@ -101,14 +105,18 @@ const MyCart = (props) => {
                 {
                     text: 'Yes', onPress: () => {
                         let index = cartItems.findIndex(item => item._id == Item._id);
+                        let _cartList= cartList.filter(item => item.id == Item._id);
                         if (index >= 0) {
                             cartItems.splice(index, 1);
 
                         }
                         let idx = cartList.findIndex(item => item.id == Item._id);
                         if (idx >= 0) {
-                            cartList.splice(idx, 1);
-                            AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+                            cartList.splice(idx, 1);                          
+                            if(_cartList){
+                                shoppingHandlers.removeItemFromCart(_cartList);
+                            }
+                            //AsyncStorage.setItem('myCart', JSON.stringify(cartList));
                         }
                         ToastAndroid.showWithGravityAndOffset(
                             'Removed Successfully!!',
@@ -243,7 +251,7 @@ const MyCart = (props) => {
     );
 }
 
-export default MyCart;
+export default connect(cartItemSelector)(MyCart);
 
 const styles = StyleSheet.create({
     container: {

@@ -17,7 +17,7 @@ if(__DEV__){
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whiteList:[]
+    whiteList:['cartItems']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

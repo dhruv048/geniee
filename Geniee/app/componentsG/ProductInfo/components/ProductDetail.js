@@ -47,6 +47,8 @@ import IIcon from 'react-native-vector-icons/Ionicons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import Moment from 'moment';
 import { Rating } from 'react-native-elements';
+import shoppingHandlers from "../../../store/services/shopping/handlers";
+import { cartItemSelector } from '../../../store/selectors/shopping';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -66,6 +68,7 @@ const ProductDetail = (props) => {
     const [ratingValue, setRatingValue] = useState(3);
     const [answer, setAnswer] = useState('');
     const [isReply, setIsReply] = useState([]);
+    const [addedToCart, setAddedToCart] = useState(false);
 
     const [liked, setLiked] = useState(0);
 
@@ -84,7 +87,9 @@ const ProductDetail = (props) => {
         if (_product) {
             productId = _product._id;
             setProductData(_product);
-            setLiked(wishList.includes(_product._id) ? true : false)
+            let index = props.cartItems.findIndex(item => item.id == _product._id);
+            setAddedToCart(index>-1 ? true: false);
+            setLiked(wishList.includes(_product._id) ? true : false);
         } else {
             Meteor.call('getSingleProduct', productId, (err, res) => {
                 if (err) {
@@ -98,6 +103,16 @@ const ProductDetail = (props) => {
         }
 
         //Get Similar products
+        getSimilarProducts(productId);
+
+        //Update View Count
+        Meteor.call('updateViewCount', productId);
+
+        //Get Questions for products
+        getQuestion(productId);
+    }, [])
+
+    const getSimilarProducts = (productId) => {
         Meteor.call('getSimilarProduct', productId, (err, res) => {
             console.log(err, res);
             if (err) {
@@ -106,13 +121,7 @@ const ProductDetail = (props) => {
                 setSimilarProducts(res);
             }
         });
-
-        //Update View Count
-        Meteor.call('updateViewCount', productId);
-
-        //Get Questions for products
-        getQuestion(productId);
-    }, [])
+    }
 
     const getQuestion = (productId) => {
         Meteor.call('getTopQuestion', productId, (err, res) => {
@@ -192,7 +201,9 @@ const ProductDetail = (props) => {
                 0,
                 50,
             );
-            AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+            //AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+            shoppingHandlers.addItemToCart(cartList);
+            setAddedToCart(true);
             EventRegister.emit('cartItemsChanged', 'it works!!!')
         }
     }
@@ -600,6 +611,7 @@ const ProductDetail = (props) => {
                                     mode='contained'
                                     onPress={() => { addToCart() }}
                                     uppercase={false}
+                                    disabled={addedToCart}
                                     style={styles.btnContinue}
                                 >
                                     <Text
@@ -718,7 +730,7 @@ const ProductDetail = (props) => {
 
     );
 }
-export default ProductDetail;
+export default connect(cartItemSelector)(ProductDetail);
 
 const styles = StyleSheet.create({
     container: {
