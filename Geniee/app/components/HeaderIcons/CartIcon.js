@@ -6,6 +6,9 @@ import { TouchableOpacity, Text } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
 import AIcon from 'react-native-vector-icons/AntDesign';
+import { connect } from 'react-redux';
+import { cartItemSelector, cartSelector } from '../../store/selectors/shopping';
+import shoppingHandlers from "../../store/services/shopping/handlers";
 
 const CartIcon = (props) => {
     const [totalCount, setTotalCount] = useState(0);
@@ -20,10 +23,14 @@ const CartIcon = (props) => {
     }, []);
 
     const _setCartCount = async () => {
-        let cartList = await AsyncStorage.getItem('myCart');
-        cartList = JSON.parse(cartList);
-        cartList = cartList ? cartList : [];
-        setTotalCount(cartList.length);
+        // let cartList = await AsyncStorage.getItem('myCart');
+        // cartList = JSON.parse(cartList);
+        // cartList = cartList ? cartList : [];
+        // setTotalCount(cartList.length);
+        // will be used when we get data from db
+        //shoppingHandlers.getAllCartItems();
+        let cartCount = props.cartItems ? props.cartItems.length : null;
+        setTotalCount(cartCount);
     }
 
 
@@ -44,5 +51,4 @@ const CartIcon = (props) => {
     );
 }
 
-
-export default CartIcon;
+export default connect(cartItemSelector)(CartIcon);
