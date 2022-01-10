@@ -21,7 +21,8 @@ import {
     Input as NBInput,
     Right,
     Textarea,
-    ListItem
+    ListItem,
+    Footer
 } from 'native-base';
 import ActionSheet from 'react-native-actionsheet';
 import Icon from 'react-native-vector-icons/Feather';
@@ -88,7 +89,7 @@ const ProductDetail = (props) => {
             productId = _product._id;
             setProductData(_product);
             let index = props.cartItems.findIndex(item => item.id == _product._id);
-            setAddedToCart(index>-1 ? true: false);
+            setAddedToCart(index > -1 ? true : false);
             setLiked(wishList.includes(_product._id) ? true : false);
         } else {
             Meteor.call('getSingleProduct', productId, (err, res) => {
@@ -424,87 +425,77 @@ const ProductDetail = (props) => {
     const renderQuestions = (data, index, isRating) => {
         let item = data.item;
         return (
-            <ListItem
-                noBorder
-                key={item._id}
-            // last={payMethod.length === index + 1}
-            >
-                {/* <TouchableOpacity
-                        onPress={() => { }}
-                    > */}
-                <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
-                    <View>
-                        <Image
-                            source={require('../../../images/user-icon.png')}
-                            style={{
-                                height: 46, width: 46, resizeMode: 'cover', borderRadius: 23, backgroundColor: customPaperTheme.GenieeColor.lightTextColor
-                            }}
-                        />
-                    </View>
-                    <View style={{ marginLeft: 10 }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ fontSize: 12 }}>
-                                {item.User[0].profile.firstName} {item.User[0].profile.lastName}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: colors.gray_300, marginLeft: 8 }}>
-                                {Moment(item.questionedDate).fromNow()}
-                            </Text>
-                            {isRating ? <Rating
-                                imageSize={12}
-                                onFinishRating={ratingValue}
-                                style={{ marginTop: 3, marginLeft: 5 }} /> : null}
-                        </View>
-                        <View style={{ width: '98%' }}>
-                            <Text style={{ fontSize: 12, color: colors.gray_300, marginRight: 'auto' }} numberOfLines={2}>
-                                {item.question}
-                            </Text>
-                        </View>
-                        {/* Answer */}
-                        {!isRating ? <View style={{ marginTop: 10, marginLeft: 10 }}>
-                            {item.answer !== "" ?
-                                <View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={{ fontSize: 12, color: customPaperTheme.GenieeColor.primaryColor }}>
-                                            {item.User[0].profile.firstName} {item.User[0].profile.lastName}
-                                        </Text>
-                                        <Text style={{ fontSize: 12, color: colors.gray_300, marginLeft: 8 }}>
-                                            {Moment(item.answerDate).fromNow()}
-                                        </Text>
-                                    </View>
-                                    <View style={{ width: '95%' }}>
-                                        <Text style={{ fontSize: 12, color: colors.gray_300, marginRight: 'auto' }} numberOfLines={2}>
-                                            {item.answer}
-                                        </Text>
-                                    </View>
-                                </View> :
-                                <View>
-                                    {productData.owner === loggedUser ?
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <FIcon name='reply' style={{ fontSize: 16, marginRight: 10, marginTop: 5 }} onPress={() => { onreplyPress(item._id) }} />
-                                            {isReply.findIndex((x) => x.questionId === item._id && x.reply === true) > -1 ?
-                                                <TextInput
-                                                    mode="outlined"
-                                                    color={customGalioTheme.COLORS.INPUT_TEXT}
-                                                    right={<TextInput.Icon name="send" onPress={() => { replyToQuestion(item._id) }} style={{ marginTop: 13, marginLeft: 20 }} />}
-                                                    placeholder="reply"
-                                                    placeholderTextColor="#808080"
-                                                    label="reply"
-                                                    value={answer}
-                                                    onChangeText={(value) => setAnswer(value)}
-                                                    style={{ fontSize: 12, height: 25, width: '70%' }}
-                                                    error={answer === '' ? true : false}
-                                                    theme={{ roundness: 6 }}
-                                                /> : null}
-                                        </View> : null
-                                    }
-                                </View>
-                            }
-
-                        </View> : null}
-                    </View>
+            <View key={item._id} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
+                <View>
+                    <Image
+                        source={require('../../../images/user-icon.png')}
+                        style={{
+                            height: 46, width: 46, resizeMode: 'cover', borderRadius: 23, backgroundColor: customPaperTheme.GenieeColor.lightTextColor
+                        }}
+                    />
                 </View>
-                {/* </TouchableOpacity> */}
-            </ListItem>
+                <View style={{ marginLeft: 10 }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontSize: 12 }}>
+                            {item.User[0].profile.firstName} {item.User[0].profile.lastName}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: colors.gray_300, marginLeft: 8 }}>
+                            {Moment(item.questionedDate).fromNow()}
+                        </Text>
+                        {isRating ? <Rating
+                            imageSize={12}
+                            onFinishRating={ratingValue}
+                            style={{ marginTop: 3, marginLeft: 5 }} /> : null}
+                    </View>
+                    <View style={{ width: '98%' }}>
+                        <Text style={{ fontSize: 12, color: colors.gray_300, marginRight: 'auto' }} numberOfLines={2}>
+                            {item.question}
+                        </Text>
+                    </View>
+                    {/* Answer */}
+                    {!isRating ? <View style={{ marginTop: 10, marginLeft: 10 }}>
+                        {item.answer !== "" ?
+                            <View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={{ fontSize: 12, color: customPaperTheme.GenieeColor.primaryColor }}>
+                                        {item.User[0].profile.firstName} {item.User[0].profile.lastName}
+                                    </Text>
+                                    <Text style={{ fontSize: 12, color: colors.gray_300, marginLeft: 8 }}>
+                                        {Moment(item.answerDate).fromNow()}
+                                    </Text>
+                                </View>
+                                <View style={{ width: '95%' }}>
+                                    <Text style={{ fontSize: 12, color: colors.gray_300, marginRight: 'auto' }} numberOfLines={2}>
+                                        {item.answer}
+                                    </Text>
+                                </View>
+                            </View> :
+                            <View>
+                                {productData.owner === loggedUser ?
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <FIcon name='reply' style={{ fontSize: 16, marginRight: 10, marginTop: 5 }} onPress={() => { onreplyPress(item._id) }} />
+                                        {isReply.findIndex((x) => x.questionId === item._id && x.reply === true) > -1 ?
+                                            <TextInput
+                                                mode="outlined"
+                                                color={customGalioTheme.COLORS.INPUT_TEXT}
+                                                right={<TextInput.Icon name="send" onPress={() => { replyToQuestion(item._id) }} style={{ marginTop: 13, marginLeft: 20 }} />}
+                                                placeholder="reply"
+                                                placeholderTextColor="#808080"
+                                                label="reply"
+                                                value={answer}
+                                                onChangeText={(value) => setAnswer(value)}
+                                                style={{ fontSize: 12, height: 25, width: '70%' }}
+                                                error={answer === '' ? true : false}
+                                                theme={{ roundness: 6 }}
+                                            /> : null}
+                                    </View> : null
+                                }
+                            </View>
+                        }
+
+                    </View> : null}
+                </View>
+            </View>
         );
     }
 
@@ -530,7 +521,7 @@ const ProductDetail = (props) => {
                                         props.navigation.goBack();
                                     }}
                                     name="arrow-left" />
-                                <CartIcon navigation = {props.navigation}></CartIcon>
+                                <CartIcon key={props.cartItems} navigation={props.navigation}></CartIcon>
                                 <Icon
                                     style={{ color: colors.whiteText, fontSize: 20, marginLeft: 15 }}
                                     onPress={() => {
@@ -594,7 +585,7 @@ const ProductDetail = (props) => {
                                 <Text style={styles.titleStyle}>Product Specification : </Text>
                                 {productData.productProperty && productData.productProperty.length > 0 ? productData.productProperty.map((item, index) => renderProductProperty(item, index)) : <Text>N/A</Text>}
                             </View>
-                            <View style={styles.horizontalView}>
+                            {/* <View style={styles.horizontalView}>
                                 <RNPButton
                                     mode='outlined'
                                     onPress={() => { orderNow() }}
@@ -620,7 +611,7 @@ const ProductDetail = (props) => {
                                     </Text>
                                     <Icon style={{ color: '#ffffff', fontSize: 14 }} name="shopping-cart" />
                                 </RNPButton>
-                            </View>
+                            </View> */}
                             {/* Ratings Sections */}
                             <View style={styles.blockHeader}>
                                 <Text style={[styles.blockTitle, { fontSize: 16 }]}>
@@ -726,6 +717,35 @@ const ProductDetail = (props) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Content>
+            <Footer style={{backgroundColor:colors.appLayout}}>
+                <View style={[styles.horizontalView,{alignContent:'center',alignItems:'center'}]}>
+                    <RNPButton
+                        mode='outlined'
+                        onPress={() => { orderNow() }}
+                        uppercase={false}
+                        style={{marginRight:5, width:'45%'}}
+                    >
+                        <Text
+                            style={styles.btnBuyText}>
+                            Buy Now
+                        </Text>
+                        <Icon style={{ color: 'black', fontSize: 14 }} name="shopping-bag" />
+                    </RNPButton>
+                    <RNPButton
+                        mode='contained'
+                        onPress={() => { addToCart() }}
+                        uppercase={false}
+                        disabled={addedToCart}
+                        style={{marginLeft:5, width:'45%'}}
+                    >
+                        <Text
+                            style={styles.btnContinueText}>
+                            Add to Cart
+                        </Text>
+                        <Icon style={{ color: '#ffffff', fontSize: 14 }} name="shopping-cart" />
+                    </RNPButton>
+                </View>
+            </Footer>
         </Container>
 
     );

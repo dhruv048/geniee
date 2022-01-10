@@ -134,7 +134,8 @@ const MyCart = (props) => {
 
     const handleCheckout = () => {
         console.log('Proceed to checkout');
-        props.navigation.navigate('Checkout')
+        //sending productOrder null as productorder will be from cartItems.
+        props.navigation.navigate('Checkout',{ productOrder: null })
     }
 
     const renderItems = (data, index) => {
