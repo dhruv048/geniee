@@ -74,11 +74,11 @@ const ProductDetail = (props) => {
     const [liked, setLiked] = useState(0);
 
     const loggedUser = Meteor.userId();
-
+    let productId = props.route.params.Id;
+    const _product = props.route.params.data;
     useEffect(async () => {
         //get the product with id of this.props.product.id from your server
-        let productId = props.route.params.Id;
-        let _product = props.route.params.data;
+
         //_product = productTest;//using for Testing
         let wishList = await AsyncStorage.getItem('myWhishList');
         console.log('wishList', wishList);
@@ -160,7 +160,7 @@ const ProductDetail = (props) => {
     }
 
     const addToCart = async () => {
-        var product = productData;
+        var product = { ...productData };
         if (selectedColor === '' && selectedSize === '') {
             ToastAndroid.showWithGravityAndOffset(
                 'Please select favourite color and size !',
@@ -205,7 +205,6 @@ const ProductDetail = (props) => {
             //AsyncStorage.setItem('myCart', JSON.stringify(cartList));
             shoppingHandlers.addItemToCart(cartList);
             setAddedToCart(true);
-            EventRegister.emit('cartItemsChanged', 'it works!!!')
         }
     }
 
@@ -717,13 +716,13 @@ const ProductDetail = (props) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Content>
-            <Footer style={{backgroundColor:colors.appLayout}}>
-                <View style={[styles.horizontalView,{alignContent:'center',alignItems:'center'}]}>
+            <Footer style={{ backgroundColor: colors.appLayout }}>
+                <View style={[styles.horizontalView, { alignContent: 'center', alignItems: 'center' }]}>
                     <RNPButton
                         mode='outlined'
                         onPress={() => { orderNow() }}
                         uppercase={false}
-                        style={{marginRight:5, width:'45%'}}
+                        style={{ marginRight: 5, width: '45%' }}
                     >
                         <Text
                             style={styles.btnBuyText}>
@@ -736,7 +735,7 @@ const ProductDetail = (props) => {
                         onPress={() => { addToCart() }}
                         uppercase={false}
                         disabled={addedToCart}
-                        style={{marginLeft:5, width:'45%'}}
+                        style={{ marginLeft: 5, width: '45%' }}
                     >
                         <Text
                             style={styles.btnContinueText}>

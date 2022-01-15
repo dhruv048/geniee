@@ -9,7 +9,7 @@ import {
     Icon
 } from 'native-base';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Keyboard, View, Text, StyleSheet, FlatList, Alert, ToastAndroid, TouchableOpacity } from 'react-native';
+import { Keyboard, View, Text, StyleSheet, FlatList, Alert, ToastAndroid, TouchableOpacity, RefreshControl } from 'react-native';
 import { Button } from 'react-native-paper';
 import settings, { ProductOwner } from "../../../config/settings";
 import { colors } from '../../../config/styles';
@@ -27,7 +27,7 @@ const MyCart = (props) => {
     const [cartItems, setCartItems] = useState([]);
     const [liked, setLiked] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
-
+    const [isRefreshing, setIsRefreshing] = useState(true);
 
     useEffect(async () => {
         let products = [];
@@ -74,6 +74,7 @@ const MyCart = (props) => {
                 });
                 setCartItems(res.result);
                 setTotalPrice(totalPrice);
+                setIsRefreshing(false);
             }
         });
     };
@@ -132,6 +133,10 @@ const MyCart = (props) => {
         )
     }
 
+    const onRefreshPage = () => {
+
+    }
+
     const handleCheckout = () => {
         console.log('Proceed to checkout');
         //sending productOrder null as productorder will be from cartItems.
@@ -187,7 +192,12 @@ const MyCart = (props) => {
 
     return (
         <Container style={styles.container}>
-            <Content style={{ backgroundColor: colors.appBackground }}>
+            <Content style={{ backgroundColor: colors.appBackground }}
+            refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={onRefreshPage} />
+              }>
                 <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
                     <Header
                         androidStatusBarColor={colors.statusBar}

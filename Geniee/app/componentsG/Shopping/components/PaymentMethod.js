@@ -57,6 +57,7 @@ const PaymentMethod = (props) => {
                 );
             } else {
                 try {
+                    shoppingHandler.removeItemFromCart(Item);
                     ToastAndroid.showWithGravityAndOffset(
                         'Order Made Successfully!!',
                         ToastAndroid.SHORT,
