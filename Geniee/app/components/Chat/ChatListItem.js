@@ -12,7 +12,7 @@ import { goToRoute } from "../../Navigation";
 
 const ChatListItem = (props) => {
 
-    const chatChannel = props;
+    const chatChannel = props.chatChannel;
     const time = chatChannel.hasOwnProperty('latestMessage')
         ? Moment(chatChannel.latestMessage.messageOn)
             .local()
@@ -36,12 +36,8 @@ const ChatListItem = (props) => {
         <List.Item onPress={() => {
             _handlePress(chatChannel)
         }}
-            style={{
-                backgroundColor: customGalioTheme.COLORS.WHITE, padding: 10, marginBottom: 8,
-                borderRadius: 4,
-            }}
-
-            title={chatChannel.user.profile.name}
+            style={{ backgroundColor: customGalioTheme.COLORS.WHITE, marginBottom: 8,borderRadius: 4,}}
+            title={chatChannel.user.profile.name || 'User'}
             description={() => (
                 <View style={{}}>
                     {chatChannel.Message && chatChannel.Message.type == 'text' ? (
@@ -79,25 +75,9 @@ const ChatListItem = (props) => {
                         // <Text style={{alignSelf: 'flex-end'}} note>{Moment(item.latestMessage.messageOn).local().format('hh:mm A')}</Text>
                         <View style={{ marginTop: 10 }}>
                             {chatChannel.latestMessage.seen ? (
-                                <MaterialIcon
-                                    name={'done-all'}
-                                    size={13}
-                                    style={{
-                                        color: customGalioTheme.COLORS.PRIMARY,
-                                        marginHorizontal: 5,
-                                        alignSelf: 'center',
-                                    }}
-                                />
+                                <MaterialIcon name={'done-all'} size={13} style={{ color: customGalioTheme.COLORS.PRIMARY, marginHorizontal: 5, alignSelf: 'center', }} />
                             ) : (
-                                <MaterialIcon
-                                    name={'done'}
-                                    size={13}
-                                    style={{
-                                        color: '#8E8E8E',
-                                        marginHorizontal: 5,
-                                        alignSelf: 'center',
-                                    }}
-                                />
+                                <MaterialIcon name={'done'} size={13} style={{ color: '#8E8E8E', marginHorizontal: 5, alignSelf: 'center', }} />
                             )}
                         </View>
                     ) : null}

@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useMemo, useState } from 'react';
+import React, { Component } from 'react';
 import {
   Header,
   Text,
@@ -23,13 +23,47 @@ import ChatListItem from '../../components/Chat/ChatListItem';
 import FooterTabs from '../../components/FooterTab';
 import { customPaperTheme } from '../../config/themes';
 
-const ChatList = (props) => {
+class ChatList extends Component {
+  constructor(props) {
+    super(props);
+    this._handlePress = this._handlePress.bind(this);
+    this.state = {
+      chatList: [],
+    };
+    this.isDisplaying = false;
+  }
 
-  const [chatList, setChatList] = useState([]);
+  componentDidMount() {
+    this.setState({ chatList: this.props.chatChannels });
+  }
 
-  useMemo((props) => {
-    setChatList([]);
-    let sorteData = props.chatChannels.sort((a, b) => {
+  handleBackButtonChat() {
+    console.log('handlebackpressChatList');
+    this.props.navigation.navigate('Home');
+    return true;
+  }
+
+  componentDidAppear() {
+    console.log('chalList Dsplayed');
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonChat.bind(this),
+    );
+    this.isDisplaying = true;
+  }
+
+  componentDidDisappear() {
+    console.log('chalList not displaying');
+    this.isDisplaying = false;
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonChat.bind(this),
+    );
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ chatList: [] });
+    let sorteData = newProps.chatChannels.sort((a, b) => {
       if (
         !a.hasOwnProperty('latestMessage') ||
         !a.latestMessage.hasOwnProperty('messageOn')
@@ -63,14 +97,10 @@ const ChatList = (props) => {
     });
     // console.log('received new props..', newProps.chatChannels)
     // console.log('sortedData', sorteData);
-    setChatList(sorteData);
-  }, [props]);
+    this.setState({ chatList: sorteData });
+  }
 
-  useEffect(() => {
-    setChatList(props.chatChannels);
-  })
-
-  const _handlePress = (channel) => {
+  _handlePress = channel => {
     let Channel = {
       channelId: channel._id,
       user: {
@@ -80,7 +110,7 @@ const ChatList = (props) => {
       },
       service: channel.service,
     };
-    props.navigation.navigate('Message', { Channel: Channel });
+    this.props.navigation.navigate('Message', { Channel: Channel });
   };
 
   _renderList = data => {
@@ -88,35 +118,37 @@ const ChatList = (props) => {
     let item = data.item;
     //console.log(item);
     item.Message = item.latestMessage ? item.latestMessage.messageData : null;
-    item.user = item.Users.find(item => item._id !== logged);
+    item.user = item.Users.find(item => item._id === logged);
 
     return (
-      <ChatListItem chatChannel={item} componentId={props.componentId} />
+      <ChatListItem chatChannel={item} componentId={this.props.componentId} navigation = {this.props.navigation} />
     );
   };
 
-  return (
-    <Container>
-      <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
-        <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{ backgroundColor: colors.statusBar }}>
-          <Left>
-            <CogMenu componentId={props.componentId} />
-          </Left>
-          <Body>
-            <Text style={{ color: 'white' }}>Messages</Text>
-          </Body>
-        </Header>
-      </View>
-      <Content style={styles.content}>
-        <FlatList
-          data={chatList}
-          renderItem={_renderList}
-          keyExtractor={item => item._id}
-        />
-      </Content>
-      {/* <FooterTabs route={'Chat'} componentId={this.props.componentId}/> */}
-    </Container>
-  );
+  render() {
+    return (
+      <Container>
+        <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
+          <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{ backgroundColor: colors.statusBar }}>
+            <Left>
+              <CogMenu componentId={this.props.componentId} />
+            </Left>
+            <Body>
+              <Text style={{ color: 'white' }}>Messages</Text>
+            </Body>
+          </Header>
+        </View>
+        <Content style={styles.content}>
+          <FlatList
+            data={this.state.chatList}
+            renderItem={this._renderList}
+            keyExtractor={item => item._id}
+          />
+        </Content>
+        {/* <FooterTabs route={'Chat'} componentId={this.props.componentId}/> */}
+      </Container>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -136,8 +168,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 });
-
-//export default ChatList;
 
 export default Meteor.withTracker(() => {
   return {

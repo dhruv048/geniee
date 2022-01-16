@@ -138,7 +138,7 @@ const StoreDetail = (props) => {
     }
 
     const _getChatChannel = (userId) => {
-        var channelId = new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             Meteor.call('addChatChannel', userId, function (error, result) {
                 if (error) {
                     reject(error);
@@ -148,13 +148,13 @@ const StoreDetail = (props) => {
                 }
             });
         });
-        return channelId;
     }
 
     const handleChat = (businesInfo) => {
         console.log('service' + businesInfo._id);
+        
         _getChatChannel(businesInfo._id).then(channelId => {
-            // console.log(channelId);
+            console.log(channelId);
             let Channel = {
                 channelId: channelId,
                 user: {
@@ -164,7 +164,7 @@ const StoreDetail = (props) => {
                 },
                 business: businesInfo
             };
-            props.navigation.navigate("Message",{Channel});
+            props.navigation.navigate("Message", { Channel });
         }).catch(error => {
             console.error(error);
         });
