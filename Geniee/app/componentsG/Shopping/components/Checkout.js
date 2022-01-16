@@ -21,9 +21,12 @@ import FIcon from 'react-native-vector-icons/Feather';
 import { Button, TextInput } from 'react-native-paper';
 import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { settings } from '../../../config/settings';
+import { connect } from 'react-redux';
+import { cartItemSelector } from '../../../store/selectors/shopping';
 
 const Checkout = (props) => {
-    const [cartItems, setCartItems] = useState('');
+    
+    const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
     const [card, setCard] = useState(true);
     const [paypal, setPaypal] = useState(false);
@@ -37,28 +40,33 @@ const Checkout = (props) => {
     const [finalAmount, setFinalAmont] = useState(0);
     const [merchantName, setMerchantName] = useState('');
 
+    const singleProduct = props.route.params.productOrder;
+    const loggedUser = props.user ? props.user : Meteor.user();
     useEffect(() => {
-        const singleProduct = props.productOrder;
         if (singleProduct) {
             singleProduct.addDate = new Date(new Date().toUTCString());
             singleProduct.type = 0;
-            setCartItems([singleProduct])
+            setCartItems([singleProduct]);
+            setTotal(parseInt(singleProduct.finalPrice) *parseInt(singleProduct.orderQuantity));
+            setFinalAmont(parseInt(singleProduct.finalPrice) *parseInt(singleProduct.orderQuantity)+ shippingCharge);
         }
         else {
             getCartItems();
         }
-        props.user ? getShippingAddress() : null;
+        
+        loggedUser ? getShippingAddress() : null;
     }, []);
 
     const getShippingAddress = () => {
-        setName(props.user.profile.firstName + ' ' + props.user.profile.lastName);
-        setEmail(props.user.profile.primaryEmail);
-        setAddress(props.user.profile.city);
-        setPhone(props.user.profile.contactNo);
+        setName(loggedUser.profile.firstName + ' ' + loggedUser.profile.lastName);
+        setEmail(loggedUser.profile.primaryEmail);
+        setAddress(loggedUser.profile.city);
+        setPhone(loggedUser.profile.contactNo);
     }
 
     const updateTotal = (myItems) => {
         // console.log(cartItems);
+
         var total = 0;
         myItems.map((item) => {
             total += parseFloat(item.finalPrice) * parseInt(item.orderQuantity);
@@ -73,11 +81,12 @@ const Checkout = (props) => {
         return id;
     };
 
-    const getCartItems = async () => {
+    const getCartItems = () => {
         let products = [];
-        let myCart = await AsyncStorage.getItem('myCart');
+        //let myCart = await AsyncStorage.getItem('myCart');
+        let myCart = props.cartItems;
         if (myCart) {
-            myCart = JSON.parse(myCart);
+            //myCart = JSON.parse(myCart);
             myCart.forEach(item => {
                 products.push(item.id)
             }
@@ -381,6 +390,7 @@ const Checkout = (props) => {
         </SafeAreaView>
     );
 }
+export default connect(cartItemSelector)(Checkout);
 
 const styles = StyleSheet.create({
     container: {
@@ -430,10 +440,10 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Meteor.withTracker((props) => {
-    let productId = props.productId;
-    return {
-        user: Meteor.user(),
-        cartItems: Meteor.collection('cart').find(),
-    }
-})(Checkout)
+// export default Meteor.withTracker((props) => {
+//     let productId = props.productId;
+//     return {
+//         user: Meteor.user(),
+//         cartItems: Meteor.collection('cart').find(),
+//     }
+// })(Checkout)

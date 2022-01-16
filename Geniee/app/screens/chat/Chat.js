@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Header,
   Text,
@@ -29,158 +29,115 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../config/styles';
+import { colors } from '../../config/styles';
 import Meteor from '../../react-native-meteor';
-import settings, {getProfileImage} from '../../config/settings';
+import settings, { getProfileImage } from '../../config/settings';
 import Moment from 'moment';
 import MyFunctions from '../../lib/MyFunctions';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
-import {goBack} from '../../Navigation';
+import { goBack } from '../../Navigation';
+import { customPaperTheme } from '../../config/themes';
+import { Button as RNPButton, TextInput } from 'react-native-paper';
 
-const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 var RNFS = require('react-native-fs');
 
 class Chat extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: '',
+      files: [],
+      modalItem: '',
+      customModalVisible: false,
+      allowDelete: false,
+      height: 45,
+      messages: [],
+      disable: false,
+    };
+    this._sendMessage = this._sendMessage.bind(this);
+    this.viewabilityConfig = {
+      minimumViewTime: 100,
+      viewAreaCoveragePercentThreshold: 20,
+    };
+    this._onViewChange = this._onViewChange.bind(this);
+    this._showFile = this._showFile.bind(this);
+  }
+
+  componentDidMount() { }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ messages: newProps.messages });
+  }
+
+  componentWillUnmount() {
+    this._handleNotTyping();
+  }
+  componentDidAppear() {
+    this.setState({ messages: [] });
+    this.setState({ messages: this.props.messages });
+  }
+  componentDidDisappear() {
+    this._handleNotTyping();
+  }
+
   getMessage = message => {
     const loggedUser = Meteor.userId();
     let Message = message.messageData;
     if (message.from != loggedUser)
       return (
-        <View
-          key={message._id}
-          style={{
-            marginRight: '20%',
-            marginLeft: '1%',
-            marginTop: 5,
-            maxWidth: '79%',
-            alignSelf: 'flex-start',
-          }}>
-          <View
-            style={{backgroundColor: '#e6e6e6', padding: 5, borderRadius: 8}}>
+        <View key={message._id} style={styles.leftMessage}>
+          <View style={{ backgroundColor: '#e6e6e6', padding: 5, borderRadius: 8 }}>
             {Message.type === 'text' ? (
-              <Text
-                style={{
-                  alignSelf: 'flex-start',
-                }}>
-                {Message.message}
-              </Text>
+              <Text style={{ alignSelf: 'flex-start' }}>{Message.message}</Text>
             ) : (
               <TouchableOpacity onPress={() => this._showFile(Message, false)}>
                 <View>
                   {Message.type.includes('image') ? (
-                    <Image
-                      style={{
-                        alignSelf: 'flex-start',
-                        width: 150,
-                        height: 150,
-                        resizeMode: 'cover',
-                      }}
-                      source={{
-                        uri:
-                          settings.WEB_URL +
-                          'api/chatFiles/' +
-                          Message.src +
-                          '/' +
-                          Message.fileName,
-                      }}
+                    <Image style={styles.leftImage}
+                      source={{ uri: settings.WEB_URL + 'api/chatFiles/' + Message.src + '/' + Message.fileName, }}
                     />
                   ) : (
-                    <Icon
-                      style={{alignSelf: 'flex-start'}}
-                      name={'file-text'}
-                      size={50}
-                    />
+                    <Icon style={{ alignSelf: 'flex-start' }} name={'file-text'} size={50} />
                   )}
-                  {/* <Text style={{
-                                    alignSelf: 'flex-start',
-                                    color: colors.appLayout
-                                }}>{Message.fileName || ''}</Text>*/}
                 </View>
               </TouchableOpacity>
             )}
           </View>
-          <Text style={{alignSelf: 'flex-start'}} note>
-            {Moment(message.messageOn)
-              .local()
-              .format('hh:mm A')}
-          </Text>
+          <Text style={{ alignSelf: 'flex-start' }} note>{Moment(message.messageOn).local().format('hh:mm A')}</Text>
         </View>
       );
     else
       return (
-        <View
-          key={message._id}
-          style={{
-            marginRight: '1%',
-            marginLeft: '20%',
-            marginTop: 5,
-            maxWidth: '79%',
-            flex: 1,
-            alignSelf: 'flex-end',
-          }}>
-          <View
-            style={{backgroundColor: '#acd1e3', padding: 5, borderRadius: 8}}>
+        <View key={message._id} style={styles.rightMessage}>
+          <View style={{ backgroundColor: '#acd1e3', padding: 5, borderRadius: 8 }}>
             {Message.type === 'text' ? (
-              <Text style={{alignSelf: 'flex-end'}}>{Message.message}</Text>
+              <Text style={{ alignSelf: 'flex-end' }}>{Message.message}</Text>
             ) : (
               <TouchableOpacity onPress={() => this._showFile(Message, false)}>
-                <View>
-                  {Message.type.includes('image') ? (
-                    <Image
-                      style={{
-                        alignSelf: 'flex-end',
-                        width: 150,
-                        height: 150,
-                        resizeMode: 'cover',
-                      }}
-                      source={{
-                        uri:
-                          settings.WEB_URL +
-                          'api/chatFiles/' +
-                          Message.src +
-                          '/' +
-                          Message.fileName,
-                      }}
-                    />
-                  ) : (
-                    <Icon
-                      style={{alignSelf: 'flex-end'}}
-                      name={'file-text'}
-                      size={50}
-                    />
-                  )}
+                <View> {Message.type.includes('image') ? (
+                  <Image
+                    style={styles.rightImage}
+                    source={{ uri: settings.WEB_URL + 'api/chatFiles/' + Message.src + '/' + Message.fileName, }}
+                  />
+                ) : (
+                  <Icon style={{ alignSelf: 'flex-end' }} name={'file-text'} size={50} />
+                )}
                   {/*  <Text
                                 style={{alignSelf: 'flex-end', color: colors.appLayout}}>{Message.fileName || ''}</Text> */}
                 </View>
               </TouchableOpacity>
             )}
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignSelf: 'flex-end',
-            }}>
-            <Text note>
-              {Moment(message.messageOn)
-                .local()
-                .format('hh:mm A')}
-            </Text>
+          <View style={styles.timeStyle}>
+            <Text note> {Moment(message.messageOn).local().format('hh:mm A')}</Text>
             {message.seen ? (
-              <MaterialIcon
-                name={'done-all'}
-                size={13}
-                style={{color: colors.appLayout, marginHorizontal: 5}}
-              />
+              <MaterialIcon name={'done-all'} size={13} style={{ color: colors.appLayout, marginHorizontal: 5 }} />
             ) : (
-              <MaterialIcon
-                name={'done'}
-                size={13}
-                style={{color: '#8E8E8E', marginHorizontal: 5}}
-              />
+              <MaterialIcon name={'done'} size={13} style={{ color: '#8E8E8E', marginHorizontal: 5 }} />
             )}
           </View>
         </View>
@@ -190,8 +147,8 @@ class Chat extends Component {
     let item = data.item;
     // console.log(item)
     return (
-      <ListItem key={data.index} style={{flexDirection: 'column'}}>
-        <Text style={{fontWeight: '500', color: colors.appLayout}}>
+      <ListItem key={data.index} style={{ flexDirection: 'column' }}>
+        <Text style={{ fontWeight: '500', color: colors.appLayout }}>
           {item._id}
         </Text>
         {item.messages.map((message, index) => this.getMessage(message))}
@@ -199,16 +156,16 @@ class Chat extends Component {
     );
   };
   _sendMessage = () => {
-    const chanelId = this.props.Channel.channelId;
+    const chanelId = this.props.route.params.Channel.channelId;
     if (this.state.message) {
       let Message = {
         channelId: chanelId,
-        data: {message: this.state.message, type: 'text'},
+        data: { message: this.state.message, type: 'text' },
       };
       this._saveMessageToServer(Message);
     }
     if (this.state.files.length > 0) {
-      this.setState({disable: true});
+      this.setState({ disable: true });
       this.state.files.map((file, index) => {
         Meteor.call('uploadChatFile', file, chanelId, (err, result) => {
           if (err) {
@@ -226,7 +183,7 @@ class Chat extends Component {
           }
         });
         if (this.state.files.length == index + 1)
-          this.setState({disable: false});
+          this.setState({ disable: false });
       });
     }
   };
@@ -318,29 +275,9 @@ class Chat extends Component {
   _removeFile = i => {
     let files = [...this.state.files];
     files.splice(i, 1);
-    this.setState({files});
+    this.setState({ files });
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: '',
-      files: [],
-      modalItem: '',
-      customModalVisible: false,
-      allowDelete: false,
-      height: 45,
-      messages: [],
-      disable: false,
-    };
-    this._sendMessage = this._sendMessage.bind(this);
-    this.viewabilityConfig = {
-      minimumViewTime: 100,
-      viewAreaCoveragePercentThreshold: 20,
-    };
-    this._onViewChange = this._onViewChange.bind(this);
-    this._showFile = this._showFile.bind(this);
-  }
   updateSize = height => {
     console.log(height);
     this.setState({
@@ -352,7 +289,7 @@ class Chat extends Component {
     console.log('removeTyping');
     Meteor.call(
       'addRemoveTyper',
-      this.props.Channel.channelId,
+      this.props.route.params.Channel.channelId,
       'remove',
       err => {
         if (err) {
@@ -364,54 +301,24 @@ class Chat extends Component {
 
   _handleTyping = () => {
     console.log('typing');
-    Meteor.call('addRemoveTyper', this.props.Channel.channelId, 'add', err => {
+    Meteor.call('addRemoveTyper', this.props.route.params.Channel.channelId, 'add', err => {
       if (err) {
         console.log(err.reason);
       }
     });
   };
   _saveMessageToServer(Message) {
-      this.setState({message: ''});
-    this.setState({disable: true});
+    this.setState({ message: '' });
+    this.setState({ disable: true });
     Meteor.call('addChatMessage', Message, err => {
-      this.setState({disable: false});
+      this.setState({ disable: false });
       if (err) {
-          // this.setState({message: Message.data.message});
+        // this.setState({message: Message.data.message});
       } else {
-        this.setState({message: ''});
+        this.setState({ message: '' });
         // this.flatList.scrollToOffset({offset: 0, animated: true});
       }
     });
-  }
-
-  componentDidMount() {}
-
-  componentWillReceiveProps(newProps) {
-    // if (this.props.messages.length !== newProps.messages.length) {
-    //     let sorteData = newProps.messages.sort((a, b) => {
-    //         if (Moment(a._id).isBefore(Moment(b._id))) {
-    //             return 1;
-    //         }
-    //         else {
-    //             return -1;
-    //         }
-    //     })
-    //     this.setState({messages: sorteData})
-    // }
-    // else {
-    this.setState({messages: newProps.messages});
-    // }
-  }
-
-  componentWillUnmount() {
-    this._handleNotTyping();
-  }
-  componentDidAppear() {
-    this.setState({messages: []});
-    this.setState({messages: this.props.messages});
-  }
-  componentDidDisappear() {
-    this._handleNotTyping();
   }
 
   _showFile = (file, allowDelete) => {
@@ -432,49 +339,51 @@ class Chat extends Component {
   };
 
   render() {
-    const {height} = this.state;
+    const { height } = this.state;
 
     let newStyle = {
       height,
     };
-    const channel = this.props.Channel;
+    const channel = this.props.route.params.Channel;
     return (
       <Container>
-        <Header  androidStatusBarColor={colors.statusBar} searchBar rounded style={{backgroundColor: colors.appLayout}}>
-          <Left style={{flexDirection: 'row'}}>
-            <Button
-              onPress={() => {
-                this.props.navigation.goBack();
-              }}
-              transparent>
-              <Icon name="arrow-left" color="white" size={25} />
-            </Button>
-            <Thumbnail
-              square
-              small
-              style={{borderRadius: 5, margin: 7}}
-              source={
-                channel.user.profileImage
-                  ? {uri: getProfileImage(channel.user.profileImage)}
-                  : require('../../images/user-icon.png')
-              }
-            />
-          </Left>
-          <Body>
-            <Text style={{color: 'white', fontSize: 18, fontWeight: '500'}}>
-              {channel.user.name || ''}
-            </Text>
-            <Text style={{color: 'white', fontSize: 14, fontWeight: '200'}}>
-              {channel.service.title || ''}
-            </Text>
-          </Body>
-          {/*<Left style={{margin: 7}}>*/}
+        <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
+          <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{ backgroundColor: colors.statusBar }}>
+            <Left style={{ flexDirection: 'row' }}>
+              <Button
+                onPress={() => {
+                  this.props.navigation.goBack();
+                }}
+                transparent>
+                <Icon name="arrow-left" color="white" size={25} />
+              </Button>
+              <Thumbnail
+                square
+                small
+                style={{ borderRadius: 5, margin: 7 }}
+                source={
+                  channel.user.profileImage
+                    ? { uri: getProfileImage(channel.user.profileImage) }
+                    : require('../../images/user-icon.png')
+                }
+              />
+            </Left>
+            <Body>
+              <Text style={{ color: 'white', fontSize: 18, fontWeight: '500' }}>
+                {channel.user.name || 'User'}
+              </Text>
+              <Text style={{ color: 'white', fontSize: 14, fontWeight: '200' }}>
+                {channel.business.businessName || ''}
+              </Text>
+            </Body>
+            {/*<Left style={{margin: 7}}>*/}
 
-          {/*</Left>*/}
-        </Header>
+            {/*</Left>*/}
+          </Header>
+        </View>
         <View style={styles.content}>
           <FlatList
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             inverted
             ref={ref => (this.flatList = ref)}
             // onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})}
@@ -487,15 +396,15 @@ class Chat extends Component {
             onViewableItemsChanged={this._onViewChange}
             viewabilityConfig={this.viewabilityConfig}
             onEndReachedThreshold={0.5}
-            onEndReached={info => {}}
+            onEndReached={info => { }}
           />
           {this.props.typerList.length > 0 ? (
-            <Text note style={{alignSelf: 'center'}}>
+            <Text note style={{ alignSelf: 'center' }}>
               {channel.user.name || ''} is <Icon name={'edit-3'} /> message...
             </Text>
           ) : null}
-          <View style={{maxHeight: '40%'}}>
-            <ScrollView style={{marginHorizontal: 10, flexGrow: 0}}>
+          <View style={{ maxHeight: '40%' }}>
+            <ScrollView style={{ marginHorizontal: 10, flexGrow: 0 }}>
               {this.state.files.map((file, index) => (
                 <TouchableOpacity
                   onPress={() => this._showFile(file, true)}
@@ -506,7 +415,7 @@ class Chat extends Component {
                       backgroundColor: '#5093b3',
                       flexDirection: 'row',
                     }}>
-                    <View style={{alignSelf: 'flex-start'}}>
+                    <View style={{ alignSelf: 'flex-start' }}>
                       {file.mime.includes('application/') ? (
                         <Icon name="file-text" size={50} />
                       ) : (
@@ -514,16 +423,16 @@ class Chat extends Component {
                           square
                           medium
                           onPress={() => this._showFile(file, true)}
-                          source={{uri: file.src}}
+                          source={{ uri: file.src }}
                         />
                       )}
                     </View>
-                    <View style={{alignSelf: 'center', width: '75%'}}>
-                      <Text style={{color: 'white'}} note>
+                    <View style={{ alignSelf: 'center', width: '75%' }}>
+                      <Text style={{ color: 'white' }} note>
                         {file.fileName}
                       </Text>
                     </View>
-                    <View style={{alignSelf: 'flex-end'}}>
+                    <View style={{ alignSelf: 'flex-end' }}>
                       <Button
                         transparent
                         style={
@@ -572,7 +481,7 @@ class Chat extends Component {
               newStyle,
             ]}
             onChangeText={message => {
-              this.setState({message});
+              this.setState({ message });
             }}
             onFocus={this._handleTyping.bind(this)}
             onBlur={this._handleNotTyping}
@@ -580,16 +489,16 @@ class Chat extends Component {
           />
 
           <View
-            style={{flexDirection: 'row', width: '30%', alignSelf: 'flex-end'}}>
+            style={{ flexDirection: 'row', width: '30%', alignSelf: 'flex-end' }}>
             <Button
               transparent
               onPress={this._senFile}
-              style={{marginHorizontal: 8}}>
+              style={{ marginHorizontal: 8 }}>
               <Icon name="paperclip" size={20} color="white" />
             </Button>
             <Button
               transparent
-              style={{marginHorizontal: 8}}
+              style={{ marginHorizontal: 8 }}
               onPress={this._sendImageCamera}>
               <Icon name="camera" size={20} color="white" />
             </Button>
@@ -597,7 +506,7 @@ class Chat extends Component {
               disabled={this.state.disable}
               transparent
               onPress={this._sendMessage}
-              style={{marginHorizontal: 8}}>
+              style={{ marginHorizontal: 8 }}>
               {/*<Icon                                     
                                     style={{color: this.state.message.length > 1 || this.state.files.length > 0 ? colors.appLayout : undefined}}
                                 name='send' size={20} color='white'/>*/}
@@ -610,15 +519,8 @@ class Chat extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  content: {
-    backgroundColor: colors.appBackground,
-    flex: 1,
-  },
-});
-
 export default Meteor.withTracker(props => {
-  let channel = props.Channel;
+  let channel = props.route.params.Channel;
   Meteor.subscribe('chatItemsGroupByDate', channel.channelId);
   Meteor.subscribe('chatUsers', channel.channelId);
   Meteor.subscribe('typerList', channel.channelId);
@@ -626,9 +528,53 @@ export default Meteor.withTracker(props => {
   return {
     messages: Meteor.collection('chatMessages').find(
       {},
-      {$sort: {nepaliDate: -1}},
+      { $sort: { nepaliDate: -1 } },
     ),
-    user: Meteor.collection('users').findOne({_id: channel.user.userId}),
+    user: Meteor.collection('users').findOne({ _id: channel.user.userId }),
     typerList: Meteor.collection('typingList').find(),
   };
 })(Chat);
+
+
+const styles = StyleSheet.create({
+  content: {
+    backgroundColor: colors.appBackground,
+    flex: 1,
+  },
+  leftMessage: {
+    marginRight: '20%',
+    marginLeft: '1%',
+    marginTop: 5,
+    maxWidth: '79%',
+    alignSelf: 'flex-start',
+  },
+
+  rightMessage: {
+    marginRight: '1%',
+    marginLeft: '20%',
+    marginTop: 5,
+    maxWidth: '79%',
+    flex: 1,
+    alignSelf: 'flex-end',
+  },
+  leftImage: {
+    alignSelf: 'flex-start',
+    width: 150,
+    height: 150,
+    resizeMode: 'cover',
+  },
+
+  rightImage: {
+    alignSelf: 'flex-end',
+    width: 150,
+    height: 150,
+    resizeMode: 'cover',
+  },
+  timeStyle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'flex-end'
+  }
+
+});

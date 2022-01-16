@@ -137,6 +137,39 @@ const StoreDetail = (props) => {
         getMyProducts(businessInfo.owner);
     }
 
+    const _getChatChannel = (userId) => {
+        return new Promise(function (resolve, reject) {
+            Meteor.call('addChatChannel', userId, function (error, result) {
+                if (error) {
+                    reject(error);
+                } else {
+                    // Now I can access `result` and make an assign `result` to variable `resultData`
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    const handleChat = (businesInfo) => {
+        console.log('service' + businesInfo._id);
+        
+        _getChatChannel(businesInfo._id).then(channelId => {
+            console.log(channelId);
+            let Channel = {
+                channelId: channelId,
+                user: {
+                    userId: businesInfo.createdBy,
+                    name: "",
+                    profileImage: null,
+                },
+                business: businesInfo
+            };
+            props.navigation.navigate("Message", { Channel });
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
     const _renderProducts = (data, index) => {
         let item = data.item;
         let isInWishlist = wishList.includes(item._id);
@@ -252,7 +285,7 @@ const StoreDetail = (props) => {
                         </View>
                     </View>
                     <View style={{ marginLeft: 'auto', marginTop: 15, paddingRight: 10 }}>
-                        <Icon name='message-square' style={{ fontSize: 30 }} onPress={() => props.navigation.navigate('Chat')}></Icon>
+                        <Icon name='message-square' style={{ fontSize: 30 }} onPress={() => handleChat(businessInfo)}></Icon>
                         <Text>Chat</Text>
                     </View>
                 </View>

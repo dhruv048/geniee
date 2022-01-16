@@ -38,7 +38,7 @@ Meteor.publish('aggChatChannels', function () {
                 _id: "$_id",
                 users: {$push: "$users"},
                 Users: {$push: "$Users"},
-                service: {$first: "$service"},
+                business: {$first: "$business"},
                 creator: {$first: "$creator"},
                 createDate: {$first: "$createDate"},
                 latest: {$first: "$allMessage"},
@@ -70,7 +70,7 @@ Meteor.publish('aggChatChannels', function () {
             "$project": {
                 "_id": 1,
                 "users": 1,
-                "service":1,
+                "business":1,
                 "creator": 1,
                 "createDate": 1,
                 "Users._id": 1,

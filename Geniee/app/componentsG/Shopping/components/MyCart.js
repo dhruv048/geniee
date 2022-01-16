@@ -9,7 +9,7 @@ import {
     Icon
 } from 'native-base';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Keyboard, View, Text, StyleSheet, FlatList, Alert, ToastAndroid, TouchableOpacity } from 'react-native';
+import { Keyboard, View, Text, StyleSheet, FlatList, Alert, ToastAndroid, TouchableOpacity, RefreshControl } from 'react-native';
 import { Button } from 'react-native-paper';
 import settings, { ProductOwner } from "../../../config/settings";
 import { colors } from '../../../config/styles';
@@ -18,19 +18,23 @@ import Meteor from '../../../react-native-meteor';
 import AsyncStorage from '@react-native-community/async-storage';
 import { customPaperTheme } from '../../../config/themes';
 import Loading from '../../../components/Loading/Loading';
+import { connect } from 'react-redux';
+import { cartItemSelector } from '../../../store/selectors/shopping';
+import shoppingHandlers from "../../../store/services/shopping/handlers";
 
 let cartList = [];
 const MyCart = (props) => {
     const [cartItems, setCartItems] = useState([]);
     const [liked, setLiked] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
-
+    const [isRefreshing, setIsRefreshing] = useState(true);
 
     useEffect(async () => {
         let products = [];
-        let mycart = await AsyncStorage.getItem('myCart');
+        //let mycart = await AsyncStorage.getItem('myCart');
+        let mycart = props.cartItems ? props.cartItems : [];
         if (mycart) {
-            mycart = JSON.parse(mycart);
+           // mycart = JSON.parse(mycart);
             mycart.forEach(item => {
                 products.push(item.id)
             }
@@ -70,6 +74,7 @@ const MyCart = (props) => {
                 });
                 setCartItems(res.result);
                 setTotalPrice(totalPrice);
+                setIsRefreshing(false);
             }
         });
     };
@@ -101,14 +106,18 @@ const MyCart = (props) => {
                 {
                     text: 'Yes', onPress: () => {
                         let index = cartItems.findIndex(item => item._id == Item._id);
+                        let _cartList= cartList.filter(item => item.id == Item._id);
                         if (index >= 0) {
                             cartItems.splice(index, 1);
 
                         }
                         let idx = cartList.findIndex(item => item.id == Item._id);
                         if (idx >= 0) {
-                            cartList.splice(idx, 1);
-                            AsyncStorage.setItem('myCart', JSON.stringify(cartList));
+                            cartList.splice(idx, 1);                          
+                            if(_cartList){
+                                shoppingHandlers.removeItemFromCart(_cartList);
+                            }
+                            //AsyncStorage.setItem('myCart', JSON.stringify(cartList));
                         }
                         ToastAndroid.showWithGravityAndOffset(
                             'Removed Successfully!!',
@@ -124,9 +133,14 @@ const MyCart = (props) => {
         )
     }
 
+    const onRefreshPage = () => {
+
+    }
+
     const handleCheckout = () => {
         console.log('Proceed to checkout');
-        props.navigation.navigate('Checkout')
+        //sending productOrder null as productorder will be from cartItems.
+        props.navigation.navigate('Checkout',{ productOrder: null })
     }
 
     const renderItems = (data, index) => {
@@ -178,7 +192,12 @@ const MyCart = (props) => {
 
     return (
         <Container style={styles.container}>
-            <Content style={{ backgroundColor: colors.appBackground }}>
+            <Content style={{ backgroundColor: colors.appBackground }}
+            refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={onRefreshPage} />
+              }>
                 <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
                     <Header
                         androidStatusBarColor={colors.statusBar}
@@ -243,7 +262,7 @@ const MyCart = (props) => {
     );
 }
 
-export default MyCart;
+export default connect(cartItemSelector)(MyCart);
 
 const styles = StyleSheet.create({
     container: {

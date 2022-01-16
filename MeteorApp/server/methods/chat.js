@@ -4,7 +4,31 @@ import {ChatChannels,TypingList,ChatItems} from "../../lib/collections/chat";
 
 
 Meteor.methods({
-    'addChatChannel': (ServiceId) => {
+    'addChatChannel': (businessId) => {
+        try {
+            let business=Business.findOne({_id:businessId});
+            let logged = Meteor.user();
+            let channel = ChatChannels.findOne({$and: [{'business.Id': businessId}, {users: logged._id}]});
+            if (channel) {
+                return channel._id;
+            }
+            else {
+                let ChatChannel = {
+                    users: [business.createdBy, logged._id],
+                    business:{Id:businessId,title:business.businessName},
+                    creator: logged._id,
+                    createDate: new Date(new Date().toUTCString()),
+                    lastMessage: null,
+                }
+                return ChatChannels.insert(ChatChannel);
+            }
+        }
+        catch (e) {
+            throw new Meteor.Error(500, e.message);
+        }
+    },
+
+    'addChatChannel_old': (ServiceId) => {
         try {
             let service=Service.findOne({_id:ServiceId});
             let logged = Meteor.user();

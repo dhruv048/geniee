@@ -34,14 +34,15 @@ class ChatList extends Component {
   }
 
   componentDidMount() {
-
     this.setState({ chatList: this.props.chatChannels });
   }
+
   handleBackButtonChat() {
     console.log('handlebackpressChatList');
     this.props.navigation.navigate('Home');
     return true;
   }
+
   componentDidAppear() {
     console.log('chalList Dsplayed');
     BackHandler.addEventListener(
@@ -117,10 +118,10 @@ class ChatList extends Component {
     let item = data.item;
     //console.log(item);
     item.Message = item.latestMessage ? item.latestMessage.messageData : null;
-    item.user = item.Users.find(item => item._id !== logged);
+    item.user = item.Users.find(item => item._id === logged);
 
     return (
-      <ChatListItem chatChannel={item} componentId={this.props.componentId} />
+      <ChatListItem chatChannel={item} componentId={this.props.componentId} navigation = {this.props.navigation} />
     );
   };
 
@@ -130,22 +131,11 @@ class ChatList extends Component {
         <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
           <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{ backgroundColor: colors.statusBar }}>
             <Left>
-              {/*<Button onPress={() => Navigation.pop(this.props.componentId)} transparent>*/}
-              {/*<Icon name='arrow-left' color='white' size={25}/>*/}
-              {/*</Button>*/}
-
               <CogMenu componentId={this.props.componentId} />
             </Left>
             <Body>
               <Text style={{ color: 'white' }}>Messages</Text>
             </Body>
-            {/*<Right style={{margin: 7}}>*/}
-            {/*<Button onPress={() => {*/}
-            {/*this.props.navigation.navigate('AddHospital')*/}
-            {/*}} transparent>*/}
-            {/*<Icon name='plus' color='white' size={25}/>*/}
-            {/*</Button>*/}
-            {/*</Right>*/}
           </Header>
         </View>
         <Content style={styles.content}>
