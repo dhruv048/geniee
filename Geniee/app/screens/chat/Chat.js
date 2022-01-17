@@ -373,7 +373,7 @@ class Chat extends Component {
                 {channel.user.name || 'User'}
               </Text>
               <Text style={{ color: 'white', fontSize: 14, fontWeight: '200' }}>
-                {channel.business.businessName || ''}
+                {channel.business.title || channel.business.businessName}
               </Text>
             </Body>
             {/*<Left style={{margin: 7}}>*/}
