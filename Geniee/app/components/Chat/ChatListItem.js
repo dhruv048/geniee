@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Image, View, Text } from 'react-native';
 import { List, Avatar, Paragraph, Badge, Caption } from 'react-native-paper';
 import StarRating from '../StarRating/StarRating';
-import { customGalioTheme } from '../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../config/themes';
 import { getProfileImage } from '../../config/settings';
 import Icon from 'react-native-vector-icons/Feather';
 import Meteor from '../../react-native-meteor';
@@ -24,10 +24,10 @@ const ChatListItem = (props) => {
             channelId: channel._id,
             user: {
                 userId: channel.user._id,
-                name: channel.user.profile.name || '',
+                name: channel.user.profile.firstName || '',
                 profileImage: channel.user.profile.profileImage || '',
             },
-            service: channel.service,
+            business: channel.business,
         };
         props.navigation.navigate('Message', { Channel: Channel });
     };
@@ -36,8 +36,9 @@ const ChatListItem = (props) => {
         <List.Item onPress={() => {
             _handlePress(chatChannel)
         }}
-            style={{ backgroundColor: customGalioTheme.COLORS.WHITE, marginBottom: 8,borderRadius: 4,}}
-            title={chatChannel.user.profile.name || 'User'}
+            style={{ backgroundColor: customGalioTheme.COLORS.WHITE, marginBottom: 8,borderRadius: 4}}
+            title={chatChannel.user.profile.firstName || 'User'}
+            titleStyle={{fontSize:16, fontWeight:'bold', color:customPaperTheme.GenieeColor.darkColor}}
             description={() => (
                 <View style={{}}>
                     {chatChannel.Message && chatChannel.Message.type == 'text' ? (
@@ -50,6 +51,7 @@ const ChatListItem = (props) => {
                     )}
                 </View>
             )}
+            descriptionStyle={{fontSize:16, fontWeight:'bold', color:customPaperTheme.GenieeColor.lightTextColor}}
             left={() => (
                 <View style={{ paddingHorizontal: 10 }}>
                     <Image

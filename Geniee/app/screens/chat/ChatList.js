@@ -22,6 +22,8 @@ import CogMenu from '../../components/CogMenu';
 import ChatListItem from '../../components/Chat/ChatListItem';
 import FooterTabs from '../../components/FooterTab';
 import { customPaperTheme } from '../../config/themes';
+import { Button as RNPButton} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Feather';
 
 class ChatList extends Component {
   constructor(props) {
@@ -105,10 +107,10 @@ class ChatList extends Component {
       channelId: channel._id,
       user: {
         userId: channel.user._id,
-        name: channel.user.profile.name || '',
+        name: channel.user.profile.firstName || '',
         profileImage: channel.user.profile.profileImage || '',
       },
-      service: channel.service,
+      business: channel.business,
     };
     this.props.navigation.navigate('Message', { Channel: Channel });
   };
@@ -118,7 +120,7 @@ class ChatList extends Component {
     let item = data.item;
     //console.log(item);
     item.Message = item.latestMessage ? item.latestMessage.messageData : null;
-    item.user = item.Users.find(item => item._id === logged);
+    item.user = item.Users.find(item => item._id !== logged);
 
     return (
       <ChatListItem chatChannel={item} componentId={this.props.componentId} navigation = {this.props.navigation} />
@@ -131,7 +133,13 @@ class ChatList extends Component {
         <View style={{ marginVertical: customPaperTheme.headerMarginVertical }}>
           <Header androidStatusBarColor={colors.statusBar} searchBar rounded style={{ backgroundColor: colors.statusBar }}>
             <Left>
-              <CogMenu componentId={this.props.componentId} />
+            <RNPButton
+                onPress={() => {
+                  this.props.navigation.goBack();
+                }}
+                transparent>
+                <Icon name="arrow-left" color="white" size={25} />
+              </RNPButton>
             </Left>
             <Body>
               <Text style={{ color: 'white' }}>Messages</Text>
