@@ -127,5 +127,16 @@ Meteor.methods({
         catch (e) {
             throw new Meteor.Error('500', e.message)
         }
+    },
+
+    'getAllChatItems' : (user) => {
+        try {
+            var currentUserId = user!= null ? user._id : Meteor.userId();
+            var data = ChatItems.find({ to: currentUserId }).fetch();
+            console.log('This is chatItem '+ data);
+            return data;
+        } catch(error){
+            throw new Meteor.Error('Please contact administrator');
+        }
     }
 })
