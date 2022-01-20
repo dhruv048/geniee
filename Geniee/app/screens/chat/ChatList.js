@@ -267,7 +267,7 @@ class ChatList extends Component {
             uppercase={false}
             style={{ width: '100%', alignItems: 'flex-start' }}
             onPress={() => {
-              navigation.goBack();
+              this.props.navigation.goBack();
             }}>
             <Icon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
             <Text style={{ color: colors.whiteText, fontSize: 20 }}>Inbox</Text>

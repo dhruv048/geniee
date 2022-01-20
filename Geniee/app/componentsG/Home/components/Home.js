@@ -757,7 +757,7 @@ const Home = props => {
                     mode="text"
                     uppercase={false}
                     onPress={() => {
-                      console.log('See All Prssed');
+                      props.navigation.navigate('AllProduct', { data: popularProducts })
                     }}>
                     <Text style={{ fontSize: 12 }}>See All</Text>
                     <Icon
