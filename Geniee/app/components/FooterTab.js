@@ -35,7 +35,7 @@ const FooterTabs = (props) => {
     getChatItems()
   })
 
-  const getBusinessInfo = useCallback(() => {
+  const getBusinessInfo = () => {
     merchantHandlers.getBusinessInfo(loggedUser, (res) => {
       if (res) {
         setMerchantUser(true);
@@ -43,7 +43,7 @@ const FooterTabs = (props) => {
         setMerchantUser(false);
       }
     })
-  },[])
+  }
 
   const getIndex = (routeName) => {
     return props.state.routes.findIndex(route => route.name == routeName)

@@ -72,12 +72,12 @@ class UploadProfilePic extends React.Component {
     _onImageChange=(image)=>{
         const uri=`data:${image.mime};base64,${image.data}`;
         image.name = Meteor.userId() + Moment().format('DDMMYYx') + '.' + image.mime.substr(image.mime.indexOf('/') + 1);
-        Meteor.call('uploadProfileImage', image, (err, result) => {
+        Meteor.call('uploadProfileImage', uri, (err, result) => {
                 if(!err) {
                     console.log(result);
                     this.setState({
                         // avatarSource:uri,
-                        avatarSource: uri,
+                        avatarSource: result,
                         //  avatarSource:{ uri:  image.path }
 
                     });
