@@ -68,11 +68,23 @@ const getAllProducts = (callBack) => {
   })
 }
 
+const getAllStores = (callBack) => {
+  Meteor.call('getPopularStores', (err, res) => {
+    if (err) {
+      console.log('Please contact administrator.')
+      callBack(err);
+    } else {
+      callBack(res);
+    }
+  })
+}
+
 export default {
   saveProduct,
   updateProduct,
   getBusinessList,
   getMyProducts,
   getStoreCategoriesWise,
-  getAllProducts
+  getAllProducts,
+  getAllStores
 }

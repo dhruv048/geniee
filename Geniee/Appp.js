@@ -73,6 +73,7 @@ import MerchantOrder from './app/componentsG/Merchant/component/MerchantOrder';
 import OrderTrack from './app/componentsG/Shopping/components/OrderTrack';
 import { BottomTab } from './app/componentsG/Shared/components/BottomTab';
 import AllProduct from './app/componentsG/ProductInfo/components/AllProduct';
+import AllStore from './app/componentsG/stores/AllStore';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -354,6 +355,7 @@ export default function Appp({ navigation }) {
                             <Stack.Screen name='MerchantOrder' component={MerchantOrder}></Stack.Screen>
                             <Stack.Screen name='OrderTrack' component={OrderTrack}></Stack.Screen>
                             <Stack.Screen name='AllProduct' component={AllProduct}></Stack.Screen>
+                            <Stack.Screen name='AllStore' component={AllStore}></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>

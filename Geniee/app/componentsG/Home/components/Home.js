@@ -167,7 +167,7 @@ const Home = props => {
           longitude: position.coords.longitude,
         };
         region = region;
-        //   _fetchNearByServices();
+          _fetchNearByServices();
       },
       error => {
         // See error code charts below.
@@ -226,7 +226,6 @@ const Home = props => {
   }, [])
 
   const _fetchNearByServices = () => {
-    console.log('_fetchNearByServices');
     const data = {
       skip: 0,
       limit: 10,
@@ -779,11 +778,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -806,191 +801,36 @@ const Home = props => {
             ) : null}
 
             {/*NEARBY SERVICE PROVIDERS LIST START*/}
-            {/* {nearByservice === '' ? null : nearByservice > 0 ? ( */}
-            <View style={styles.block}>
-              <View style={customStyle.blockHeader}>
-                <Text style={[styles.blockTitle, { fontSize: 16 }]}>
-                  Nearby Stores
-                </Text>
-                <RNPButton
-                  mode="text"
-                  uppercase={false}
-                  onPress={() =>
-                    props.navigation.navigate('ServiceList', {
-                      Region: region,
-                    })
-                  }>
-                  <Text style={{ fontSize: 10, color: colors.statusBar }}>
-                    See All
+              {storesList && storesList.length > 0 ? (
+              <View style={styles.block}>
+                <View style={styles.blockHeader}>
+                  <Text style={[styles.blockTitle, { fontSize: 16 }]}>
+                    Nearby Store
                   </Text>
-                  <Icon
-                    name="arrow-right"
-                    style={customStyle.blockHeaderArrow}
-                  />
-                </RNPButton>
+                  <RNPButton
+                    mode="text"
+                    uppercase={false}
+                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
+                    <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                      See All
+                    </Text>
+                    <Icon
+                      name="arrow-right"
+                      style={customStyle.blockHeaderArrow}
+                    />
+                  </RNPButton>
+                </View>
+                <FlatList
+                  contentContainerStyle={styles.popularProductsContentStyle}
+                  data={storesList}
+                  horizontal={true}
+                  keyExtractor={(item, index) => item._id}
+                  showsHorizontalScrollIndicator={false}
+                  //  numColumns={3}
+                  renderItem={(item, index) => _renderStore(item, index)}
+                />
               </View>
-              <FlatList
-                contentContainerStyle={{
-                  paddingBottom: 14,
-                  paddingLeft: 14,
-                  paddingRight: 14,
-                  marginTop: 15,
-                }}
-                data={nearByservice}
-                horizontal={true}
-                keyExtractor={(item, index) => item._id}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item, index }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      props.navigation.navigate('ServiceDetail', {
-                        Id: item,
-                      });
-                    }}>
-                    <View
-                      key={item._id}
-                      style={{
-                        backgroundColor: 'white',
-                        marginRight: 8,
-                        // height: 120,
-                        width: 310,
-                        flexDirection: 'column',
-                        // alignItems: 'center',
-                        // paddingHorizontal: 10,
-                        // paddingBottom: 10,
-                        borderRadius: 4,
-                      }}>
-                      <View style={{ height: 147, width: 310, borderRadius: 4 }}>
-                        <Thumbnail
-                          style={{
-                            width: 310,
-                            height: 147,
-                            marginBottom: 10,
-                            borderRadius: 4,
-                            resizeMode: 'cover',
-                          }}
-                          square
-                          source={
-                            item.coverImage
-                              ? { uri: settings.IMAGE_URL + item.coverImage }
-                              : require('../../../images/no-image.png')
-                          }
-                        />
-                        <LinearGradient
-                          colors={[
-                            'transparent',
-                            'rgba(0, 0, 0, 0.5)',
-                            'rgba(0, 0, 0, 0.6)',
-                          ]}
-                          style={{
-                            position: 'absolute',
-                            bottom: 0,
-                            width: '100%',
-                            padding: 5,
-                            paddingTop: 10,
-                            borderBottomLeftRadius: 5,
-                            borderBottomRightRadius: 5,
-                          }}>
-                          <Text style={{ color: 'white', fontSize: 15 }}>
-                            {item.title}
-                          </Text>
-                        </LinearGradient>
-                      </View>
-                      <View style={{ flexDirection: 'row', padding: 0 }}>
-                        <View
-                          style={{
-                            flex: 3,
-                            alignItems: 'flex-start',
-                          }}>
-                          {/*<Text style={styles.cardTitle} numberOfLines={1}>*/}
-                          {/*{item.title}*/}
-                          {/*</Text>*/}
-                          {item.category ? (
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              {/* <Icon
-
-                                                                    name={'tag'}
-                                                                    size={12}
-                                                                    color={colors.gray_100}
-                                                                /> */}
-
-                              <Text
-                                numberOfLines={1}
-                                style={customStyle.itemTitle}>
-                                {item.category.mainCategory || ''}
-                              </Text>
-                            </View>
-                          ) : null}
-                          {/*<Text note style={styles.cardNote}*/}
-                          {/*numberOfLines={1}>{item.location.formatted_address}</Text>*/}
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              // justifyContent: 'space-between',
-                              width: '100%',
-                            }}>
-                            <View
-                              style={{
-                                alignItem: 'center',
-                                flexDirection: 'row',
-                              }}>
-                              {/*<Icon name={'location-arrow'} size={18}*/}
-                              {/*color={colors.gray_200}/>*/}
-                              <Text
-                                note
-                                style={{
-                                  fontSize: 12,
-                                  color: colors.text_muted,
-                                }}>
-                                {Math.round(item.dist.calculated * 100) / 100}{' '}
-                                km away
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                marginLeft: 10,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <NBIcon
-                                name={'star'}
-                                style={{
-                                  fontSize: 14,
-                                  color: colors.text_muted,
-                                }}
-                              />
-                              <Text
-                                note
-                                style={{
-                                  fontSize: 12,
-                                  marginLeft: 4,
-                                  color: colors.text_muted,
-                                }}>
-                                {item.hasOwnProperty('ratings')
-                                  ? Math.round(item.Rating.avgRate)
-                                  : 1}{' '}
-                                (
-                                {item.hasOwnProperty('ratings')
-                                  ? tem.Rating.count
-                                  : 0}
-                                )
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-            {/* ) : null} */}
+            ) : null}
 
             {/*POPULAR STORE*/}
             {storesList && storesList.length > 0 ? (
@@ -1002,11 +842,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -1038,11 +874,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProduct })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -1074,11 +906,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProducts })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -1095,7 +923,7 @@ const Home = props => {
                   keyExtractor={(item, index) => item._id}
                   showsHorizontalScrollIndicator={false}
                   //  numColumns={3}
-                  renderItem={(item, index) => _renderStore(item, index)}
+                  renderItem={(item, index) => _renderProduct(item, index)}
                 />
               </View>
             ) : null}
@@ -1110,11 +938,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProducts })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -1146,11 +970,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -1162,7 +982,7 @@ const Home = props => {
                 </View>
                 <FlatList
                   contentContainerStyle={styles.popularProductsContentStyle}
-                  data={popularProducts}
+                  data={storesList}
                   horizontal={true}
                   keyExtractor={(item, index) => item._id}
                   showsHorizontalScrollIndicator={false}
@@ -1180,11 +1000,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>
-                      props.navigation.navigate('AllProducts', {
-                        Region: region,
-                      })
-                    }>
+                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProducts })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
                     <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
                   </RNPButton>

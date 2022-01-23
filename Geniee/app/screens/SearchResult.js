@@ -134,6 +134,14 @@ const SearchResult = (props) => {
             }
         });
 
+        // Meteor.call('searchBusiness', dataToSend, (err, res) => {
+        //     console.log(err, res);
+        //     if (!err) {
+        //         setLoading(false);
+        //         setServices(res.result)
+        //     }
+        // });
+
         Meteor.call('searchProducts', text, (err, res) => {
             console.log(err, res);
             if (!err) {
