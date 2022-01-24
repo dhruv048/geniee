@@ -35,12 +35,10 @@ Meteor.methods({
     'uploadProfileImage':  async (image) => {
         let userId = Meteor.userId();
         const imageUploaded =  await handleImageUpload(image);
-        console.log(imageUploaded+' This PP file name '+imageUploaded.fileName);
         const imageName = imageUploaded ? imageUploaded.fileName : '';
         Meteor.users.update({ _id: userId }, {
             $set: { 'profile.profileImage': imageName }
         })
-        console.log(imageUploaded+' This PP file name '+imageUploaded.fileName);
         return imageName;
 
     }

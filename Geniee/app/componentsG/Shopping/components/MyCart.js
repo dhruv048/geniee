@@ -73,9 +73,9 @@ const MyCart = (props) => {
                     console.log(shippingPrice, totalPrice);
                 });
                 setCartItems(res.result);
-                setTotalPrice(totalPrice);
-                setIsRefreshing(false);
+                setTotalPrice(totalPrice);              
             }
+            setIsRefreshing(false);
         });
     };
 
