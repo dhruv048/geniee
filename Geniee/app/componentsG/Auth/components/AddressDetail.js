@@ -82,16 +82,7 @@ const AddressDetail = (props) => {
                 setLoading(true);
                 authHandlers.handleSignUp(user, (res) => {
                     console.log('Result from register' + res);
-                    if (res.error) {
-                        console.log('result from signup error ' + res.reason);
-                        ToastAndroid.showWithGravityAndOffset(
-                            res.reason,
-                            ToastAndroid.LONG,
-                            ToastAndroid.TOP,
-                            0,
-                            50,
-                        );
-                    } else {
+                    if (res) {
                         // hack because react-native-meteor doesn't login right away after sign in
                         console.log('Result from register' + res);
                         ToastAndroid.showWithGravityAndOffset(
@@ -105,6 +96,16 @@ const AddressDetail = (props) => {
                         setLoading(false);
                         resetAddressDetailForm();
                         props.navigation.navigate('RegisterCompleted', { data: registerUser });
+
+                    } else {
+                        console.log('result from signup error ' + res.reason);
+                        ToastAndroid.showWithGravityAndOffset(
+                            res.reason,
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            50,
+                        );
                     }
                 });
                 setLoading(false);
@@ -132,7 +133,7 @@ const AddressDetail = (props) => {
             }
 
             delete location.address_components;
-            handleInputChange('location',location.formatted_address);
+            handleInputChange('location', location.formatted_address);
             //setLocation(location);
             handleInputChange('district', district.long_name);
             handleInputChange('city', city.long_name)
@@ -152,8 +153,8 @@ const AddressDetail = (props) => {
         let otpCode = generateOTPCode();
         let message = 'Your OTP code is ' + otpCode + ' for Geniee verification.';
         if (otpCode && mobileNumber) {
-            authHandlers.PostSendSMS(mobileNumber, message, (res) =>{
-                if(res){
+            authHandlers.PostSendSMS(mobileNumber, message, (res) => {
+                if (res) {
                     setsendOTPCode(otpCode);
                     ToastAndroid.showWithGravityAndOffset(
                         'OTP Code has been sent to register number.',
@@ -164,7 +165,7 @@ const AddressDetail = (props) => {
                     );
                 }
             })
-            
+
         }
     }
 

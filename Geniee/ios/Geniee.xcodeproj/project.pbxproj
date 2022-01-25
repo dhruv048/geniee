@@ -54,6 +54,14 @@
 		EEF678C9352C43B09B170580 /* DMSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B5A4BE19EB146CAA5D5A41A /* DMSans-Medium.ttf */; };
 		7D06AFB814BA49C1BD3665F8 /* DMSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC51D8F6BFA4850A117214B /* DMSans-MediumItalic.ttf */; };
 		FA5F6A7B645E4917819E6C91 /* DMSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEDC2D9DC45640A98098E8ED /* DMSans-Regular.ttf */; };
+		A4DC50046A524013ACF1D455 /* EudoxusSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86AB26C3741340A69E0FBD44 /* EudoxusSans-Bold.ttf */; };
+		AB88B847D57A4254B49DD988 /* EudoxusSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 76A55DED886C4831B0EE50BD /* EudoxusSans-Light.ttf */; };
+		D4925B48A80D4BFA85E91AB7 /* EudoxusSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 25D3B8722BD14E47B32D5292 /* EudoxusSans-Medium.ttf */; };
+		2587F46D6B8849158C25D1C1 /* EudoxusSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F00FA7C9CFF04F12815193CB /* EudoxusSans-Regular.ttf */; };
+		9C2C409EF5B64F91BE31DFBF /* Manrope-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B657663F23394A09ABFD2AC3 /* Manrope-Bold.ttf */; };
+		3C2923E492DE413BB96208C4 /* Manrope-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76074D0E68A4A85854CB4F9 /* Manrope-Light.ttf */; };
+		7AB6BFE2A8264FCA9F221C35 /* Manrope-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 544C7330191848D2BD42498F /* Manrope-Medium.ttf */; };
+		B6C881D9A87E4FD5B6446DF2 /* Manrope-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9EE518A67AEB48BEB847200F /* Manrope-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +128,14 @@
 		4B5A4BE19EB146CAA5D5A41A /* DMSans-Medium.ttf */ = {isa = PBXFileReference; name = "DMSans-Medium.ttf"; path = "../assets/fonts/DMSans-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		7FC51D8F6BFA4850A117214B /* DMSans-MediumItalic.ttf */ = {isa = PBXFileReference; name = "DMSans-MediumItalic.ttf"; path = "../assets/fonts/DMSans-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		BEDC2D9DC45640A98098E8ED /* DMSans-Regular.ttf */ = {isa = PBXFileReference; name = "DMSans-Regular.ttf"; path = "../assets/fonts/DMSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		86AB26C3741340A69E0FBD44 /* EudoxusSans-Bold.ttf */ = {isa = PBXFileReference; name = "EudoxusSans-Bold.ttf"; path = "../assets/fonts/EudoxusSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		76A55DED886C4831B0EE50BD /* EudoxusSans-Light.ttf */ = {isa = PBXFileReference; name = "EudoxusSans-Light.ttf"; path = "../assets/fonts/EudoxusSans-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		25D3B8722BD14E47B32D5292 /* EudoxusSans-Medium.ttf */ = {isa = PBXFileReference; name = "EudoxusSans-Medium.ttf"; path = "../assets/fonts/EudoxusSans-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F00FA7C9CFF04F12815193CB /* EudoxusSans-Regular.ttf */ = {isa = PBXFileReference; name = "EudoxusSans-Regular.ttf"; path = "../assets/fonts/EudoxusSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B657663F23394A09ABFD2AC3 /* Manrope-Bold.ttf */ = {isa = PBXFileReference; name = "Manrope-Bold.ttf"; path = "../assets/fonts/Manrope-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D76074D0E68A4A85854CB4F9 /* Manrope-Light.ttf */ = {isa = PBXFileReference; name = "Manrope-Light.ttf"; path = "../assets/fonts/Manrope-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		544C7330191848D2BD42498F /* Manrope-Medium.ttf */ = {isa = PBXFileReference; name = "Manrope-Medium.ttf"; path = "../assets/fonts/Manrope-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9EE518A67AEB48BEB847200F /* Manrope-Regular.ttf */ = {isa = PBXFileReference; name = "Manrope-Regular.ttf"; path = "../assets/fonts/Manrope-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,6 +270,14 @@
 				4B5A4BE19EB146CAA5D5A41A /* DMSans-Medium.ttf */,
 				7FC51D8F6BFA4850A117214B /* DMSans-MediumItalic.ttf */,
 				BEDC2D9DC45640A98098E8ED /* DMSans-Regular.ttf */,
+				86AB26C3741340A69E0FBD44 /* EudoxusSans-Bold.ttf */,
+				76A55DED886C4831B0EE50BD /* EudoxusSans-Light.ttf */,
+				25D3B8722BD14E47B32D5292 /* EudoxusSans-Medium.ttf */,
+				F00FA7C9CFF04F12815193CB /* EudoxusSans-Regular.ttf */,
+				B657663F23394A09ABFD2AC3 /* Manrope-Bold.ttf */,
+				D76074D0E68A4A85854CB4F9 /* Manrope-Light.ttf */,
+				544C7330191848D2BD42498F /* Manrope-Medium.ttf */,
+				9EE518A67AEB48BEB847200F /* Manrope-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -391,6 +415,14 @@
 				EEF678C9352C43B09B170580 /* DMSans-Medium.ttf in Resources */,
 				7D06AFB814BA49C1BD3665F8 /* DMSans-MediumItalic.ttf in Resources */,
 				FA5F6A7B645E4917819E6C91 /* DMSans-Regular.ttf in Resources */,
+				A4DC50046A524013ACF1D455 /* EudoxusSans-Bold.ttf in Resources */,
+				AB88B847D57A4254B49DD988 /* EudoxusSans-Light.ttf in Resources */,
+				D4925B48A80D4BFA85E91AB7 /* EudoxusSans-Medium.ttf in Resources */,
+				2587F46D6B8849158C25D1C1 /* EudoxusSans-Regular.ttf in Resources */,
+				9C2C409EF5B64F91BE31DFBF /* Manrope-Bold.ttf in Resources */,
+				3C2923E492DE413BB96208C4 /* Manrope-Light.ttf in Resources */,
+				7AB6BFE2A8264FCA9F221C35 /* Manrope-Medium.ttf in Resources */,
+				B6C881D9A87E4FD5B6446DF2 /* Manrope-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

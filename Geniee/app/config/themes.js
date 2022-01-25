@@ -1,7 +1,47 @@
-import {DefaultTheme} from 'react-native-paper';
+import { configureFonts, DefaultTheme } from 'react-native-paper';
+
+const fontConfig = {
+  manropeFont : {
+    regular: {
+      fontFamily: 'Manrope-Regular',
+      fontWeight: 'normal',
+    },
+    medium: {
+      fontFamily: 'Manrope-Medium',
+      fontWeight: 'normal',
+    },
+    light: {
+      fontFamily: 'Manrope-Light',
+      fontWeight: 'normal',
+    },
+    bold: {
+      fontFamily: 'Manrope-Bold',
+      fontWeight: 'normal',
+    },
+  },
+  eudoxusFont: {
+    regular: {
+      fontFamily: 'EudoxusSans-Regular',
+      fontWeight: 'normal',
+    },
+    medium: {
+      fontFamily: 'EudoxusSans-Medium',
+      fontWeight: 'normal',
+    },
+    light: {
+      fontFamily: 'EudoxusSans-Light',
+      fontWeight: 'normal',
+    },
+    bold: {
+      fontFamily: 'EudoxusSans-Bold',
+      fontWeight: 'normal',
+    },
+  }
+}
 
 export const customPaperTheme = {
   ...DefaultTheme,
+  fonts : configureFonts(fontConfig),
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
@@ -10,38 +50,42 @@ export const customPaperTheme = {
     text: 'rgba(0,0,0,0.6)',
     title: 'rgba(0,0,0,0.87)',
   },
-  fonts: {
-    regular: 'Roboto',
-    medium: 'Helvetica Neue Light',
+  // fonts: {
+  //   regular: 'Roboto',
+  //   medium: 'Helvetica Neue Light',
+  // },
+  GenieeButton: {
+    btnMaxWidth: '100%',
+    btnMinWidth: '55%',
+    btnHeight: '48',
+    btnTextSize : '18'
   },
-  GenieeButton : {
-    buttonMaxWidth :'100%',
-    buttonMinWidth :'55%',
-    buttonHeight : '48px' 
+  GenieeColor: {
+    primaryColor: '#3DA9FC',
+    lightPrimaryColor: '#F0F3FF',
+    pinkColor: '#FC2165',
+    lightDarkColor: '#DCDCDC',
+    lightTextColor: '#B8B8B8',
+    darkColor: '#353945',
+    yellowColor: '#FFC940'
   },
-  GenieeColor : {
-    primaryColor :'#3DA9FC',
-    lightPrimaryColor :'#F0F3FF',
-    pinkColor :'#FC2165',
-    lightDarkColor :'#DCDCDC',
-    lightTextColor :'#B8B8B8',
-    darkColor :'#353945',
-    yellowColor :'#FFC940'
+  GenieeText: {
+    fontBoldSize: 20,
+    fontMinSize: 12,
+    fontAverageSize: 14,
+    fontMaxSize: 18,
+    fontBoldWeight :'bold',
+    fontNormalWeight:'normal',
+    fontWeight_600:'600'
   },
-  GenieeText : {
-    boldFontSize : '20px',
-    boldFontWeight :'bold',
-    fontMinSize : 10,
-    fontMaxSize : 18,
+  GenieeInput: {
+    roundness: 6,
+    inputHeight: 45,
+    inputMaxWidth: '100%',
+    inputMinWidth: '55%',
+    inputFontSize: 18,
   },
-  GenieeInput : {
-    roundness : 6,
-    inputHeight : 45,
-    inputMaxWidth :'100%',
-    inputMinWidth : '55%',
-    inputFontSize : 18,
-  },
-  headerMarginVertical :'6%'
+  headerMarginVertical: '6%'
 };
 
 export const customGalioTheme = {

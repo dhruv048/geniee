@@ -167,7 +167,7 @@ const Home = props => {
           longitude: position.coords.longitude,
         };
         region = region;
-          _fetchNearByServices();
+        _fetchNearByServices();
       },
       error => {
         // See error code charts below.
@@ -678,16 +678,24 @@ const Home = props => {
                 style={{ height: 30, width: 80 }}
                 source={require('../../../images/geniee_logo.png')}
               />
-              <TouchableOpacity
-                style={{ marginHorizontal: 0, flexDirection: 'row' }}>
-                <FAIcon
-                  name="map-marker"
+              <View>
+                <TouchableOpacity
+                  style={{ marginHorizontal: 0, flexDirection: 'row', marginLeft:'auto' }}>
+                  <FAIcon
+                    name="map-marker"
+                    style={{
+                      color: colors.statusBar, fontSize: 20, marginRight: 8,
+                    }}
+                  />
+                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize}}>Kathmandu</Text>
+                </TouchableOpacity>
+                <Text uppercase={false}
                   style={{
-                    color: colors.statusBar, fontSize: 20, marginRight: 8,
-                  }}
-                />
-                <Text style={{ fontSize: 15 }}>Kathmandu</Text>
-              </TouchableOpacity>
+                    fontSize: 10, color: colors.statusBar, marginLeft: 65,
+                  }}>
+                  {Moment(currentDate).format('MMM Do YYYY')}{' '}
+                </Text>
+              </View>
             </View>
             <View style={{ marginHorizontal: 15 }}>
               <Image
@@ -778,7 +786,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
+                    onPress={() => props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -801,7 +809,7 @@ const Home = props => {
             ) : null}
 
             {/*NEARBY SERVICE PROVIDERS LIST START*/}
-              {storesList && storesList.length > 0 ? (
+            {storesList && storesList.length > 0 ? (
               <View style={styles.block}>
                 <View style={styles.blockHeader}>
                   <Text style={[styles.blockTitle, { fontSize: 16 }]}>
@@ -810,7 +818,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
+                    onPress={() => props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -842,7 +850,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
+                    onPress={() => props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -874,7 +882,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProduct })}>
+                    onPress={() => props.navigation.navigate('AllProduct', { data: popularProduct })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -906,7 +914,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProducts })}>
+                    onPress={() => props.navigation.navigate('AllProduct', { data: popularProducts })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -938,7 +946,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProducts })}>
+                    onPress={() => props.navigation.navigate('AllProduct', { data: popularProducts })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -970,7 +978,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllStore', { data: storesList })}>
+                    onPress={() => props.navigation.navigate('AllStore', { data: storesList })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>
                       See All
                     </Text>
@@ -1000,7 +1008,7 @@ const Home = props => {
                   <RNPButton
                     mode="text"
                     uppercase={false}
-                    onPress={() =>props.navigation.navigate('AllProduct', { data: popularProducts })}>
+                    onPress={() => props.navigation.navigate('AllProduct', { data: popularProducts })}>
                     <Text style={{ fontSize: 10, color: colors.statusBar }}>See All</Text>
                     <Icon name="arrow-right" style={customStyle.blockHeaderArrow} />
                   </RNPButton>
