@@ -75,7 +75,9 @@ const StoreDetail = (props) => {
         //set liked based on wishlist
         allProduct.map((item) => {
             setLiked(wishList.includes(item._id))
-        })
+        });
+
+        Meteor.call('updateBusinessViewCount', businessInfo._id);
     }, [])
 
     const _handleSearchText = () => {

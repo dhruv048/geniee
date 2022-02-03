@@ -408,7 +408,7 @@ const ProductInfo = (props) => {
                                             disabled={productImage.length === 4 ? true : false}
                                             style={{ height: 70, width: 70, borderWidth: 1, borderColor: 'grey' }}>
                                             <Image
-                                                source={require('Geniee/app/images/uploadimage.png')}
+                                                source={require('Geniee/app/images/upload.png')}
                                                 style={{ width: 65, height: 65, resizeMode: 'cover' }} />
                                         </TouchableOpacity>
                                     </View>

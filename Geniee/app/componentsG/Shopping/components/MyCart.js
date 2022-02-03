@@ -50,6 +50,7 @@ const MyCart = (props) => {
     const getCartItems = (products) => {
         if (products.length === 0) {
             setCartItems([]);
+            setIsRefreshing(false);
             return true;
         }
         Meteor.call('WishListItemsEF', products, (err, res) => {
@@ -73,9 +74,9 @@ const MyCart = (props) => {
                     console.log(shippingPrice, totalPrice);
                 });
                 setCartItems(res.result);
-                setTotalPrice(totalPrice);
-                setIsRefreshing(false);
+                setTotalPrice(totalPrice);              
             }
+            setIsRefreshing(false);
         });
     };
 

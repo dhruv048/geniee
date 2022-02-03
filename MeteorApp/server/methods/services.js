@@ -125,6 +125,21 @@ Meteor.methods({
         // }
     },
 
+    updateBusinessViewCount: (businessId) => {
+        let _business = Business.findOne(businessId);
+        if (_business) {
+            let views = _business.views || 0;
+            Business.update(
+                { _id: businessId },
+                {
+                    $set: {
+                        views: views + 1,
+                    },
+                }
+            );
+        }
+    },
+
     getBusinessInfo: (loggedUser) => {
 
         let user;
@@ -427,7 +442,7 @@ Meteor.methods({
     },
 
     getPopularStores: function () {
-        var data = Business.find({ businessTypes: { $in: [1,2,4] } }).fetch();
+        var data = Business.find({ businessTypes: { $in: [1,2,4] } },{sort: {views : -1}}).fetch();
         return data;
     },
 
@@ -884,6 +899,79 @@ Meteor.methods({
         }).fetch();
     },
 
+    getBusinessNearBy: (obj) => {
+        const collection = Business.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
+        const defaultUser = {
+            id: "000",
+            profile: { name: "", profileImage: null },
+        };
+
+        const OwnerLookup = {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users",
+        };
+
+        const addValues = {
+            Owner: {
+                $cond: {
+                    if: { $eq: ["$users", []] },
+                    then: defaultUser,
+                    else: { $arrayElemAt: ["$users", 0] },
+                },
+            },
+        };
+        const project = {
+            _id: 1,
+            createdAt: 1,
+            createdBy: 1,
+            Owner: 1,
+            owner: 1,
+            businessName: 1,
+            description: 1,
+            dist: 1,
+            email: 1,
+            fax: 1,
+            isPaid: 1,
+            location: 1,
+            contact: 1,
+            contact1: 1,
+            pbox: 1,
+            radius: 1,
+            website: 1,
+            coverImage: 1,
+        };
+        //  return Category.find().fetch();
+        return Async.runSync(function (done) {
+            aggregate(
+                [
+                    {
+                        $geoNear: {
+                            near: { type: "Point", coordinates: obj.coords },
+                            distanceField: "dist.calculated",
+                            spherical: true,
+                            distanceMultiplier: 0.001,
+                        },
+                    },
+                    { $limit: obj.skip + obj.limit },
+                    { $skip: obj.skip },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $project: project }
+                ],
+                { cursor: {} }
+            ).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
     getServicesNearBy: (obj) => {
         const collection = Service.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
@@ -892,22 +980,6 @@ Meteor.methods({
             id: "000",
             profile: { name: "", profileImage: null },
         };
-        // const categoryLookup = {
-        //     from: "MainCategories",
-        //     let: { catId: "$categoryId" },
-        //     pipeline: [
-        //         {
-        //             $match: {
-        //                 subCategories: {
-        //                     $elemMatch: {
-        //                         subCatId: "$$catId"
-        //                     },
-        //                 },
-        //             },
-        //         },
-        //     ],
-        //     as: "categories",
-        // };
 
         const categoryLookup = {
             from: "MainCategories",
@@ -1494,18 +1566,113 @@ Meteor.methods({
         });
     },
 
+    searchBusiness: (obj) => {
+        const collection = Business.rawCollection();
+        const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+        const defaultRating = { id: "000", avgRate: 1, count: 0 };
+        const defaultUser = {
+            id: "000",
+            profile: { name: "", profileImage: null },
+        };
+
+        const OwnerLookup = {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users",
+        };
+        const ServiceRatings = {
+            from: "ratings",
+            let: { serviceId: "$_id" },
+            pipeline: [
+                { $match: { $expr: { $eq: ["$serviceId", "$$serviceId"] } } },
+                {
+                    $group: {
+                        _id: "$_id",
+                        avgRate: { $avg: "$rating.count" },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $project: { avgRate: 1, count: 1 } },
+            ],
+            as: "servRatings",
+        };
+
+        const addValues = {
+            Rating: {
+                $cond: {
+                    if: { $eq: ["$servRatings", []] },
+                    then: defaultRating,
+                    else: { $arrayElemAt: ["$servRatings", 0] },
+                },
+            },
+            Owner: {
+                $cond: {
+                    if: { $eq: ["$users", []] },
+                    then: defaultUser,
+                    else: { $arrayElemAt: ["$users", 0] },
+                },
+            },
+        };
+        const project = {
+            _id: 1,
+            createdAt: 1,
+            createdBy: 1,
+            Rating: 1,
+            Owner: 1,
+            owner: 1,
+            businessName: 1,
+            description: 1,
+            dist: 1,
+            email: 1,
+            fax: 1,
+            isPaid: 1,
+            location: 1,
+            contact: 1,
+            contact1: 1,
+            pbox: 1,
+            radius: 1,
+            website: 1,
+            coverImage: 1,
+        };
+        //  return Category.find().fetch();
+        const query = { $text: { $search: obj.searchValue } };
+        return Async.runSync(function (done) {
+            aggregate(
+                [
+                    { $match: query },
+                    { $sort: { titleScore: { $meta: "textScore" } } },
+                    { $limit: 20 },
+                    { $skip: 0 },
+                    { $lookup: ServiceRatings },
+                    { $lookup: OwnerLookup },
+                    { $addFields: addValues },
+                    { $project: project }
+                ],
+                {
+                    cursor: {}
+                }
+            ).toArray(function (err, doc) {
+                if (doc) {
+                    //   console.log('doc', doc.length,doc)
+                }
+                done(err, doc);
+            });
+        });
+    },
+
     searchProducts: (searchValue) => {
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
         const OwnerLookup = {
-            from: "service",
-            localField: "service",
-            foreignField: "_id",
-            as: "services",
+            from: "business",
+            localField: "businessType",
+            foreignField: "businessTypes",
+            as: "business",
         };
         const addValues = {
-            Service: { $arrayElemAt: ["$services", 0] },
+            Business: { $arrayElemAt: ["$business", 0] },
         };
         return Async.runSync(function (done) {
             aggregate(
@@ -1530,7 +1697,7 @@ Meteor.methods({
 
 
     searchCategories: (searchValue) => {
-        const collection = MainCategories.rawCollection();
+        const collection = Categories.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
         const OwnerLookup = {
