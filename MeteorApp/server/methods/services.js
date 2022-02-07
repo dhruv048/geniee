@@ -895,7 +895,8 @@ Meteor.methods({
     getSimilarProduct: (Id) => {
         let product = Products.findOne({ _id: Id });
         return Products.find({
-            service: product.service,
+            //service: product.service,
+            businessType : product.businessType,
             _id: {
                 $ne: Id,
             },

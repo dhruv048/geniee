@@ -47,8 +47,6 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
                 "Owner.profile.name": 1,
                 "Owner.profile.profileImage": 1,
                 "Owner.profile.role": 1,
-                Owner:1,
-                Users:1,
                 title: 1,
                 description: 1,
                 navigateId: 1,

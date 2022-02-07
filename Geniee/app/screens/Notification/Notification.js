@@ -294,7 +294,7 @@ class Notification extends Component {
                             <Menu ref={ref => (this[`menu${item._id}`] = ref)}
                                   button={
                                       <Button transparent onPress={() => this[`menu${item._id}`].show()} style={{marginBottom:50}}>
-                                          <Icon name={'more-horizontal'} size={30} color={variables.gray_200}/>
+                                          <Icon name={'more-vertical'} size={30} color={variables.gray_200}/>
                                       </Button>}>
                                 <MenuItem onPress={() => {
                                     this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)
