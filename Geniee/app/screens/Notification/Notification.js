@@ -34,6 +34,52 @@ import DeviceInfo from "react-native-device-info";
 
 class Notification extends Component {
 
+    constructor(props) {
+        super(props);
+        this.mounted = false;
+        this.skip = 0;
+        this.viewabilityConfig = {
+            minimumViewTime: 100,
+            viewAreaCoveragePercentThreshold: 50
+        };
+        this.state = {
+            newNotifications: Meteor.collection('notificationDetail').find({seenBy: {$nin: [Meteor.userId()]}}),
+            earlyNotifications: Meteor.collection('notificationDetail').find({seenBy: Meteor.userId()}),
+            notifications: Meteor.collection('notificationDetail').find(),
+            loading: false
+        }
+        this.loggedUser = Meteor.user();
+        this.subHandle = null;
+        this.loadMore = false;
+    }
+
+    componentDidMount() {
+        const deviceId = DeviceInfo.getUniqueId();
+        this.subHandle = Meteor.subscribe("notificationWithLimit", 0, deviceId);
+        this.skip = this.skip + 20;
+        this.setState({
+            newNotifications: this.props.newNotifications,
+            earlyNotifications: this.props.earlyNotifications,
+            notifications: this.props.notifications
+        })
+        this._notificationPressed = this._notificationPressed.bind(this);
+    }
+
+    componentWillUnmount() {
+        if (this.subHandle)
+            this.subHandle.stop();
+        this.mounted = false;
+    }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.notifications.length != this.props.notifications.length) {
+            this.setState({
+                notifications: newProps.notifications
+            })
+        }
+
+    }
+
     _notificationPressed = (item) => {
         console.log('press',item);
         const deviceId = DeviceInfo.getUniqueId();
@@ -274,51 +320,6 @@ class Notification extends Component {
         }
     }
 
-    constructor(props) {
-        super(props);
-        this.mounted = false;
-        this.skip = 0;
-        this.viewabilityConfig = {
-            minimumViewTime: 100,
-            viewAreaCoveragePercentThreshold: 50
-        };
-        this.state = {
-            newNotifications: Meteor.collection('notificationDetail').find({seenBy: {$nin: [Meteor.userId()]}}),
-            earlyNotifications: Meteor.collection('notificationDetail').find({seenBy: Meteor.userId()}),
-            notifications: Meteor.collection('notificationDetail').find(),
-            loading: false
-        }
-        this.loggedUser = Meteor.user();
-        this.subHandle = null;
-        this.loadMore = false;
-    }
-
-    componentDidMount() {
-        const deviceId = DeviceInfo.getUniqueId();
-        this.subHandle = Meteor.subscribe("notificationWithLimit", 0, deviceId);
-        this.skip = this.skip + 20;
-        this.setState({
-            newNotifications: this.props.newNotifications,
-            earlyNotifications: this.props.earlyNotifications,
-            notifications: this.props.notifications
-        })
-        this._notificationPressed = this._notificationPressed.bind(this);
-    }
-
-    componentWillUnmount() {
-        if (this.subHandle)
-            this.subHandle.stop();
-        this.mounted = false;
-    }
-
-    componentWillReceiveProps(newProps) {
-        if (newProps.notifications.length != this.props.notifications.length) {
-            this.setState({
-                notifications: newProps.notifications
-            })
-        }
-
-    }
 
     clearAll = () => {
         console.log("clearAll")
@@ -350,11 +351,9 @@ class Notification extends Component {
     }
 
     render() {
-
-
         return (
             <Container>
-                <Header androidStatusBarColor={colors.statusBar} searchBar rounded
+                {/* <Header androidStatusBarColor={colors.statusBar} searchBar rounded
                         style={{backgroundColor: colors.appLayout}}>
                     <Left>
                         <Button onPress={() => this.props.navigation.goBack()
@@ -369,10 +368,9 @@ class Notification extends Component {
                     <Right>
                         <Button onPress={this.clearAll} transparent>
                             <Icon name='trash' color='white' size={18}/>
-                            {/* <Text>CLEAR ALL</Text> */}
                         </Button>
                     </Right>
-                </Header>
+                </Header> */}
                 <Content style={styles.content}>
                     {/*{this.state.newNotifications.length > 0 ?*/}
                     {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>New</Text> : null}*/}
