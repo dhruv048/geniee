@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     Container,
     Header,
@@ -19,17 +19,20 @@ import {
     FlatList,
     TouchableOpacity
 } from 'react-native';
-import {colors, variables} from "../../config/styles";
-import settings, {NotificationTypes, userType, getProfileImage, ProductOwner} from "../../config/settings";
+import { colors, variables } from "../../config/styles";
+import settings, { NotificationTypes, userType, getProfileImage, ProductOwner } from "../../config/settings";
 import Meteor from '../../react-native-meteor';
 import MyFunctions from "../../lib/MyFunctions";
 import Moment from 'moment';
 import Swipeable from "react-native-gesture-handler/Swipeable";
 // import DropdownAlert from 'react-native-dropdownalert';
-import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import Loading from "../../components/Loading/Loading";
-import {goBack, goToRoute} from '../../Navigation';
+import { goBack, goToRoute } from '../../Navigation';
 import DeviceInfo from "react-native-device-info";
+import { Image } from 'react-native';
+import { Button as RNPButton } from 'react-native-paper';
+import { customPaperTheme } from '../../config/themes';
 
 
 class Notification extends Component {
@@ -43,8 +46,8 @@ class Notification extends Component {
             viewAreaCoveragePercentThreshold: 50
         };
         this.state = {
-            newNotifications: Meteor.collection('notificationDetail').find({seenBy: {$nin: [Meteor.userId()]}}),
-            earlyNotifications: Meteor.collection('notificationDetail').find({seenBy: Meteor.userId()}),
+            newNotifications: Meteor.collection('notificationDetail').find({ seenBy: { $nin: [Meteor.userId()] } }),
+            earlyNotifications: Meteor.collection('notificationDetail').find({ seenBy: Meteor.userId() }),
             notifications: Meteor.collection('notificationDetail').find(),
             loading: false
         }
@@ -81,7 +84,7 @@ class Notification extends Component {
     }
 
     _notificationPressed = (item) => {
-        console.log('press',item);
+        console.log('press', item);
         const deviceId = DeviceInfo.getUniqueId();
         Meteor.call('updateNotificationSeen', [item._id], deviceId, (err) => {
             if (err) {
@@ -94,30 +97,30 @@ class Notification extends Component {
 
             case NotificationTypes.ADD_PRODUCT:
                 if (item.productOwner == ProductOwner.EAT_FIT)
-                    this.props.navigation.navigate( "ProductDetailEF", {Id: item.navigateId});
+                    this.props.navigation.navigate("ProductDetailEF", { Id: item.navigateId });
                 else
-                    this.props.navigation.navigate( "ProductDetail", {Id: item.navigateId});
+                    this.props.navigation.navigate("ProductDetail", { Id: item.navigateId });
                 break;
             case NotificationTypes.ADD_SERVICE:
-                this.props.navigation.navigate( "ServiceDetail", {Id: item.navigateId});
+                this.props.navigation.navigate("ServiceDetail", { Id: item.navigateId });
                 break;
             case NotificationTypes.RATE_SERVICE:
-                this.props.navigation.navigate( "ServiceRatings", {Id: item.navigateId});
-                 break;
+                this.props.navigation.navigate("ServiceRatings", { Id: item.navigateId });
+                break;
             case NotificationTypes.ORDER_DECLINED:
-                this.props.navigation.navigate( "OrderDetailOut", {Id: item.navigateId});
-                 break;
+                this.props.navigation.navigate("OrderDetailOut", { Id: item.navigateId });
+                break;
             case NotificationTypes.ORDER_CANCELLED:
-                this.props.navigation.navigate( "OrderDetailIn", {Id: item.navigateId});
-                 break;
+                this.props.navigation.navigate("OrderDetailIn", { Id: item.navigateId });
+                break;
             case NotificationTypes.ORDER_DISPATCHED:
-                this.props.navigation.navigate( "OrderDetailOut", {Id: item.navigateId});
-                 break;
+                this.props.navigation.navigate("OrderDetailOut", { Id: item.navigateId });
+                break;
             case NotificationTypes.ORDER_DELIVERED:
-                this.props.navigation.navigate( "OrderDetailOut", {Id: item.navigateId});
-                 break;
+                this.props.navigation.navigate("OrderDetailOut", { Id: item.navigateId });
+                break;
             case NotificationTypes.ORDER_REQUESTED:
-                this.props.navigation.navigate( "OrderDetailIn", {Id: item.navigateId});
+                this.props.navigation.navigate("OrderDetailIn", { Id: item.navigateId });
                 break;
         }
     }
@@ -141,7 +144,7 @@ class Notification extends Component {
                     profileImage: this.props.User.profile.profileImage
                 }
             }
-            this.props.navigation.navigate('Message', {Channel: Channel});
+            this.props.navigation.navigate('Message', { Channel: Channel });
         }).catch(error => {
             console.error(error);
         });
@@ -177,7 +180,7 @@ class Notification extends Component {
             outputRange: [0, 1],
         });
         return (
-            <View style={{backgroundColor: colors.appBackground, flex: 1}}>
+            <View style={{ backgroundColor: colors.appBackground, flex: 1 }}>
                 {/*<Animated.Text*/}
                 {/*style={{transform: [{ translateX: trans }]}}>*/}
                 {/*removing*/}
@@ -216,7 +219,12 @@ class Notification extends Component {
         )
     };
 
-    renderItem = (item) => {
+    handleNotificationPressed = (item) => {
+        this.NotificationMarkAsRead(item);
+        this._notificationPressed(item);
+    }
+    renderItem = (data) => {
+        let item = data;
         const logged = this.loggedUser ? this.loggedUser._id : Meteor._userIdSaved;
         if (item.owner == logged)
             return true;
@@ -224,91 +232,131 @@ class Notification extends Component {
         let seen = false;
         if (item.seenBy.includes(logged) || item.seenBy.includes(deviceId))
             seen = true;
-
         return (
-            <TouchableOpacity onPress={() => this._notificationPressed(item)}>
-                <View style={{
-                    borderWidth: 1,
-                    //borderColor: '#C8E3F5',
-                    borderColor: seen ? '#fff' : 'rgba(17,131, 131, .15)',
-                    backgroundColor: '#fff',
-                    marginBottom: 3,
-                    borderRadius: 4,
-                    paddingVertical: 15,
-                    paddingLeft: 15,
-                    paddingRight: 5,
-                    marginHorizontal: 15,
-                    flex: 1,
-                    flexDirection: 'row'
-                }}>
-                    <Left style={{flex: 0, alignSelf: 'flex-start', paddingTop: 4}}>
-                        {[].includes(item.type) ?
-                            <Thumbnail medium square style={{borderRadius: 5}}
-                                       source={require('../../images/logo.png')}/> :
-
-                            <Thumbnail square medium style={{borderRadius: 5}}
-                                       source={item.Owner.profile.profileImage ?
-                                           {uri: getProfileImage(item.Owner.profile.profileImage)}
-                                           : require('../../images/user-icon.png')}
-                            />}
-                    </Left>
-                    <Body style={{flex: 3, flexDirection: 'column', alignItems: 'flex-start', paddingHorizontal: 10}}>
-                    <Text style={{flex: 1, marginBottom: 3}}>
-                        <Label style={{
-                            fontSize: 14,
-                            fontWeight: "bold"
-                        }}>{[].includes(item.type) ? "Geniee" : item.Owner.profile.name}</Label>
-
-                        {item.type == NotificationTypes.ADD_SERVICE ?
-                            <Label style={{fontSize: 14}}> has started new service
-                                '{item.description}'. </Label> : null}
-                        {item.type == NotificationTypes.ADD_PRODUCT ?
-                            <Label style={{fontSize: 14}}> has added new product '{item.description}'. </Label> : null}
-                        {item.type == NotificationTypes.RATE_SERVICE ?
-                            <Label style={{fontSize: 14}}> has rated service '{item.description}'. </Label> : null}
-                        {item.type == 3 ?
-                            <Label style={{fontSize: 14}}> has written new article. </Label> : null}
-                        {item.type == 21 ?
-                            <Label style={{fontSize: 14}}> has added new products. </Label> : null}
-                        {item.type == 22 ?
-                            <Label style={{fontSize: 14}}> has added new news </Label> : null}
-                        {item.type == NotificationTypes.ORDER_DISPATCHED ?
-                            <Label style={{fontSize: 14}}> has dispatched your order. </Label> : null}
-                        {item.type == NotificationTypes.ORDER_DELIVERED ?
-                            <Label style={{fontSize: 14}}> has delivered your order. </Label> : null}
-                        {item.type == NotificationTypes.ORDER_CANCELLED ?
-                            <Label style={{fontSize: 14}}> has cancelled the order. </Label> : null}
-                        {item.type == NotificationTypes.ORDER_DECLINED ?
-                            <Label style={{fontSize: 14}}> has declined your order. </Label> : null}
-                        {item.type == NotificationTypes.ORDER_REQUESTED ?
-                            <Label style={{fontSize: 14}}> has placed new order </Label> : null}
-                    </Text>
-                    <Text style={{
-                        color: seen ? colors.gray_200 : colors.primaryText,
-                        fontSize: 13
-                    }}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
-                    </Body>
-                    <Right style={{flex: 0}}>
-                        <TouchableOpacity
-                            style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}>
-                            <Menu ref={ref => (this[`menu${item._id}`] = ref)}
-                                  button={
-                                      <Button transparent onPress={() => this[`menu${item._id}`].show()} style={{marginBottom:50}}>
-                                          <Icon name={'more-vertical'} size={30} color={variables.gray_200}/>
-                                      </Button>}>
-                                <MenuItem onPress={() => {
-                                    this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)
-                                }}> Mark as read</MenuItem>
-                                <MenuItem onPress={() => {
-                                    this[`menu${item._id}`].hide(), this.swipeLeft(item._id)
-                                }}> Remove</MenuItem>
-                            </Menu>
-                        </TouchableOpacity>
-                    </Right>
+            <View style={{ flex: 1, padding: 10, backgroundColor: seen ? customPaperTheme.GenieeColor.lightDarkColor : '' }}>
+                <View style={{ flexDirection: 'row', }}>
+                    {/* Image Section */}
+                    <Image
+                        style={styles.notificationImage}
+                        source={
+                            item.Owner.profile.profileImage
+                                ? { uri: settings.IMAGE_URLS + item.Owner.profile.profileImage } : require('../../images/user-icon.png')
+                        } />
+                    {/* Content Section */}
+                    <View style={{ marginLeft: 10, flex: 1 }}>
+                        <Text numberOfLines={2} style={styles.headerText}>{item.title}</Text>
+                        <Text numberOfLines={2} style={styles.subHeaderText}>{item.description}</Text>
+                    </View>
                 </View>
-            </TouchableOpacity>
-        )
-    };
+                {/* button section */}
+                {item.type === 0 || item.type === 11 ?
+                    <RNPButton
+                        mode='contained'
+                        uppercase={false}
+                        style={styles.buttonStyle}
+                        onPress={() => { this.handleNotificationPressed(item) }}
+                    >
+                        {item.type === 0 ? <Text>TrackOrder</Text> : <Text>Review</Text>}
+                    </RNPButton> :
+                    null
+                }
+            </View>
+        );
+    }
+
+    // renderItem = (item) => {
+    //     const logged = this.loggedUser ? this.loggedUser._id : Meteor._userIdSaved;
+    //     if (item.owner == logged)
+    //         return true;
+    //     const deviceId = DeviceInfo.getUniqueId();
+    //     let seen = false;
+    //     if (item.seenBy.includes(logged) || item.seenBy.includes(deviceId))
+    //         seen = true;
+
+    //     return (
+    //         <TouchableOpacity onPress={() => this._notificationPressed(item)}>
+    //             <View style={{
+    //                 borderWidth: 1,
+    //                 //borderColor: '#C8E3F5',
+    //                 borderColor: seen ? '#fff' : 'rgba(17,131, 131, .15)',
+    //                 backgroundColor: '#fff',
+    //                 marginBottom: 3,
+    //                 borderRadius: 4,
+    //                 paddingVertical: 15,
+    //                 paddingLeft: 15,
+    //                 paddingRight: 5,
+    //                 marginHorizontal: 15,
+    //                 flex: 1,
+    //                 flexDirection: 'row'
+    //             }}>
+    //                 <Left style={{flex: 0, alignSelf: 'flex-start', paddingTop: 4}}>
+    //                     {[].includes(item.type) ?
+    //                         <Thumbnail medium square style={{borderRadius: 5}}
+    //                                    source={require('../../images/logo.png')}/> :
+
+    //                         <Thumbnail square medium style={{borderRadius: 5}}
+    //                                    source={item.Owner.profile.profileImage ?
+    //                                        {uri: getProfileImage(item.Owner.profile.profileImage)}
+    //                                        : require('../../images/user-icon.png')}
+    //                         />}
+    //                 </Left>
+    //                 <Body style={{flex: 3, flexDirection: 'column', alignItems: 'flex-start', paddingHorizontal: 10}}>
+    //                 <Text style={{flex: 1, marginBottom: 3}}>
+    //                     <Label style={{
+    //                         fontSize: 14,
+    //                         fontWeight: "bold"
+    //                     }}>{[].includes(item.type) ? "Geniee" : item.Owner.profile.name}</Label>
+
+    //                     {item.type == NotificationTypes.ADD_SERVICE ?
+    //                         <Label style={{fontSize: 14}}> has started new service
+    //                             '{item.description}'. </Label> : null}
+    //                     {item.type == NotificationTypes.ADD_PRODUCT ?
+    //                         <Label style={{fontSize: 14}}> has added new product '{item.description}'. </Label> : null}
+    //                     {item.type == NotificationTypes.RATE_SERVICE ?
+    //                         <Label style={{fontSize: 14}}> has rated service '{item.description}'. </Label> : null}
+    //                     {item.type == 3 ?
+    //                         <Label style={{fontSize: 14}}> has written new article. </Label> : null}
+    //                     {item.type == 21 ?
+    //                         <Label style={{fontSize: 14}}> has added new products. </Label> : null}
+    //                     {item.type == 22 ?
+    //                         <Label style={{fontSize: 14}}> has added new news </Label> : null}
+    //                     {item.type == NotificationTypes.ORDER_DISPATCHED ?
+    //                         <Label style={{fontSize: 14}}> has dispatched your order. </Label> : null}
+    //                     {item.type == NotificationTypes.ORDER_DELIVERED ?
+    //                         <Label style={{fontSize: 14}}> has delivered your order. </Label> : null}
+    //                     {item.type == NotificationTypes.ORDER_CANCELLED ?
+    //                         <Label style={{fontSize: 14}}> has cancelled the order. </Label> : null}
+    //                     {item.type == NotificationTypes.ORDER_DECLINED ?
+    //                         <Label style={{fontSize: 14}}> has declined your order. </Label> : null}
+    //                     {item.type == NotificationTypes.ORDER_REQUESTED ?
+    //                         <Label style={{fontSize: 14}}> has placed new order </Label> : null}
+    //                 </Text>
+    //                 <Text style={{
+    //                     color: seen ? colors.gray_200 : colors.primaryText,
+    //                     fontSize: 13
+    //                 }}>{Moment(item.createdAt).format('DD-MMM-YYYY hh:mm a')}</Text>
+    //                 </Body>
+    //                 <Right style={{flex: 0}}>
+    //                     <TouchableOpacity
+    //                         style={{width: 38, height: 38, justifyContent: 'center', alignItems: 'center'}}>
+    //                         <Menu ref={ref => (this[`menu${item._id}`] = ref)}
+    //                               button={
+    //                                   <Button transparent onPress={() => this[`menu${item._id}`].show()} style={{marginBottom:50}}>
+    //                                       <Icon name={'more-vertical'} size={30} color={variables.gray_200}/>
+    //                                   </Button>}>
+    //                             <MenuItem onPress={() => {
+    //                                 this[`menu${item._id}`].hide(), this.NotificationMarkAsRead(item)
+    //                             }}> Mark as read</MenuItem>
+    //                             <MenuItem onPress={() => {
+    //                                 this[`menu${item._id}`].hide(), this.swipeLeft(item._id)
+    //                             }}> Remove</MenuItem>
+    //                         </Menu>
+    //                     </TouchableOpacity>
+    //                 </Right>
+    //             </View>
+    //         </TouchableOpacity>
+    //     )
+    // };
     _handleEndReach = (data) => {
         if (!this.loadMore) {
             this.loadMore = true;
@@ -353,27 +401,7 @@ class Notification extends Component {
     render() {
         return (
             <Container>
-                {/* <Header androidStatusBarColor={colors.statusBar} searchBar rounded
-                        style={{backgroundColor: colors.appLayout}}>
-                    <Left>
-                        <Button onPress={() => this.props.navigation.goBack()
-                        } transparent>
-                            <Icon name="arrow-left" color='white' size={24}/>
-                        </Button>
-                    </Left>
-                    <Body>
-                    <Title>Notification</Title>
-                    </Body>
-                    <Right/>
-                    <Right>
-                        <Button onPress={this.clearAll} transparent>
-                            <Icon name='trash' color='white' size={18}/>
-                        </Button>
-                    </Right>
-                </Header> */}
                 <Content style={styles.content}>
-                    {/*{this.state.newNotifications.length > 0 ?*/}
-                    {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>New</Text> : null}*/}
                     <FlatList
                         data={this.state.notifications}
                         renderItem={this._renderNotification}
@@ -381,25 +409,13 @@ class Notification extends Component {
                         onEndReached={this._handleEndReach}
                         onEndReachedThreshold={0.5}
                         keyboardShouldPersistTaps='always'
-                        // onViewableItemsChanged={this._onViewChange}
-                        // viewabilityConfig={this.viewabilityConfig}
+                    // onViewableItemsChanged={this._onViewChange}
+                    // viewabilityConfig={this.viewabilityConfig}
                     />
-                    {/*{this.state.earlyNotifications.length > 0 ?*/}
-                    {/*<Text style={{paddingHorizontal: 15, paddingTop: 15, paddingBottom: 7}}>Earlier</Text> : null}*/}
-                    {/*<FlatList*/}
-                    {/*data={this.state.earlyNotifications}*/}
-                    {/*renderItem={this._renderEarly}*/}
-                    {/*keyExtracter={(item) => item._id}*/}
-                    {/*onEndReached={this._handleEndReach}*/}
-                    {/*onEndReachedThreshold={0.5}*/}
-                    {/*keyboardShouldPersistTaps='always'*/}
-                    {/*// onViewableItemsChanged={this._onViewChange}*/}
-                    {/*// viewabilityConfig={this.viewabilityConfig}*/}
-                    {/*/>*/}
 
                 </Content>
                 {this.state.loading ?
-                    <Loading/> : null
+                    <Loading /> : null
                 }
                 {/*<DropdownAlert ref={ref => this.dropDownAlertRef = ref}/>*/}
             </Container>
@@ -413,14 +429,37 @@ const styles = StyleSheet.create({
         backgroundColor: colors.appBackground,
         flex: 1,
         paddingTop: 10
+    },
+    notificationImage: {
+        height: 60,
+        width: 60,
+        resizeMode: 'cover',
+        borderRadius: 4,
+        marginBottom: 8,
+    },
+    headerText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: customPaperTheme.GenieeColor.darkColor
+    },
+    subHeaderText: {
+        fontSize: 14,
+        color: customPaperTheme.GenieeColor.lightTextColor
+    },
+    buttonStyle: {
+        width: '40%',
+        height: 36,
+        marginLeft: '20%',
+        backgroundColor: customPaperTheme.GenieeColor.primaryColor,
+        color: 'white'
     }
 });
 
 export default Meteor.withTracker(() => {
     const logged = Meteor.userId();
     return {
-        newNotifications: Meteor.collection('notificationDetail').find({seenBy: {$nin: [logged]}}),
-        earlyNotifications: Meteor.collection('notificationDetail').find({seenBy: logged}),
+        newNotifications: Meteor.collection('notificationDetail').find({ seenBy: { $nin: [logged] } }),
+        earlyNotifications: Meteor.collection('notificationDetail').find({ seenBy: logged }),
         notifications: Meteor.collection('notificationDetail').find(),
     }
 
