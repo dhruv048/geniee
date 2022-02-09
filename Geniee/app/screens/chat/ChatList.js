@@ -26,6 +26,8 @@ import { customPaperTheme } from '../../config/themes';
 import { Button as RNPButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import settings from '../../config/settings';
+import Notification from '../Notification/Notification';
+import DeviceInfo from "react-native-device-info";
 
 class ChatList extends Component {
 
@@ -72,6 +74,7 @@ class ChatList extends Component {
 
   componentDidMount() {
     this.setState({ chatList: this.props.chatChannels });
+
   }
 
   handleBackButtonChat() {
@@ -239,14 +242,14 @@ class ChatList extends Component {
               ? { uri: settings.IMAGE_URLS + item.image } : require('../../images/user-icon.png')
           } />
         {/* Content Section */}
-        <View style={{ marginLeft: 10, flex: 1, marginVertical:10 }}>
+        <View style={{ marginLeft: 10, flex: 1, marginVertical: 10 }}>
           <Text numberOfLines={2} style={[styles.headerText]}>{item.title}</Text>
         </View>
         {/* button section */}
         <RNPButton
           mode='contained'
           uppercase={false}
-          style={{width:'40%', height:36, backgroundColor:customPaperTheme.GenieeColor.primaryColor}}
+          style={{ width: '40%', height: 36, backgroundColor: customPaperTheme.GenieeColor.primaryColor }}
           onPress={() => this.handleViewStore()}
         >
           <Text>ViewStore</Text>
@@ -315,11 +318,12 @@ class ChatList extends Component {
             </View>
             : this.state.notificationButtonActive ?
               <View style={{ flex: 1, paddingVertical: 10 }}>
-                <FlatList
-                  data={this.announceList}
+                <Notification navigation={this.props.navigation} />
+                {/* <FlatList
+                  data={this.state.notifications}
                   renderItem={this.renderNotification}
                   keyExtractor={item => item._id}
-                />
+                /> */}
               </View>
               : <View style={{ flex: 1, paddingVertical: 10 }}>
                 <FlatList

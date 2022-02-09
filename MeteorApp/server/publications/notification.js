@@ -3,7 +3,7 @@ import {Notification} from "../../lib/collections/notification";
 import {NotificationTypes} from "../../lib/utils";
 
 Meteor.publish('getNotification', () => {
-    return Notification.find({receiver: this.userId});
+    return Notification.find({receiver:{$in :[this.userId,[]]}});
 })
 
 Meteor.publish('notificationWithLimit', function (skip,deviceId) {
@@ -17,7 +17,7 @@ Meteor.publish('notificationWithLimit', function (skip,deviceId) {
                     {
                         $or: [
                             {type: {$in: [NotificationTypes.ADD_SERVICE,NotificationTypes.ADD_PRODUCT,21,22]}},
-                            {receiver:logged}
+                            {receiver:{$in : [logged, []]}}
                         ]
                     },
                     {removedBy: {$nin: [logged,deviceId]}}

@@ -109,6 +109,7 @@ Meteor.methods({
                 receiver: [],
                 removedBy: [],
                 type: NotificationTypes.ADD_SERVICE,
+                image : businessInfo.coverImage
             };
             Meteor.call("addNotification", notification);
             return res;
@@ -614,7 +615,7 @@ Meteor.methods({
                         FIREBASE_MESSAGING.notificationToAll(
                             "newPoductStaging",
                             // `New Product by - ${_service.title}`,
-                            `New Product by - ${productInfo.productTitle}`,
+                            `New Product Added - ${productInfo.productTitle}`,
                             productInfo.productTitle,
                             {
                                 Id: pId,
@@ -630,8 +631,8 @@ Meteor.methods({
                     }
                     const notification = {
                         // title: `New Product by- ${_service.title}`,
-                        title: `New Product by- ${productInfo.productTitle}`,
-                        description: productInfo.productTitle,
+                        title: `New Product Added - ${productInfo.productTitle}`,
+                        description: productInfo.description,
                         owner: productInfo.owner,
                         navigateId: pId,
                         productOwner:
@@ -639,6 +640,7 @@ Meteor.methods({
                         receiver: [],
                         removedBy: [],
                         type: NotificationTypes.ADD_PRODUCT,
+                        image: imageIds
                     };
                     Meteor.call(
                         "addNotification",
@@ -654,7 +656,7 @@ Meteor.methods({
                     FIREBASE_MESSAGING.notificationToAll(
                         "newPoductStaging",
                         // `New Product by - ${_service.title}`,
-                        `New Product by - ${productInfo.productTitle}`,
+                        `New Product Added - ${productInfo.productTitle}`,
                         productInfo.productTitle,
                         {
                             Id: pId,
@@ -668,13 +670,14 @@ Meteor.methods({
                 const notification = {
                     // title: `New Product by- ${_service.title}`,
                     title: `New Product by- ${productInfo.productTitle}`,
-                    description: productInfo.productTitle,
+                    description: productInfo.description,
                     owner: productInfo.owner,
                     navigateId: pId,
                     productOwner: ProductOwner.REGULAR_USERS,
                     receiver: [],
                     removedBy: [],
                     type: NotificationTypes.ADD_PRODUCT,
+                    image: imageIds
                 };
                 Meteor.call("addNotification", notification);
                 return pId;
@@ -892,7 +895,8 @@ Meteor.methods({
     getSimilarProduct: (Id) => {
         let product = Products.findOne({ _id: Id });
         return Products.find({
-            service: product.service,
+            //service: product.service,
+            businessType : product.businessType,
             _id: {
                 $ne: Id,
             },

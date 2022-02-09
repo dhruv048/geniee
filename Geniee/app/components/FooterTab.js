@@ -99,11 +99,11 @@ const FooterTab = (props) => {
             <Button transparent style={styles.btnTab}
               onPress={() => handleDashboard()}
             >
-              <AIcon name="home" style={{ color: props.selectedTab == 'Home' || props.selectedTab == 'MerchantDashboard' ? colors.statusBar : colors.gray_200, }} size={25} ></AIcon>
+              <AIcon name="home" style={{ color: props.state.index == getIndex('Home') || props.state.index == getIndex('MerchantDashboard') ? colors.statusBar : colors.gray_200, }} size={25} ></AIcon>
               {merchantUser ?
-                <Text note style={{ color: props.selectedTab == 'MerchantDashboard' ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Dash</Text>
+                <Text note style={{ color: props.state.index == getIndex('MerchantDashboard') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Dash</Text>
                 :
-                <Text note style={{ color: props.selectedTab == 'Home' ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Home</Text>
+                <Text note style={{ color: props.state.index == getIndex('Home') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Home</Text>
               }
             </Button >
           </View>
@@ -111,8 +111,8 @@ const FooterTab = (props) => {
             <Button transparent style={styles.btnTab}
               onPress={() => props.navigation.navigate('Chat')}
             >
-              <AIcon name="message1" style={{ color: props.selectedTab == 'Chat' ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
-              <Text note style={{ color: props.selectedTab == 'Chat' ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Message</Text>
+              <AIcon name="message1" style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
+              <Text note style={{ color: props.state.index == getIndex('Chat') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Message</Text>
             </Button>
             {unreadChatCount > 0 ? (
               <Badge style={{ position: 'absolute', top: -8, left: 36, borderWidth: 1 }}>
@@ -144,8 +144,8 @@ const FooterTab = (props) => {
             <Button transparent style={styles.btnTab}
               onPress={() => handleAccount()}
             >
-              <AIcon name="user" style={{ color: props.selectedTab == 'MyAccount' ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
-              <Text note style={{ color: props.selectedTab == 'MyAccount' ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Account</Text>
+              <AIcon name="user" style={{ color: props.state.index == getIndex('MyAccount') ? colors.statusBar : colors.gray_200 }} size={25}></AIcon>
+              <Text note style={{ color: props.state.index == getIndex('MyAccount') ? colors.statusBar : colors.gray_200, fontSize: 8 }}>Account</Text>
             </Button>
           </View>
         </View>
