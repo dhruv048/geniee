@@ -342,6 +342,17 @@ Meteor.methods({
         };
     },
 
+    'getUserCount': () => {
+        const users = Meteor.users.find().fetch();
+        const usersCount = users.length;
+        // console.log(user)
+        if (usersCount)
+            return Async.runSync(function (done) {
+                done(null, usersCount);
+            });
+
+    },
+
 });
 const pluckAddresses = (emails = []) => emails.map(email => email.address);
 const randomNum = () => {

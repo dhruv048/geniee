@@ -59,7 +59,7 @@ import CartIcon from '../../../components/HeaderIcons/CartIcon';
 import { customPaperTheme } from '../../../config/themes';
 import { MaterialColors } from '../../../constants/material-colors';
 import { Button as RNPButton } from 'react-native-paper';
-import { lowerCase } from 'lodash';
+import { lowerCase, set } from 'lodash';
 import Moment from 'moment';
 import Data from '../../../react-native-meteor/Data';
 import { connect } from 'react-redux';
@@ -91,6 +91,9 @@ const Home = props => {
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
   const [storesList, setStoresList] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(true);
+  const [timeForBanner, setTimeForBanner] = useState();
+  const [userCount, setUserCount] = useState(0);
+  const [displayUserCount, setDisplayUserCount] = useState(true);
 
   const currentDate = new Date();
   let arrayholder;
@@ -185,6 +188,18 @@ const Home = props => {
     //     setResturants(res, [...resturants, res]);
     //   }
     // });
+
+    Meteor.call('getUserCount', (err, res) => {
+      if (res) {
+        setUserCount(res.result);
+      }
+    })
+
+    //Timer
+    let end = moment(currentDate).add(5, 'days');
+    let duration = moment.duration(end.diff(currentDate, 'days'));
+    let hours = duration.asHours();
+    setTimeForBanner(duration);
 
   }, []);
 
@@ -680,14 +695,14 @@ const Home = props => {
               />
               <View>
                 <TouchableOpacity
-                  style={{ marginHorizontal: 0, flexDirection: 'row', marginLeft:'auto' }}>
+                  style={{ marginHorizontal: 0, flexDirection: 'row', marginLeft: 'auto' }}>
                   <FAIcon
                     name="map-marker"
                     style={{
                       color: colors.statusBar, fontSize: 20, marginRight: 8,
                     }}
                   />
-                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize}}>Kathmandu</Text>
+                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize }}>Kathmandu</Text>
                 </TouchableOpacity>
                 <Text uppercase={false}
                   style={{
@@ -703,7 +718,46 @@ const Home = props => {
                 source={require('../../../images/geniee_banner.png')}
               />
             </View>
-            <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+            <View style={{ position: 'absolute', top: 225, left: 130, backgroundColor: '#FFE5E5', width: 90, height: 25, borderRadius: 6 }}>
+              <Text style={{ color: 'red', textAlign: 'center', justifyContent: 'center' }} >{Moment(timeForBanner).format('HH:mm:ss')}</Text>
+            </View>
+            {displayUserCount ? <View>
+              <TouchableOpacity
+                onPress={() => {
+                  loggedUser
+                    ? props.navigation.navigate('BecomeSeller', {
+                      data: loggedUser,
+                    })
+                    : props.navigation.navigate('SignIn');
+                }}
+                style={{
+                  flexDirection: 'row',
+                  marginVertical: 20,
+                  marginHorizontal: 15,
+                  height: 70,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  borderColor: customPaperTheme.GenieeColor.primaryColor
+                }}>
+                <Image
+                  style={{
+                    height: 40,
+                    width: 40,
+                    resizeMode: 'cover',
+                    marginHorizontal: 10,
+                    marginTop: 15
+                  }}
+                  source={require('../../../images/Avatar.png')}
+                />
+                <Text style={{
+                  flex: 1,
+                  marginTop: 15,
+                  fontSize: 16
+                }}>Become a merchant and reach {userCount}+ customers.</Text>
+                <FAIcon name='x' style={{ fontSize: 18, marginTop: 10, marginRight: 10 }} onPress={() => setDisplayUserCount(false)} />
+              </TouchableOpacity>           
+            </View> : null}
+            {/* <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
               <RNPButton
                 mode="outlined"
                 uppercase={false}
@@ -721,7 +775,7 @@ const Home = props => {
                   Become a Merchant & Sell
                 </Text>
               </RNPButton>
-            </View>
+            </View> */}
             {/*CATEGORIES LIST START*/}
             {props.categories ? (
               props.categories.length > 0 ? (
