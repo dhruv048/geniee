@@ -52,7 +52,7 @@ const handleSignUp = (user, callBack) => {
     } else {
       console.log('SignedUp successfully' + res.result);
       dispatch(setSignedUp());
-      callBack(res.result);
+      callBack(res);
     }
   })
 };

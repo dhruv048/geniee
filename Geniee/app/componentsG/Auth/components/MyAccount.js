@@ -225,7 +225,7 @@ const MyAccount = (props) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => { _signOut() }}>
-                                    <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                                    <View style={{ flexDirection: 'row', paddingVertical: 10, marginBottom:50 }}>
                                         <AIcon style={{ fontSize: 20, fontWeight: 'bold' }} name='logout' />
                                         <Text style={{ fontSize: 14, marginLeft: 10, fontWeight: 'bold' }}>Logout</Text>
                                     </View>

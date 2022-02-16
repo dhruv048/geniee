@@ -668,6 +668,14 @@ const Home = props => {
     getPopularStores();
   }
 
+  const handleMerchantSeller = () => {
+      loggedUser
+        ? props.navigation.navigate('BecomeSeller', {
+          data: loggedUser,
+        })
+        : props.navigation.navigate('SignIn');
+  }
+  
   const profileImage = loggedUser ? loggedUser.profile.profileImage : null;
   // console.log(loggedUser,profileImage)
   return (
@@ -723,30 +731,10 @@ const Home = props => {
             </View>
             {displayUserCount ? <View>
               <TouchableOpacity
-                onPress={() => {
-                  loggedUser
-                    ? props.navigation.navigate('BecomeSeller', {
-                      data: loggedUser,
-                    })
-                    : props.navigation.navigate('SignIn');
-                }}
-                style={{
-                  flexDirection: 'row',
-                  marginVertical: 20,
-                  marginHorizontal: 15,
-                  height: 70,
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  borderColor: customPaperTheme.GenieeColor.primaryColor
-                }}>
+                onPress={() => handleMerchantSeller()}
+                style={styles.merchantContainer}>
                 <Image
-                  style={{
-                    height: 40,
-                    width: 40,
-                    resizeMode: 'cover',
-                    marginHorizontal: 10,
-                    marginTop: 15
-                  }}
+                  style={styles.merchantImage}
                   source={require('../../../images/Avatar.png')}
                 />
                 <Text style={{
@@ -755,7 +743,7 @@ const Home = props => {
                   fontSize: 16
                 }}>Become a merchant and reach {userCount}+ customers.</Text>
                 <FAIcon name='x' style={{ fontSize: 18, marginTop: 10, marginRight: 10 }} onPress={() => setDisplayUserCount(false)} />
-              </TouchableOpacity>           
+              </TouchableOpacity>
             </View> : null}
             {/* <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
               <RNPButton
@@ -1338,7 +1326,23 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     marginHorizontal: 8,
     marginTop: 15,
-  }
+  },
+  merchantContainer: {
+    flexDirection: 'row',
+    marginVertical: 20,
+    marginHorizontal: 15,
+    height: 70,
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: customPaperTheme.GenieeColor.primaryColor
+  },
+  merchantImage: {
+    height: 40,
+    width: 40,
+    resizeMode: 'cover',
+    marginHorizontal: 10,
+    marginTop: 15
+  },
 });
 // export default Meteor.withTracker(() => {
 //     return {

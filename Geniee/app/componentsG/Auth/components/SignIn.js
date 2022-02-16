@@ -96,6 +96,7 @@ const SignIn = ({ actions, navigation }) => {
     };
 
     const handleSignIn = () => {
+        let errorMessage ="";
         if (validInput(true)) {
             setLoading(true);
             authHandlers.handleSignIn(email, password, (res) => {
@@ -115,8 +116,9 @@ const SignIn = ({ actions, navigation }) => {
                     navigation.navigate('Home');
                 } else {
                     setLoading(false);
+                     errorMessage = res.error === 403 ? res.reason:"Please activate your account";
                     ToastAndroid.showWithGravityAndOffset(
-                        'Username and Password are wrong',
+                        errorMessage,
                         ToastAndroid.LONG,
                         ToastAndroid.TOP,
                         0,
