@@ -41,7 +41,7 @@ const BusinessForm = (props) => {
     const [pickLocation, setPickLocation] = useState(false);
     const [location, setLocation] = useState('');
 
-    const merchantOwner = Meteor.userId() ? Meteor.userId() : registerUser;
+    const merchantOwner = registerUser._id ? registerUser._id : Meteor.userId();
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -72,7 +72,7 @@ const BusinessForm = (props) => {
         }
 
         delete location.address_components;
-        setLocation(location.formatted_address);
+        setLocation(location);     
         handleInputChange('district', district.long_name);
         handleInputChange('city', city.long_name)
         setPickLocation(false);
@@ -101,23 +101,23 @@ const BusinessForm = (props) => {
     });
 
     const handleMerchantInfo = () => {
-        //if(!validateBusinessForm()){
-        //preparing for Database
-        let business = {
-            businessName: values.merchantName.value,
-            selectedCategory: values.selectedCategory.value,
-            businessTypes: values.businessType.value,
-            district: values.district.value,
-            city: values.city.value,
-            nearestLandmark: values.nearestLandmark.value,
-            location: location,
-            panNumber: values.panNumber.value,
-            contact: values.contact.value,
-            email: values.email.value,
-            owner: merchantOwner
-        };
-        //}
-        props.navigation.navigate('BusinessDocument', { businessData: business });
+        if (!validateBusinessForm()) {
+            //preparing for Database
+            let business = {
+                businessName: values.merchantName.value,
+                selectedCategory: values.selectedCategory.value,
+                businessTypes: values.businessType.value,
+                district: values.district.value,
+                city: values.city.value,
+                nearestLandmark: values.nearestLandmark.value,
+                location: location,
+                panNumber: values.panNumber.value,
+                contact: values.contact.value,
+                email: values.email.value,
+                owner: merchantOwner
+            };
+            props.navigation.navigate('BusinessDocument', { businessData: business });
+        }
         resetBusinessForm();
     }
 
@@ -145,7 +145,7 @@ const BusinessForm = (props) => {
                                 <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
                             </RNPButton>
                         </Header>
-                        
+
                         <View style={styles.welcomeText}>
                             <Text
                                 style={styles.textHeader}>
@@ -167,6 +167,7 @@ const BusinessForm = (props) => {
                                 onChangeText={(value) => handleInputChange('merchantName', value)}
                                 style={styles.inputBox}
                                 theme={{ roundness: 6 }}
+                                error={values.merchantName.error}
                             />
                             <View
                                 style={styles.categoryPicker}>
@@ -197,10 +198,11 @@ const BusinessForm = (props) => {
                                 onFocus={() => setPickLocation(true)}
                                 placeholder="Location"
                                 placeholderTextColor='#808080'
-                                value={location}
+                                value={location.formatted_address}
                                 //   onChangeText={(radius) => this.setState({radius})}
                                 style={styles.inputBox}
                                 theme={{ roundness: 6 }}
+                                error={values.location.error}
                             />
                             <View style={styles.textInputNameView}>
                                 <TextInput
@@ -254,6 +256,7 @@ const BusinessForm = (props) => {
                                 onChangeText={(value) => handleInputChange('panNumber', value)}
                                 style={styles.inputBox}
                                 theme={{ roundness: 6 }}
+                                error={values.panNumber.error}
                             />
                             <TextInput
                                 mode="outlined"
@@ -267,6 +270,7 @@ const BusinessForm = (props) => {
                                 value={values.contact.value}
                                 style={styles.inputBox}
                                 theme={{ roundness: 6 }}
+                                error={values.contact.error}
                             />
                             <TextInput
                                 mode="outlined"
@@ -278,6 +282,7 @@ const BusinessForm = (props) => {
                                 value={values.email.value}
                                 style={styles.inputBox}
                                 theme={{ roundness: 6 }}
+                                error={values.email.error}
                             />
                             <RNPButton
                                 mode='contained'

@@ -63,9 +63,10 @@ import { lowerCase, set } from 'lodash';
 import Moment from 'moment';
 import Data from '../../../react-native-meteor/Data';
 import { connect } from 'react-redux';
-import { categorySelector } from '../../../store/selectors';
+import { categorySelector, loggedUserSelector } from '../../../store/selectors';
 import AIcon from 'react-native-vector-icons/AntDesign';
 import Statusbar from '../../Shared/components/Statusbar';
+import combineSelectors from '../../../helpers';
 
 let isDashBoard = true;
 
@@ -114,7 +115,7 @@ const Home = props => {
   useEffect(async () => {
     SplashScreen.hide();
     let user = Meteor.user();
-    setLoggedUser(user);
+    setLoggedUser(props.loggedUser? props.loggedUser:user);
     updateCounts();
     setCategories(props.categories);
     //
@@ -1351,4 +1352,5 @@ const styles = StyleSheet.create({
 //         notificationCount: Meteor.collection('newNotificationCount').find(),
 //     };
 // })(Home);
-export default connect(categorySelector)(Home);
+const combinedSelector = combineSelectors(categorySelector, loggedUserSelector);
+export default connect(combinedSelector)(Home);

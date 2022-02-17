@@ -8,7 +8,7 @@ const UseBusinessForm = () => {
         district : {value:'',error:false},
         city : {value:'',error:false},
         nearestLandmark : {value:'',error:false},
-        //location: { value: null, error: false },
+        location: { value: '', error: false },
         panNumber: { value: '', error: false },
         contact: { value: '', error: false },
         email: { value: '', error: false },

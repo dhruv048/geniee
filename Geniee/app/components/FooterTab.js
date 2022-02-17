@@ -22,6 +22,8 @@ import merchantHandlers from "../store/services/merchant/handlers";
 import AddProduct from "../screens/store/AddProduct";
 import ChatHandlers from "../store/services/chat/handlers";
 import { customPaperTheme } from "../config/themes";
+import { connect } from "react-redux";
+import { loggedUserSelector } from "../store/selectors";
 
 const FooterTab = (props) => {
 
@@ -177,7 +179,7 @@ const FooterTab = (props) => {
   );
 }
 
-export default FooterTab;
+export default connect(loggedUserSelector) (FooterTab);
 
 const styles = StyleSheet.create({
   container: {

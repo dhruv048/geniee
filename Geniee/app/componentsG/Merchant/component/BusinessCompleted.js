@@ -5,6 +5,7 @@ import { Button } from 'react-native-paper';
 import { colors } from '../../../config/styles';
 import Icon from 'react-native-vector-icons/Feather';
 import Meteor from '../../../react-native-meteor';
+import { customPaperTheme } from '../../../config/themes';
 
 const BusinessCompleted = (props) => {
 
@@ -25,7 +26,7 @@ const BusinessCompleted = (props) => {
             <Content style={{ backgroundColor: colors.appBackground }}>
                 <Header
                     androidStatusBarColor={colors.statusBar}
-                    style={{ backgroundColor: '#4d94ff' }}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
                 >
                     <Left>
                         <Button

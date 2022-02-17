@@ -109,7 +109,7 @@ Meteor.methods({
                 receiver: [],
                 removedBy: [],
                 type: NotificationTypes.ADD_SERVICE,
-                image : businessInfo.coverImage
+                image: businessInfo.coverImage
             };
             Meteor.call("addNotification", notification);
             return res;
@@ -142,13 +142,10 @@ Meteor.methods({
     },
 
     getBusinessInfo: (loggedUser) => {
-
-        let user;
-        if (loggedUser != null) {
-            user = Business.find({ owner: loggedUser._id }).fetch();
-        }
         try {
-            if (user) {
+            if (loggedUser != null) {
+                let user = Business.find({ owner: loggedUser._id }).fetch();
+
                 return Async.runSync(function (done) {
                     done(null, user);
                 })
@@ -436,14 +433,14 @@ Meteor.methods({
             var currentUserId = userId != null ? userId : Meteor.userId();
             var data = Business.find({ owner: currentUserId }).fetch();
             return data;
-        } catch(error){
+        } catch (error) {
             throw new Meteor.Error('Please first add your business Type');
         }
 
     },
 
     getPopularStores: function () {
-        var data = Business.find({ businessTypes: { $in: [1,2,4] } },{sort: {views : -1}}).fetch();
+        var data = Business.find({ businessTypes: { $in: [1, 2, 4] } }, { sort: { views: -1 } }).fetch();
         return data;
     },
 
@@ -896,7 +893,7 @@ Meteor.methods({
         let product = Products.findOne({ _id: Id });
         return Products.find({
             //service: product.service,
-            businessType : product.businessType,
+            businessType: product.businessType,
             _id: {
                 $ne: Id,
             },
@@ -1362,7 +1359,7 @@ Meteor.methods({
     },
 
     getMyProducts(userId) {
-        let loggedUser = userId === null ?  Meteor.userId() || "NA" : userId;
+        let loggedUser = userId === null ? Meteor.userId() || "NA" : userId;
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 
