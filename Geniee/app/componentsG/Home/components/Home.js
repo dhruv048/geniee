@@ -95,6 +95,7 @@ const Home = props => {
   const [timeForBanner, setTimeForBanner] = useState();
   const [userCount, setUserCount] = useState(0);
   const [displayUserCount, setDisplayUserCount] = useState(true);
+  const [currentLocation, setCurrentLocation] = useState();
 
   const currentDate = new Date();
   let arrayholder;
@@ -115,7 +116,7 @@ const Home = props => {
   useEffect(async () => {
     SplashScreen.hide();
     let user = Meteor.user();
-    setLoggedUser(props.loggedUser? props.loggedUser:user);
+    setLoggedUser(props.loggedUser ? props.loggedUser : user);
     updateCounts();
     setCategories(props.categories);
     //
@@ -196,6 +197,8 @@ const Home = props => {
       }
     })
 
+    // get current location name
+    fetchCurrentLocation();
     //Timer
     let end = moment(currentDate).add(5, 'days');
     let duration = moment.duration(end.diff(currentDate, 'days'));
@@ -203,6 +206,29 @@ const Home = props => {
     setTimeForBanner(duration);
 
   }, []);
+
+  const fetchCurrentLocation = () => {
+    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + region.latitude + ',' + region.longitude + '&key=' + settings.GOOGLE_MAP_API_KEY)
+      .then((response) => response.json())
+      .then((json) => {
+        let location = json.results[0];
+        if (location != '') {
+          for (var i = 0; i < location.address_components.length; i++) {
+            for (var b = 0; b < location.address_components[i].types.length; b++) {
+
+              //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+              if (location.address_components[i].types[b] == "locality") {
+                //this is the object you are looking for                
+                setCurrentLocation(location.address_components[i].long_name);
+              }
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
   const getNearByServices = useCallback(() => {
     Meteor.call('getRandomServices', [region.longitude, region.latitude], 15, 10, (err, res) => {
@@ -670,13 +696,13 @@ const Home = props => {
   }
 
   const handleMerchantSeller = () => {
-      loggedUser
-        ? props.navigation.navigate('BecomeSeller', {
-          data: loggedUser,
-        })
-        : props.navigation.navigate('SignIn');
+    loggedUser
+      ? props.navigation.navigate('BecomeSeller', {
+        data: loggedUser,
+      })
+      : props.navigation.navigate('SignIn');
   }
-  
+
   const profileImage = loggedUser ? loggedUser.profile.profileImage : null;
   // console.log(loggedUser,profileImage)
   return (
@@ -711,7 +737,7 @@ const Home = props => {
                       color: colors.statusBar, fontSize: 20, marginRight: 8,
                     }}
                   />
-                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize }}>Kathmandu</Text>
+                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize }}>{currentLocation}</Text>
                 </TouchableOpacity>
                 <Text uppercase={false}
                   style={{
