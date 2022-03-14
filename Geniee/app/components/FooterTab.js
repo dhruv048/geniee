@@ -34,7 +34,7 @@ const FooterTab = (props) => {
   const [loggedUser, setLoggedUser] = useState();
   const [merchantUser, setMerchantUser] = useState(false);
   const actionSheetRef = createRef();
-  const userLogged = Meteor.user();
+  const userLogged = Meteor.userId();
   const [unreadChatCount, setUnreadChatCount] = useState(0);
 
   useEffect(() => {
@@ -42,14 +42,14 @@ const FooterTab = (props) => {
     if (!props.loggedUser) {
       setLoggedUser(userLogged);
     } else {
-      setLoggedUser(props.loggedUser);
+      setLoggedUser(props.loggedUser._id);
     }
 
     getBusinessInfo()
     getChatItems()
   })
 
-  const getBusinessInfo = () => {
+  const getBusinessInfo = useCallback(() => {
     merchantHandlers.getBusinessInfo(loggedUser, (res) => {
       if (res) {
         setMerchantUser(true);
@@ -57,7 +57,7 @@ const FooterTab = (props) => {
         setMerchantUser(false);
       }
     })
-  }
+  },[])
 
   const getIndex = (routeName) => {
     return props.state.routes.findIndex(route => route.name == routeName)

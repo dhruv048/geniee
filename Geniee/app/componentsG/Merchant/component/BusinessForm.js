@@ -39,7 +39,7 @@ const BusinessForm = (props) => {
     const { values, handleInputChange, validateBusinessForm, resetBusinessForm } = UseBusinessForm();
     const registerUser = props.route.params.data;
     const [pickLocation, setPickLocation] = useState(false);
-    const [location, setLocation] = useState('');
+    //const [location, setLocation] = useState('');
 
     const merchantOwner = registerUser._id ? registerUser._id : Meteor.userId();
 
@@ -72,7 +72,8 @@ const BusinessForm = (props) => {
         }
 
         delete location.address_components;
-        setLocation(location);     
+        //setLocation(location);     
+        handleInputChange('location',location);
         handleInputChange('district', district.long_name);
         handleInputChange('city', city.long_name)
         setPickLocation(false);
@@ -110,7 +111,7 @@ const BusinessForm = (props) => {
                 district: values.district.value,
                 city: values.city.value,
                 nearestLandmark: values.nearestLandmark.value,
-                location: location,
+                location: values.location.value,
                 panNumber: values.panNumber.value,
                 contact: values.contact.value,
                 email: values.email.value,
@@ -118,7 +119,7 @@ const BusinessForm = (props) => {
             };
             props.navigation.navigate('BusinessDocument', { businessData: business });
         }
-        resetBusinessForm();
+        //resetBusinessForm();
     }
 
     return (
@@ -198,7 +199,8 @@ const BusinessForm = (props) => {
                                 onFocus={() => setPickLocation(true)}
                                 placeholder="Location"
                                 placeholderTextColor='#808080'
-                                value={location.formatted_address}
+                                value={values.location.value.formatted_address}
+                                onChangeText={(value) => handleInputChange('location', value)}
                                 //   onChangeText={(radius) => this.setState({radius})}
                                 style={styles.inputBox}
                                 theme={{ roundness: 6 }}
