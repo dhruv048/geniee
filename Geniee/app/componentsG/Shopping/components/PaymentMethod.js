@@ -45,17 +45,8 @@ const PaymentMethod = (props) => {
         let Item = orderItems;
         Item.PaymentType = paymentType;
 
-        shoppingHandler.addOrder(Item, async (err, res) => {
-            if (err) {
-                console.log(err.reason);
-                ToastAndroid.showWithGravityAndOffset(
-                    err.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    80,
-                );
-            } else {
+        shoppingHandler.addOrder(Item, async (res) => {
+            if (res.result) {
                 try {
                     shoppingHandler.removeItemFromCart(Item);
                     ToastAndroid.showWithGravityAndOffset(
@@ -65,7 +56,7 @@ const PaymentMethod = (props) => {
                         0,
                         50,
                     );
-                    
+
                 }
                 catch (e) {
                     Meteor.call('removeOrder', res.result);
@@ -78,6 +69,16 @@ const PaymentMethod = (props) => {
                     );
                 }
                 props.navigation.navigate('OrdersCompleted', { orderId: res.result });
+
+            } else {
+                console.log(err.reason);
+                ToastAndroid.showWithGravityAndOffset(
+                    err.reason,
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    80,
+                );
             }
         });
     };

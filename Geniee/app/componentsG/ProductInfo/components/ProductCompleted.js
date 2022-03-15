@@ -11,12 +11,11 @@ const ProductCompleted = (props) => {
   const productData = props.route.params.data;
   return (
     <SafeAreaView>
-      <Content style={{ backgroundColor: colors.appBackground }}>
         <Header
           androidStatusBarColor={colors.statusBar}
           style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
         >
-          <RNPButton
+          <Button
             transparent
             uppercase={false}
             style={{ width: '100%', alignItems: 'flex-start' }}
@@ -25,7 +24,7 @@ const ProductCompleted = (props) => {
             }}>
             <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
             <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
-          </RNPButton>
+          </Button>
         </Header>
 
         <View style={styles.container}>
@@ -55,7 +54,6 @@ const ProductCompleted = (props) => {
             <FIcon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
           </Button>
         </View>
-      </Content>
     </SafeAreaView>
   );
 }

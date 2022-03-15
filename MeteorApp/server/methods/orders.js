@@ -31,7 +31,7 @@ Meteor.methods({
                     product = await Products.findOne({ _id: item.productId });
                     RegularItems.push(item);
                     searchText = searchText + " " + product.title
-                    ServiceProviders.push(product.serviceOwner);
+                    ServiceProviders.push(product.productOwner);
                     RTotal = RTotal + item.finalPrice * item.quantity;
                 }
 
@@ -90,20 +90,20 @@ Meteor.methods({
                         order.searchText = searchTextEF;
                         EFOrder.insert(order, (err, res) => {
                             if (res) {
-                                // let notification = {
-                                //     title: 'Order is placed ',
-                                //     description: product.productTitle,
-                                //     owner: order.owner ? order.owner : loggedUser._id,
-                                //     navigateId: res,
-                                //     receiver:ServiceProviders,
-                                //     type: NotificationTypes.ORDER_REQUESTED,
-                                //     receiver: [],
-                                //     removedBy: [],
-                                // }
-                                // Meteor.call('addNotification', notification);
+                                let notification = {
+                                    title: 'Order is placed ',
+                                    description: product.productTitle,
+                                    owner: order.owner ? order.owner : loggedUser._id,
+                                    navigateId: res,
+                                    receiver:ServiceProviders,
+                                    type: NotificationTypes.ORDER_REQUESTED,
+                                    receiver: [],
+                                    removedBy: [],
+                                }
+                                Meteor.call('addNotification', notification);
                                 orderIds.push(res);
                                 console.log('This is order Ids' + orderIds);
-                                return res;
+                               // return res;
                             } else {
                                 resetOrderQty(itemsUpdated);
                                 return err;
@@ -135,10 +135,10 @@ Meteor.methods({
                             }
                         });
                     }
-                    //done(null, orderIds);
-                    return Async.runSync(function (done) {
-                        done(null, orderIds);
-                    })
+                    done(null, orderIds);
+                    // return Async.runSync(function (done) {
+                    //     done(null, orderIds);
+                    // })
                 }
             });
         });

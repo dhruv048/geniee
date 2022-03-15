@@ -34,7 +34,7 @@ const FooterTab = (props) => {
   const [loggedUser, setLoggedUser] = useState();
   const [merchantUser, setMerchantUser] = useState(false);
   const actionSheetRef = createRef();
-  const userLogged = Meteor.userId();
+  const userLogged = Meteor.user();
   const [unreadChatCount, setUnreadChatCount] = useState(0);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const FooterTab = (props) => {
     if (!props.loggedUser) {
       setLoggedUser(userLogged);
     } else {
-      setLoggedUser(props.loggedUser._id);
+      setLoggedUser(props.loggedUser);
     }
 
     getBusinessInfo()
