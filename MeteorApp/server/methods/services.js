@@ -144,7 +144,7 @@ Meteor.methods({
     getBusinessInfo: (loggedUser) => {
         try {
             if (loggedUser != null) {
-                let user = Business.find({ owner: loggedUser._id }).fetch();
+                let user = Business.find({ owner: loggedUser }).fetch();
 
                 return Async.runSync(function (done) {
                     done(null, user);

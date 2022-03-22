@@ -794,16 +794,32 @@ const Home = props => {
             {/*CATEGORIES LIST START*/}
             {props.categories ? (
               props.categories.length > 0 ? (
-                <View style={[styles.block, { marginVertical: 15 }]}>
-                  <FlatList
-                    contentContainerStyle={styles.categoriesContentStyle}
-                    data={categories}
-                    //horizontal={true}
-                    keyExtractor={(item, index) => index.toString()}
-                    // showsHorizontalScrollIndicator={false}
-                    renderItem={renderCategoryItem}
-                    numColumns={5}
-                  />
+                <View>
+                  <View style={[styles.block, { marginVertical: 15 }]}>
+                    <FlatList
+                      contentContainerStyle={styles.categoriesContentStyle}
+                      data={categories}
+                      //horizontal={true}
+                      keyExtractor={(item, index) => index.toString()}
+                      // showsHorizontalScrollIndicator={false}
+                      renderItem={renderCategoryItem}
+                      numColumns={5}
+                    />
+                  </View>
+                  <View>
+                    <RNPButton
+                      mode="text"
+                      uppercase={false}
+                      onPress={() => props.navigation.navigate('CategoryList', { data: categories })}>
+                      <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                        View more
+                      </Text>
+                      <Icon
+                        name="arrow-right"
+                        style={customStyle.blockHeaderArrow}
+                      />
+                    </RNPButton>
+                  </View>
                 </View>
               ) : null
             ) : null}

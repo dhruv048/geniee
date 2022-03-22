@@ -1,4 +1,4 @@
-import React, { Component, createRef, useCallback, useEffect, useState } from "react";
+import React, { Component, createRef, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -34,7 +34,7 @@ const FooterTab = (props) => {
   const [loggedUser, setLoggedUser] = useState();
   const [merchantUser, setMerchantUser] = useState(false);
   const actionSheetRef = createRef();
-  const userLogged = Meteor.user();
+  const userLogged = Meteor.userId();
   const [unreadChatCount, setUnreadChatCount] = useState(0);
 
   useEffect(() => {
@@ -42,14 +42,14 @@ const FooterTab = (props) => {
     if (!props.loggedUser) {
       setLoggedUser(userLogged);
     } else {
-      setLoggedUser(props.loggedUser);
+      setLoggedUser(props.loggedUser._id);
     }
 
     getBusinessInfo()
     getChatItems()
   })
 
-  const getBusinessInfo = useCallback(() => {
+  const getBusinessInfo = () => {
     merchantHandlers.getBusinessInfo(loggedUser, (res) => {
       if (res) {
         setMerchantUser(true);
@@ -57,7 +57,7 @@ const FooterTab = (props) => {
         setMerchantUser(false);
       }
     })
-  },[])
+  };
 
   const getIndex = (routeName) => {
     return props.state.routes.findIndex(route => route.name == routeName)
@@ -78,7 +78,7 @@ const FooterTab = (props) => {
     }
   }
 
-  const getChatItems = useCallback(() => {
+  const getChatItems = () => {
     ChatHandlers.getAllChatItems(loggedUser, (res) => {
       if (res) {
         let result = res.filter(item => item.seen === false);
@@ -87,7 +87,7 @@ const FooterTab = (props) => {
         console.log('Please contact administrator ' + err);
       }
     });
-  }, [])
+  };
 
   const handleCartOrder = () => {
     props.navigation.navigate('MerchantOrder');
