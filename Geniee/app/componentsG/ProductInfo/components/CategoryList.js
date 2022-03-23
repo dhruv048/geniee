@@ -53,7 +53,7 @@ const CategoryList = (props) => {
         });
     });
 
-    const _handleProductPress = (item) => {
+    const onCategoryClick = (item) => {
         props.navigation.navigate('StoreList', { categoryId: item._id, title: item.title });
     }
 
@@ -68,7 +68,7 @@ const CategoryList = (props) => {
                 <View key={data.index.toString()} style={styles.containerStyle}>
                     <TouchableOpacity onPress={() => onCategoryClick(item)}>
                         <Image
-                            style={{ height: 50, width: 50 }}
+                            style={{ height: 60, width: 60 }}
                             source={{
                                 uri: settings.IMAGE_URLS + item.image,
                             }}
@@ -77,7 +77,7 @@ const CategoryList = (props) => {
                 </ImageBackground>*/}
                     </TouchableOpacity>
                 </View>
-                <View style={{ width: 65, marginBottom: 5 }}>
+                <View style={{ width: 65, marginBottom: 10, marginLeft:8 }}>
                     <Text style={{ textAlign: 'center', fontSize: 10 }}> {item.title}</Text>
                 </View>
             </View>
@@ -133,7 +133,7 @@ const CategoryList = (props) => {
                                     //horizontal={true}
                                     keyExtractor={(item, index) => item._id}
                                     //showsHorizontalScrollIndicator={false}
-                                    numColumns={5}
+                                    numColumns={4}
                                     renderItem={(item, index) => _renderCategories(item, index)}
                                 />
                             </View>
@@ -171,6 +171,9 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: 4,
         marginBottom: 8,
-    }
+    },
+    containerStyle: {
+        paddingHorizontal:10
+      },
 });
 export default CategoryList;
