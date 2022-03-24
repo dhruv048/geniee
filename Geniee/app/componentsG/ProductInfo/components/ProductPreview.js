@@ -33,6 +33,7 @@ import { ProgressViewIOSComponent, Image } from 'react-native';
 import { SliderBox } from "react-native-image-slider-box";
 import productHandlers from "../../../store/services/product/handlers";
 import FIcon from 'react-native-vector-icons/FontAwesome';
+import settings from '../../../config/settings';
 
 const RNFS = require('react-native-fs');
 
@@ -44,7 +45,7 @@ const ProductPreview = (props) => {
     // })
 
     const editProduct = () => {
-        props.navigation.goBack();
+        props.navigation.navigate('ProductEdit',{data : productData});
     }
 
     const handleConfirmProduct = () => {
@@ -102,9 +103,10 @@ const ProductPreview = (props) => {
     }
 
     const renderImage = () => {
+        productData.images.map((image) =>settings.IMAGE_URLS+image);
         return (
             <SliderBox
-                images={productData.images}
+                images={productData.images.find((image) => image.includes('base64')) ? productData.images : productData.images.map((image) =>settings.IMAGE_URLS+image)}
                 sliderBoxHeight={250}
                 onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                 dotColor="#FFEE58"

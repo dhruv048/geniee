@@ -75,6 +75,7 @@ import { BottomTab } from './app/componentsG/Shared/components/BottomTab';
 import AllProduct from './app/componentsG/ProductInfo/components/AllProduct';
 import AllStore from './app/componentsG/stores/AllStore';
 import CategoryList from './app/componentsG/ProductInfo/components/CategoryList';
+import ProductEdit from './app/componentsG/ProductInfo/components/ProductEdit';
 
 export default function Appp({ navigation }) {
     const routeNameRef = React.useRef();
@@ -358,6 +359,7 @@ export default function Appp({ navigation }) {
                             <Stack.Screen name='AllProduct' component={AllProduct}></Stack.Screen>
                             <Stack.Screen name='AllStore' component={AllStore}></Stack.Screen>
                             <Stack.Screen name='CategoryList' component={CategoryList}></Stack.Screen>
+                            <Stack.Screen name='ProductEdit' component={ProductEdit}></Stack.Screen>
                         </Stack.Navigator>
                     </PaperProvider>
                 </NavigationContainer>

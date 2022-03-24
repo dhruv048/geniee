@@ -43,7 +43,7 @@ const { width, height } = Dimensions.get('screen');
 
 const RNFS = require('react-native-fs');
 
-const ProductInfo = (props) => {
+const ProductEdit = (props) => {
     let actionsheet = useRef();
 
     const loggedUser = props.route.params.loggedUser ? props.route.params.loggedUser : Meteor.userId();
@@ -810,7 +810,7 @@ const ProductInfo = (props) => {
 
     );
 }
-export default ProductInfo;
+export default ProductEdit;
 
 const styles = StyleSheet.create({
     container: {

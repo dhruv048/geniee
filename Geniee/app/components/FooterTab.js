@@ -125,7 +125,7 @@ const FooterTab = (props) => {
           {/* Center Circle */}
           <View style={{ flex: 1, justifyContent: 'center',  marginHorizontal:30, paddingBottom:10}}>
             {merchantUser ?
-              <Button onPress={() => { props.navigation.navigate('ProductInfo') }}
+              <Button onPress={() => { props.navigation.navigate('ProductInfo',{loggedUser : props.loggedUser._id }) }}
                 style={styles.searchBtn} >
                 <AIcon name="plus" style={{ color: colors.whiteText }} size={25}></AIcon>
               </Button>

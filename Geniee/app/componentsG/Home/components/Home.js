@@ -530,7 +530,11 @@ const Home = props => {
   };
 
   const _handleProductPress = pro => {
-    props.navigation.navigate('ProductDetail', { Id: pro._id, data: pro });
+    if (loggedUser._id == pro.owner) {
+      props.navigation.navigate('ProductPreview', { Id: pro._id, productInfo: pro })
+    } else {
+      props.navigation.navigate('ProductDetail', { Id: pro._id, data: pro })
+    };
   };
 
   const _onScroll = event => {
