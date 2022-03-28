@@ -47,6 +47,7 @@ const ProductEdit = (props) => {
     let actionsheet = useRef();
 
     const loggedUser = props.route.params.loggedUser ? props.route.params.loggedUser : Meteor.userId();
+    const editProduct = props.route.params.data;
 
     const [productTitle, setProductTitle] = useState('');
     const [price, setPrice] = useState(0);
@@ -68,7 +69,7 @@ const ProductEdit = (props) => {
     const [colorField, setColorField] = useState([{ colorName: 'Color1' }]);
     const [sizeField, setSizeField] = useState([{ size: 'Color1' }]);
     const [businessList, setBusinessList] = useState([]);
-    const [businessType, setBusinessTypes] = useState();
+    const [businessType, setBusinessTypes] = useState(0);
 
     useEffect(() => {
 
@@ -77,7 +78,29 @@ const ProductEdit = (props) => {
                 setBusinessList(res);
             }
         })
+        fillEditForm(editProduct);
     }, [])
+
+    const fillEditForm = (_editProduct) => {
+
+        setProductTitle(_editProduct.productTitle);
+        setPrice(_editProduct.price);
+        setDiscount(_editProduct.discount);
+        setDescription(_editProduct.description);
+        setBusinessTypes(_editProduct.businessType);
+        setWarranty(_editProduct.warranty);
+        setWarrantyTime(_editProduct.warrantyTime);
+        setReturnPolicy(_editProduct.returnPolicy);
+        setReturnPolicyTime(_editProduct.returnPolicyTime);
+        setStockAvailability(_editProduct.stockAvailability);
+        //setColorAvailability(_editProduct.colorAvailability);
+        //setSizeAvailability(_editProduct.sizeAvailability);
+        setProductImage(_editProduct.images);
+        setCustomFields(_editProduct.productProperty);
+        setColorField(_editProduct.color)
+        setSizeField(_editProduct.size);
+
+    }
 
     const addPropertyCustomField = () => {
         setCustomFields(prev => [...prev, { metaName: 'value', metaValue: 'value' }])
@@ -138,7 +161,7 @@ const ProductEdit = (props) => {
                         placeholderTextColor="#808080"
                         label="Property label"
                         name="label"
-                        value={customInput.key}
+                        value={customInput.metaName}
                         onChangeText={(label) => handleCustomFieldName(label, key)}
                         style={styles.textInputNameBox}
                         error={isPriceValid}
@@ -151,7 +174,7 @@ const ProductEdit = (props) => {
                         label="Property value"
                         placeholderTextColor="#808080"
                         name="value"
-                        //value={discount}
+                        value={customInput.metaValue}
                         onChangeText={(value) => handleCustomFieldValue(value, key)}
                         style={styles.textInputNameBox}
                         theme={{ roundness: 6 }}
@@ -175,7 +198,7 @@ const ProductEdit = (props) => {
                         label="Color value"
                         placeholderTextColor="#808080"
                         name="color"
-                        //value={discount}
+                        value={customInput.colorName}
                         onChangeText={(value) => handleColorFieldValue(value, key)}
                         style={{ width: '50%', height: 45, fontSize: 18 }}
                         theme={{ roundness: 6 }}
@@ -200,7 +223,7 @@ const ProductEdit = (props) => {
                         label="Size value"
                         placeholderTextColor="#808080"
                         name="size"
-                        //value={discount}
+                        value={customInput.size}
                         onChangeText={(value) => handleSizeFieldValue(value, key)}
                         style={{ width: '50%', height: 45, fontSize: 18 }}
                         theme={{ roundness: 6 }}
@@ -262,6 +285,7 @@ const ProductEdit = (props) => {
         //if(!validateBusinessForm()){
         //preparing for Database
         let product = {
+            _id : editProduct._id,
             productTitle: productTitle,
             price: price,
             discount: discount,
@@ -306,7 +330,7 @@ const ProductEdit = (props) => {
                     width: 70,
                     height: 70,
                 }}
-                    source={{ uri: item }} />
+                source={{ uri: item.includes('base64') ? item : settings.IMAGE_URLS + item }} />
                 <RNPButton
                     transparent
                     style={{ position: 'absolute', top: -12, left: 30 }}
@@ -363,18 +387,18 @@ const ProductEdit = (props) => {
                                 <Text style={{ color: colors.whiteText, fontSize: 20 }}>Back</Text>
                             </RNPButton>
                         </Header>
-                        <View style={{ paddingHorizontal: 25, marginTop: 15 }}>
+                        {/* <View style={{ paddingHorizontal: 25, marginTop: 15 }}>
                             <View style={styles.categoryPicker}>
                                 <Picker
                                     placeholder='Select Business'
                                     selectedValue={businessType}
                                     onValueChange={(itemValue, itemIndex) => setBusinessTypes(itemValue)
                                     }>
-                                    <Picker.Item label='Select Business' value='0' style={styles.inputBox} />
+                                    {businessType ? <Picker.Item label={businessType} value={businessType} style={styles.inputBox} /> : <Picker.Item label='Select Business' value='0' style={styles.inputBox} />}
                                     {loadBusiness()}
                                 </Picker>
                             </View>
-                        </View>
+                        </View> */}
                         {/* Product Add */}
                         {businessType === BusinessType.STORE || businessType === BusinessType.PRODUCTS_GOODS_SELLER ?
                             <View>

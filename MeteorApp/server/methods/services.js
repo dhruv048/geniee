@@ -693,10 +693,16 @@ Meteor.methods({
         //productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
         let imageIds = [];
+
         productInfo.images.forEach(async (image) => {
-            let Id = await uploadImage(image);
-            imageIds.push(Id.fileName);
+            if (image.includes('base64')) {
+                let Id = await uploadImage(image);
+                imageIds.push(Id.fileName);
+            } else {
+                imageIds.push(image);
+            }
         });
+
         productInfo.images = imageIds;
         // if (productInfo.images.length < 1) {
         console.log("imagesToRemove", imagesToRemove);
@@ -705,7 +711,11 @@ Meteor.methods({
             { $set: productInfo },
             (err, res) => {
                 ServiceImage.remove({ _id: { $in: imagesToRemove } });
+                if (res) {
+                    return res;
+                }
             }
+
         );
         return;
         // }
