@@ -687,23 +687,24 @@ Meteor.methods({
 
     updateProduct: (productId, productInfo, imagesToRemove) => {
         //productInfo.qty = parseInt(productInfo.qty);
-        //productInfo.availabeQuantity = parseInt(productInfo.qty);
-        productInfo.price = parseInt(productInfo.price);
-        productInfo.discount = parseInt(productInfo.discount);
-        //productInfo.radius = parseInt(productInfo.radius);
-        productInfo.updateDate = new Date(new Date().toUTCString());
+        //productInfo.availabeQuantity = parseInt(productInfo.qty);      
+        //productInfo.radius = parseInt(productInfo.radius);      
         let imageIds = [];
-
-        productInfo.images.forEach(async (image) => {
+        productInfo.images.forEach( async(image) => {           
             if (image.includes('base64')) {
-                let Id = await uploadImage(image);
-                imageIds.push(Id.fileName);
+                await handleImageUpload(image).then((res) => {
+                    imageIds.push(res.fileName);
+                })
             } else {
                 imageIds.push(image);
-            }
+            }      
         });
+        productInfo.price = parseInt(productInfo.price);
+        productInfo.discount = parseInt(productInfo.discount);
+        productInfo.updateDate = new Date(new Date().toUTCString());
 
         productInfo.images = imageIds;
+        console.log('This is productinfo imagename '+ productInfo.images);
         // if (productInfo.images.length < 1) {
         console.log("imagesToRemove", imagesToRemove);
         Products.update(

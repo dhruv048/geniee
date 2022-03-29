@@ -103,10 +103,9 @@ const ProductPreview = (props) => {
     }
 
     const renderImage = () => {
-        productData.images.map((image) =>settings.IMAGE_URLS+image);
         return (
-            <SliderBox
-                images={productData.images.find((image) => image.includes('base64')) ? productData.images : productData.images.map((image) =>settings.IMAGE_URLS+image)}
+            <SliderBox 
+                images={productData.images && productData.images.map((image) => image.includes('base64') ? image : settings.IMAGE_URLS+image)}
                 sliderBoxHeight={250}
                 onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                 dotColor="#FFEE58"
