@@ -24,7 +24,7 @@ import { loggedUserSelector } from '../../../store/selectors';
 
 const MyAccount = (props) => {
 
-    const [isMerchant, setIsMerchant] = useState(false);
+    const [isMerchant, setIsMerchant] = useState(true);
     const [userName, setUserName] = useState('User');
     const [merchantUser, setMerchantUser] = useState(false);
 
@@ -40,9 +40,9 @@ const MyAccount = (props) => {
         setUserName(loggedUser.profile.firstName + ' ' + loggedUser.profile.lastName);
 
         getBusinessInfo();
-    }, [])
+    }, [props.loggedUser])
 
-    const getBusinessInfo = useCallback(() => {
+    const getBusinessInfo = () => {
         merchantHandlers.getBusinessInfo(loggedUser, (res) => {
             if (res) {
                 setMerchantUser(true);
@@ -50,7 +50,7 @@ const MyAccount = (props) => {
                 setMerchantUser(false);
             }
         })
-    }, [])
+    }
 
     const _signOut = async () => {
         Alert.alert(
@@ -112,12 +112,12 @@ const MyAccount = (props) => {
                             <UploadProfilePic />
                             <View style={{ marginTop: 30, marginLeft: 20, }}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.statusBar }}>{userName}</Text>
-                                {isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>My Design Store</Text> : null}
+                                {merchantUser && isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>My Design Store</Text> : null}
                             </View>
                         </View>
                         {!merchantUser ?
                             <View style={{ flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#F0F8FF', paddingBottom: 15}}>
-                                <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text>
+                                <Text style={{ fontWeight: 'bold', color: colors.statusBar,paddingLeft:20 }}>User</Text>
                             </View>
                             :
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#F0F8FF', paddingBottom: 15 }}>

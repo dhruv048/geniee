@@ -37,8 +37,8 @@ const addBusiness = (businessModel, callBack) => {
 };
 
 const getBusinessInfo = (loggedUser, callBack) => {
-    Meteor.call('getBusinessInfo', loggedUser, (err, res) => {
-        if (res) {
+    Meteor.call('getBusinessList', loggedUser, (err, res) => {
+        if (res.length>0) {
             callBack(true);
         } else {           
             console.log('Please contact administrator.')
