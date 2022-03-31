@@ -9,6 +9,7 @@ import {
   setLoggedInUser,
   setSignedUp,
   emailSent,
+  setMerchantUser,
 } from '../../../store/actions';
 
 import { apiUrl } from 'settings';
@@ -86,6 +87,18 @@ const PostSendSMS = (mobileNumber,message, callBack) =>{
       console.log('Get OTP SMS successfully' + res.result);
       callBack(true);
     }
+  })
+}
+
+const getBusinessInfo = (loggedUser, callBack) => {
+  Meteor.call('getBusinessList', loggedUser, (err, res) => {
+      if (res.error || res.length == 0) {
+        console.log('Please contact administrator.')
+        callBack(res.error);
+      } else {           
+        dispatch(setMerchantUser({ user : res[0]}))
+        callBack(true);
+      }
   })
 }
 
@@ -212,6 +225,7 @@ export default {
   forgetPassword,
   changeNewPassword,
   PostSendSMS,
+  getBusinessInfo,
   //handleValidateToken,
   // handleResetActions,
   // handleResetPassword,

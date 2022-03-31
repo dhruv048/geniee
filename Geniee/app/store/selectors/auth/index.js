@@ -21,3 +21,8 @@ export const loggedUserSelector = createSelector(
   [authContainer],
   ({ loggedUser }) => ({ loggedUser }),
 );
+
+export const merchantUserSelector = createSelector(
+  [authContainer],
+  ({isMerchantUser, merchantUser}) => ({isMerchantUser, merchantUser}),
+);

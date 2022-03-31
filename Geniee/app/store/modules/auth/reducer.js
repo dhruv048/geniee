@@ -8,6 +8,7 @@ import {
   setSignedOut,
   setLoggedInUser,
   setSignedUp,
+  setMerchantUser,
 } from './actions';
 
 export default handleActions(
@@ -30,6 +31,8 @@ export default handleActions(
     [setSignedOut]: (state) => ({
       ...state,
       loggedUser:'',
+      merchantUser:'',
+      isMerchantUser: false,
       actions: {
         ...state.actions,
         loginError: false,
@@ -49,12 +52,19 @@ export default handleActions(
         signedUp: true,
       },
     }),
+    [setMerchantUser]: (state, {payload :{user}}) => ({
+      ... state,
+      isMerchantUser : true,
+      merchantUser : user, 
+    })
   },
   {
     userId: null,
     email: '',
     password: '',
     loggedUser:'',
+    isMerchantUser:false,
+    merchantUser : '',
     actions: {
       loading: false,
       emailNotFound: false,

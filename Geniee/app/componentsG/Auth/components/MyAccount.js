@@ -20,7 +20,8 @@ import Loading from '../../../components/Loading';
 import Statusbar from '../../Shared/components/Statusbar';
 import { customPaperTheme } from '../../../config/themes';
 import { connect } from 'react-redux';
-import { loggedUserSelector } from '../../../store/selectors';
+import { loggedUserSelector, merchantUserSelector } from '../../../store/selectors';
+import combineSelectors from '../../../helpers';
 
 const MyAccount = (props) => {
 
@@ -38,19 +39,20 @@ const MyAccount = (props) => {
         //profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
         //this._updateState(this.loggedUser.profile)
         setUserName(loggedUser.profile.firstName + ' ' + loggedUser.profile.lastName);
+        props.isMerchantUser ? setMerchantUser(props.isMerchantUser): setMerchantUser(false);
 
-        getBusinessInfo();
+        //getBusinessInfo();
     }, [props.loggedUser])
 
-    const getBusinessInfo = () => {
-        merchantHandlers.getBusinessInfo(loggedUser, (res) => {
-            if (res) {
-                setMerchantUser(true);
-            } else {
-                setMerchantUser(false);
-            }
-        })
-    }
+    // const getBusinessInfo = () => {
+    //     merchantHandlers.getBusinessInfo(loggedUser, (res) => {
+    //         if (res) {
+    //             setMerchantUser(true);
+    //         } else {
+    //             setMerchantUser(false);
+    //         }
+    //     })
+    // }
 
     const _signOut = async () => {
         Alert.alert(
@@ -74,7 +76,7 @@ const MyAccount = (props) => {
         );
     }
 
-    inviteFriends = async () => {
+    const inviteFriends = async () => {
         const shareOptions = {
             message: 'Geniee App',
             url: 'www.google.com'
@@ -112,7 +114,7 @@ const MyAccount = (props) => {
                             <UploadProfilePic />
                             <View style={{ marginTop: 30, marginLeft: 20, }}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.statusBar }}>{userName}</Text>
-                                {merchantUser && isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>My Design Store</Text> : null}
+                                {merchantUser && isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>{props.merchantUser.businessName}</Text> : null}
                             </View>
                         </View>
                         {!merchantUser ?
@@ -233,7 +235,7 @@ const MyAccount = (props) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => { _signOut() }}>
-                                    <View style={{ flexDirection: 'row', paddingVertical: 10, marginBottom: 50 }}>
+                                    <View style={{ flexDirection: 'row', paddingVertical: 10, marginBottom: 80 }}>
                                         <AIcon style={{ fontSize: 20, fontWeight: 'bold' }} name='logout' />
                                         <Text style={{ fontSize: 14, marginLeft: 10, fontWeight: 'bold' }}>Logout</Text>
                                     </View>
@@ -352,4 +354,6 @@ const styles = StyleSheet.create({
         color: '#ffffff',
     },
 });
-export default connect(loggedUserSelector)(MyAccount);
+
+const combinedSelector = combineSelectors(loggedUserSelector, merchantUserSelector)
+export default connect(combinedSelector)(MyAccount);

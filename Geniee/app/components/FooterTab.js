@@ -24,6 +24,7 @@ import ChatHandlers from "../store/services/chat/handlers";
 import { customPaperTheme } from "../config/themes";
 import { connect } from "react-redux";
 import { loggedUserSelector } from "../store/selectors";
+import { merchantUserSelector } from "../store/selectors";
 
 const FooterTab = (props) => {
 
@@ -39,25 +40,26 @@ const FooterTab = (props) => {
 
   useEffect(() => {
 
-    if (!props.loggedUser) {
+    if (!props.merchantUser) {
       setLoggedUser(userLogged);
     } else {
-      setLoggedUser(props.loggedUser._id);
+      setLoggedUser(props.merchantUser.owner);
     }
 
-    getBusinessInfo()
-    getChatItems()
+    //getBusinessInfo()
+    getChatItems();
+    setMerchantUser(props.isMerchantUser);
   })
 
-  const getBusinessInfo = () => {
-    merchantHandlers.getBusinessInfo(loggedUser, (res) => {
-      if (res) {
-        setMerchantUser(true);
-      } else {
-        setMerchantUser(false);
-      }
-    })
-  };
+  // const getBusinessInfo = () => {
+  //   merchantHandlers.getBusinessInfo(loggedUser, (res) => {
+  //     if (res) {
+  //       setMerchantUser(true);
+  //     } else {
+  //       setMerchantUser(false);
+  //     }
+  //   })
+  // };
 
   const getIndex = (routeName) => {
     return props.state.routes.findIndex(route => route.name == routeName)
@@ -179,7 +181,7 @@ const FooterTab = (props) => {
   );
 }
 
-export default connect(loggedUserSelector) (FooterTab);
+export default connect(merchantUserSelector) (FooterTab);
 
 const styles = StyleSheet.create({
   container: {

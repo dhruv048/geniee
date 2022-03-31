@@ -67,6 +67,7 @@ import { categorySelector, loggedUserSelector } from '../../../store/selectors';
 import AIcon from 'react-native-vector-icons/AntDesign';
 import Statusbar from '../../Shared/components/Statusbar';
 import combineSelectors from '../../../helpers';
+import authHandlers from '../../../store/services/auth/handlers';
 
 let isDashBoard = true;
 
@@ -129,6 +130,18 @@ const Home = props => {
 
     //Get Popular Products
     getPopularStores()
+    // get current location name
+    fetchCurrentLocation();
+    //Timer
+    // let end = moment(currentDate).add(5, 'days');
+    // let duration = moment.duration(end.diff(currentDate, 'days'));
+    // let hours = duration.asHours();
+    //setTimeForBanner(duration);
+
+    // GetBusinessInfo
+    authHandlers.getBusinessInfo(props.loggedUser._id,(res) =>{
+      console.log('This is business info '+res);
+    });
 
     if (Platform.OS === 'ios') {
       granted = await Geolocation.requestAuthorization('always');
@@ -196,14 +209,6 @@ const Home = props => {
         setUserCount(res.result);
       }
     })
-
-    // get current location name
-    fetchCurrentLocation();
-    //Timer
-    let end = moment(currentDate).add(5, 'days');
-    let duration = moment.duration(end.diff(currentDate, 'days'));
-    let hours = duration.asHours();
-    setTimeForBanner(duration);
 
   }, []);
 
