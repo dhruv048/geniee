@@ -109,7 +109,7 @@ Meteor.methods({
                 receiver: [],
                 removedBy: [],
                 type: NotificationTypes.ADD_SERVICE,
-                image : businessInfo.coverImage
+                image: businessInfo.coverImage
             };
             Meteor.call("addNotification", notification);
             return res;
@@ -138,26 +138,6 @@ Meteor.methods({
                     },
                 }
             );
-        }
-    },
-
-    getBusinessInfo: (loggedUser) => {
-
-        let user;
-        if (loggedUser != null) {
-            user = Business.find({ owner: loggedUser._id }).fetch();
-        }
-        try {
-            if (user) {
-                return Async.runSync(function (done) {
-                    done(null, user);
-                })
-            }
-            else {
-                return false;
-            }
-        } catch (e) {
-            throw new Meteor.Error(403, e.message);
         }
     },
 
@@ -436,14 +416,14 @@ Meteor.methods({
             var currentUserId = userId != null ? userId : Meteor.userId();
             var data = Business.find({ owner: currentUserId }).fetch();
             return data;
-        } catch(error){
+        } catch (error) {
             throw new Meteor.Error('Please first add your business Type');
         }
 
     },
 
     getPopularStores: function () {
-        var data = Business.find({ businessTypes: { $in: [1,2,4] } },{sort: {views : -1}}).fetch();
+        var data = Business.find({ businessTypes: { $in: [1, 2, 4] } }, { sort: { views: -1 } }).fetch();
         return data;
     },
 
@@ -690,17 +670,24 @@ Meteor.methods({
 
     updateProduct: (productId, productInfo, imagesToRemove) => {
         //productInfo.qty = parseInt(productInfo.qty);
-        //productInfo.availabeQuantity = parseInt(productInfo.qty);
+        //productInfo.availabeQuantity = parseInt(productInfo.qty);      
+        //productInfo.radius = parseInt(productInfo.radius);      
+        let imageIds = [];
+        productInfo.images.forEach( async(image) => {           
+            if (image.includes('base64')) {
+                await handleImageUpload(image).then((res) => {
+                    imageIds.push(res.fileName);
+                })
+            } else {
+                imageIds.push(image);
+            }      
+        });
         productInfo.price = parseInt(productInfo.price);
         productInfo.discount = parseInt(productInfo.discount);
-        //productInfo.radius = parseInt(productInfo.radius);
         productInfo.updateDate = new Date(new Date().toUTCString());
-        let imageIds = [];
-        productInfo.images.forEach(async (image) => {
-            let Id = await uploadImage(image);
-            imageIds.push(Id.fileName);
-        });
+
         productInfo.images = imageIds;
+        console.log('This is productinfo imagename '+ productInfo.images);
         // if (productInfo.images.length < 1) {
         console.log("imagesToRemove", imagesToRemove);
         Products.update(
@@ -708,7 +695,11 @@ Meteor.methods({
             { $set: productInfo },
             (err, res) => {
                 ServiceImage.remove({ _id: { $in: imagesToRemove } });
+                if (res) {
+                    return res;
+                }
             }
+
         );
         return;
         // }
@@ -896,7 +887,7 @@ Meteor.methods({
         let product = Products.findOne({ _id: Id });
         return Products.find({
             //service: product.service,
-            businessType : product.businessType,
+            businessType: product.businessType,
             _id: {
                 $ne: Id,
             },
@@ -1362,7 +1353,7 @@ Meteor.methods({
     },
 
     getMyProducts(userId) {
-        let loggedUser = userId === null ?  Meteor.userId() || "NA" : userId;
+        let loggedUser = userId === null ? Meteor.userId() || "NA" : userId;
         const collection = Products.rawCollection();
         const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
 

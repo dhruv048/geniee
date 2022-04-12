@@ -515,7 +515,7 @@ const ProductDetail = (props) => {
                             {productData.images && productData.images.length > 0 ? renderImage() : null}
                             <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%', marginHorizontal: 5 }}>
                                 <Icon
-                                    style={{ color: colors.whiteText, fontSize: 20, marginRight: '70%' }}
+                                    style={{ color: customPaperTheme.GenieeColor.lightDarkColor, fontSize: 20, marginRight: '70%' }}
                                     onPress={() => {
                                         props.navigation.goBack();
                                     }}

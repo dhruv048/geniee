@@ -96,32 +96,43 @@ const BusinessForm = (props) => {
         business.registrationImage = registrationImage;
 
         setLoading(true);
-        merchantHandlers.addBusiness(business, (res) => {
-            if (res === true) {
-                // hack because react-native-meteor doesn't login right away after sign in
-                console.log('Result from Merchant register' + res);
-                ToastAndroid.showWithGravityAndOffset(
-                    'Business Registered Successfully',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-                setLoading(false);
-                //resetAddressDetailForm();
-                props.navigation.navigate('BusinessCompleted', { data: business.owner });
+        if (merchantImage === '' || PANImage === '' || registrationImage === '') {
+            ToastAndroid.showWithGravityAndOffset(
+                'Please upload all required documents.',
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                50,
+            );
+        }
+        else {
+            merchantHandlers.addBusiness(business, (res) => {
+                if (res === true) {
+                    // hack because react-native-meteor doesn't login right away after sign in
+                    console.log('Result from Merchant register' + res);
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Business Registered Successfully',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                    setLoading(false);
+                    //resetAddressDetailForm();
+                    props.navigation.navigate('BusinessCompleted', { data: business.owner });
 
-            } else {
-                console.log('result from Merchant error ' + res.reason);
-                ToastAndroid.showWithGravityAndOffset(
-                    res.reason,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    50,
-                );
-            }
-        });
+                } else {
+                    console.log('result from Merchant error ' + res.reason);
+                    ToastAndroid.showWithGravityAndOffset(
+                        res.reason,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        50,
+                    );
+                }
+            });
+        }
         setLoading(false);
     }
 
@@ -170,6 +181,7 @@ const BusinessForm = (props) => {
                                     value={merchantPhoto}
                                     onChangeText={(value) => setMerchantPhoto(value)}
                                     style={styles.textInputNameBox}
+                                    error={merchantImage ? false : true}
                                     theme={{ roundness: 6 }}
                                 />
                                 <TouchableOpacity
@@ -204,6 +216,7 @@ const BusinessForm = (props) => {
                                     onChangeText={(value) => setPANNumber(value)}
                                     style={styles.textInputNameBox}
                                     theme={{ roundness: 6 }}
+                                    error={PANImage ? false : true}
                                 />
                                 <TouchableOpacity
                                     style={styles.imageView}
@@ -237,6 +250,7 @@ const BusinessForm = (props) => {
                                     onChangeText={(value) => setBusinessRegistration(value)}
                                     style={styles.textInputNameBox}
                                     theme={{ roundness: 6 }}
+                                    error={registrationImage ? false : true}
                                 />
                                 <TouchableOpacity
                                     style={styles.imageView}

@@ -1,4 +1,4 @@
-import React, { PureComponent, useEffect, useState } from 'react';
+import React, { PureComponent, useCallback, useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-community/async-storage";
 import { colors, customStyle, variables } from "../../../config/styles";
 import Meteor from '../../../react-native-meteor';
@@ -19,30 +19,40 @@ import Share from 'react-native-share';
 import Loading from '../../../components/Loading';
 import Statusbar from '../../Shared/components/Statusbar';
 import { customPaperTheme } from '../../../config/themes';
+import { connect } from 'react-redux';
+import { loggedUserSelector, merchantUserSelector } from '../../../store/selectors';
+import combineSelectors from '../../../helpers';
 
 const MyAccount = (props) => {
 
     const [isMerchant, setIsMerchant] = useState(true);
     const [userName, setUserName] = useState('User');
     const [merchantUser, setMerchantUser] = useState(false);
-    let loggedUser;
-    let profile;
 
+    let loggedUser = props.loggedUser;
     useEffect(async () => {
-        let user = await AsyncStorage.getItem('loggedUser');
-        loggedUser = Meteor.user() ? Meteor.user() : JSON.parse(user);
-        profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
+        //let user = await AsyncStorage.getItem('loggedUser');
+        //let loggedUser;
+        //let profile;
+        //let user = props.loggedUser;
+        //loggedUser = user ? user : Meteor.user();
+        //profile = Meteor.user() ? Meteor.user().profile : this.loggedUser.profile;
         //this._updateState(this.loggedUser.profile)
-        setUserName(profile.firstName + ' ' + profile.lastName);
+        setUserName(loggedUser.profile.firstName + ' ' + loggedUser.profile.lastName);
+        props.isMerchantUser ? setMerchantUser(props.isMerchantUser): setMerchantUser(false);
 
-        merchantHandlers.getBusinessInfo(loggedUser, (res) => {
-            if (res) {
-                setMerchantUser(true);
-            } else {
-                setMerchantUser(false);
-            }
-        })
-    }, [])
+        //getBusinessInfo();
+    }, [props.loggedUser])
+
+    // const getBusinessInfo = () => {
+    //     merchantHandlers.getBusinessInfo(loggedUser, (res) => {
+    //         if (res) {
+    //             setMerchantUser(true);
+    //         } else {
+    //             setMerchantUser(false);
+    //         }
+    //     })
+    // }
 
     const _signOut = async () => {
         Alert.alert(
@@ -66,7 +76,7 @@ const MyAccount = (props) => {
         );
     }
 
-    inviteFriends = async () => {
+    const inviteFriends = async () => {
         const shareOptions = {
             message: 'Geniee App',
             url: 'www.google.com'
@@ -84,32 +94,32 @@ const MyAccount = (props) => {
             <SafeAreaView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
                 <Statusbar />
                 <Header
-                        androidStatusBarColor={colors.statusBar}
-                        style={{ backgroundColor: colors.statusBar ,marginTop:customPaperTheme.headerMarginVertical}}
-                    >
-                        <RNPButton
-                            transparent
-                            uppercase={false}
-                            style={{ width: '100%', alignItems: 'flex-start' }}
-                            onPress={() => {
-                                props.navigation.goBack();
-                            }}>
-                            <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
-                            <Text style={{ color: colors.whiteText, fontSize: 20 }}>My Account</Text>
-                        </RNPButton>
-                    </Header>
+                    androidStatusBarColor={colors.statusBar}
+                    style={{ backgroundColor: colors.statusBar, marginTop: customPaperTheme.headerMarginVertical }}
+                >
+                    <RNPButton
+                        transparent
+                        uppercase={false}
+                        style={{ width: '100%', alignItems: 'flex-start' }}
+                        onPress={() => {
+                            props.navigation.goBack();
+                        }}>
+                        <FIcon style={{ color: '#ffffff', fontSize: 20 }} name="arrow-left" />
+                        <Text style={{ color: colors.whiteText, fontSize: 20 }}>My Account</Text>
+                    </RNPButton>
+                </Header>
                 <Content>
                     <View>
                         <View style={[{ flexDirection: 'row', backgroundColor: '#F0F8FF' }]}>
                             <UploadProfilePic />
                             <View style={{ marginTop: 30, marginLeft: 20, }}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.statusBar }}>{userName}</Text>
-                                {isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>My Design Store</Text> : null}
+                                {merchantUser && isMerchant ? <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.statusBar }}>{props.merchantUser.businessName}</Text> : null}
                             </View>
                         </View>
                         {!merchantUser ?
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#F0F8FF', paddingBottom: 15, marginLeft: 15 }}>
-                                <Text style={{ fontWeight: 'bold', color: colors.statusBar }}>User</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#F0F8FF', paddingBottom: 15}}>
+                                <Text style={{ fontWeight: 'bold', color: colors.statusBar,paddingLeft:20 }}>User</Text>
                             </View>
                             :
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#F0F8FF', paddingBottom: 15 }}>
@@ -225,7 +235,7 @@ const MyAccount = (props) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => { _signOut() }}>
-                                    <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                                    <View style={{ flexDirection: 'row', paddingVertical: 10, marginBottom: 80 }}>
                                         <AIcon style={{ fontSize: 20, fontWeight: 'bold' }} name='logout' />
                                         <Text style={{ fontSize: 14, marginLeft: 10, fontWeight: 'bold' }}>Logout</Text>
                                     </View>
@@ -344,4 +354,6 @@ const styles = StyleSheet.create({
         color: '#ffffff',
     },
 });
-export default MyAccount;
+
+const combinedSelector = combineSelectors(loggedUserSelector, merchantUserSelector)
+export default connect(combinedSelector)(MyAccount);

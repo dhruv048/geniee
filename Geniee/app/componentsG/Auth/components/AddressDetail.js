@@ -81,10 +81,8 @@ const AddressDetail = (props) => {
                 }
                 setLoading(true);
                 authHandlers.handleSignUp(user, (res) => {
-                    console.log('Result from register' + res);
-                    if (res) {
+                    if (res.result) {
                         // hack because react-native-meteor doesn't login right away after sign in
-                        console.log('Result from register' + res);
                         ToastAndroid.showWithGravityAndOffset(
                             'Registered Successfully',
                             ToastAndroid.LONG,
@@ -92,13 +90,12 @@ const AddressDetail = (props) => {
                             0,
                             50,
                         );
-                        registerUser = res;
+                        registerUser = res.result;
                         setLoading(false);
                         resetAddressDetailForm();
                         props.navigation.navigate('RegisterCompleted', { data: registerUser });
 
                     } else {
-                        console.log('result from signup error ' + res.reason);
                         ToastAndroid.showWithGravityAndOffset(
                             res.reason,
                             ToastAndroid.LONG,

@@ -1,4 +1,4 @@
-import React, { Component, createRef, useCallback, useEffect, useState } from "react";
+import React, { Component, createRef, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -22,6 +22,9 @@ import merchantHandlers from "../store/services/merchant/handlers";
 import AddProduct from "../screens/store/AddProduct";
 import ChatHandlers from "../store/services/chat/handlers";
 import { customPaperTheme } from "../config/themes";
+import { connect } from "react-redux";
+import { loggedUserSelector } from "../store/selectors";
+import { merchantUserSelector } from "../store/selectors";
 
 const FooterTab = (props) => {
 
@@ -32,30 +35,31 @@ const FooterTab = (props) => {
   const [loggedUser, setLoggedUser] = useState();
   const [merchantUser, setMerchantUser] = useState(false);
   const actionSheetRef = createRef();
-  const userLogged = Meteor.user();
+  const userLogged = Meteor.userId();
   const [unreadChatCount, setUnreadChatCount] = useState(0);
 
   useEffect(() => {
 
-    if (!props.loggedUser) {
+    if (!props.merchantUser) {
       setLoggedUser(userLogged);
     } else {
-      setLoggedUser(props.loggedUser);
+      setLoggedUser(props.merchantUser.owner);
     }
 
-    getBusinessInfo()
-    getChatItems()
+    //getBusinessInfo()
+    getChatItems();
+    setMerchantUser(props.isMerchantUser);
   })
 
-  const getBusinessInfo = () => {
-    merchantHandlers.getBusinessInfo(loggedUser, (res) => {
-      if (res) {
-        setMerchantUser(true);
-      } else {
-        setMerchantUser(false);
-      }
-    })
-  }
+  // const getBusinessInfo = () => {
+  //   merchantHandlers.getBusinessInfo(loggedUser, (res) => {
+  //     if (res) {
+  //       setMerchantUser(true);
+  //     } else {
+  //       setMerchantUser(false);
+  //     }
+  //   })
+  // };
 
   const getIndex = (routeName) => {
     return props.state.routes.findIndex(route => route.name == routeName)
@@ -76,7 +80,7 @@ const FooterTab = (props) => {
     }
   }
 
-  const getChatItems = useCallback(() => {
+  const getChatItems = () => {
     ChatHandlers.getAllChatItems(loggedUser, (res) => {
       if (res) {
         let result = res.filter(item => item.seen === false);
@@ -85,7 +89,7 @@ const FooterTab = (props) => {
         console.log('Please contact administrator ' + err);
       }
     });
-  }, [])
+  };
 
   const handleCartOrder = () => {
     props.navigation.navigate('MerchantOrder');
@@ -123,7 +127,7 @@ const FooterTab = (props) => {
           {/* Center Circle */}
           <View style={{ flex: 1, justifyContent: 'center',  marginHorizontal:30, paddingBottom:10}}>
             {merchantUser ?
-              <Button onPress={() => { props.navigation.navigate('ProductInfo') }}
+              <Button onPress={() => { props.navigation.navigate('ProductInfo',{loggedUser : props.loggedUser._id }) }}
                 style={styles.searchBtn} >
                 <AIcon name="plus" style={{ color: colors.whiteText }} size={25}></AIcon>
               </Button>
@@ -162,7 +166,7 @@ const FooterTab = (props) => {
           <Path
             fill={"white"}
             stroke={"grey"}
-            d={`M30,60h${pathX}.3c17.2,0,31,14.4,30,31.6c-0.2,2.7-0.3,5.5-0.3,8.2c0,71.2,58.1,129.6,129.4,130c72.1,0.3,130.6-58,130.6-130c0-2.7-0.1-5.4-0.2-8.1C${pathY}.7,74.5,${pathA}.5,60,${pathB}.7,60H1062c16.6,0,30,13.4,30,30v94c0,42-34,76-76,76H76c-42,0-76-34-76-76V90C0,73.4,13.4,60,30,60z`}
+            d={`M30,60h${pathX}.3c17.2,0,31,14.4,30,31.6c-0.2,2.7-0.3,5.5-0.3,8.2c0,71.2,58.1,129.6,129.4,130c72.1,0.3,130.6-58,130.6-130c0-2.7-0.1-5.4-0.2-8.1C${pathY}.7,74.5,${pathA}.5,60,${pathB}.7,60H1062c16.6,0,30,13.4,30,30v135c0,42-34,76-76,120H76c-42,0-76-34-76-76V90C0,73.4,13.4,60,30,60z`}
           />
           <Circle
             fill={customPaperTheme.GenieeColor.primaryColor}
@@ -177,7 +181,7 @@ const FooterTab = (props) => {
   );
 }
 
-export default FooterTab;
+export default connect(merchantUserSelector) (FooterTab);
 
 const styles = StyleSheet.create({
   container: {

@@ -96,12 +96,13 @@ Meteor.methods({
                             }
                         });
                     });
-
                 //return userId;
-
-                return Async.runSync(function (done) {
-                    done(null, userId);
-                })
+                done(null, userId);
+                 
+                // return Async.runSync(function (done) {
+                //     done(null, userId);
+                //     console.log('This is userId '+ userId);
+                // })
             }
         });
         }
@@ -137,7 +138,9 @@ Meteor.methods({
             //if user is found
             if (user) {
                 //authenticate user
+                console.log('This is sigin result '+ result);
                 var result = Accounts._checkPassword(user, password);
+                
                 if (result.error) {
                     return result.error;
                 } else {
@@ -340,6 +343,17 @@ Meteor.methods({
             userId: user._id,
             token: stampedToken.token
         };
+    },
+
+    'getUserCount': () => {
+        const users = Meteor.users.find().fetch();
+        const usersCount = users.length;
+        // console.log(user)
+        if (usersCount)
+            return Async.runSync(function (done) {
+                done(null, usersCount);
+            });
+
     },
 
 });

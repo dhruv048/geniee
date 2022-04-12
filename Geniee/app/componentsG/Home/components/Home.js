@@ -59,13 +59,15 @@ import CartIcon from '../../../components/HeaderIcons/CartIcon';
 import { customPaperTheme } from '../../../config/themes';
 import { MaterialColors } from '../../../constants/material-colors';
 import { Button as RNPButton } from 'react-native-paper';
-import { lowerCase } from 'lodash';
+import { lowerCase, set } from 'lodash';
 import Moment from 'moment';
 import Data from '../../../react-native-meteor/Data';
 import { connect } from 'react-redux';
-import { categorySelector } from '../../../store/selectors';
+import { categorySelector, loggedUserSelector } from '../../../store/selectors';
 import AIcon from 'react-native-vector-icons/AntDesign';
 import Statusbar from '../../Shared/components/Statusbar';
+import combineSelectors from '../../../helpers';
+import authHandlers from '../../../store/services/auth/handlers';
 
 let isDashBoard = true;
 
@@ -91,6 +93,10 @@ const Home = props => {
   const [loggedUser, setLoggedUser] = useState(Meteor.user());
   const [storesList, setStoresList] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(true);
+  const [timeForBanner, setTimeForBanner] = useState();
+  const [userCount, setUserCount] = useState(0);
+  const [displayUserCount, setDisplayUserCount] = useState(true);
+  const [currentLocation, setCurrentLocation] = useState();
 
   const currentDate = new Date();
   let arrayholder;
@@ -111,7 +117,7 @@ const Home = props => {
   useEffect(async () => {
     SplashScreen.hide();
     let user = Meteor.user();
-    setLoggedUser(user);
+    setLoggedUser(props.loggedUser ? props.loggedUser : user);
     updateCounts();
     setCategories(props.categories);
     //
@@ -124,6 +130,18 @@ const Home = props => {
 
     //Get Popular Products
     getPopularStores()
+    // get current location name
+    fetchCurrentLocation();
+    //Timer
+    // let end = moment(currentDate).add(5, 'days');
+    // let duration = moment.duration(end.diff(currentDate, 'days'));
+    // let hours = duration.asHours();
+    //setTimeForBanner(duration);
+
+    // GetBusinessInfo
+    authHandlers.getBusinessInfo(props.loggedUser._id,(res) =>{
+      console.log('This is business info '+res);
+    });
 
     if (Platform.OS === 'ios') {
       granted = await Geolocation.requestAuthorization('always');
@@ -186,7 +204,36 @@ const Home = props => {
     //   }
     // });
 
+    Meteor.call('getUserCount', (err, res) => {
+      if (res) {
+        setUserCount(res.result);
+      }
+    })
+
   }, []);
+
+  const fetchCurrentLocation = () => {
+    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + region.latitude + ',' + region.longitude + '&key=' + settings.GOOGLE_MAP_API_KEY)
+      .then((response) => response.json())
+      .then((json) => {
+        let location = json.results[0];
+        if (location != '') {
+          for (var i = 0; i < location.address_components.length; i++) {
+            for (var b = 0; b < location.address_components[i].types.length; b++) {
+
+              //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+              if (location.address_components[i].types[b] == "locality") {
+                //this is the object you are looking for                
+                setCurrentLocation(location.address_components[i].long_name);
+              }
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
   const getNearByServices = useCallback(() => {
     Meteor.call('getRandomServices', [region.longitude, region.latitude], 15, 10, (err, res) => {
@@ -488,7 +535,11 @@ const Home = props => {
   };
 
   const _handleProductPress = pro => {
-    props.navigation.navigate('ProductDetail', { Id: pro._id, data: pro });
+    if (loggedUser._id == pro.owner) {
+      props.navigation.navigate('ProductPreview', { Id: pro._id, productInfo: pro })
+    } else {
+      props.navigation.navigate('ProductDetail', { Id: pro._id, data: pro })
+    };
   };
 
   const _onScroll = event => {
@@ -653,6 +704,14 @@ const Home = props => {
     getPopularStores();
   }
 
+  const handleMerchantSeller = () => {
+    loggedUser
+      ? props.navigation.navigate('BecomeSeller', {
+        data: loggedUser,
+      })
+      : props.navigation.navigate('SignIn');
+  }
+
   const profileImage = loggedUser ? loggedUser.profile.profileImage : null;
   // console.log(loggedUser,profileImage)
   return (
@@ -680,14 +739,14 @@ const Home = props => {
               />
               <View>
                 <TouchableOpacity
-                  style={{ marginHorizontal: 0, flexDirection: 'row', marginLeft:'auto' }}>
+                  style={{ marginHorizontal: 0, flexDirection: 'row', marginLeft: 'auto' }}>
                   <FAIcon
                     name="map-marker"
                     style={{
                       color: colors.statusBar, fontSize: 20, marginRight: 8,
                     }}
                   />
-                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize}}>Kathmandu</Text>
+                  <Text style={{ fontSize: customPaperTheme.GenieeText.fontMinSize }}>{currentLocation}</Text>
                 </TouchableOpacity>
                 <Text uppercase={false}
                   style={{
@@ -703,7 +762,26 @@ const Home = props => {
                 source={require('../../../images/geniee_banner.png')}
               />
             </View>
-            <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+            <View style={{ position: 'absolute', top: 225, left: 130, backgroundColor: '#FFE5E5', width: 90, height: 25, borderRadius: 6 }}>
+              <Text style={{ color: 'red', textAlign: 'center', justifyContent: 'center' }} >{Moment(timeForBanner).format('HH:mm:ss')}</Text>
+            </View>
+            {displayUserCount ? <View>
+              <TouchableOpacity
+                onPress={() => handleMerchantSeller()}
+                style={styles.merchantContainer}>
+                <Image
+                  style={styles.merchantImage}
+                  source={require('../../../images/Avatar.png')}
+                />
+                <Text style={{
+                  flex: 1,
+                  marginTop: 15,
+                  fontSize: 16
+                }}>Become a merchant and reach {userCount}+ customers.</Text>
+                <FAIcon name='x' style={{ fontSize: 18, marginTop: 10, marginRight: 10 }} onPress={() => setDisplayUserCount(false)} />
+              </TouchableOpacity>
+            </View> : null}
+            {/* <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
               <RNPButton
                 mode="outlined"
                 uppercase={false}
@@ -721,20 +799,36 @@ const Home = props => {
                   Become a Merchant & Sell
                 </Text>
               </RNPButton>
-            </View>
+            </View> */}
             {/*CATEGORIES LIST START*/}
             {props.categories ? (
               props.categories.length > 0 ? (
-                <View style={[styles.block, { marginVertical: 15 }]}>
-                  <FlatList
-                    contentContainerStyle={styles.categoriesContentStyle}
-                    data={categories}
-                    //horizontal={true}
-                    keyExtractor={(item, index) => index.toString()}
-                    // showsHorizontalScrollIndicator={false}
-                    renderItem={renderCategoryItem}
-                    numColumns={5}
-                  />
+                <View>
+                  <View style={[styles.block, { marginVertical: 15 }]}>
+                    <FlatList
+                      contentContainerStyle={styles.categoriesContentStyle}
+                      data={categories}
+                      //horizontal={true}
+                      keyExtractor={(item, index) => index.toString()}
+                      // showsHorizontalScrollIndicator={false}
+                      renderItem={renderCategoryItem}
+                      numColumns={5}
+                    />
+                  </View>
+                  <View>
+                    <RNPButton
+                      mode="text"
+                      uppercase={false}
+                      onPress={() => props.navigation.navigate('CategoryList', { data: categories })}>
+                      <Text style={{ fontSize: 10, color: colors.statusBar }}>
+                        View more
+                      </Text>
+                      <Icon
+                        name="arrow-right"
+                        style={customStyle.blockHeaderArrow}
+                      />
+                    </RNPButton>
+                  </View>
                 </View>
               ) : null
             ) : null}
@@ -1284,7 +1378,23 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     marginHorizontal: 8,
     marginTop: 15,
-  }
+  },
+  merchantContainer: {
+    flexDirection: 'row',
+    marginVertical: 20,
+    marginHorizontal: 15,
+    height: 70,
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: customPaperTheme.GenieeColor.primaryColor
+  },
+  merchantImage: {
+    height: 40,
+    width: 40,
+    resizeMode: 'cover',
+    marginHorizontal: 10,
+    marginTop: 15
+  },
 });
 // export default Meteor.withTracker(() => {
 //     return {
@@ -1293,4 +1403,5 @@ const styles = StyleSheet.create({
 //         notificationCount: Meteor.collection('newNotificationCount').find(),
 //     };
 // })(Home);
-export default connect(categorySelector)(Home);
+const combinedSelector = combineSelectors(categorySelector, loggedUserSelector);
+export default connect(combinedSelector)(Home);

@@ -12,8 +12,8 @@ const saveProduct = (product, cb) => {
   })
 }
 
-const updateProduct = (product, productId, imageTobeRemove, cb) => {
-  Meteor.call('updateProduct', product, (err, res) => {
+const updateProduct = (productId, product, imageTobeRemove, cb) => {
+  Meteor.call('updateProduct',productId, product, imageTobeRemove,(err, res) => {
     if (err) {
       console.log('Please contact administrator.')
       cb(err);

@@ -12,9 +12,10 @@ import {
   Dimensions,
   Modal,
   ScrollView,
-  Image
+  Image,
+  SafeAreaView
 } from 'react-native';
-import { Button as NBButton, Icon as NBIcon, Row } from 'native-base';
+import { Button as NBButton, Header, Icon as NBIcon, Row } from 'native-base';
 import { RadioGroup } from 'react-native-btr';
 import Icon from 'react-native-vector-icons/Feather';
 import Meteor from '../../../react-native-meteor';
@@ -27,13 +28,14 @@ import { goBack, goToRoute } from '../../../Navigation';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import { privacyPolicy } from '../../../lib/PrivacyPolicy';
 import { TermsCondition } from '../../../lib/Terms&Condition';
-import { customGalioTheme } from '../../../config/themes';
+import { customGalioTheme, customPaperTheme } from '../../../config/themes';
 import { Title, Button as RNPButton, TextInput, Checkbox } from 'react-native-paper';
 import useRegisterForm from '../../../hooks/useRegisterForm';
 import connect from '../../../react-native-meteor/components/ReactMeteorData';
 import authHandlers from '../../../store/services/auth/handlers';
 import AddService from '../../../screens/services/AddService';
 import BusinessForm from '../../Merchant/component/BusinessForm';
+import Statusbar from '../../Shared/components/Statusbar';
 
 const Register = ({ navigation }) => {
 
@@ -93,91 +95,93 @@ const Register = ({ navigation }) => {
   }
 
   return (
-    <Container>
-      <Content style={{ backgroundColor: colors.appBackground }}>
-        <TouchableWithoutFeedback
-          onPress={Keyboard.dismiss}
-          accessible={false}>
-          <View style={{ paddingTop: 0 }}>
-            {/* <Logo />*/}
-            <View style={styles.logo}>
-              <Image style={styles.logoImage} source={require('Geniee/app/images/logoApp.png')} />
-            </View>
-
-            <View style={styles.welcomeText}>
-              <Text
-                style={styles.textHeader}>
-                Let's create your account,
-              </Text>
-              <Text
-                style={styles.textSubHeader}>
-                A step to making your wish come true
-              </Text>
-            </View>
-            <View style={styles.containerRegister}>
-              <View style={styles.textInputNameView}>               
-                <TextInput
-                  mode="outlined"
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="First Name"
-                  placeholderTextColor="#808080"
-                  label="First Name"
-                  name="firstName"
-                  value={values.firstName.value}
-                  onChangeText={(value) => handleInputChange('firstName', value)}
-                  style={styles.textInputNameBox}
-                  theme={{ roundness: 6 }}
-                  error={values.firstName.error}
-                />
-                <TextInput
-                  mode="outlined"
-                  color={customGalioTheme.COLORS.INPUT_TEXT}
-                  placeholder="Last Name"
-                  placeholderTextColor="#808080"
-                  label="Last Name"
-                  name="lastName"
-                  value={values.lastName.value}
-                  onChangeText={(value) => handleInputChange('lastName', value)}
-                  style={styles.textInputNameBox}
-                  theme={{ roundness: 6 }}
-                  error={values.lastName.error}
-                />
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.whiteText }}>
+      <Statusbar />
+      <Content style={{width: '100%', flex: 1, paddingTop: 10}}>
+        <View>
+          <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+            accessible={false}>
+            <View style={{ paddingTop: 0 }}>
+              {/* <Logo />*/}
+              <View style={styles.logo}>
+                <Image style={styles.logoImage} source={require('Geniee/app/images/logoApp.png')} />
               </View>
-              <TextInput
-                mode="outlined"
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                placeholder="Email"
-                placeholderTextColor="#808080"
-                keyboardType="email-address"
-                label="Email"
-                value={values.email.value}
-                onChangeText={(value) => handleEmailValidation(value)}
-                style={styles.inputBox}
-                theme={{ roundness: 6 }}
-                error={values.email.value.length > 0 ? !isEmailValid : values.email.error}
-              />
-              <TextInput
-                mode="outlined"
-                color={customGalioTheme.COLORS.INPUT_TEXT}
-                secureTextEntry={!showPassword}
-                right={
-                  <TextInput.Icon
-                    name="eye"
-                    onPress={() => setshowPassword(!showPassword)}
+
+              <View style={styles.welcomeText}>
+                <Text
+                  style={styles.textHeader}>
+                  Let's create your account,
+                </Text>
+                <Text
+                  style={styles.textSubHeader}>
+                  A step to making your wish come true
+                </Text>
+              </View>
+              <View style={styles.containerRegister}>
+                <View style={styles.textInputNameView}>
+                  <TextInput
+                    mode="outlined"
+                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                    placeholder="First Name"
+                    placeholderTextColor="#808080"
+                    label="First Name"
+                    name="firstName"
+                    value={values.firstName.value}
+                    onChangeText={(value) => handleInputChange('firstName', value)}
+                    style={styles.textInputNameBox}
+                    theme={{ roundness: 6 }}
+                    error={values.firstName.error}
                   />
-                }
-                iconColor={colors.primary}
-                iconSize={24}
-                placeholder="Password"
-                placeholderTextColor="#808080"
-                label="Password"
-                value={values.password.value}
-                onChangeText={(value) => handlePasswordValidation(value)}
-                style={styles.inputBox}
-                theme={{ roundness: 6 }}
-                error={values.password.value.length > 0 ? !isPasswordValid : values.password.error}
-              />
-              {/* <TextInput
+                  <TextInput
+                    mode="outlined"
+                    color={customGalioTheme.COLORS.INPUT_TEXT}
+                    placeholder="Last Name"
+                    placeholderTextColor="#808080"
+                    label="Last Name"
+                    name="lastName"
+                    value={values.lastName.value}
+                    onChangeText={(value) => handleInputChange('lastName', value)}
+                    style={styles.textInputNameBox}
+                    theme={{ roundness: 6 }}
+                    error={values.lastName.error}
+                  />
+                </View>
+                <TextInput
+                  mode="outlined"
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
+                  placeholder="Email"
+                  placeholderTextColor="#808080"
+                  keyboardType="email-address"
+                  label="Email"
+                  value={values.email.value}
+                  onChangeText={(value) => handleEmailValidation(value)}
+                  style={styles.inputBox}
+                  theme={{ roundness: 6 }}
+                  error={values.email.value.length > 0 ? !isEmailValid : values.email.error}
+                />
+                <TextInput
+                  mode="outlined"
+                  color={customGalioTheme.COLORS.INPUT_TEXT}
+                  secureTextEntry={!showPassword}
+                  right={
+                    <TextInput.Icon
+                      name="eye"
+                      onPress={() => setshowPassword(!showPassword)}
+                    />
+                  }
+                  iconColor={colors.primary}
+                  iconSize={24}
+                  placeholder="Password"
+                  placeholderTextColor="#808080"
+                  label="Password"
+                  value={values.password.value}
+                  onChangeText={(value) => handlePasswordValidation(value)}
+                  style={styles.inputBox}
+                  theme={{ roundness: 6 }}
+                  error={values.password.value.length > 0 ? !isPasswordValid : values.password.error}
+                />
+                {/* <TextInput
                 mode="outlined"
                 color={customGalioTheme.COLORS.INPUT_TEXT}
                 secureTextEntry={!values.showConfirmPassword.value}
@@ -198,60 +202,61 @@ const Register = ({ navigation }) => {
                 theme={{ roundness: 6 }}
                 error={values.confirmPassword.error}
               /> */}
-              <View style={{ marginBottom: 15 }}>
-                {isPasswordValid ?
-                  <Text style={{ color: 'green' }}>At least 8 character. At least 1 numerals.</Text> :
-                  <Text>At least 8 character. At least 1 numerals.</Text>}
-                {isPasswordValid ? <Text style={{ color: 'green' }}>A upper and lower character.</Text> :
-                  <Text>A upper and lower character.</Text>}
-              </View>
-              <View
-                style={styles.textTermsCondition}>
-                <View style={{ flexDirection: 'row' }}>
-                  <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
-                    Signing up means you agree with all the {' '}
-                  </Text>
-
-                  <TouchableOpacity>
-                    <Text
-                      style={{ color: colors.primaryText, fontSize: 12 }}
-                      onPress={() => handleInputChange('termsModal', true)}>
-                      terms & condition
-                    </Text>
-                  </TouchableOpacity>
+                <View style={{ marginBottom: 15 }}>
+                  {isPasswordValid ?
+                    <Text style={{ color: 'green' }}>At least 8 character. At least 1 numerals.</Text> :
+                    <Text>At least 8 character. At least 1 numerals.</Text>}
+                  {isPasswordValid ? <Text style={{ color: 'green' }}>A upper and lower character.</Text> :
+                    <Text>A upper and lower character.</Text>}
                 </View>
+                <View
+                  style={styles.textTermsCondition}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12 }}>
+                      Signing up means you agree with all the {' '}
+                    </Text>
 
-                <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12, marginLeft: '35%' }}>
-                  {' '}
-                  set by geniee{' '}
-                </Text>
+                    <TouchableOpacity>
+                      <Text
+                        style={{ color: colors.primaryText, fontSize: 12 }}
+                        onPress={() => handleInputChange('termsModal', true)}>
+                        terms & condition
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <Text style={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 12, marginLeft: '35%' }}>
+                    {' '}
+                    set by geniee{' '}
+                  </Text>
+                </View>
+                <RNPButton
+                  mode='contained'
+                  uppercase={false}
+                  onPress={handleCreateAccount}
+                  style={styles.btnContinue}
+                >
+                  <Text
+                    style={styles.btnContinueText}>
+                    Continue
+                  </Text>
+                  <Icon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
+                </RNPButton>
               </View>
-              <RNPButton
-                mode='contained'
-                uppercase={false}
-                onPress={handleCreateAccount}
-                style={styles.btnContinue}
-              >
-                <Text
-                  style={styles.btnContinueText}>
-                  Continue
-                </Text>
-                <Icon style={{ color: '#ffffff', fontSize: 18 }} name="arrow-right" />
-              </RNPButton>
-            </View>
 
-            <View style={styles.signupCont}>
-              <Text style={styles.signupText}>
-                Already have an account?
-              </Text>
-              <TouchableOpacity
-                style={styles.navButton}
-                onPress={() => navigation.navigate('SignIn')}>
-                <Text style={styles.navButtonText}>Login</Text>
-              </TouchableOpacity>
+              <View style={styles.signupCont}>
+                <Text style={styles.signupText}>
+                  Already have an account?
+                </Text>
+                <TouchableOpacity
+                  style={styles.navButton}
+                  onPress={() => navigation.navigate('SignIn')}>
+                  <Text style={styles.navButtonText}>Login</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </View>
       </Content>
       {/*PRIVACY POLICY MODAL START */}
       <Modal
@@ -329,7 +334,7 @@ const Register = ({ navigation }) => {
         </View>
       </Modal>
       {/* TERMS&CONDITION MODAL STOP */}
-    </Container>
+    </SafeAreaView>
   );
 }
 
@@ -402,13 +407,13 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    marginTop: 30,
-    marginLeft: 10,
-    marginBottom: 40
+    marginTop: 40,
+    marginBottom: 30,
+    marginLeft: 15,
   },
 
   logoImage: {
-    height: 40,
+    height: 30,
     width: 80,
     position: 'absolute'
   },
